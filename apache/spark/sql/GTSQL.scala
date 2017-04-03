@@ -19,9 +19,11 @@
 package org.apache.spark.sql
 
 import com.typesafe.scalalogging.LazyLogging
+import org.apache.spark.sql.GTSQLTypes.{MultibandTileUDT, TileUDT}
 
 /**
  * Module providing support for using GeoTrellis native types in Spark SQL.
+ * To use call [[GTSQL.init(SQLContext)]] and then `import GTSQL.Implicits._`.
  *
  * @author sfitch 
  * @since 3/30/17
@@ -31,4 +33,10 @@ object GTSQL extends LazyLogging {
     GTSQLTypes.register(sqlContext)
     GTSQLFunctions.register(sqlContext)
   }
+
+  trait Implicits {
+    implicit val tileEncoder = GTSQLEncoder(TileUDT)
+    implicit val mbTileEncoder = GTSQLEncoder(MultibandTileUDT)
+  }
+  object Implicits extends Implicits
 }
