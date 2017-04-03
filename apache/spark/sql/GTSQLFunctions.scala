@@ -23,8 +23,8 @@ import geotrellis.raster.mapalgebra.focal._
 import org.apache.spark.sql.GTSQLTypes.TileUDT
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.analysis.FunctionRegistry
-import org.apache.spark.sql.catalyst.expressions.{Expression, Generator, UnaryExpression}
 import org.apache.spark.sql.catalyst.expressions.codegen.CodegenFallback
+import org.apache.spark.sql.catalyst.expressions.{Expression, Generator}
 import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
 
 /**
@@ -35,7 +35,7 @@ import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
  */
 object GTSQLFunctions {
 
-  def explodeTile(col: Column) = Column(ExplodeTile(col.expr))
+  def explodeTile(cols: Column*) = Column(ExplodeTile(cols.map(_.expr)))
 
   // -- Private APIs below --
 
@@ -47,28 +47,34 @@ object GTSQLFunctions {
   // Expression-oriented functions have a different registration scheme
   FunctionRegistry.builtin.registerFunction("st_explodeTile", ExplodeTile.apply)
 
-  private[spark] case class ExplodeTile(child: Expression)
-    extends UnaryExpression with Generator with CodegenFallback with Serializable {
+  private[spark] case class ExplodeTile(override val children: Seq[Expression])
+    extends Expression with Generator with CodegenFallback with Serializable {
 
-    override def elementSchema: StructType = StructType(Array(
-      StructField("col", DoubleType, false)
-    ))
+    override def elementSchema: StructType = {
+      val names = if(children.size == 1) Seq("col")
+      else children.indices.map(i ⇒ s"col_$i")
+
+      StructType(
+        names.map(n ⇒ StructField(n, DoubleType, false)).toArray
+      )
+    }
 
     override def eval(input: InternalRow): TraversableOnce[InternalRow] = {
-      // Expect CCE?
-      val tileRow = child.eval(input).asInstanceOf[InternalRow]
-      val tile = TileUDT.deserialize(tileRow)
-      val rows = new Array[InternalRow](tile.size)
-      var i = 0
-      tile.foreachDouble((value) ⇒ {rows(i) = InternalRow(value); i += 1})
-      rows
+      // Do we need to worry about deserializing all the tiles like this?
+      val tiles = for(child ← children) yield
+        TileUDT.deserialize(child.eval(input).asInstanceOf[InternalRow])
+
+      require(tiles.map(_.dimensions).distinct.size == 1, "Multi-column explode requires equally sized tiles")
+
+      val (cols, rows) = tiles.head.dimensions
+
+      for {
+        row ← 0 until rows
+        col ← 0 until cols
+      } yield InternalRow(tiles.map(_.getDouble(col, row)): _*)
     }
   }
 
-  private[spark] object ExplodeTile {
-    // Only looks at first item in seq.
-    def apply(inputs: Seq[Expression]): ExplodeTile = new ExplodeTile(inputs.head)
-  }
 
   // Constructor for constant tiles
   private[spark] val makeConstantTile: (Number, Int, Int, String) ⇒ Tile = (value, cols, rows, cellTypeName) ⇒ {
@@ -90,6 +96,5 @@ object GTSQLFunctions {
 
   // Perform a focal sum over square area with given half/width extent (value of 1 would be a 3x3 tile)
   private[spark] val focalSum: (Tile, Int) ⇒ Tile = (tile, extent) ⇒ Sum(tile, Square(extent))
-
 
 }
