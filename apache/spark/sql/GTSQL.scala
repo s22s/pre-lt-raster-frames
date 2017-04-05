@@ -19,7 +19,10 @@
 package org.apache.spark.sql
 
 import com.typesafe.scalalogging.LazyLogging
-import org.apache.spark.sql.GTSQLTypes.{MultibandTileUDT, TileUDT}
+import geotrellis.raster.{MultibandTile, Tile}
+import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
+
+import scala.reflect.runtime.universe._
 
 /**
  * Module providing support for using GeoTrellis native types in Spark SQL.
@@ -35,8 +38,8 @@ object GTSQL extends LazyLogging {
   }
 
   trait Implicits {
-    implicit val tileEncoder = GTSQLEncoder(TileUDT)
-    implicit val mbTileEncoder = GTSQLEncoder(MultibandTileUDT)
+    implicit def singlebandTileEncoder[T <: Tile: TypeTag]: Encoder[T] = ExpressionEncoder()
+    implicit def multibandTileEncoder[T <: MultibandTile: TypeTag]: Encoder[T] = ExpressionEncoder()
   }
   object Implicits extends Implicits
 }

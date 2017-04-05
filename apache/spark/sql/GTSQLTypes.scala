@@ -18,7 +18,7 @@
 
 package org.apache.spark.sql
 
-import geotrellis.raster.{MultibandTile, Tile}
+import geotrellis.raster.{MultibandTile, Tile, TileFeature}
 import geotrellis.spark.io.avro.{AvroEncoder, AvroRecordCodec}
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
@@ -47,12 +47,15 @@ private[spark] object GTSQLTypes {
     )
   }
 
-  def runtimeClass[T: TypeTag]: Class[T] =
+  private[spark] def runtimeClass[T: TypeTag]: Class[T] =
     typeTag[T].mirror.runtimeClass(typeTag[T].tpe).asInstanceOf[Class[T]]
 
-  private[spark] abstract class GeoTrellisUDT[T >: Null: AvroRecordCodec: TypeTag](override val simpleString: String)
-    extends UserDefinedType[T] {
-    override def sqlType: StructType = StructType(Array(StructField(simpleString, BinaryType)))
+  private[spark] abstract class GeoTrellisUDT[T >: Null: AvroRecordCodec: TypeTag]
+  (override val simpleString: String) extends UserDefinedType[T] {
+    override def sqlType: StructType = StructType(Array(
+      StructField(simpleString + "_avro", BinaryType)
+    ))
+
     override def serialize(obj: T): InternalRow = {
       val bytes = AvroEncoder.toBinary[T](obj)
       new GenericInternalRow(Array[Any](bytes))
@@ -71,5 +74,4 @@ private[spark] object GTSQLTypes {
 
   private [spark] class TileUDT extends GeoTrellisUDT[Tile]("st_tile")
   object TileUDT extends TileUDT
-
 }
