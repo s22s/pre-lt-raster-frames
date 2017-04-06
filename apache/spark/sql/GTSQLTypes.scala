@@ -18,13 +18,17 @@
 
 package org.apache.spark.sql
 
+import java.sql.Timestamp
+
 import com.vividsolutions.jts.{geom ⇒ jts}
 import geotrellis.proj4.CRS
 import geotrellis.raster.{MultibandTile, Tile}
+import geotrellis.spark.TemporalProjectedExtent
 import geotrellis.spark.io.avro.{AvroEncoder, AvroRecordCodec}
 import geotrellis.vector.{Extent, ProjectedExtent}
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.expressions.GenericInternalRow
+import org.apache.spark.sql.functions.from_unixtime
 import org.apache.spark.sql.types._
 import org.apache.spark.unsafe.types.UTF8String
 
@@ -42,6 +46,7 @@ private[spark] object GTSQLTypes {
     register(MultibandTileUDT)
     register(ExtentUDT)
     register(ProjectedExtentUDT)
+    register(TemporalProjectedExtentUDT)
   }
 
   private[spark] def register(udt: UserDefinedType[_]): Unit = {
@@ -130,4 +135,36 @@ private[spark] object GTSQLTypes {
     override def userClass: Class[ProjectedExtent] = classOf[ProjectedExtent]
   }
   object ProjectedExtentUDT extends ProjectedExtentUDT
+
+  private [spark] class TemporalProjectedExtentUDT extends UserDefinedType[TemporalProjectedExtent] {
+
+    override def typeName = "st_projectedextent"
+
+    override def simpleString = typeName
+
+    override def sqlType = StructType(Array(
+      StructField("extent", ExtentUDT.sqlType, false),
+      StructField("crs", StringType, false),
+      StructField("time", TimestampType, false)
+    ))
+
+    override def serialize(obj: TemporalProjectedExtent): Any = {
+      val extent = ExtentUDT.serialize(obj.extent)
+      val crs = UTF8String.fromString(obj.crs.toProj4String)
+      val time = obj.instant * 1000
+      new GenericInternalRow(Array[Any](extent, crs, time))
+    }
+
+    override def deserialize(datum: Any): TemporalProjectedExtent = {
+      val row = datum.asInstanceOf[InternalRow]
+      val extent = ExtentUDT.deserialize(row.get(0, ExtentUDT.sqlType))
+      val proj4 = row.getString(1)
+      val time = row.getLong(2) / 1000
+      TemporalProjectedExtent(extent, CRS.fromString(proj4), time)
+    }
+
+    override def userClass: Class[TemporalProjectedExtent] = classOf[TemporalProjectedExtent]
+  }
+  object TemporalProjectedExtentUDT extends TemporalProjectedExtentUDT
+
 }
