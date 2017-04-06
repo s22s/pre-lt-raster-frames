@@ -18,14 +18,20 @@
 
 package org.apache.spark.sql
 
+
 import geotrellis.raster._
 import geotrellis.raster.mapalgebra.focal._
+import geotrellis.vector.{Extent, ProjectedExtent}
 import org.apache.spark.sql.GTSQLTypes.{ExtentUDT, TileUDT}
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.analysis.{FunctionRegistry, MultiAlias}
+import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.catalyst.expressions.codegen.{CodegenFallback, GenerateUnsafeProjection}
 import org.apache.spark.sql.catalyst.expressions.{BoundReference, CreateArray, Expression, Generator, Inline, UnaryExpression}
 import org.apache.spark.sql.types._
+
+import scala.reflect.runtime.universe._
+import scala.util.Try
 
 /**
  * GT functions adapted for Spark SQL use.
@@ -34,21 +40,31 @@ import org.apache.spark.sql.types._
  * @since 4/3/17
  */
 object GTSQLFunctions {
-
+  /** Create a row for each pixel in tile. */
   def explodeTile(cols: Column*) = Column(ExplodeTile(cols.map(_.expr)))
-  def flattenExtent(col: Column) = flatten(ExtentUDT, col)
+  /** Create columns for each field in the structure or UDT. */
+  def flatten[T >: Null: TypeTag](col: TypedColumn[_, T]) = {
+    Column(Try(asStruct[T](col)).map(col ⇒ projectStruct(col.encoder.schema, col.expr))
+      .getOrElse(projectStruct(col.encoder.schema, col.expr)))
+  }
 
-  //def flatten(col: TypedColumn) =
+  def asStruct[T >: Null: TypeTag](col: TypedColumn[_, T]) = {
+    val converter = UDTAsStruct(udtOf[T], col.expr)
+    Column(converter).as[Row](RowEncoder(converter.dataType))
+  }
 
   // -- Private APIs below --
-  private[spark] def flatten(udt: UserDefinedType[_ >: Null], col: Column) = {
-    require(udt.sqlType.isInstanceOf[StructType],
-      "Only struct encoded UDTs supported right now. See `ExpressionEncoder` line 74 for possible workaround")
-    projectStruct(udt.sqlType.asInstanceOf[StructType], UDTAsStruct(udt, col.expr))
+  private[spark] def udtOf[T >: Null: TypeTag]: UserDefinedType[T] =
+    UDTRegistration.getUDTFor(typeTag[T].tpe.toString).map(_.newInstance().asInstanceOf[UserDefinedType[T]])
+      .getOrElse(throw new IllegalArgumentException(typeTag[T].tpe + " doesn't have a corresponding UDT"))
+
+  private[spark] def flatten[T >: Null : TypeTag](input: Expression) = {
+    val converter = UDTAsStruct(udtOf[T], input)
+    projectStruct(converter.dataType, converter)
   }
 
   private[spark] def projectStruct(dataType: StructType, input: Expression) =
-    Column(MultiAlias(Inline(CreateArray(Seq(input))), dataType.fields.map(_.name)))
+    MultiAlias(Inline(CreateArray(Seq(input))), dataType.fields.map(_.name))
 
   private[spark] def register(sqlContext: SQLContext): Unit = {
     sqlContext.udf.register("st_makeConstantTile", makeConstantTile)
@@ -57,7 +73,10 @@ object GTSQLFunctions {
   }
   // Expression-oriented functions have a different registration scheme
   FunctionRegistry.builtin.registerFunction("st_explodeTile", ExplodeTile.apply)
+  FunctionRegistry.builtin.registerFunction("st_flattenExtent", (exprs: Seq[Expression]) ⇒ flatten[Extent](exprs.head))
+  FunctionRegistry.builtin.registerFunction("st_flattenProjectedExtent", (exprs: Seq[Expression]) ⇒ flatten[ProjectedExtent](exprs.head))
 
+  // TODO: add row column ability.
   private[spark] case class ExplodeTile(override val children: Seq[Expression])
     extends Expression with Generator with CodegenFallback {
 
@@ -100,7 +119,7 @@ object GTSQLFunctions {
 
     override def prettyName: String = udt.typeName + "_asstruct"
 
-    override def dataType = udt.sqlType
+    override def dataType: StructType = udt.sqlType.asInstanceOf[StructType]
 
     lazy val projector = GenerateUnsafeProjection.generate(
       udt.sqlType.asInstanceOf[StructType].fields.zipWithIndex.map { case (field, index) ⇒
