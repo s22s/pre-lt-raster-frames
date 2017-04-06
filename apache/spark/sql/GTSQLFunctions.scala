@@ -20,14 +20,11 @@ package org.apache.spark.sql
 
 import geotrellis.raster._
 import geotrellis.raster.mapalgebra.focal._
-import geotrellis.vector.Extent
 import org.apache.spark.sql.GTSQLTypes.{ExtentUDT, TileUDT}
 import org.apache.spark.sql.catalyst.InternalRow
-import org.apache.spark.sql.catalyst.analysis.{FunctionRegistry, UnresolvedAttribute}
-import org.apache.spark.sql.catalyst.encoders.{ExpressionEncoder, RowEncoder}
-import org.apache.spark.sql.catalyst.expressions.codegen.{CodegenFallback, GenerateSafeProjection, GenerateUnsafeProjection}
-import org.apache.spark.sql.catalyst.expressions.{AttributeReference, BoundReference, Expression, FromUnsafeProjection, Generator, GenericInternalRow, GetArrayItem, GetStructField, InterpretedProjection, Literal, UnaryExpression}
-import org.apache.spark.sql.catalyst.util.{ArrayData, GenericArrayData}
+import org.apache.spark.sql.catalyst.analysis.{FunctionRegistry, MultiAlias}
+import org.apache.spark.sql.catalyst.expressions.codegen.{CodegenFallback, GenerateUnsafeProjection}
+import org.apache.spark.sql.catalyst.expressions.{BoundReference, CreateArray, Expression, Generator, Inline, UnaryExpression}
 import org.apache.spark.sql.types._
 
 /**
@@ -39,9 +36,19 @@ import org.apache.spark.sql.types._
 object GTSQLFunctions {
 
   def explodeTile(cols: Column*) = Column(ExplodeTile(cols.map(_.expr)))
-  def flattenExtent(col: Column) = Column(ProjectStruct(ExtentUDT.sqlType, UDTAsStruct(ExtentUDT, col.expr)))
+  def flattenExtent(col: Column) = flatten(ExtentUDT, col)
+
+  //def flatten(col: TypedColumn) =
 
   // -- Private APIs below --
+  private[spark] def flatten(udt: UserDefinedType[_ >: Null], col: Column) = {
+    require(udt.sqlType.isInstanceOf[StructType],
+      "Only struct encoded UDTs supported right now. See `ExpressionEncoder` line 74 for possible workaround")
+    projectStruct(udt.sqlType.asInstanceOf[StructType], UDTAsStruct(udt, col.expr))
+  }
+
+  private[spark] def projectStruct(dataType: StructType, input: Expression) =
+    Column(MultiAlias(Inline(CreateArray(Seq(input))), dataType.fields.map(_.name)))
 
   private[spark] def register(sqlContext: SQLContext): Unit = {
     sqlContext.udf.register("st_makeConstantTile", makeConstantTile)
@@ -58,9 +65,9 @@ object GTSQLFunctions {
       val names = if(children.size == 1) Seq("col")
       else children.indices.map(i ⇒ s"col_$i")
 
-      StructType(
-        names.map(n ⇒ StructField(n, DoubleType, false)).toArray
-      )
+      StructType(names.map(n ⇒
+        StructField(n, DoubleType, false)
+      ).toArray)
     }
 
     override def eval(input: InternalRow): TraversableOnce[InternalRow] = {
@@ -79,10 +86,10 @@ object GTSQLFunctions {
     }
   }
 
-  case class FooBar(xmin: Double, ymin: Double, xmax: Double, ymax: Double)
-  val foobarEncoder = Encoders.product[FooBar].asInstanceOf[ExpressionEncoder[FooBar]]
-
-  println(foobarEncoder)
+//  case class FooBar(xmin: Double, ymin: Double, xmax: Double, ymax: Double)
+//  val foobarEncoder = Encoders.product[FooBar].asInstanceOf[ExpressionEncoder[FooBar]]
+//
+//  println(foobarEncoder)
 
 
   private[spark] case class UDTAsStruct(udt: UserDefinedType[_ >: Null], child: Expression)
@@ -105,13 +112,6 @@ object GTSQLFunctions {
       projector(input.asInstanceOf[InternalRow])
     }
   }
-
-  private[spark] case class ProjectStruct(dataType: StructType, child: Expression)
-    extends UnaryExpression with CodegenFallback {
-
-
-  }
-
 
   // Constructor for constant tiles
   private[spark] val makeConstantTile: (Number, Int, Int, String) ⇒ Tile = (value, cols, rows, cellTypeName) ⇒ {

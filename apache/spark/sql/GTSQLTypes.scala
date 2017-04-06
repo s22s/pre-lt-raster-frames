@@ -18,18 +18,16 @@
 
 package org.apache.spark.sql
 
-import geotrellis.raster.{BitCellType, BitConstantTile, ByteArrayTile, ByteCells, ByteConstantTile, DoubleCells, DoubleConstantTile, FloatCells, FloatConstantTile, IntCells, IntConstantTile, MultibandTile, ShortCells, ShortConstantTile, Tile, TileFeature, UByteCells, UByteConstantTile, UShortCells, UShortConstantTile}
+import com.vividsolutions.jts.{geom ⇒ jts}
+import geotrellis.proj4.CRS
+import geotrellis.raster.{MultibandTile, Tile}
 import geotrellis.spark.io.avro.{AvroEncoder, AvroRecordCodec}
 import geotrellis.vector.{Extent, ProjectedExtent}
 import org.apache.spark.sql.catalyst.InternalRow
-import org.apache.spark.sql.catalyst.encoders.{ExpressionEncoder, RowEncoder}
-import org.apache.spark.sql.catalyst.expressions.{Attribute, BoundReference, GenericInternalRow, GenericRowWithSchema, InterpretedProjection, UnsafeProjection}
+import org.apache.spark.sql.catalyst.expressions.GenericInternalRow
 import org.apache.spark.sql.types._
-import com.vividsolutions.jts.{geom ⇒ jts}
-import geotrellis.proj4.CRS
 import org.apache.spark.unsafe.types.UTF8String
 
-import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
 
 /**
