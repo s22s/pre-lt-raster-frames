@@ -18,12 +18,16 @@
 
 package org.apache.spark.sql
 
-import geotrellis.raster.{MultibandTile, Tile, TileFeature}
+import geotrellis.raster.{BitCellType, BitConstantTile, ByteArrayTile, ByteCells, ByteConstantTile, DoubleCells, DoubleConstantTile, FloatCells, FloatConstantTile, IntCells, IntConstantTile, MultibandTile, ShortCells, ShortConstantTile, Tile, TileFeature, UByteCells, UByteConstantTile, UShortCells, UShortConstantTile}
 import geotrellis.spark.io.avro.{AvroEncoder, AvroRecordCodec}
+import geotrellis.vector.{Extent, ProjectedExtent}
 import org.apache.spark.sql.catalyst.InternalRow
-import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
-import org.apache.spark.sql.catalyst.expressions.GenericInternalRow
+import org.apache.spark.sql.catalyst.encoders.{ExpressionEncoder, RowEncoder}
+import org.apache.spark.sql.catalyst.expressions.{Attribute, BoundReference, GenericInternalRow, GenericRowWithSchema, InterpretedProjection, UnsafeProjection}
 import org.apache.spark.sql.types._
+import com.vividsolutions.jts.{geom ⇒ jts}
+import geotrellis.proj4.CRS
+import org.apache.spark.unsafe.types.UTF8String
 
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
@@ -31,16 +35,18 @@ import scala.reflect.runtime.universe._
 /**
  * Spark UDTs for Geotrellis
  *
- * @author sfitch 
+ * @author sfitch
  * @since 4/3/17
  */
 private[spark] object GTSQLTypes {
   def register(sqlContext: SQLContext): Unit = {
-    register(MultibandTileUDT)
     register(TileUDT)
+    register(MultibandTileUDT)
+    register(ExtentUDT)
+    register(ProjectedExtentUDT)
   }
 
-  private[spark] def register(udt: GeoTrellisUDT[_]): Unit = {
+  private[spark] def register(udt: UserDefinedType[_]): Unit = {
     UDTRegistration.register(
       udt.userClass.getCanonicalName,
       udt.getClass.getSuperclass.getName
@@ -74,4 +80,56 @@ private[spark] object GTSQLTypes {
 
   private [spark] class TileUDT extends GeoTrellisUDT[Tile]("st_tile")
   object TileUDT extends TileUDT
+
+  private [spark] class ExtentUDT extends UserDefinedType[Extent] {
+
+    override val simpleString = "st_extent"
+
+    override val sqlType = StructType(Array(
+      StructField("xmin", DoubleType, false),
+      StructField("ymin", DoubleType, false),
+      StructField("xmax", DoubleType, false),
+      StructField("ymax", DoubleType, false)
+    ))
+
+    override def serialize(obj: Extent): Any = {
+      new GenericInternalRow(Array[Any](obj.xmin, obj.ymin, obj.xmax, obj.ymax))
+    }
+
+    override def deserialize(datum: Any): Extent = {
+      val row = datum.asInstanceOf[InternalRow]
+      Extent(row.getDouble(0), row.getDouble(1), row.getDouble(2), row.getDouble(3))
+    }
+
+    override def userClass: Class[Extent] = classOf[Extent]
+  }
+  object ExtentUDT extends ExtentUDT
+
+  private [spark] class ProjectedExtentUDT extends UserDefinedType[ProjectedExtent] {
+
+    override def typeName = "st_projectedextent"
+
+    override def simpleString = typeName
+
+    override def sqlType = StructType(Array(
+      StructField("extent", ExtentUDT.sqlType, false),
+      StructField("crs", StringType, false)
+    ))
+
+    override def serialize(obj: ProjectedExtent): Any = {
+      val extent = ExtentUDT.serialize(obj.extent)
+      val crs = UTF8String.fromString(obj.crs.toProj4String)
+      new GenericInternalRow(Array[Any](extent, crs))
+    }
+
+    override def deserialize(datum: Any): ProjectedExtent = {
+      val row = datum.asInstanceOf[InternalRow]
+      val extent = ExtentUDT.deserialize(row.get(0, ExtentUDT.sqlType))
+      val proj4 = row.getString(1)
+      ProjectedExtent(extent, CRS.fromString(proj4))
+    }
+
+    override def userClass: Class[ProjectedExtent] = classOf[ProjectedExtent]
+  }
+  object ProjectedExtentUDT extends ProjectedExtentUDT
 }

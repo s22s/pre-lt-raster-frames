@@ -18,8 +18,8 @@
 
 package org.apache.spark.sql
 
-import com.typesafe.scalalogging.LazyLogging
 import geotrellis.raster.{MultibandTile, Tile}
+import geotrellis.vector.{Extent, ProjectedExtent}
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 
 import scala.reflect.runtime.universe._
@@ -31,15 +31,17 @@ import scala.reflect.runtime.universe._
  * @author sfitch 
  * @since 3/30/17
  */
-object GTSQL extends LazyLogging {
+object GTSQL {
   def init(sqlContext: SQLContext): Unit = {
     GTSQLTypes.register(sqlContext)
     GTSQLFunctions.register(sqlContext)
   }
 
   trait Implicits {
-    implicit def singlebandTileEncoder[T <: Tile: TypeTag]: Encoder[T] = ExpressionEncoder()
-    implicit def multibandTileEncoder[T <: MultibandTile: TypeTag]: Encoder[T] = ExpressionEncoder()
+    implicit def singlebandTileEncoder: Encoder[Tile] = ExpressionEncoder()
+    implicit def multibandTileEncoder: Encoder[MultibandTile] = ExpressionEncoder()
+    implicit def extentEncoder: Encoder[Extent] = ExpressionEncoder()
+    implicit def projectedExtentEncoder: Encoder[ProjectedExtent] = ExpressionEncoder()
   }
   object Implicits extends Implicits
 }

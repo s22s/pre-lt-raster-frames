@@ -20,12 +20,15 @@ package org.apache.spark.sql
 
 import geotrellis.raster._
 import geotrellis.raster.mapalgebra.focal._
-import org.apache.spark.sql.GTSQLTypes.TileUDT
+import geotrellis.vector.Extent
+import org.apache.spark.sql.GTSQLTypes.{ExtentUDT, TileUDT}
 import org.apache.spark.sql.catalyst.InternalRow
-import org.apache.spark.sql.catalyst.analysis.FunctionRegistry
-import org.apache.spark.sql.catalyst.expressions.codegen.CodegenFallback
-import org.apache.spark.sql.catalyst.expressions.{Expression, Generator}
-import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
+import org.apache.spark.sql.catalyst.analysis.{FunctionRegistry, UnresolvedAttribute}
+import org.apache.spark.sql.catalyst.encoders.{ExpressionEncoder, RowEncoder}
+import org.apache.spark.sql.catalyst.expressions.codegen.{CodegenFallback, GenerateSafeProjection, GenerateUnsafeProjection}
+import org.apache.spark.sql.catalyst.expressions.{AttributeReference, BoundReference, Expression, FromUnsafeProjection, Generator, GenericInternalRow, GetArrayItem, GetStructField, InterpretedProjection, Literal, UnaryExpression}
+import org.apache.spark.sql.catalyst.util.{ArrayData, GenericArrayData}
+import org.apache.spark.sql.types._
 
 /**
  * GT functions adapted for Spark SQL use.
@@ -36,6 +39,7 @@ import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
 object GTSQLFunctions {
 
   def explodeTile(cols: Column*) = Column(ExplodeTile(cols.map(_.expr)))
+  def flattenExtent(col: Column) = Column(ProjectStruct(ExtentUDT.sqlType, UDTAsStruct(ExtentUDT, col.expr)))
 
   // -- Private APIs below --
 
@@ -48,7 +52,7 @@ object GTSQLFunctions {
   FunctionRegistry.builtin.registerFunction("st_explodeTile", ExplodeTile.apply)
 
   private[spark] case class ExplodeTile(override val children: Seq[Expression])
-    extends Expression with Generator with CodegenFallback with Serializable {
+    extends Expression with Generator with CodegenFallback {
 
     override def elementSchema: StructType = {
       val names = if(children.size == 1) Seq("col")
@@ -73,6 +77,39 @@ object GTSQLFunctions {
         col ← 0 until cols
       } yield InternalRow(tiles.map(_.getDouble(col, row)): _*)
     }
+  }
+
+  case class FooBar(xmin: Double, ymin: Double, xmax: Double, ymax: Double)
+  val foobarEncoder = Encoders.product[FooBar].asInstanceOf[ExpressionEncoder[FooBar]]
+
+  println(foobarEncoder)
+
+
+  private[spark] case class UDTAsStruct(udt: UserDefinedType[_ >: Null], child: Expression)
+    extends UnaryExpression with CodegenFallback {
+
+    require(udt.sqlType.isInstanceOf[StructType],
+      "Only struct encoded UDTs supported right now. See `ExpressionEncoder` line 74 for possible workaround")
+
+    override def prettyName: String = udt.typeName + "_asstruct"
+
+    override def dataType = udt.sqlType
+
+    lazy val projector = GenerateUnsafeProjection.generate(
+      udt.sqlType.asInstanceOf[StructType].fields.zipWithIndex.map { case (field, index) ⇒
+        BoundReference(index, field.dataType, true)
+      }
+    )
+
+    override protected def nullSafeEval(input: Any): Any = {
+      projector(input.asInstanceOf[InternalRow])
+    }
+  }
+
+  private[spark] case class ProjectStruct(dataType: StructType, child: Expression)
+    extends UnaryExpression with CodegenFallback {
+
+
   }
 
 
