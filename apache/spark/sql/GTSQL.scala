@@ -19,6 +19,7 @@
 package org.apache.spark.sql
 
 import geotrellis.raster.{MultibandTile, Tile}
+import geotrellis.spark.TemporalProjectedExtent
 import geotrellis.vector.{Extent, ProjectedExtent}
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 
@@ -42,6 +43,7 @@ object GTSQL {
     implicit def multibandTileEncoder: Encoder[MultibandTile] = ExpressionEncoder()
     implicit def extentEncoder: Encoder[Extent] = ExpressionEncoder()
     implicit def projectedExtentEncoder: Encoder[ProjectedExtent] = ExpressionEncoder()
+    implicit def temporalProjectedExtentEncoder: Encoder[TemporalProjectedExtent] = ExpressionEncoder()
   }
   object Implicits extends Implicits
 }

@@ -22,7 +22,7 @@ package org.apache.spark.sql
 import geotrellis.raster._
 import geotrellis.raster.mapalgebra.focal._
 import geotrellis.vector.{Extent, ProjectedExtent}
-import org.apache.spark.sql.GTSQLTypes.{ExtentUDT, TileUDT}
+import org.apache.spark.sql.GTSQLTypes.TileUDT
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.analysis.{FunctionRegistry, MultiAlias}
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
@@ -40,18 +40,20 @@ import scala.util.Try
  * @since 4/3/17
  */
 object GTSQLFunctions {
-  /** Create a row for each pixel in tile. */
-  def explodeTile(cols: Column*) = Column(ExplodeTile(cols.map(_.expr)))
   /** Create columns for each field in the structure or UDT. */
   def flatten[T >: Null: TypeTag](col: TypedColumn[_, T]) = {
     Column(Try(asStruct[T](col)).map(col ⇒ projectStruct(col.encoder.schema, col.expr))
       .getOrElse(projectStruct(col.encoder.schema, col.expr)))
   }
 
+  /** Attempts to convert a UDT into a struct based on the underlying deserializer. */
   def asStruct[T >: Null: TypeTag](col: TypedColumn[_, T]) = {
     val converter = UDTAsStruct(udtOf[T], col.expr)
     Column(converter).as[Row](RowEncoder(converter.dataType))
   }
+
+  /** Create a row for each pixel in tile. */
+  def explodeTile(cols: Column*) = Column(ExplodeTile(cols.map(_.expr)))
 
   // -- Private APIs below --
   private[spark] def udtOf[T >: Null: TypeTag]: UserDefinedType[T] =
@@ -70,23 +72,27 @@ object GTSQLFunctions {
     sqlContext.udf.register("st_makeConstantTile", makeConstantTile)
     sqlContext.udf.register("st_focalSum", focalSum)
     sqlContext.udf.register("st_makeTiles", makeTiles)
+    sqlContext.udf.register("st_gridRows", gridRows)
+    sqlContext.udf.register("st_gridCols", gridCols)
   }
   // Expression-oriented functions have a different registration scheme
   FunctionRegistry.builtin.registerFunction("st_explodeTile", ExplodeTile.apply)
   FunctionRegistry.builtin.registerFunction("st_flattenExtent", (exprs: Seq[Expression]) ⇒ flatten[Extent](exprs.head))
   FunctionRegistry.builtin.registerFunction("st_flattenProjectedExtent", (exprs: Seq[Expression]) ⇒ flatten[ProjectedExtent](exprs.head))
 
-  // TODO: add row column ability.
   private[spark] case class ExplodeTile(override val children: Seq[Expression])
     extends Expression with Generator with CodegenFallback {
 
     override def elementSchema: StructType = {
-      val names = if(children.size == 1) Seq("col")
-      else children.indices.map(i ⇒ s"col_$i")
+      val names = if(children.size == 1) Seq("cell")
+      else children.indices.map(i ⇒ s"cell_$i")
 
-      StructType(names.map(n ⇒
+      StructType(Seq(
+        StructField("column", IntegerType, false),
+        StructField("row", IntegerType, false)
+      ) ++ names.map(n ⇒
         StructField(n, DoubleType, false)
-      ).toArray)
+      ))
     }
 
     override def eval(input: InternalRow): TraversableOnce[InternalRow] = {
@@ -101,15 +107,10 @@ object GTSQLFunctions {
       for {
         row ← 0 until rows
         col ← 0 until cols
-      } yield InternalRow(tiles.map(_.getDouble(col, row)): _*)
+        contents = Seq[Any](col, row) ++ tiles.map(_.getDouble(col, row))
+      } yield InternalRow(contents: _*)
     }
   }
-
-//  case class FooBar(xmin: Double, ymin: Double, xmax: Double, ymax: Double)
-//  val foobarEncoder = Encoders.product[FooBar].asInstanceOf[ExpressionEncoder[FooBar]]
-//
-//  println(foobarEncoder)
-
 
   private[spark] case class UDTAsStruct(udt: UserDefinedType[_ >: Null], child: Expression)
     extends UnaryExpression with CodegenFallback {
@@ -149,6 +150,9 @@ object GTSQLFunctions {
 
   private[spark] val makeTiles: (Int) ⇒ Array[Tile] = (count) ⇒
     Array.fill(count)(makeConstantTile(0, 4, 4, "int8raw"))
+
+  private[spark] val gridCols: (CellGrid) ⇒ (Int) = (tile) ⇒ tile.cols
+  private[spark] val gridRows: (CellGrid) ⇒ (Int) = (tile) ⇒ tile.rows
 
   // Perform a focal sum over square area with given half/width extent (value of 1 would be a 3x3 tile)
   private[spark] val focalSum: (Tile, Int) ⇒ Tile = (tile, extent) ⇒ Sum(tile, Square(extent))

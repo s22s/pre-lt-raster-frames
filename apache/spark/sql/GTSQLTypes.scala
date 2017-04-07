@@ -60,14 +60,18 @@ private[spark] object GTSQLTypes {
     typeTag[T].mirror.runtimeClass(typeTag[T].tpe).asInstanceOf[Class[T]]
 
   private[spark] abstract class GeoTrellisUDT[T >: Null: AvroRecordCodec: TypeTag]
-  (override val simpleString: String) extends UserDefinedType[T] {
+  (override val typeName: String) extends UserDefinedType[T] {
+
+    override val simpleString = typeName
+
+    // TODO: Consider using built-in kryo encoder
     override def sqlType: StructType = StructType(Array(
       StructField(simpleString + "_avro", BinaryType)
     ))
 
     override def serialize(obj: T): InternalRow = {
       val bytes = AvroEncoder.toBinary[T](obj)
-      new GenericInternalRow(Array[Any](bytes))
+      InternalRow(bytes)
     }
 
     override def deserialize(datum: Any): T = {
@@ -86,7 +90,9 @@ private[spark] object GTSQLTypes {
 
   private [spark] class ExtentUDT extends UserDefinedType[Extent] {
 
-    override val simpleString = "st_extent"
+    override val typeName = "st_extent"
+
+    override val simpleString = typeName
 
     override val sqlType = StructType(Array(
       StructField("xmin", DoubleType, false),
@@ -96,7 +102,7 @@ private[spark] object GTSQLTypes {
     ))
 
     override def serialize(obj: Extent): Any = {
-      new GenericInternalRow(Array[Any](obj.xmin, obj.ymin, obj.xmax, obj.ymax))
+      InternalRow(obj.xmin, obj.ymin, obj.xmax, obj.ymax)
     }
 
     override def deserialize(datum: Any): Extent = {
@@ -122,7 +128,7 @@ private[spark] object GTSQLTypes {
     override def serialize(obj: ProjectedExtent): Any = {
       val extent = ExtentUDT.serialize(obj.extent)
       val crs = UTF8String.fromString(obj.crs.toProj4String)
-      new GenericInternalRow(Array[Any](extent, crs))
+      InternalRow(extent, crs)
     }
 
     override def deserialize(datum: Any): ProjectedExtent = {
@@ -152,7 +158,7 @@ private[spark] object GTSQLTypes {
       val extent = ExtentUDT.serialize(obj.extent)
       val crs = UTF8String.fromString(obj.crs.toProj4String)
       val time = obj.instant * 1000
-      new GenericInternalRow(Array[Any](extent, crs, time))
+      InternalRow(extent, crs, time)
     }
 
     override def deserialize(datum: Any): TemporalProjectedExtent = {
