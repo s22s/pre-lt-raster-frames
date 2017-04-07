@@ -24,7 +24,7 @@ import geotrellis.raster.mapalgebra.focal._
 import geotrellis.vector.{Extent, ProjectedExtent}
 import org.apache.spark.sql.GTSQLTypes.TileUDT
 import org.apache.spark.sql.catalyst.InternalRow
-import org.apache.spark.sql.catalyst.analysis.{FunctionRegistry, MultiAlias}
+import org.apache.spark.sql.catalyst.analysis.{FunctionRegistry, MultiAlias, UnresolvedAttribute}
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.catalyst.expressions.codegen.{CodegenFallback, GenerateUnsafeProjection}
 import org.apache.spark.sql.catalyst.expressions.{BoundReference, CreateArray, Expression, Generator, Inline, UnaryExpression}
@@ -55,7 +55,14 @@ object GTSQLFunctions {
   /** Create a row for each pixel in tile. */
   def explodeTile(cols: Column*) = {
     val exploder = ExplodeTile(cols.map(_.expr))
-    Column(exploder).as(exploder.elementSchema.fields.map(_.name))
+    // Hack to grab the first two non-cell columns
+    val metaNames = exploder.elementSchema.fieldNames.take(2)
+    val colNames = cols.map(_.expr).map {
+      case ua: UnresolvedAttribute ⇒ ua.name
+      case o ⇒ o.prettyName
+    }
+
+    Column(exploder).as(Seq("column", "row") ++ colNames)
   }
 
   // -- Private APIs below --
