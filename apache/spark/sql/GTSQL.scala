@@ -18,7 +18,7 @@
 
 package org.apache.spark.sql
 
-import geotrellis.raster.{MultibandTile, Tile}
+import geotrellis.raster.{MultibandTile, Tile, TileFeature}
 import geotrellis.spark.TemporalProjectedExtent
 import geotrellis.vector.{Extent, ProjectedExtent}
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder

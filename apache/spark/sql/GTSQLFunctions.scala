@@ -53,7 +53,10 @@ object GTSQLFunctions {
   }
 
   /** Create a row for each pixel in tile. */
-  def explodeTile(cols: Column*) = Column(ExplodeTile(cols.map(_.expr)))
+  def explodeTile(cols: Column*) = {
+    val exploder = ExplodeTile(cols.map(_.expr))
+    Column(exploder).as(exploder.elementSchema.fields.map(_.name))
+  }
 
   // -- Private APIs below --
   private[spark] def udtOf[T >: Null: TypeTag]: UserDefinedType[T] =

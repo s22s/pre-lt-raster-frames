@@ -18,8 +18,6 @@
 
 package org.apache.spark.sql
 
-import java.sql.Timestamp
-
 import com.vividsolutions.jts.{geom ⇒ jts}
 import geotrellis.proj4.CRS
 import geotrellis.raster.{MultibandTile, Tile}
@@ -27,8 +25,6 @@ import geotrellis.spark.TemporalProjectedExtent
 import geotrellis.spark.io.avro.{AvroEncoder, AvroRecordCodec}
 import geotrellis.vector.{Extent, ProjectedExtent}
 import org.apache.spark.sql.catalyst.InternalRow
-import org.apache.spark.sql.catalyst.expressions.GenericInternalRow
-import org.apache.spark.sql.functions.from_unixtime
 import org.apache.spark.sql.types._
 import org.apache.spark.unsafe.types.UTF8String
 
@@ -144,7 +140,7 @@ private[spark] object GTSQLTypes {
 
   private [spark] class TemporalProjectedExtentUDT extends UserDefinedType[TemporalProjectedExtent] {
 
-    override def typeName = "st_projectedextent"
+    override def typeName = "st_temporalprojectedextent"
 
     override def simpleString = typeName
 
