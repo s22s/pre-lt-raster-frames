@@ -4,4 +4,4 @@
 
 [![Build Status](https://travis-ci.org/s22s/geotrellis-spark-sql.svg?branch=master)](https://travis-ci.org/s22s/geotrellis-spark-sql)
 
-Experimental facility for encoding GeoTrellis types into Spark Datasets/Dataframes. 
+Experimental facility for encoding [GeoTrellis](https://geotrellis.io/) types into Spark Datasets/Dataframes. 
