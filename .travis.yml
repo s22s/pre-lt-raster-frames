@@ -1,0 +1,3 @@
+language: scala
+
+sbt_args: -no-colors
