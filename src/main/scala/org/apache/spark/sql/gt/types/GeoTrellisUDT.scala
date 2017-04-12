@@ -17,11 +17,11 @@
 package org.apache.spark.sql.gt.types
 
 import geotrellis.raster.{MultibandTile, Tile}
-import geotrellis.spark.io.avro.{AvroEncoder, AvroRecordCodec}
+import geotrellis.spark.util.KryoSerializer
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.types.{BinaryType, StructField, StructType, UserDefinedType}
 
-import scala.reflect.runtime.universe._
+import scala.reflect._
 
 
 /**
@@ -30,27 +30,26 @@ import scala.reflect.runtime.universe._
  * @author sfitch 
  * @since 4/12/17
  */
-private[gt] abstract class GeoTrellisUDT[T >: Null: AvroRecordCodec: TypeTag]
+private[gt] abstract class GeoTrellisUDT[T >: Null: ClassTag]
   (override val typeName: String) extends UserDefinedType[T] {
 
   override val simpleString = typeName
 
-  // TODO: Consider using built-in kryo encoder
   override def sqlType: StructType = StructType(Array(
-    StructField(simpleString + "_avro", BinaryType)
+    StructField(simpleString + "_kryo", BinaryType)
   ))
 
   override def serialize(obj: T): InternalRow = {
-    val bytes = AvroEncoder.toBinary[T](obj)
+    val bytes = KryoSerializer.serialize(obj)
     InternalRow(bytes)
   }
 
   override def deserialize(datum: Any): T = {
     val row = datum.asInstanceOf[InternalRow]
-    AvroEncoder.fromBinary[T](row.getBinary(0))
+    KryoSerializer.deserialize[T](row.getBinary(0))
   }
 
-  override def userClass: Class[T] = runtimeClass[T]
+  override def userClass: Class[T] = classTag[T].runtimeClass.asInstanceOf[Class[T]]
 }
 
 
