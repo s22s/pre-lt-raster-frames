@@ -52,9 +52,9 @@ private[gt] abstract class GeoTrellisUDT[T >: Null: ClassTag]
   override def userClass: Class[T] = classTag[T].runtimeClass.asInstanceOf[Class[T]]
 }
 
+private[gt] class TileUDT extends GeoTrellisUDT[Tile]("st_tile")
+object TileUDT extends TileUDT
 
 private[gt] class MultibandTileUDT extends GeoTrellisUDT[MultibandTile]("st_multibandtile")
 object MultibandTileUDT extends MultibandTileUDT
 
-private[gt] class TileUDT extends GeoTrellisUDT[Tile]("st_tile")
-object TileUDT extends TileUDT

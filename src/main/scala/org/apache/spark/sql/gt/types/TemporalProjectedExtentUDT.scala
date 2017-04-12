@@ -27,7 +27,7 @@ import org.apache.spark.unsafe.types.UTF8String
  * @author sfitch 
  * @since 4/12/17
  */
-private [gt] class TemporalProjectedExtentUDT extends UserDefinedType[TemporalProjectedExtent] {
+private[gt] class TemporalProjectedExtentUDT extends UserDefinedType[TemporalProjectedExtent] {
 
   override def typeName = "st_temporalprojectedextent"
 
@@ -56,5 +56,5 @@ private [gt] class TemporalProjectedExtentUDT extends UserDefinedType[TemporalPr
 
   override def userClass: Class[TemporalProjectedExtent] = classOf[TemporalProjectedExtent]
 }
-object TemporalProjectedExtentUDT extends TemporalProjectedExtentUDT
 
+object TemporalProjectedExtentUDT extends TemporalProjectedExtentUDT

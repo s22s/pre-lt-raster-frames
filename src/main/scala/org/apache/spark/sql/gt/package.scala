@@ -16,7 +16,6 @@
 
 package org.apache.spark.sql
 
-
 /**
  * Module providing support for using GeoTrellis native types in Spark SQL.
  * `import org.apache.spark.sql.gt._`., and then call `gtRegister(SQLContext)`.
@@ -26,7 +25,7 @@ package org.apache.spark.sql
  */
 package object gt extends implicits {
   def gtRegister(sqlContext: SQLContext): Unit = {
-    gt.types.register(sqlContext)
-    gt.functions.register(sqlContext)
+    gt.types.Registrar.register(sqlContext)
+    gt.functions.Registrar.register(sqlContext)
   }
 }

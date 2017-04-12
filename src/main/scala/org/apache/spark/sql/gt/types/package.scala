@@ -29,23 +29,6 @@ import scala.reflect.runtime.universe._
  * @since 4/12/17
  */
 package object types {
-
-  def register(sqlContext: SQLContext): Unit = {
-    register(TileUDT)
-    register(MultibandTileUDT)
-    register(ExtentUDT)
-    register(ProjectedExtentUDT)
-    register(TemporalProjectedExtentUDT)
-  }
-
-  private[gt] def register(udt: UserDefinedType[_]): Unit = {
-    UDTRegistration.register(
-      udt.userClass.getCanonicalName,
-      udt.getClass.getSuperclass.getName
-    )
-  }
-
   private[gt] def runtimeClass[T: TypeTag]: Class[T] =
     typeTag[T].mirror.runtimeClass(typeTag[T].tpe).asInstanceOf[Class[T]]
-
 }

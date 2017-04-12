@@ -50,4 +50,5 @@ private[gt] class ExtentUDT extends UserDefinedType[Extent] {
 
   override def userClass: Class[Extent] = classOf[Extent]
 }
+
 object ExtentUDT extends ExtentUDT

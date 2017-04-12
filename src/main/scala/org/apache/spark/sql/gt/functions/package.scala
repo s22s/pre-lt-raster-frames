@@ -16,15 +16,11 @@
 
 package org.apache.spark.sql.gt
 
-import geotrellis.raster.mapalgebra.focal.{Square, Sum}
-import geotrellis.raster.{BitCellType, BitConstantTile, ByteCells, ByteConstantTile, CellGrid, CellType, DoubleCells, DoubleConstantTile, FloatCells, FloatConstantTile, IntCells, IntConstantTile, ShortCells, ShortConstantTile, Tile, UByteCells, UByteConstantTile, UShortCells, UShortConstantTile}
-import geotrellis.vector.{Extent, ProjectedExtent}
-import org.apache.spark.sql.catalyst.analysis.{FunctionRegistry, MultiAlias, UnresolvedAttribute}
+import org.apache.spark.sql.catalyst.analysis.{MultiAlias, UnresolvedAttribute}
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.catalyst.expressions.{CreateArray, Expression, Inline}
-import org.apache.spark.sql.gt.expressions.{ExplodeTileExpression, UDTAsStructExpression}
 import org.apache.spark.sql.types.{StructType, UDTRegistration, UserDefinedType}
-import org.apache.spark.sql.{Column, Row, SQLContext, TypedColumn}
+import org.apache.spark.sql.{Column, Row, TypedColumn}
 
 import scala.reflect.runtime.universe._
 import scala.util.Try
@@ -37,10 +33,11 @@ import scala.util.Try
  */
 package object functions {
   /** Create columns for each field in the structure or UDT. */
-  def flatten[T >: Null: TypeTag](col: TypedColumn[_, T]) = {
-    Column(Try(asStruct[T](col)).map(col ⇒ projectStruct(col.encoder.schema, col.expr))
-      .getOrElse(projectStruct(col.encoder.schema, col.expr)))
-  }
+  def flatten[T >: Null: TypeTag](col: TypedColumn[_, T]) = Column(
+    Try(asStruct[T](col))
+      .map(col ⇒ projectStructExpression(col.encoder.schema, col.expr))
+      .getOrElse(projectStructExpression(col.encoder.schema, col.expr))
+  )
 
   /** Attempts to convert a UDT into a struct based on the underlying deserializer. */
   def asStruct[T >: Null: TypeTag](col: TypedColumn[_, T]) = {
@@ -58,56 +55,22 @@ package object functions {
       case o ⇒ o.prettyName
     }
 
-    Column(exploder).as(Seq("column", "row") ++ colNames)
+    Column(exploder).as(metaNames ++ colNames)
   }
 
   // -- Private APIs below --
-  private[spark] def udtOf[T >: Null: TypeTag]: UserDefinedType[T] =
+  /** Lookup the registered Catalyst UDT for the given Scala type. */
+  private[gt] def udtOf[T >: Null: TypeTag]: UserDefinedType[T] =
     UDTRegistration.getUDTFor(typeTag[T].tpe.toString).map(_.newInstance().asInstanceOf[UserDefinedType[T]])
       .getOrElse(throw new IllegalArgumentException(typeTag[T].tpe + " doesn't have a corresponding UDT"))
 
-  private[spark] def flatten[T >: Null : TypeTag](input: Expression) = {
+  /** Creates a Catalyst expression for flattening the fields in a UDT into columns. */
+  private[gt] def flattenExpression[T >: Null : TypeTag](input: Expression) = {
     val converter = UDTAsStructExpression(udtOf[T], input)
-    projectStruct(converter.dataType, converter)
+    projectStructExpression(converter.dataType, converter)
   }
 
-  private[spark] def projectStruct(dataType: StructType, input: Expression) =
+  /** Creates a Catalyst expression for flattening the fields in a struct into columns. */
+  private[gt] def projectStructExpression(dataType: StructType, input: Expression) =
     MultiAlias(Inline(CreateArray(Seq(input))), dataType.fields.map(_.name))
-
-  private[spark] def register(sqlContext: SQLContext): Unit = {
-    sqlContext.udf.register("st_makeConstantTile", makeConstantTile)
-    sqlContext.udf.register("st_focalSum", focalSum)
-    sqlContext.udf.register("st_makeTiles", makeTiles)
-    sqlContext.udf.register("st_gridRows", gridRows)
-    sqlContext.udf.register("st_gridCols", gridCols)
-  }
-  // Expression-oriented functions have a different registration scheme
-  FunctionRegistry.builtin.registerFunction("st_explodeTile", ExplodeTileExpression.apply)
-  FunctionRegistry.builtin.registerFunction("st_flattenExtent", (exprs: Seq[Expression]) ⇒ flatten[Extent](exprs.head))
-  FunctionRegistry.builtin.registerFunction("st_flattenProjectedExtent", (exprs: Seq[Expression]) ⇒ flatten[ProjectedExtent](exprs.head))
-
-  // Constructor for constant tiles
-  private[spark] val makeConstantTile: (Number, Int, Int, String) ⇒ Tile = (value, cols, rows, cellTypeName) ⇒ {
-    val cellType = CellType.fromString(cellTypeName)
-    cellType match {
-      case BitCellType => BitConstantTile(if (value.intValue() == 0) false else true, cols, rows)
-      case ct: ByteCells => ByteConstantTile(value.byteValue(), cols, rows, ct)
-      case ct: UByteCells => UByteConstantTile(value.byteValue(), cols, rows, ct)
-      case ct: ShortCells => ShortConstantTile(value.shortValue() , cols, rows, ct)
-      case ct: UShortCells =>  UShortConstantTile(value.shortValue() , cols, rows, ct)
-      case ct: IntCells =>  IntConstantTile(value.intValue() , cols, rows, ct)
-      case ct: FloatCells => FloatConstantTile(value.floatValue() , cols, rows, ct)
-      case ct: DoubleCells => DoubleConstantTile(value.doubleValue(), cols, rows, ct)
-    }
-  }
-
-  private[spark] val makeTiles: (Int) ⇒ Array[Tile] = (count) ⇒
-    Array.fill(count)(makeConstantTile(0, 4, 4, "int8raw"))
-
-  private[spark] val gridCols: (CellGrid) ⇒ (Int) = (tile) ⇒ tile.cols
-  private[spark] val gridRows: (CellGrid) ⇒ (Int) = (tile) ⇒ tile.rows
-
-  // Perform a focal sum over square area with given half/width extent (value of 1 would be a 3x3 tile)
-  private[spark] val focalSum: (Tile, Int) ⇒ Tile = (tile, extent) ⇒ Sum(tile, Square(extent))
-
 }
