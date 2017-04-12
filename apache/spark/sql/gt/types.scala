@@ -16,7 +16,7 @@
  * the License.
  */
 
-package org.apache.spark.sql
+package org.apache.spark.sql.gt
 
 import com.vividsolutions.jts.{geom ⇒ jts}
 import geotrellis.proj4.CRS
@@ -24,6 +24,7 @@ import geotrellis.raster.{MultibandTile, Tile}
 import geotrellis.spark.TemporalProjectedExtent
 import geotrellis.spark.io.avro.{AvroEncoder, AvroRecordCodec}
 import geotrellis.vector.{Extent, ProjectedExtent}
+import org.apache.spark.sql.SQLContext
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.types._
 import org.apache.spark.unsafe.types.UTF8String
@@ -36,7 +37,7 @@ import scala.reflect.runtime.universe._
  * @author sfitch
  * @since 4/3/17
  */
-private[spark] object GTSQLTypes {
+private[spark] object types {
   def register(sqlContext: SQLContext): Unit = {
     register(TileUDT)
     register(MultibandTileUDT)

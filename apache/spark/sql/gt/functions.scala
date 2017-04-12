@@ -16,22 +16,22 @@
  * the License.
  */
 
-package org.apache.spark.sql
-
+package org.apache.spark.sql.gt
 
 import geotrellis.raster._
 import geotrellis.raster.mapalgebra.focal._
 import geotrellis.vector.{Extent, ProjectedExtent}
-import org.apache.spark.sql.GTSQLTypes.TileUDT
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.analysis.{FunctionRegistry, MultiAlias, UnresolvedAttribute}
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.catalyst.expressions.codegen.{CodegenFallback, GenerateUnsafeProjection}
 import org.apache.spark.sql.catalyst.expressions.{BoundReference, CreateArray, Expression, Generator, Inline, UnaryExpression}
 import org.apache.spark.sql.types._
+import org.apache.spark.sql.{Column, Row, SQLContext, TypedColumn}
 
 import scala.reflect.runtime.universe._
 import scala.util.Try
+import types._
 
 /**
  * GT functions adapted for Spark SQL use.
@@ -39,7 +39,7 @@ import scala.util.Try
  * @author sfitch 
  * @since 4/3/17
  */
-object GTSQLFunctions {
+object functions {
   /** Create columns for each field in the structure or UDT. */
   def flatten[T >: Null: TypeTag](col: TypedColumn[_, T]) = {
     Column(Try(asStruct[T](col)).map(col ⇒ projectStruct(col.encoder.schema, col.expr))
