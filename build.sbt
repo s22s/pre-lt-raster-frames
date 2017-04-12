@@ -4,7 +4,7 @@ name := "geotrellis-spark-sql"
 
 organization := "astraea"
 
-version := "0.1.0-SNAPSHOT"
+version := "0.1.0"
 
 resolvers ++= Seq(
   "locationtech-releases" at "https://repo.locationtech.org/content/groups/releases",
