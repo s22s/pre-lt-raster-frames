@@ -1,3 +1,9 @@
 language: scala
 
 sbt_args: -no-colors
+
+scala:
+  - 2.11.8
+
+jdk:
+  - openjdk8
