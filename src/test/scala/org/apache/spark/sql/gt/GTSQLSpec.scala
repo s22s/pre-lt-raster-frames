@@ -23,12 +23,11 @@ import java.sql.Timestamp
 import geotrellis.raster.{ByteCellType, MultibandTile, Tile, TileFeature}
 import geotrellis.spark.TemporalProjectedExtent
 import geotrellis.vector.{Extent, ProjectedExtent}
-import org.apache.spark.sql.gt._
 import org.apache.spark.sql.gt.functions._
 import org.apache.spark.sql.{DataFrame, Encoders}
 import org.scalatest.{FunSpec, Inspectors, Matchers}
-import org.apache.spark.sql.execution.debug._
 import org.apache.spark.sql.functions._
+//import org.apache.spark.sql.execution.debug._
 
 /**
  * Test rig for Spark UDTs and friends for GT.
@@ -55,6 +54,7 @@ class GTSQLSpec extends FunSpec with Matchers with Inspectors with TestEnvironme
     it("should evaluate UDF on tile") {
       val query = sql.sql("select st_focalSum(st_makeConstantTile(1, 10, 10, 'int8raw'), 4)")
       val tile = query.firstTile
+      println(tile.asciiDraw())
       assert(tile.cellType === ByteCellType)
     }
 
@@ -152,6 +152,7 @@ class GTSQLSpec extends FunSpec with Matchers with Inspectors with TestEnvironme
           .select(flatten($"value".as[TemporalProjectedExtent]))
           .select(flatten($"extent".as[Extent]), $"time", $"crs")
         implicit val enc = Encoders.TIMESTAMP
+
         assert(flattened.select("time").as[Timestamp].collect().head === new Timestamp(tpe.instant))
       }
     }

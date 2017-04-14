@@ -40,13 +40,18 @@ private[gt] abstract class GeoTrellisUDT[T >: Null: ClassTag]
   ))
 
   override def serialize(obj: T): InternalRow = {
-    val bytes = KryoSerializer.serialize(obj)
-    InternalRow(bytes)
+    Option(obj)
+      .map(KryoSerializer.serialize(_))
+      .map(InternalRow.apply(_))
+      .orNull
   }
 
   override def deserialize(datum: Any): T = {
-    val row = datum.asInstanceOf[InternalRow]
-    KryoSerializer.deserialize[T](row.getBinary(0))
+    Option(datum)
+      .map(_.asInstanceOf[InternalRow])
+      .flatMap(row ⇒ Option(row.getBinary(0)))
+      .map(KryoSerializer.deserialize[T])
+      .orNull
   }
 
   override def userClass: Class[T] = classTag[T].runtimeClass.asInstanceOf[Class[T]]
