@@ -35,9 +35,14 @@ private[gt] object Registrar {
     sqlContext.udf.register("st_makeTiles", makeTiles)
     sqlContext.udf.register("st_gridRows", gridRows)
     sqlContext.udf.register("st_gridCols", gridCols)
+    sqlContext.udf.register("st_localMax", localMax)
+    sqlContext.udf.register("st_localMin", localMin)
+    sqlContext.udf.register("st_renderAscii", UDFs.renderAscii)
   }
   // Expression-oriented functions have a different registration scheme
   FunctionRegistry.builtin.registerFunction("st_explodeTile", ExplodeTileExpression.apply)
-  FunctionRegistry.builtin.registerFunction("st_flattenExtent", (exprs: Seq[Expression]) ⇒ flattenExpression[Extent](exprs.head))
-  FunctionRegistry.builtin.registerFunction("st_flattenProjectedExtent", (exprs: Seq[Expression]) ⇒ flattenExpression[ProjectedExtent](exprs.head))
+  FunctionRegistry.builtin.registerFunction("st_flattenExtent",
+    (exprs: Seq[Expression]) ⇒ flattenExpression[Extent](exprs.head))
+  FunctionRegistry.builtin.registerFunction("st_flattenProjectedExtent",
+    (exprs: Seq[Expression]) ⇒ flattenExpression[ProjectedExtent](exprs.head))
 }

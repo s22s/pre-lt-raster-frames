@@ -19,7 +19,7 @@ package org.apache.spark.sql.gt.types
 import geotrellis.raster.{MultibandTile, Tile}
 import geotrellis.spark.util.KryoSerializer
 import org.apache.spark.sql.catalyst.InternalRow
-import org.apache.spark.sql.types.{BinaryType, StructField, StructType, UserDefinedType}
+import org.apache.spark.sql.types._
 
 import scala.reflect._
 
@@ -55,11 +55,16 @@ private[gt] abstract class GeoTrellisUDT[T >: Null: ClassTag]
   }
 
   override def userClass: Class[T] = classTag[T].runtimeClass.asInstanceOf[Class[T]]
+
+  private[sql] override def acceptsType(dataType: DataType) = dataType match {
+    case o: GeoTrellisUDT[T] ⇒ o.typeName == this.typeName
+    case _ ⇒ super.acceptsType(dataType)
+  }
 }
 
 private[gt] class TileUDT extends GeoTrellisUDT[Tile]("st_tile")
-object TileUDT extends TileUDT
+case object TileUDT extends TileUDT
 
 private[gt] class MultibandTileUDT extends GeoTrellisUDT[MultibandTile]("st_multibandtile")
-object MultibandTileUDT extends MultibandTileUDT
+case object MultibandTileUDT extends MultibandTileUDT
 

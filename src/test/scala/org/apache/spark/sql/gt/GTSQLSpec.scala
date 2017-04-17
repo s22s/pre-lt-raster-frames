@@ -20,6 +20,7 @@ package org.apache.spark.sql.gt
 
 import java.sql.Timestamp
 
+import geotrellis.raster.mapalgebra.local.Max
 import geotrellis.raster.{ByteCellType, MultibandTile, Tile, TileFeature}
 import geotrellis.spark.TemporalProjectedExtent
 import geotrellis.vector.{Extent, ProjectedExtent}
@@ -155,6 +156,13 @@ class GTSQLSpec extends FunSpec with Matchers with Inspectors with TestEnvironme
 
         assert(flattened.select("time").as[Timestamp].collect().head === new Timestamp(tpe.instant))
       }
+    }
+
+    it("should support aggregation") {
+      val ds = Seq[Tile](byteArrayTile, byteConstantTile).toDF("tiles")
+
+      ds.agg(renderAscii(localMax($"tiles")).as("tiles")).show(false)
+
     }
   }
 }

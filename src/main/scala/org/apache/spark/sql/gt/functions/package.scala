@@ -16,6 +16,7 @@
 
 package org.apache.spark.sql.gt
 
+import geotrellis.raster.mapalgebra.local.{Max, Min}
 import org.apache.spark.sql.catalyst.analysis.{MultiAlias, UnresolvedAttribute}
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.catalyst.expressions.{CreateArray, Expression, Inline}
@@ -57,6 +58,14 @@ package object functions {
 
     Column(exploder).as(metaNames ++ colNames)
   }
+
+  /** Compute the cellwise/local max operation between tiles in a column. */
+  val localMax = new LocalTileAggregateFunction(Max)
+
+  /** Compute the cellwise/local min operation between tiles in a column. */
+  val localMin = new LocalTileAggregateFunction(Min)
+
+  val renderAscii = org.apache.spark.sql.functions.udf(UDFs.renderAscii)
 
   // -- Private APIs below --
   /** Lookup the registered Catalyst UDT for the given Scala type. */

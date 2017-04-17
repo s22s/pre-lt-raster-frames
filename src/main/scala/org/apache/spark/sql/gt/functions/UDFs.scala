@@ -18,6 +18,7 @@ package org.apache.spark.sql.gt.functions
 
 import geotrellis.raster.{BitCellType, BitConstantTile, ByteCells, ByteConstantTile, CellGrid, CellType, DoubleCells, DoubleConstantTile, FloatCells, FloatConstantTile, IntCells, IntConstantTile, ShortCells, ShortConstantTile, Tile, UByteCells, UByteConstantTile, UShortCells, UShortConstantTile}
 import geotrellis.raster.mapalgebra.focal.{Square, Sum}
+import geotrellis.raster.mapalgebra.local.Max
 
 /**
  * Library of simple GT-related UDFs.
@@ -26,6 +27,9 @@ import geotrellis.raster.mapalgebra.focal.{Square, Sum}
  * @since 4/12/17
  */
 object UDFs {
+
+  /** Render tile as ASCII string. */
+  private[gt] val renderAscii: (Tile) ⇒ String = tile ⇒ tile.asciiDraw()
 
   /** Constructor for constant tiles */
   private[gt] val makeConstantTile: (Number, Int, Int, String) ⇒ Tile = (value, cols, rows, cellTypeName) ⇒ {
