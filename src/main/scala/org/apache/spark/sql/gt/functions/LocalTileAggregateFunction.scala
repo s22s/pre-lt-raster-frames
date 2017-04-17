@@ -5,7 +5,7 @@ import geotrellis.raster.mapalgebra.local.LocalTileBinaryOp
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.expressions.{MutableAggregationBuffer, UserDefinedAggregateFunction}
 import org.apache.spark.sql.gt.types.TileUDT
-import org.apache.spark.sql.types.{DataType, StructField, StructType}
+import org.apache.spark.sql.types._
 
 /**
  * Aggregation function for applying a [[LocalTileBinaryOp]] pairwise across all tiles. Assumes Monoid algebra.
@@ -20,7 +20,7 @@ class LocalTileAggregateFunction(op: LocalTileBinaryOp) extends UserDefinedAggre
 
   override def bufferSchema: StructType = inputSchema
 
-  override def dataType: DataType = TileUDT
+  override def dataType: DataType = new TileUDT()
 
   override def deterministic: Boolean = true
 
@@ -32,13 +32,13 @@ class LocalTileAggregateFunction(op: LocalTileBinaryOp) extends UserDefinedAggre
       buffer(0) = input(0)
     }
     else {
-      val t1 = buffer(0).asInstanceOf[Tile]
-      val t2 = input(0).asInstanceOf[Tile]
+      val t1 = buffer.getAs[Tile](0)
+      val t2 = input.getAs[Tile](0)
       buffer(0) = op(t1, t2)
     }
   }
 
   override def merge(buffer1: MutableAggregationBuffer, buffer2: Row): Unit = update(buffer1, buffer2)
 
-  override def evaluate(buffer: Row): Any = buffer(0).asInstanceOf[Tile]
+  override def evaluate(buffer: Row): Tile = buffer.getAs[Tile](0)
 }

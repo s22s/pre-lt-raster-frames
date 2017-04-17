@@ -18,14 +18,15 @@
 
 package org.apache.spark.sql.gt
 
+import java.nio.file.Files
 import java.sql.Timestamp
 
-import geotrellis.raster.mapalgebra.local.Max
+import geotrellis.raster.mapalgebra.local.{Max, Min}
 import geotrellis.raster.{ByteCellType, MultibandTile, Tile, TileFeature}
 import geotrellis.spark.TemporalProjectedExtent
 import geotrellis.vector.{Extent, ProjectedExtent}
 import org.apache.spark.sql.gt.functions._
-import org.apache.spark.sql.{DataFrame, Encoders}
+import org.apache.spark.sql.{DataFrame, Dataset, Encoders, SaveMode}
 import org.scalatest.{FunSpec, Inspectors, Matchers}
 import org.apache.spark.sql.functions._
 //import org.apache.spark.sql.execution.debug._
@@ -39,6 +40,14 @@ class GTSQLSpec extends FunSpec with Matchers with Inspectors with TestEnvironme
 
   gtRegister(sql)
 
+  def write(df: Dataset[_]): Unit = {
+    val sanitized = df.select(df.columns.map(c ⇒ col(c).as(c.replaceAll("[ ,;{}()\n\t=]", "_"))): _*)
+
+    val dest = Files.createTempFile("GTSQL", ".parquet")
+    println("Writing: " + dest)
+    sanitized.write.mode(SaveMode.Overwrite).parquet(dest.toString)
+  }
+
   implicit class DFExtras(df: DataFrame) {
     def firstTile: Tile = df.collect().head.getAs[Tile](0)
   }
@@ -48,12 +57,14 @@ class GTSQLSpec extends FunSpec with Matchers with Inspectors with TestEnvironme
   describe("GeoTrellis UDTs") {
     it("should create constant tiles") {
       val query = sql.sql("select st_makeConstantTile(1, 10, 10, 'int8raw')")
+      write(query)
       val tile = query.firstTile
       assert((tile.cellType === ByteCellType) (org.scalactic.Equality.default))
     }
 
     it("should evaluate UDF on tile") {
       val query = sql.sql("select st_focalSum(st_makeConstantTile(1, 10, 10, 'int8raw'), 4)")
+      write(query)
       val tile = query.firstTile
       println(tile.asciiDraw())
       assert(tile.cellType === ByteCellType)
@@ -64,11 +75,13 @@ class GTSQLSpec extends FunSpec with Matchers with Inspectors with TestEnvironme
         """|select st_gridRows(tiles) as rows, st_gridCols(tiles) as cols from (
            |select st_makeConstantTile(1, 10, 10, 'int8raw') as tiles)
            |""".stripMargin)
+      write(query)
       assert(query.as[(Int, Int)].collect().head === ((10, 10)))
     }
 
     it("should generate multiple rows") {
       val query = sql.sql("select st_makeTiles(3)")
+      write(query)
       val tiles = query.collect().head.getAs[Seq[Tile]](0)
       assert(tiles.distinct.size == 1)
     }
@@ -80,56 +93,65 @@ class GTSQLSpec extends FunSpec with Matchers with Inspectors with TestEnvironme
           |  st_makeConstantTile(2, 10, 10, 'int8raw')
           |)
           |""".stripMargin)
+      write(query)
       assert(query.select("cell_0", "cell_1").as[(Double, Double)].collect().forall(_ == ((1.0, 2.0))))
       val query2 = sql.sql(
         """|select st_gridRows(tiles) as rows, st_gridCols(tiles) as cols, st_explodeTile(tiles)  from (
            |select st_makeConstantTile(1, 10, 10, 'int8raw') as tiles)
            |""".stripMargin)
+      write(query2)
       assert(query2.columns.size === 5)
 
       val df = Seq[(Tile, Tile)]((byteArrayTile, byteArrayTile)).toDF("tile1", "tile2")
       val exploded = df.select(explodeTile($"tile1", $"tile2"))
-
       exploded.printSchema()
-      exploded.show()
-
+      assert(exploded.columns.size === 4)
+      assert(exploded.count() === 9)
+      write(exploded)
     }
 
     it("should code RDD[(Int, Tile)]") {
       val ds = Seq((1, byteArrayTile: Tile)).toDS
+      write(ds)
       assert(ds.toDF.as[(Int, Tile)].collect().head === ((1, byteArrayTile)))
     }
 
     it("should code RDD[Tile]") {
       val rdd = sc.makeRDD(Seq(byteArrayTile: Tile))
       val ds = rdd.toDF("tile")
+      write(ds)
       assert(ds.toDF.as[Tile].collect().head === byteArrayTile)
     }
 
     it("should code RDD[MultibandTile]") {
       val rdd = sc.makeRDD(Seq(multibandTile))
       val ds = rdd.toDS()
+      write(ds)
       assert(ds.toDF.as[MultibandTile].collect().head === multibandTile)
     }
 
     it("should code RDD[TileFeature]") {
       val thing = TileFeature(byteArrayTile: Tile, "meta")
       val ds = Seq(thing).toDS()
+      write(ds)
       assert(ds.toDF.as[TileFeature[Tile, String]].collect().head === thing)
     }
 
     it("should code RDD[Extent]") {
       val ds = Seq(extent).toDS()
+      write(ds)
       assert(ds.toDF.as[Extent].collect().head === extent)
     }
 
     it("should code RDD[ProjectedExtent]") {
       val ds = Seq(pe).toDS()
+      write(ds)
       assert(ds.toDF.as[ProjectedExtent].collect().head === pe)
     }
 
     it("should code RDD[TemporalProjectedExtent]") {
       val ds = Seq(tpe).toDS()
+      write(ds)
       assert(ds.toDF.as[TemporalProjectedExtent].collect().head === tpe)
     }
 
@@ -158,11 +180,22 @@ class GTSQLSpec extends FunSpec with Matchers with Inspectors with TestEnvironme
       }
     }
 
-    it("should support aggregation") {
+    it("should support local min/max") {
       val ds = Seq[Tile](byteArrayTile, byteConstantTile).toDF("tiles")
 
-      ds.agg(renderAscii(localMax($"tiles")).as("tiles")).show(false)
+      withClue("max") {
+        val max = ds.agg(localMax($"tiles"))
+        assert(max.as[Tile].first() === Max(byteArrayTile, byteConstantTile))
+      }
 
+      withClue("min") {
+        val min = ds.agg(localMin($"tiles"))
+        assert(min.as[Tile].first() === Min(byteArrayTile, byteConstantTile))
+      }
+
+      val foo = ds.agg(localMin($"tiles") as "min").as[Tile]
+      foo.printSchema()
+      write(foo)
     }
   }
 }
