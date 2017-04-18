@@ -17,8 +17,6 @@
 package org.apache.spark.sql.gt.types
 
 import geotrellis.raster.{MultibandTile, Tile}
-import geotrellis.spark.util.KryoSerializer
-import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.types._
 
 import scala.reflect._
@@ -30,36 +28,14 @@ import scala.reflect._
  * @author sfitch 
  * @since 4/12/17
  */
-private[gt] abstract class GeoTrellisUDT[T >: Null: ClassTag]
-  (override val typeName: String) extends UserDefinedType[T] {
-
-  override val simpleString = typeName
-
-  override def sqlType: StructType = StructType(Array(
-    StructField(simpleString + "_kryo", BinaryType)
-  ))
-
-  override def serialize(obj: T): InternalRow = {
-    Option(obj)
-      .map(KryoSerializer.serialize(_))
-      .map(InternalRow.apply(_))
-      .orNull
-  }
-
-  override def deserialize(datum: Any): T = {
-    Option(datum)
-      .map(_.asInstanceOf[InternalRow])
-      .flatMap(row ⇒ Option(row.getBinary(0)))
-      .map(KryoSerializer.deserialize[T])
-      .orNull
-  }
-
-  override def userClass: Class[T] = classTag[T].runtimeClass.asInstanceOf[Class[T]]
-
+private[gt] abstract class GeoTrellisUDT[T >: Null: ClassTag](override val typeName: String)
+  extends UserDefinedType[T] with KryoBackedUDT[T] {
   private[sql] override def acceptsType(dataType: DataType) = dataType match {
     case o: GeoTrellisUDT[T] ⇒ o.typeName == this.typeName
     case _ ⇒ super.acceptsType(dataType)
   }
+
+  override val targetClassTag = classTag[T]
 }
 
 private[gt] class TileUDT extends GeoTrellisUDT[Tile]("st_tile")

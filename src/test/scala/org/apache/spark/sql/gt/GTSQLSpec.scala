@@ -21,6 +21,7 @@ package org.apache.spark.sql.gt
 import java.nio.file.Files
 import java.sql.Timestamp
 
+import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.{Max, Min}
 import geotrellis.raster.{ByteCellType, MultibandTile, Tile, TileFeature}
 import geotrellis.spark.TemporalProjectedExtent
@@ -80,10 +81,9 @@ class GTSQLSpec extends FunSpec with Matchers with Inspectors with TestEnvironme
     }
 
     it("should generate multiple rows") {
-      val query = sql("select st_makeTiles(3)")
+      val query = sql("select explode(st_makeTiles(3))")
       write(query)
-      val tiles = query.collect().head.getAs[Seq[Tile]](0)
-      assert(tiles.distinct.size == 1)
+      assert(query.count === 3)
     }
 
     it("should explode rows") {
@@ -204,6 +204,27 @@ class GTSQLSpec extends FunSpec with Matchers with Inspectors with TestEnvironme
         val sqlMin = sql("select st_localMin(tiles) from tmp")
         assert(sqlMin.as[Tile].first() === expected)
       }
+    }
+
+    it("should list supported cell types") {
+      val ct = sql("select explode(st_cellTypes())").as[String].collect
+      forEvery(UDFs.cellTypes()) { c ⇒
+        assert(ct.contains(c))
+      }
+    }
+
+    it("should generate a histogram") {
+      val ds = Seq[Tile](UDFs.randomTile(5, 5, "float32")).toDF("tiles")
+      ds.createOrReplaceTempView("tmp")
+
+      val r1 = ds.select(histogram($"tiles").as[Histogram[Double]])
+
+        .map(_.statistics().get)
+
+
+      val r2 = sql("select st_histogram(tiles) from tmp").as[Histogram[Double]].first
+
+
     }
   }
 }

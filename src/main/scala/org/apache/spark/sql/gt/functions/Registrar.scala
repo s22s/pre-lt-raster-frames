@@ -37,6 +37,9 @@ private[gt] object Registrar {
     sqlContext.udf.register("st_localMax", UDFs.localMax)
     sqlContext.udf.register("st_localMin", UDFs.localMin)
     sqlContext.udf.register("st_renderAscii", UDFs.renderAscii)
+    sqlContext.udf.register("st_randomTile", UDFs.randomTile)
+    sqlContext.udf.register("st_cellTypes", UDFs.cellTypes)
+    sqlContext.udf.register("st_histogram", UDFs.histogram)
   }
   // Expression-oriented functions have a different registration scheme
   FunctionRegistry.builtin.registerFunction("st_explodeTile", ExplodeTileExpression.apply)

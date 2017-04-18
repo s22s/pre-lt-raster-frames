@@ -28,6 +28,7 @@ import geotrellis.vectortile.protobuf.ProtobufTile
 import org.apache.commons.io.IOUtils
 
 import scala.reflect.ClassTag
+import scala.util.Random
 
 /**
  *
@@ -65,4 +66,6 @@ trait TestData {
       UShortArrayTile(rangeArray(_.toShort), rows, cols)
     )
   }
+
+
 }

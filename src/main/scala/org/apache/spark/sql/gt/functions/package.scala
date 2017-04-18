@@ -17,15 +17,15 @@
 package org.apache.spark.sql.gt
 
 import geotrellis.raster.Tile
+import geotrellis.raster.histogram.Histogram
 import org.apache.spark.sql.catalyst.analysis.{MultiAlias, UnresolvedAttribute}
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.catalyst.expressions.{CreateArray, Expression, Inline}
 import org.apache.spark.sql.types.{StructType, UDTRegistration, UserDefinedType}
-import org.apache.spark.sql.{Column, Row, TypedColumn}
+import org.apache.spark.sql._
 
 import scala.reflect.runtime.universe._
 import scala.util.Try
-
 import org.apache.spark.sql.functions.{udf ⇒ SparkUDF}
 
 /**
@@ -35,6 +35,11 @@ import org.apache.spark.sql.functions.{udf ⇒ SparkUDF}
  * @since 4/3/17
  */
 package object functions {
+  private val encoders = new SQLImplicits {
+    override protected def _sqlContext: SQLContext = ???
+  }
+  import encoders._
+
   /** Create columns for each field in the structure or UDT. */
   def flatten[T >: Null: TypeTag](col: TypedColumn[_, T]) = Column(
     Try(asStruct[T](col))
@@ -62,13 +67,29 @@ package object functions {
   }
 
   /** Compute the cellwise/local max operation between tiles in a column. */
-  def localMax(col: Column) = UDFs.localMax(col).as("localMax")
+  def localMax(col: Column) = withAlias("localMax", col, UDFs.localMax(col)).as[Tile]
   /** Compute the cellwise/local min operation between tiles in a column. */
-  def localMin(col: Column) = UDFs.localMin(col).as("localMin")
+  def localMin(col: Column) = withAlias("localMin", col, UDFs.localMin(col)).as[Tile]
+  /** Compute histogram of tile values. */
+  def histogram(col: Column) = withAlias("histogram", col,
+    SparkUDF[Histogram[Double], Tile](UDFs.histogram).apply(col)
+  ).as[Histogram[Double]]
+
   /** Render tile as ASCII string for debugging purposes. */
-  def renderAscii(col: Column) = SparkUDF[String, Tile](UDFs.renderAscii).apply(col).as("asciiTile")
+  def renderAscii(col: Column) = withAlias("renderAscii", col,
+    SparkUDF[String, Tile](UDFs.renderAscii).apply(col)
+  ).as[String]
 
   // -- Private APIs below --
+  /** Tags output column with something resonable. */
+  private[gt] def withAlias(name: String, input: Column, output: Column) = {
+    val paramName = input.expr match {
+      case ua: UnresolvedAttribute ⇒ ua.name
+      case o ⇒ o.prettyName
+    }
+    output.as(s"$name($paramName)")
+  }
+
   /** Lookup the registered Catalyst UDT for the given Scala type. */
   private[gt] def udtOf[T >: Null: TypeTag]: UserDefinedType[T] =
     UDTRegistration.getUDTFor(typeTag[T].tpe.toString).map(_.newInstance().asInstanceOf[UserDefinedType[T]])

@@ -31,6 +31,7 @@ private[gt] object Registrar {
     register(ExtentUDT)
     register(ProjectedExtentUDT)
     register(TemporalProjectedExtentUDT)
+    register(HistogramUDT)
   }
 
   private def register(udt: UserDefinedType[_]): Unit = {
