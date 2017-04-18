@@ -38,13 +38,13 @@ import org.apache.spark.sql.functions._
  */
 class GTSQLSpec extends FunSpec with Matchers with Inspectors with TestEnvironment with TestData {
 
-  gtRegister(sql)
+  gtRegister(_spark.sqlContext)
 
+  /** This is here so we can test writing UDF generated/modified GeoTrellis types to ensure they are Parquet compliant. */
   def write(df: Dataset[_]): Unit = {
     val sanitized = df.select(df.columns.map(c ⇒ col(c).as(c.replaceAll("[ ,;{}()\n\t=]", "_"))): _*)
-
     val dest = Files.createTempFile("GTSQL", ".parquet")
-    println("Writing: " + dest)
+    println(s"Writing '${sanitized.columns.mkString(", ")}' to $dest")
     sanitized.write.mode(SaveMode.Overwrite).parquet(dest.toString)
   }
 
@@ -56,22 +56,22 @@ class GTSQLSpec extends FunSpec with Matchers with Inspectors with TestEnvironme
 
   describe("GeoTrellis UDTs") {
     it("should create constant tiles") {
-      val query = sql.sql("select st_makeConstantTile(1, 10, 10, 'int8raw')")
+      val query = sql("select st_makeConstantTile(1, 10, 10, 'int8raw')")
       write(query)
       val tile = query.firstTile
       assert((tile.cellType === ByteCellType) (org.scalactic.Equality.default))
     }
 
     it("should evaluate UDF on tile") {
-      val query = sql.sql("select st_focalSum(st_makeConstantTile(1, 10, 10, 'int8raw'), 4)")
+      val query = sql("select st_focalSum(st_makeConstantTile(1, 10, 10, 'int8raw'), 4)")
       write(query)
       val tile = query.firstTile
-      println(tile.asciiDraw())
+
       assert(tile.cellType === ByteCellType)
     }
 
     it("should report dimensions") {
-      val query = sql.sql(
+      val query = sql(
         """|select st_gridRows(tiles) as rows, st_gridCols(tiles) as cols from (
            |select st_makeConstantTile(1, 10, 10, 'int8raw') as tiles)
            |""".stripMargin)
@@ -80,14 +80,14 @@ class GTSQLSpec extends FunSpec with Matchers with Inspectors with TestEnvironme
     }
 
     it("should generate multiple rows") {
-      val query = sql.sql("select st_makeTiles(3)")
+      val query = sql("select st_makeTiles(3)")
       write(query)
       val tiles = query.collect().head.getAs[Seq[Tile]](0)
       assert(tiles.distinct.size == 1)
     }
 
     it("should explode rows") {
-      val query = sql.sql(
+      val query = sql(
         """select st_explodeTile(
           |  st_makeConstantTile(1, 10, 10, 'int8raw'),
           |  st_makeConstantTile(2, 10, 10, 'int8raw')
@@ -95,7 +95,7 @@ class GTSQLSpec extends FunSpec with Matchers with Inspectors with TestEnvironme
           |""".stripMargin)
       write(query)
       assert(query.select("cell_0", "cell_1").as[(Double, Double)].collect().forall(_ == ((1.0, 2.0))))
-      val query2 = sql.sql(
+      val query2 = sql(
         """|select st_gridRows(tiles) as rows, st_gridCols(tiles) as cols, st_explodeTile(tiles)  from (
            |select st_makeConstantTile(1, 10, 10, 'int8raw') as tiles)
            |""".stripMargin)
@@ -104,7 +104,7 @@ class GTSQLSpec extends FunSpec with Matchers with Inspectors with TestEnvironme
 
       val df = Seq[(Tile, Tile)]((byteArrayTile, byteArrayTile)).toDF("tile1", "tile2")
       val exploded = df.select(explodeTile($"tile1", $"tile2"))
-      exploded.printSchema()
+      //exploded.printSchema()
       assert(exploded.columns.size === 4)
       assert(exploded.count() === 9)
       write(exploded)
@@ -182,20 +182,28 @@ class GTSQLSpec extends FunSpec with Matchers with Inspectors with TestEnvironme
 
     it("should support local min/max") {
       val ds = Seq[Tile](byteArrayTile, byteConstantTile).toDF("tiles")
+      ds.createOrReplaceTempView("tmp")
 
       withClue("max") {
         val max = ds.agg(localMax($"tiles"))
-        assert(max.as[Tile].first() === Max(byteArrayTile, byteConstantTile))
+        val expected = Max(byteArrayTile, byteConstantTile)
+        write(max)
+        assert(max.as[Tile].first() === expected)
+
+        val sqlMax = sql("select st_localMax(tiles) from tmp")
+        assert(sqlMax.as[Tile].first() === expected)
+
       }
 
       withClue("min") {
         val min = ds.agg(localMin($"tiles"))
+        val expected = Min(byteArrayTile, byteConstantTile)
+        write(min)
         assert(min.as[Tile].first() === Min(byteArrayTile, byteConstantTile))
-      }
 
-      val foo = ds.agg(localMin($"tiles") as "min").as[Tile]
-      foo.printSchema()
-      write(foo)
+        val sqlMin = sql("select st_localMin(tiles) from tmp")
+        assert(sqlMin.as[Tile].first() === expected)
+      }
     }
   }
 }

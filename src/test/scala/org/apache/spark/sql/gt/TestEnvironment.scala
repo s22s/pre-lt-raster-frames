@@ -1,10 +1,9 @@
 package org.apache.spark.sql.gt
 
-import geotrellis.spark.testkit.{TestEnvironment => GeoTrellisTestEnvironment}
-
+import geotrellis.spark.testkit.{TestEnvironment ⇒ GeoTrellisTestEnvironment}
 import org.apache.spark.SparkContext
 import org.apache.spark.serializer.KryoSerializer
-import org.apache.spark.sql.{SQLContext, SparkSession}
+import org.apache.spark.sql.{DataFrame, SQLContext, SparkSession}
 import org.scalatest._
 
 import scala.util.Properties
@@ -40,5 +39,5 @@ trait TestEnvironment extends GeoTrellisTestEnvironment { self: Suite with Befor
 
   override implicit def sc: SparkContext = _spark.sparkContext
 
-  lazy val sql: SQLContext = _spark.sqlContext
+  lazy val sql: (String) ⇒ DataFrame = _spark.sqlContext.sql
 }

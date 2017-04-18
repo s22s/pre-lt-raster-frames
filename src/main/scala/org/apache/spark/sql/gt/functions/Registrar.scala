@@ -29,14 +29,13 @@ import org.apache.spark.sql.catalyst.expressions.Expression
  */
 private[gt] object Registrar {
   def register(sqlContext: SQLContext): Unit = {
-    import UDFs._
-    sqlContext.udf.register("st_makeConstantTile", makeConstantTile)
-    sqlContext.udf.register("st_focalSum", focalSum)
-    sqlContext.udf.register("st_makeTiles", makeTiles)
-    sqlContext.udf.register("st_gridRows", gridRows)
-    sqlContext.udf.register("st_gridCols", gridCols)
-    sqlContext.udf.register("st_localMax", localMax)
-    sqlContext.udf.register("st_localMin", localMin)
+    sqlContext.udf.register("st_makeConstantTile", UDFs.makeConstantTile)
+    sqlContext.udf.register("st_focalSum", UDFs.focalSum)
+    sqlContext.udf.register("st_makeTiles", UDFs.makeTiles)
+    sqlContext.udf.register("st_gridRows", UDFs.gridRows)
+    sqlContext.udf.register("st_gridCols", UDFs.gridCols)
+    sqlContext.udf.register("st_localMax", UDFs.localMax)
+    sqlContext.udf.register("st_localMin", UDFs.localMin)
     sqlContext.udf.register("st_renderAscii", UDFs.renderAscii)
   }
   // Expression-oriented functions have a different registration scheme

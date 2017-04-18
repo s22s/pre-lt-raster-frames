@@ -18,7 +18,7 @@ package org.apache.spark.sql.gt.functions
 
 import geotrellis.raster.{BitCellType, BitConstantTile, ByteCells, ByteConstantTile, CellGrid, CellType, DoubleCells, DoubleConstantTile, FloatCells, FloatConstantTile, IntCells, IntConstantTile, ShortCells, ShortConstantTile, Tile, UByteCells, UByteConstantTile, UShortCells, UShortConstantTile}
 import geotrellis.raster.mapalgebra.focal.{Square, Sum}
-import geotrellis.raster.mapalgebra.local.Max
+import geotrellis.raster.mapalgebra.local.{Max, Min}
 
 /**
  * Library of simple GT-related UDFs.
@@ -54,4 +54,9 @@ object UDFs {
 
   /** Perform a focal sum over square area with given half/width extent (value of 1 would be a 3x3 tile) */
   private[gt] val focalSum: (Tile, Int) ⇒ Tile = (tile, extent) ⇒ Sum(tile, Square(extent))
+
+  private[gt] val localMax = new LocalTileAggregateFunction(Max)
+
+  private[gt] val localMin = new LocalTileAggregateFunction(Min)
+
 }
