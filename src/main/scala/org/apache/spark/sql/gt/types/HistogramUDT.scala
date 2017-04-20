@@ -15,6 +15,11 @@ private[gt] class HistogramUDT extends UserDefinedType[Histogram[Double]]
   override val typeName = "st_histogram"
 
   override val targetClassTag = scala.reflect.classTag[Histogram[Double]]
+
+  private[sql] override def acceptsType(dataType: DataType) = dataType match {
+    case o: HistogramUDT  ⇒ o.typeName == this.typeName
+    case _ ⇒ super.acceptsType(dataType)
+  }
 }
 
 object HistogramUDT extends HistogramUDT

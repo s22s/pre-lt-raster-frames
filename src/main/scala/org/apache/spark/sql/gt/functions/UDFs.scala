@@ -20,6 +20,7 @@ import geotrellis.raster.histogram.{DoubleHistogram, Histogram, StreamingHistogr
 import geotrellis.raster.{ArrayTile, BitCellType, BitConstantTile, ByteCellType, ByteCells, ByteConstantNoDataCellType, ByteConstantTile, CellGrid, CellType, DoubleCellType, DoubleCells, DoubleConstantNoDataCellType, DoubleConstantTile, FloatCellType, FloatCells, FloatConstantNoDataCellType, FloatConstantTile, IntCellType, IntCells, IntConstantNoDataCellType, IntConstantTile, ShortCellType, ShortCells, ShortConstantNoDataCellType, ShortConstantTile, Tile, UByteCellType, UByteCells, UByteConstantNoDataCellType, UByteConstantTile, UShortCellType, UShortCells, UShortConstantNoDataCellType, UShortConstantTile}
 import geotrellis.raster.mapalgebra.focal.{Square, Sum}
 import geotrellis.raster.mapalgebra.local.{Max, Min}
+import geotrellis.raster.summary.Statistics
 
 import scala.util.Random
 
@@ -31,22 +32,31 @@ import scala.util.Random
  */
 object UDFs {
 
-  /** Reports number of columns in a tile. */
-  private[gt] val gridCols: (CellGrid) ⇒ (Int) = (tile) ⇒ tile.cols
-  /** Reports number of rows in a tile. */
-  private[gt] val gridRows: (CellGrid) ⇒ (Int) = (tile) ⇒ tile.rows
+  private def safeEval[P, R](f: P ⇒ R): P ⇒ R =
+    (p) ⇒ if(p == null) null.asInstanceOf[R] else f(p)
+  private def safeEval[P1, P2, R](f: (P1, P2) ⇒ R): (P1, P2) ⇒ R =
+    (p1, p2) ⇒ if(p1 == null || p2 == null) null.asInstanceOf[R] else f(p1, p2)
 
-  private[gt] val histogram: (Tile) ⇒ Histogram[Double] = (tile) ⇒ StreamingHistogram.fromTile(tile)
+  /** Reports number of columns in a tile. */
+  private[gt] val gridCols: (CellGrid) ⇒ (Int) = safeEval(_.cols)
+  /** Reports number of rows in a tile. */
+  private[gt] val gridRows: (CellGrid) ⇒ (Int) = safeEval(_.rows)
+
+  private[gt] val histogram: (Tile) ⇒ Histogram[Double] = safeEval(_.histogramDouble())
+
+  private[gt] val statistics: (Tile) ⇒ Statistics[Double] = safeEval(_.statisticsDouble.orNull)
+
+  private[gt] val tileMean: (Tile) ⇒ Double = safeEval(_.statisticsDouble.map(_.mean).getOrElse(Double.NaN))
 
   /** Perform a focal sum over square area with given half/width extent (value of 1 would be a 3x3 tile) */
-  private[gt] val focalSum: (Tile, Int) ⇒ Tile = (tile, extent) ⇒ Sum(tile, Square(extent))
+  private[gt] val focalSum: (Tile, Int) ⇒ Tile = safeEval((tile, extent) ⇒ Sum(tile, Square(extent)))
   /** Compute the cell-wise max across tiles. */
   private[gt] val localMax = new LocalTileAggregateFunction(Max)
   /** Compute the cell-wise min across tiles. */
   private[gt] val localMin = new LocalTileAggregateFunction(Min)
 
   /** Render tile as ASCII string. */
-  private[gt] val renderAscii: (Tile) ⇒ String = tile ⇒ tile.asciiDraw()
+  private[gt] val renderAscii: (Tile) ⇒ String = safeEval(_.asciiDraw)
 
   private[gt] val cellTypes: () ⇒ Seq[String] = () ⇒ Seq(
     BitCellType, ByteCellType, ByteConstantNoDataCellType, UByteCellType, UByteConstantNoDataCellType,

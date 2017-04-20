@@ -16,25 +16,42 @@
 
 package org.apache.spark.sql.gt.types
 
+import com.esotericsoftware.kryo.Kryo
+import geotrellis.spark.util.KryoSerializer
+import org.apache.spark.serializer.KryoRegistrator
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.sql.types.{UDTRegistration, UserDefinedType}
+import org.apache.spark.serializer.KryoRegistrator
 
 /**
  *
  * @author sfitch 
  * @since 4/12/17
  */
-private[gt] object Registrar {
-  def register(sqlContext: SQLContext): Unit = {
-    register(TileUDT)
-    register(MultibandTileUDT)
-    register(ExtentUDT)
-    register(ProjectedExtentUDT)
-    register(TemporalProjectedExtentUDT)
-    register(HistogramUDT)
+private[gt] object Registrator {
+
+  val types = Seq(
+    TileUDT,
+    MultibandTileUDT,
+    ExtentUDT,
+    ProjectedExtentUDT,
+    TemporalProjectedExtentUDT,
+    HistogramUDT
+  )
+
+//  object SparkRegistrator extends KryoRegistrator {
+//    override def registerClasses(kryo: Kryo): Unit = types
+//      .filter(_.isInstanceOf[KryoBackedUDT[_]])
+//      .map(_.userClass)
+//      .foreach(kryo.register)
+//  }
+
+
+  def register(implicit sqlContext: SQLContext): Unit = {
+    types.foreach(register)
   }
 
-  private def register(udt: UserDefinedType[_]): Unit = {
+  private def register(udt: UserDefinedType[_])(implicit ctx: SQLContext): Unit = {
     UDTRegistration.register(
       udt.userClass.getCanonicalName,
       udt.getClass.getSuperclass.getName

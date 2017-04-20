@@ -45,8 +45,10 @@ class GTSQLSpec extends FunSpec with Matchers with Inspectors with TestEnvironme
   def write(df: Dataset[_]): Unit = {
     val sanitized = df.select(df.columns.map(c ⇒ col(c).as(c.replaceAll("[ ,;{}()\n\t=]", "_"))): _*)
     val dest = Files.createTempFile("GTSQL", ".parquet")
-    println(s"Writing '${sanitized.columns.mkString(", ")}' to $dest")
+    print(s"Writing '${sanitized.columns.mkString(", ")}' to '$dest'...")
     sanitized.write.mode(SaveMode.Overwrite).parquet(dest.toString)
+    val rows = df.sparkSession.read.parquet(dest.toString).count()
+    println(s" it has $rows row(s)")
   }
 
   implicit class DFExtras(df: DataFrame) {
@@ -206,6 +208,16 @@ class GTSQLSpec extends FunSpec with Matchers with Inspectors with TestEnvironme
       }
     }
 
+    it("should compute tile statistics") {
+      val ds = Seq.fill[Tile](3)(UDFs.randomTile(5, 5, "float32")).toDS()
+      val means1 = ds.select(statistics($"value")).map(_.mean).collect
+      val means2 = ds.select(tileMean($"value")).collect
+      assert(means1 === means2)
+
+
+      ds.toDF.mapPartitions()
+    }
+
     it("should list supported cell types") {
       val ct = sql("select explode(st_cellTypes())").as[String].collect
       forEvery(UDFs.cellTypes()) { c ⇒
@@ -218,12 +230,11 @@ class GTSQLSpec extends FunSpec with Matchers with Inspectors with TestEnvironme
       ds.createOrReplaceTempView("tmp")
 
       val r1 = ds.select(histogram($"tiles").as[Histogram[Double]])
+      write(r1)
 
-        .map(_.statistics().get)
 
-
-      val r2 = sql("select st_histogram(tiles) from tmp").as[Histogram[Double]].first
-
+      val r2 = sql("select st_histogram(tiles) from tmp")//.as[Histogram[Double]]
+      write(r2)
 
     }
   }

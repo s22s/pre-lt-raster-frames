@@ -25,7 +25,7 @@ package org.apache.spark.sql
  */
 package object gt extends implicits {
   def gtRegister(sqlContext: SQLContext): Unit = {
-    gt.types.Registrar.register(sqlContext)
-    gt.functions.Registrar.register(sqlContext)
+    gt.types.Registrator.register(sqlContext)
+    gt.functions.Registrator.register(sqlContext)
   }
 }

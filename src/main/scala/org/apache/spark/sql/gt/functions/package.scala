@@ -18,6 +18,7 @@ package org.apache.spark.sql.gt
 
 import geotrellis.raster.Tile
 import geotrellis.raster.histogram.Histogram
+import geotrellis.raster.summary.Statistics
 import org.apache.spark.sql.catalyst.analysis.{MultiAlias, UnresolvedAttribute}
 import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.catalyst.expressions.{CreateArray, Expression, Inline}
@@ -66,14 +67,41 @@ package object functions {
     Column(exploder).as(metaNames ++ colNames)
   }
 
+  /** Query the number of rows in a tile. */
+  def gridRows(col: Column) = withAlias("gridRows", col,
+    SparkUDF[Int, Tile](UDFs.gridRows).apply(col)
+  ).as[Int]
+
+  /** Query the number of columns in a tile. */
+  def gridCols(col: Column) = withAlias("gridCols", col,
+    SparkUDF[Int, Tile](UDFs.gridCols).apply(col)
+  ).as[Int]
+
+  /** Compute the focal sum of a tile with the given radius. */
+  def focalSum(tile: Column, size: Column) = withAlias("focalSum", tile,
+    SparkUDF[Tile, Tile, Int](UDFs.focalSum).apply(tile, size)
+  )
+
   /** Compute the cellwise/local max operation between tiles in a column. */
   def localMax(col: Column) = withAlias("localMax", col, UDFs.localMax(col)).as[Tile]
+
   /** Compute the cellwise/local min operation between tiles in a column. */
   def localMin(col: Column) = withAlias("localMin", col, UDFs.localMin(col)).as[Tile]
+
+  /** Compute the tile-wise mean */
+  def tileMean(col: Column) = withAlias("tileMean", col,
+    SparkUDF[Double, Tile](UDFs.tileMean).apply(col)
+  ).as[Double]
+
   /** Compute histogram of tile values. */
   def histogram(col: Column) = withAlias("histogram", col,
     SparkUDF[Histogram[Double], Tile](UDFs.histogram).apply(col)
   ).as[Histogram[Double]]
+
+  /** Compute statistics of tile values. */
+  def statistics(col: Column) = withAlias("statistics", col,
+    SparkUDF[Statistics[Double], Tile](UDFs.statistics).apply(col)
+  ).as[Statistics[Double]]
 
   /** Render tile as ASCII string for debugging purposes. */
   def renderAscii(col: Column) = withAlias("renderAscii", col,
