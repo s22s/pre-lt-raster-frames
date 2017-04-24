@@ -19,14 +19,13 @@ package org.apache.spark.sql.gt
 import geotrellis.raster.Tile
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.summary.Statistics
+import geotrellis.raster.mapalgebra.{local ⇒ alg}
 import org.apache.spark.sql.catalyst.analysis.{MultiAlias, UnresolvedAttribute}
-import org.apache.spark.sql.catalyst.encoders.RowEncoder
 import org.apache.spark.sql.catalyst.expressions.{CreateArray, Expression, Inline}
 import org.apache.spark.sql.types.{StructType, UDTRegistration, UserDefinedType}
 import org.apache.spark.sql._
 
 import scala.reflect.runtime.universe._
-import scala.util.Try
 import org.apache.spark.sql.functions.{udf ⇒ SparkUDF}
 
 /**
@@ -55,58 +54,72 @@ package object functions {
   }
 
   /** Query the number of rows in a tile. */
-  def gridRows(col: Column) = withAlias("gridRows", col,
+  def gridRows(col: Column) = withAlias("gridRows", col)(
     SparkUDF[Int, Tile](UDFs.gridRows).apply(col)
   ).as[Int]
 
   /** Query the number of columns in a tile. */
-  def gridCols(col: Column) = withAlias("gridCols", col,
+  def gridCols(col: Column) = withAlias("gridCols", col)(
     SparkUDF[Int, Tile](UDFs.gridCols).apply(col)
   ).as[Int]
 
   /** Compute the focal sum of a tile with the given radius. */
-  def focalSum(tile: Column, size: Column) = withAlias("focalSum", tile,
+  def focalSum(tile: Column, size: Column) = withAlias("focalSum", tile)(
     SparkUDF[Tile, Tile, Int](UDFs.focalSum).apply(tile, size)
   )
 
   /** Compute the cellwise/local max operation between tiles in a column. */
-  def localMax(col: Column) = withAlias("localMax", col, UDFs.localMax(col)).as[Tile]
+  def localMax(col: Column) = withAlias("localMax", col)(
+    UDFs.localMax(col)
+  ).as[Tile]
 
   /** Compute the cellwise/local min operation between tiles in a column. */
-  def localMin(col: Column) = withAlias("localMin", col, UDFs.localMin(col)).as[Tile]
+  def localMin(col: Column) = withAlias("localMin", col)(
+    UDFs.localMin(col)
+  ).as[Tile]
 
   /** Compute the tile-wise mean */
-  def tileMean(col: Column) = withAlias("tileMean", col,
+  def tileMean(col: Column) = withAlias("tileMean", col)(
     SparkUDF[Double, Tile](UDFs.tileMean).apply(col)
   ).as[Double]
 
+  def localAdd(left: Column, right: Column) = withAlias("add", left, right)(
+    SparkUDF[Tile, Tile, Tile](alg.Add.apply).apply(left, right)
+  ).as[Tile]
+
+  def localSubtract(left: Column, right: Column) = withAlias("subtract", left, right)(
+    SparkUDF[Tile, Tile, Tile](alg.Subtract.apply).apply(left, right)
+  ).as[Tile]
+
   /** Compute tileHistogram of tile values. */
-  def tileHistogram(col: Column) = withAlias("tileHistogram", col,
+  def tileHistogram(col: Column) = withAlias("tileHistogram", col)(
     SparkUDF[Histogram[Double], Tile](UDFs.tileHistogram).apply(col)
   ).as[Histogram[Double]]
 
   /** Compute statistics of tile values. */
-  def tileStatistics(col: Column) = withAlias("tileStatistics", col,
+  def tileStatistics(col: Column) = withAlias("tileStatistics", col)(
     SparkUDF[Statistics[Double], Tile](UDFs.tileStatistics).apply(col)
   ).as[Statistics[Double]]
 
-  def histogram(col: Column) = withAlias("histogram", col,
-    UDFs.histogram(col).as[Histogram[Double]]
-  )
+  def histogram(col: Column) = withAlias("histogram", col)(
+    UDFs.histogram(col)
+  ).as[Histogram[Double]]
 
   /** Render tile as ASCII string for debugging purposes. */
-  def renderAscii(col: Column) = withAlias("renderAscii", col,
+  def renderAscii(col: Column) = withAlias("renderAscii", col)(
     SparkUDF[String, Tile](UDFs.renderAscii).apply(col)
   ).as[String]
 
   // -- Private APIs below --
-  /** Tags output column with something resonable. */
-  private[gt] def withAlias(name: String, input: Column, output: Column) = {
-    val paramName = input.expr match {
-      case ua: UnresolvedAttribute ⇒ ua.name
-      case o ⇒ o.prettyName
-    }
-    output.as(s"$name($paramName)")
+  private[gt] def colName(c: Column) = c.expr match {
+    case ua: UnresolvedAttribute ⇒ ua.name
+    case o ⇒ o.prettyName
+  }
+
+  /** Tags output column with a nicer name. */
+  private[gt] def withAlias(name: String, inputs: Column*)(output: Column) = {
+    val paramNames = inputs.map(colName).mkString(",")
+    output.as(s"$name($paramNames)")
   }
 
   /** Lookup the registered Catalyst UDT for the given Scala type. */

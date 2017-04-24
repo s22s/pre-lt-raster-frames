@@ -48,13 +48,13 @@ object UDFs {
 
   private[gt] val tileMean: (Tile) ⇒ Double = safeEval(_.statisticsDouble.map(_.mean).getOrElse(Double.NaN))
 
-  /** Perform a focal sum over square area with given half/width extent (value of 1 would be a 3x3 tile) */
+  /** Perform a focal sum over square area with given half/width extent (value of 1 would be a 3x3 tile). This is just a  */
   private[gt] val focalSum: (Tile, Int) ⇒ Tile = safeEval((tile, extent) ⇒ Sum(tile, Square(extent)))
   /** Compute the cell-wise max across tiles. */
   private[gt] val localMax = new LocalTileAggregateFunction(Max)
   /** Compute the cell-wise min across tiles. */
   private[gt] val localMin = new LocalTileAggregateFunction(Min)
-  /** Computes the column aggregate tileHistogram */
+  /** Computes the column aggregate histogram */
   private[gt] val histogram = new AggregateHistogramFunction()
 
   /** Render tile as ASCII string. */

@@ -16,8 +16,6 @@
 
 package org.apache.spark.sql.gt
 
-import com.vividsolutions.jts.{geom ⇒ jts}
-
 import scala.reflect.runtime.universe._
 
 /**
