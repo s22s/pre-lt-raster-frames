@@ -30,8 +30,6 @@ import org.apache.spark.sql.types._
  * @since 4/17/17
  */
 class LocalTileAggregateFunction(op: LocalTileBinaryOp) extends UserDefinedAggregateFunction {
-  private val EMPTY = BitConstantTile(0, 0, 0)
-
   override def inputSchema: StructType = StructType(StructField("value", TileUDT) :: Nil)
 
   override def bufferSchema: StructType = inputSchema
@@ -40,11 +38,10 @@ class LocalTileAggregateFunction(op: LocalTileBinaryOp) extends UserDefinedAggre
 
   override def deterministic: Boolean = true
 
-  override def initialize(buffer: MutableAggregationBuffer): Unit =
-    buffer(0) = EMPTY
+  override def initialize(buffer: MutableAggregationBuffer): Unit = ()
 
   override def update(buffer: MutableAggregationBuffer, input: Row): Unit = {
-    if(buffer(0) == EMPTY) {
+    if(buffer(0) == null) {
       buffer(0) = input(0)
     }
     else {
