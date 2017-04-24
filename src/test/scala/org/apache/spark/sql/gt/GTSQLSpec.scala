@@ -160,31 +160,6 @@ class GTSQLSpec extends FunSpec
       assert(ds.toDF.as[TemporalProjectedExtent].collect().head === tpe)
     }
 
-    it("should flatten stuff") {
-      withClue("Extent") {
-        val ds = Seq(extent).toDS()
-        assert(ds.select(flatten(asStruct($"value".as[Extent]))).select("xmax").as[Double].collect().head === extent.xmax)
-        assert(ds.select(flatten($"value".as[Extent])).select("xmax").as[Double].collect().head === extent.xmax)
-        assert(ds.select(expr("st_flattenExtent(value)")).select("xmax").as[Double].collect().head === extent.xmax)
-      }
-      withClue("ProjectedExtent") {
-        val ds = Seq(pe).toDS()
-        val flattened = ds
-          .select(flatten($"value".as[ProjectedExtent]))
-          .select(flatten($"extent".as[Extent]), $"crs")
-        assert(flattened.select("xmax").as[Double].collect().head === pe.extent.xmax)
-      }
-      withClue("ProjectedExtent") {
-        val ds = Seq(tpe).toDS()
-        val flattened = ds
-          .select(flatten($"value".as[TemporalProjectedExtent]))
-          .select(flatten($"extent".as[Extent]), $"time", $"crs")
-        implicit val enc = Encoders.TIMESTAMP
-
-        assert(flattened.select("time").as[Timestamp].collect().head === new Timestamp(tpe.instant))
-      }
-    }
-
     it("should support local min/max") {
       val ds = Seq[Tile](byteArrayTile, byteConstantTile).toDF("tiles")
       ds.createOrReplaceTempView("tmp")
@@ -240,18 +215,18 @@ class GTSQLSpec extends FunSpec
     }
 
     it("should compute aggregate histogram") {
-      val ds = Seq.fill[Tile](3)(UDFs.randomTile(5, 5, "float32")).toDF("tiles")
+      val ds = Seq.fill[Tile](10)(UDFs.randomTile(5, 5, "float32")).toDF("tiles")
       ds.createOrReplaceTempView("tmp")
       val agg = ds.select(histogram($"tiles")).as[Histogram[Double]]
       val hist = agg.collect()
       assert(hist.length === 1)
       val stats = agg.map(_.statistics().get).as("stats")
       stats.select("stats.*").show(false)
-      assert(stats.first().stddev === 1.0 +- 0.1)
+      assert(stats.first().stddev === 1.0 +- 0.1) // <-- playing with statistical fire :)
 
       val hist2 = sql("select st_histogram(tiles) as hist from tmp").as[Histogram[Double]]
 
-      assert(hist2.first.totalCount() === 75)
+      assert(hist2.first.totalCount() === 250)
     }
   }
 }

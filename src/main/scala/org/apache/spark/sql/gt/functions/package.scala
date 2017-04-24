@@ -41,19 +41,6 @@ package object functions {
   }
   import encoders._
 
-  /** Create columns for each field in the structure or UDT. */
-  def flatten[T >: Null: TypeTag](col: TypedColumn[_, T]) = Column(
-    Try(asStruct[T](col))
-      .map(col ⇒ projectStructExpression(col.encoder.schema, col.expr))
-      .getOrElse(projectStructExpression(col.encoder.schema, col.expr))
-  )
-
-  /** Attempts to convert a UDT into a struct based on the underlying deserializer. */
-  def asStruct[T >: Null: TypeTag](col: TypedColumn[_, T]) = {
-    val converter = UDTAsStructExpression(udtOf[T], col.expr)
-    Column(converter).as[Row](RowEncoder(converter.dataType))
-  }
-
   /** Create a row for each pixel in tile. */
   def explodeTile(cols: Column*) = {
     val exploder = ExplodeTileExpression(cols.map(_.expr))
@@ -126,12 +113,6 @@ package object functions {
   private[gt] def udtOf[T >: Null: TypeTag]: UserDefinedType[T] =
     UDTRegistration.getUDTFor(typeTag[T].tpe.toString).map(_.newInstance().asInstanceOf[UserDefinedType[T]])
       .getOrElse(throw new IllegalArgumentException(typeTag[T].tpe + " doesn't have a corresponding UDT"))
-
-  /** Creates a Catalyst expression for flattening the fields in a UDT into columns. */
-  private[gt] def flattenExpression[T >: Null : TypeTag](input: Expression) = {
-    val converter = UDTAsStructExpression(udtOf[T], input)
-    projectStructExpression(converter.dataType, converter)
-  }
 
   /** Creates a Catalyst expression for flattening the fields in a struct into columns. */
   private[gt] def projectStructExpression(dataType: StructType, input: Expression) =

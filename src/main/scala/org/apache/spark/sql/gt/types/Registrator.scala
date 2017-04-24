@@ -33,19 +33,9 @@ private[gt] object Registrator {
   val types = Seq(
     TileUDT,
     MultibandTileUDT,
-    ExtentUDT,
-    ProjectedExtentUDT,
-    TemporalProjectedExtentUDT,
+    CoordinateReferenceSystemUDT,
     HistogramUDT
   )
-
-//  object SparkRegistrator extends KryoRegistrator {
-//    override def registerClasses(kryo: Kryo): Unit = types
-//      .filter(_.isInstanceOf[KryoBackedUDT[_]])
-//      .map(_.userClass)
-//      .foreach(kryo.register)
-//  }
-
 
   def register(implicit sqlContext: SQLContext): Unit = {
     types.foreach(register)

@@ -47,8 +47,4 @@ private[gt] object Registrator {
   // Expression-oriented functions have a different registration scheme
   // Currently have to register with the `builtin` registry due to data hiding.
   FunctionRegistry.builtin.registerFunction("st_explodeTile", ExplodeTileExpression.apply)
-  FunctionRegistry.builtin.registerFunction("st_flattenExtent",
-    (exprs: Seq[Expression]) ⇒ flattenExpression[Extent](exprs.head))
-  FunctionRegistry.builtin.registerFunction("st_flattenProjectedExtent",
-    (exprs: Seq[Expression]) ⇒ flattenExpression[ProjectedExtent](exprs.head))
 }

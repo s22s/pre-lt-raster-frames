@@ -16,11 +16,11 @@
 
 package org.apache.spark.sql.gt.functions
 
-import geotrellis.raster.histogram.{DoubleHistogram, Histogram, StreamingHistogram}
-import geotrellis.raster.{ArrayTile, BitCellType, BitConstantTile, ByteCellType, ByteCells, ByteConstantNoDataCellType, ByteConstantTile, CellGrid, CellType, DoubleCellType, DoubleCells, DoubleConstantNoDataCellType, DoubleConstantTile, FloatCellType, FloatCells, FloatConstantNoDataCellType, FloatConstantTile, IntCellType, IntCells, IntConstantNoDataCellType, IntConstantTile, ShortCellType, ShortCells, ShortConstantNoDataCellType, ShortConstantTile, Tile, UByteCellType, UByteCells, UByteConstantNoDataCellType, UByteConstantTile, UShortCellType, UShortCells, UShortConstantNoDataCellType, UShortConstantTile}
+import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.focal.{Square, Sum}
 import geotrellis.raster.mapalgebra.local.{Max, Min}
 import geotrellis.raster.summary.Statistics
+import geotrellis.raster._
 
 import scala.util.Random
 

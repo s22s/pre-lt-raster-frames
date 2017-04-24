@@ -17,8 +17,6 @@
 package org.apache.spark.sql.gt
 
 import com.vividsolutions.jts.{geom ⇒ jts}
-import org.apache.spark.sql.SQLContext
-import org.apache.spark.sql.types._
 
 import scala.reflect.runtime.universe._
 
