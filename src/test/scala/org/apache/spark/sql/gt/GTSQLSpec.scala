@@ -248,6 +248,10 @@ class GTSQLSpec extends FunSpec
       val stats = agg.map(_.statistics().get).as("stats")
       stats.select("stats.*").show(false)
       assert(stats.first().stddev === 1.0 +- 0.1)
+
+      val hist2 = sql("select st_histogram(tiles) as hist from tmp").as[Histogram[Double]]
+
+      assert(hist2.first.totalCount() === 75)
     }
   }
 }

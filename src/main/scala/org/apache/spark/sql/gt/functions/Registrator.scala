@@ -39,12 +39,13 @@ private[gt] object Registrator {
     sqlContext.udf.register("st_tileMean", UDFs.tileMean)
     sqlContext.udf.register("st_tileHistogram", UDFs.tileHistogram)
     sqlContext.udf.register("st_tileStatistics", UDFs.tileStatistics)
-    sqlContext.udf.register("st_aggregateHistogram", UDFs.histogram)
+    sqlContext.udf.register("st_histogram", UDFs.histogram)
     sqlContext.udf.register("st_randomTile", UDFs.randomTile)
     sqlContext.udf.register("st_cellTypes", UDFs.cellTypes)
     sqlContext.udf.register("st_renderAscii", UDFs.renderAscii)
   }
   // Expression-oriented functions have a different registration scheme
+  // Currently have to register with the `builtin` registry due to data hiding.
   FunctionRegistry.builtin.registerFunction("st_explodeTile", ExplodeTileExpression.apply)
   FunctionRegistry.builtin.registerFunction("st_flattenExtent",
     (exprs: Seq[Expression]) ⇒ flattenExpression[Extent](exprs.head))
