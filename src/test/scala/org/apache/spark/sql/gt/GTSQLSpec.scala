@@ -30,6 +30,7 @@ import org.apache.spark.sql.gt.functions._
 import org.apache.spark.sql.{DataFrame, Dataset, Encoders, SaveMode}
 import org.scalatest.{FunSpec, Inspectors, Matchers}
 import org.apache.spark.sql.functions._
+import org.scalactic.Tolerance
 //import org.apache.spark.sql.execution.debug._
 
 /**
@@ -37,7 +38,9 @@ import org.apache.spark.sql.functions._
  * @author sfitch
  * @since 3/30/17
  */
-class GTSQLSpec extends FunSpec with Matchers with Inspectors with TestEnvironment with TestData {
+class GTSQLSpec extends FunSpec
+  with Matchers with Inspectors with Tolerance
+  with TestEnvironment with TestData {
 
   gtRegister(_spark.sqlContext)
 
@@ -210,12 +213,9 @@ class GTSQLSpec extends FunSpec with Matchers with Inspectors with TestEnvironme
 
     it("should compute tile statistics") {
       val ds = Seq.fill[Tile](3)(UDFs.randomTile(5, 5, "float32")).toDS()
-      val means1 = ds.select(statistics($"value")).map(_.mean).collect
+      val means1 = ds.select(tileStatistics($"value")).map(_.mean).collect
       val means2 = ds.select(tileMean($"value")).collect
       assert(means1 === means2)
-
-
-      ds.toDF.mapPartitions()
     }
 
     it("should list supported cell types") {
@@ -225,17 +225,29 @@ class GTSQLSpec extends FunSpec with Matchers with Inspectors with TestEnvironme
       }
     }
 
-    it("should generate a histogram") {
-      val ds = Seq[Tile](UDFs.randomTile(5, 5, "float32")).toDF("tiles")
+    it("should compute per-tile histogram") {
+      val ds = Seq.fill[Tile](3)(UDFs.randomTile(5, 5, "float32")).toDF("tiles")
       ds.createOrReplaceTempView("tmp")
 
-      val r1 = ds.select(histogram($"tiles").as[Histogram[Double]])
+      val r1 = ds.select(tileHistogram($"tiles").as[Histogram[Double]])
+      assert(r1.first.totalCount() === 5 * 5)
       write(r1)
 
-
-      val r2 = sql("select st_histogram(tiles) from tmp")//.as[Histogram[Double]]
+      val r2 = sql("select st_tileHistogram(tiles) from tmp")
       write(r2)
 
+      assert(r1.first.mean === r2.as[Histogram[Double]].first.mean)
+    }
+
+    it("should compute aggregate histogram") {
+      val ds = Seq.fill[Tile](3)(UDFs.randomTile(5, 5, "float32")).toDF("tiles")
+      ds.createOrReplaceTempView("tmp")
+      val agg = ds.select(histogram($"tiles")).as[Histogram[Double]]
+      val hist = agg.collect()
+      assert(hist.length === 1)
+      val stats = agg.map(_.statistics().get).as("stats")
+      stats.select("stats.*").show(false)
+      assert(stats.first().stddev === 1.0 +- 0.1)
     }
   }
 }

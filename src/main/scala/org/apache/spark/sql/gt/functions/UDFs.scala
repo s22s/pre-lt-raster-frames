@@ -42,9 +42,9 @@ object UDFs {
   /** Reports number of rows in a tile. */
   private[gt] val gridRows: (CellGrid) ⇒ (Int) = safeEval(_.rows)
 
-  private[gt] val histogram: (Tile) ⇒ Histogram[Double] = safeEval(_.histogramDouble())
+  private[gt] val tileHistogram: (Tile) ⇒ Histogram[Double] = safeEval(_.histogramDouble())
 
-  private[gt] val statistics: (Tile) ⇒ Statistics[Double] = safeEval(_.statisticsDouble.orNull)
+  private[gt] val tileStatistics: (Tile) ⇒ Statistics[Double] = safeEval(_.statisticsDouble.orNull)
 
   private[gt] val tileMean: (Tile) ⇒ Double = safeEval(_.statisticsDouble.map(_.mean).getOrElse(Double.NaN))
 
@@ -54,6 +54,8 @@ object UDFs {
   private[gt] val localMax = new LocalTileAggregateFunction(Max)
   /** Compute the cell-wise min across tiles. */
   private[gt] val localMin = new LocalTileAggregateFunction(Min)
+  /** Computes the column aggregate tileHistogram */
+  private[gt] val histogram = new AggregateHistogramFunction()
 
   /** Render tile as ASCII string. */
   private[gt] val renderAscii: (Tile) ⇒ String = safeEval(_.asciiDraw)

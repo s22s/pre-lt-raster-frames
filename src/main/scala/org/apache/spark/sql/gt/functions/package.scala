@@ -93,15 +93,19 @@ package object functions {
     SparkUDF[Double, Tile](UDFs.tileMean).apply(col)
   ).as[Double]
 
-  /** Compute histogram of tile values. */
-  def histogram(col: Column) = withAlias("histogram", col,
-    SparkUDF[Histogram[Double], Tile](UDFs.histogram).apply(col)
+  /** Compute tileHistogram of tile values. */
+  def tileHistogram(col: Column) = withAlias("tileHistogram", col,
+    SparkUDF[Histogram[Double], Tile](UDFs.tileHistogram).apply(col)
   ).as[Histogram[Double]]
 
   /** Compute statistics of tile values. */
-  def statistics(col: Column) = withAlias("statistics", col,
-    SparkUDF[Statistics[Double], Tile](UDFs.statistics).apply(col)
+  def tileStatistics(col: Column) = withAlias("tileStatistics", col,
+    SparkUDF[Statistics[Double], Tile](UDFs.tileStatistics).apply(col)
   ).as[Statistics[Double]]
+
+  def histogram(col: Column) = withAlias("histogram", col,
+    UDFs.histogram(col).as[Histogram[Double]]
+  )
 
   /** Render tile as ASCII string for debugging purposes. */
   def renderAscii(col: Column) = withAlias("renderAscii", col,
