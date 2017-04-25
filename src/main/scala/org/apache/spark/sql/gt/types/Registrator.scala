@@ -16,12 +16,8 @@
 
 package org.apache.spark.sql.gt.types
 
-import com.esotericsoftware.kryo.Kryo
-import geotrellis.spark.util.KryoSerializer
-import org.apache.spark.serializer.KryoRegistrator
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.sql.types.{UDTRegistration, UserDefinedType}
-import org.apache.spark.serializer.KryoRegistrator
 
 /**
  *

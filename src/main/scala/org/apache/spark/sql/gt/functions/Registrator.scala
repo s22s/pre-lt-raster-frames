@@ -16,10 +16,12 @@
 
 package org.apache.spark.sql.gt.functions
 
+import geotrellis.raster.Tile
 import geotrellis.vector.{Extent, ProjectedExtent}
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.sql.catalyst.analysis.FunctionRegistry
 import org.apache.spark.sql.catalyst.expressions.Expression
+import geotrellis.raster.mapalgebra.{local ⇒ alg}
 
 /**
  * Object responsible for registering functions with Catalyst
@@ -36,6 +38,8 @@ private[gt] object Registrator {
     sqlContext.udf.register("st_gridCols", UDFs.gridCols)
     sqlContext.udf.register("st_localMax", UDFs.localMax)
     sqlContext.udf.register("st_localMin", UDFs.localMin)
+    sqlContext.udf.register("st_localAdd", UDFs.localAdd)
+    sqlContext.udf.register("st_localSubtract", UDFs.localSubtract)
     sqlContext.udf.register("st_tileMean", UDFs.tileMean)
     sqlContext.udf.register("st_tileHistogram", UDFs.tileHistogram)
     sqlContext.udf.register("st_tileStatistics", UDFs.tileStatistics)

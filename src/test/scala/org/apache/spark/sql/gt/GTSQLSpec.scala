@@ -22,7 +22,7 @@ import java.nio.file.Files
 import java.sql.Timestamp
 
 import geotrellis.raster.histogram.Histogram
-import geotrellis.raster.mapalgebra.local.{Max, Min}
+import geotrellis.raster.mapalgebra.local.{Add, Max, Min, Subtract}
 import geotrellis.raster.{ByteCellType, MultibandTile, Tile, TileFeature}
 import geotrellis.spark.TemporalProjectedExtent
 import geotrellis.vector.{Extent, ProjectedExtent}
@@ -184,6 +184,30 @@ class GTSQLSpec extends FunSpec
         val sqlMin = sql("select st_localMin(tiles) from tmp")
         assert(sqlMin.as[Tile].first() === expected)
       }
+    }
+
+    it("should support local algebra") {
+      val ds = Seq[(Tile, Tile)]((byteArrayTile, byteConstantTile)).toDF("left", "right")
+      ds.createOrReplaceTempView("tmp")
+
+      withClue("add") {
+        val sum = ds.select(localAdd($"left", $"right"))
+        val expected = Add(byteArrayTile, byteConstantTile)
+        assert(sum.as[Tile].first() === expected)
+
+        val sqlSum = sql("select st_localAdd(left, right) from tmp")
+        assert(sqlSum.as[Tile].first() === expected)
+      }
+
+      withClue("subtract") {
+        val sub = ds.select(localSubtract($"left", $"right"))
+        val expected = Subtract(byteArrayTile, byteConstantTile)
+        assert(sub.as[Tile].first() === expected)
+
+        val sqlSub = sql("select st_localSubtract(left, right) from tmp")
+        assert(sqlSub.as[Tile].first() === expected)
+      }
+
     }
 
     it("should compute tile statistics") {

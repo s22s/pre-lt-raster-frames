@@ -18,6 +18,7 @@ package org.apache.spark.sql.gt
 
 import geotrellis.raster.Tile
 import geotrellis.raster.histogram.Histogram
+import geotrellis.raster.mapalgebra.local.LocalTileBinaryOp
 import geotrellis.raster.summary.Statistics
 import geotrellis.raster.mapalgebra.{local ⇒ alg}
 import org.apache.spark.sql.catalyst.analysis.{MultiAlias, UnresolvedAttribute}
@@ -83,13 +84,17 @@ package object functions {
     SparkUDF[Double, Tile](UDFs.tileMean).apply(col)
   ).as[Double]
 
-  def localAdd(left: Column, right: Column) = withAlias("add", left, right)(
-    SparkUDF[Tile, Tile, Tile](alg.Add.apply).apply(left, right)
-  ).as[Tile]
+  /** Cellwise addition between two tiles. */
+  def localAdd(left: Column, right: Column) = localAlgebra(alg.Add, left, right)
 
-  def localSubtract(left: Column, right: Column) = withAlias("subtract", left, right)(
-    SparkUDF[Tile, Tile, Tile](alg.Subtract.apply).apply(left, right)
-  ).as[Tile]
+  /** Cellwise subtraction between two tiles. */
+  def localSubtract(left: Column, right: Column) = localAlgebra(alg.Subtract, left, right)
+
+  /** Perform an arbitrary GeoTrellis `LocalTileBinaryOp` between two tile columns. */
+  def localAlgebra(op: LocalTileBinaryOp, left: Column, right: Column) =
+    withAlias(opName(op), left, right)(
+      SparkUDF[Tile, Tile, Tile](op.apply).apply(left, right)
+    ).as[Tile]
 
   /** Compute tileHistogram of tile values. */
   def tileHistogram(col: Column) = withAlias("tileHistogram", col)(
@@ -121,6 +126,9 @@ package object functions {
     val paramNames = inputs.map(colName).mkString(",")
     output.as(s"$name($paramNames)")
   }
+
+  private[gt] def opName(op: LocalTileBinaryOp) =
+    op.getClass.getSimpleName.replace("$", "").toLowerCase
 
   /** Lookup the registered Catalyst UDT for the given Scala type. */
   private[gt] def udtOf[T >: Null: TypeTag]: UserDefinedType[T] =

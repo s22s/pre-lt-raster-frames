@@ -18,7 +18,7 @@ package org.apache.spark.sql.gt.functions
 
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.focal.{Square, Sum}
-import geotrellis.raster.mapalgebra.local.{Max, Min}
+import geotrellis.raster.mapalgebra.local.{Max, Min, Add, Subtract}
 import geotrellis.raster.summary.Statistics
 import geotrellis.raster._
 
@@ -42,10 +42,16 @@ object UDFs {
   /** Reports number of rows in a tile. */
   private[gt] val gridRows: (CellGrid) ⇒ (Int) = safeEval(_.rows)
 
+  /** Computes the column aggregate histogram */
+  private[gt] val histogram = new AggregateHistogramFunction()
+
+  /** Single tile histogram. */
   private[gt] val tileHistogram: (Tile) ⇒ Histogram[Double] = safeEval(_.histogramDouble())
 
+  /** Single tile statistics. Convenience for `tileHistogram.statisticsDouble`. */
   private[gt] val tileStatistics: (Tile) ⇒ Statistics[Double] = safeEval(_.statisticsDouble.orNull)
 
+  /** Single tile mean. Convenience for `tileHistogram.statisticsDouble.mean`. */
   private[gt] val tileMean: (Tile) ⇒ Double = safeEval(_.statisticsDouble.map(_.mean).getOrElse(Double.NaN))
 
   /** Perform a focal sum over square area with given half/width extent (value of 1 would be a 3x3 tile). This is just a  */
@@ -54,8 +60,13 @@ object UDFs {
   private[gt] val localMax = new LocalTileAggregateFunction(Max)
   /** Compute the cell-wise min across tiles. */
   private[gt] val localMin = new LocalTileAggregateFunction(Min)
-  /** Computes the column aggregate histogram */
-  private[gt] val histogram = new AggregateHistogramFunction()
+
+  /** Cell-wise addition between tiles. */
+  private[gt] val localAdd: (Tile, Tile) ⇒ Tile = safeEval((left, right) ⇒
+    Add(left, right))
+  /** Cell-wise subtraction between tiles. */
+  private[gt] val localSubtract: (Tile, Tile) ⇒ Tile = safeEval((left, right) ⇒
+    Subtract(left, right))
 
   /** Render tile as ASCII string. */
   private[gt] val renderAscii: (Tile) ⇒ String = safeEval(_.asciiDraw)
