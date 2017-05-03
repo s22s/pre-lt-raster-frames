@@ -16,12 +16,9 @@
 
 package org.apache.spark.sql.gt.functions
 
-import geotrellis.raster.Tile
-import geotrellis.vector.{Extent, ProjectedExtent}
+import geotrellis.raster.mapalgebra.{local ⇒ alg}
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.sql.catalyst.analysis.FunctionRegistry
-import org.apache.spark.sql.catalyst.expressions.Expression
-import geotrellis.raster.mapalgebra.{local ⇒ alg}
 
 /**
  * Object responsible for registering functions with Catalyst
@@ -43,6 +40,9 @@ private[gt] object Registrator {
     sqlContext.udf.register("st_tileMean", UDFs.tileMean)
     sqlContext.udf.register("st_tileHistogram", UDFs.tileHistogram)
     sqlContext.udf.register("st_tileStatistics", UDFs.tileStatistics)
+    sqlContext.udf.register("st_tileMeanDouble", UDFs.tileMeanDouble)
+    sqlContext.udf.register("st_tileHistogramDouble", UDFs.tileHistogramDouble)
+    sqlContext.udf.register("st_tileStatisticsDouble", UDFs.tileStatisticsDouble)
     sqlContext.udf.register("st_histogram", UDFs.histogram)
     sqlContext.udf.register("st_randomTile", UDFs.randomTile)
     sqlContext.udf.register("st_cellTypes", UDFs.cellTypes)
@@ -50,5 +50,5 @@ private[gt] object Registrator {
   }
   // Expression-oriented functions have a different registration scheme
   // Currently have to register with the `builtin` registry due to data hiding.
-  FunctionRegistry.builtin.registerFunction("st_explodeTile", ExplodeTileExpression.apply)
+  FunctionRegistry.builtin.registerFunction("st_explodeTile", ExplodeTileExpression.apply(1.0, _))
 }

@@ -31,6 +31,7 @@ trait implicits {
   implicit def extentEncoder: Encoder[Extent] = ExpressionEncoder()
   implicit def projectedExtentEncoder: Encoder[ProjectedExtent] = ExpressionEncoder()
   implicit def temporalProjectedExtentEncoder: Encoder[TemporalProjectedExtent] = ExpressionEncoder()
-  implicit def histogramEncoder: Encoder[Histogram[Double]] = ExpressionEncoder()
+  implicit def histogramDoubleEncoder: Encoder[Histogram[Double]] = ExpressionEncoder()
+  implicit def histogramIntEncoder: Encoder[Histogram[Int]] = ExpressionEncoder()
 }
 object implicits extends implicits

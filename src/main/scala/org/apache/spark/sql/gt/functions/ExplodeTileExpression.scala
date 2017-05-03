@@ -21,6 +21,7 @@ import org.apache.spark.sql.catalyst.expressions.codegen.CodegenFallback
 import org.apache.spark.sql.catalyst.expressions.{Expression, Generator}
 import org.apache.spark.sql.gt.types.TileUDT
 import org.apache.spark.sql.types.{DoubleType, IntegerType, StructField, StructType}
+import org.apache.spark.util.Utils
 
 /**
  * Catalyst expression for converting a tile column into a pixel column, with each tile pixel occupying a separate row.
@@ -28,8 +29,10 @@ import org.apache.spark.sql.types.{DoubleType, IntegerType, StructField, StructT
  * @author sfitch 
  * @since 4/12/17
  */
-private[spark] case class ExplodeTileExpression(override val children: Seq[Expression])
+private[spark] case class ExplodeTileExpression(sampleFraction: Double = 1.0,
+  override val children: Seq[Expression])
   extends Expression with Generator with CodegenFallback {
+
 
   override def elementSchema: StructType = {
     val names = if(children.size == 1) Seq("cell")
@@ -41,6 +44,11 @@ private[spark] case class ExplodeTileExpression(override val children: Seq[Expre
     ) ++ names.map(n ⇒
       StructField(n, DoubleType, false)
     ))
+  }
+
+  private def keep(): Boolean = {
+    if(sampleFraction >= 1.0) true
+    else Utils.random.nextDouble() <= sampleFraction
   }
 
   override def eval(input: InternalRow): TraversableOnce[InternalRow] = {
@@ -55,6 +63,7 @@ private[spark] case class ExplodeTileExpression(override val children: Seq[Expre
     for {
       row ← 0 until rows
       col ← 0 until cols
+      if keep()
       contents = Seq[Any](col, row) ++ tiles.map(_.getDouble(col, row))
     } yield InternalRow(contents: _*)
   }

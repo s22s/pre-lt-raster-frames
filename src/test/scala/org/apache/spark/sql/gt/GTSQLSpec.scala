@@ -91,7 +91,7 @@ class GTSQLSpec extends FunSpec
       assert(query.count === 3)
     }
 
-    it("should explode rows") {
+    it("should explode tiles") {
       val query = sql(
         """select st_explodeTile(
           |  st_makeConstantTile(1, 10, 10, 'int8raw'),
@@ -105,14 +105,21 @@ class GTSQLSpec extends FunSpec
            |select st_makeConstantTile(1, 10, 10, 'int8raw') as tiles)
            |""".stripMargin)
       write(query2)
-      assert(query2.columns.size === 5)
+      assert(query2.columns.length === 5)
 
       val df = Seq[(Tile, Tile)]((byteArrayTile, byteArrayTile)).toDF("tile1", "tile2")
       val exploded = df.select(explodeTile($"tile1", $"tile2"))
       //exploded.printSchema()
-      assert(exploded.columns.size === 4)
+      assert(exploded.columns.length === 4)
       assert(exploded.count() === 9)
       write(exploded)
+    }
+
+    it("should explode tiles with random sampling") {
+      val df = Seq[(Tile, Tile)]((byteArrayTile, byteArrayTile)).toDF("tile1", "tile2")
+      val exploded = df.select(explodeAndSampleTile(0.5, $"tile1", $"tile2"))
+      assert(exploded.columns.length === 4)
+      assert(exploded.count() < 9)
     }
 
     it("should code RDD[(Int, Tile)]") {
@@ -212,8 +219,8 @@ class GTSQLSpec extends FunSpec
 
     it("should compute tile statistics") {
       val ds = Seq.fill[Tile](3)(UDFs.randomTile(5, 5, "float32")).toDS()
-      val means1 = ds.select(tileStatistics($"value")).map(_.mean).collect
-      val means2 = ds.select(tileMean($"value")).collect
+      val means1 = ds.select(tileStatisticsDouble($"value")).map(_.mean).collect
+      val means2 = ds.select(tileMeanDouble($"value")).collect
       assert(means1 === means2)
     }
 

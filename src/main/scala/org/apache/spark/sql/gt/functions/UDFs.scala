@@ -45,14 +45,19 @@ object UDFs {
   /** Computes the column aggregate histogram */
   private[gt] val histogram = new AggregateHistogramFunction()
 
+  /** Single floating point tile histogram. */
+  private[gt] val tileHistogramDouble = safeEval[Tile, Histogram[Double]](_.histogramDouble())
+  /** Single floating point tile statistics. Convenience for `tileHistogram.statisticsDouble`. */
+  private[gt] val tileStatisticsDouble = safeEval[Tile, Statistics[Double]](_.statisticsDouble.orNull)
+  /** Single floating point tile mean. Convenience for `tileHistogram.statisticsDouble.mean`. */
+  private[gt] val tileMeanDouble = safeEval[Tile, Double](_.statisticsDouble.map(_.mean).getOrElse(Double.NaN))
+
   /** Single tile histogram. */
-  private[gt] val tileHistogram: (Tile) ⇒ Histogram[Double] = safeEval(_.histogramDouble())
-
-  /** Single tile statistics. Convenience for `tileHistogram.statisticsDouble`. */
-  private[gt] val tileStatistics: (Tile) ⇒ Statistics[Double] = safeEval(_.statisticsDouble.orNull)
-
-  /** Single tile mean. Convenience for `tileHistogram.statisticsDouble.mean`. */
-  private[gt] val tileMean: (Tile) ⇒ Double = safeEval(_.statisticsDouble.map(_.mean).getOrElse(Double.NaN))
+  private[gt] val tileHistogram = safeEval[Tile, Histogram[Int]](_.histogram)
+  /** Single tile statistics. Convenience for `tileHistogram.statistics`. */
+  private[gt] val tileStatistics = safeEval[Tile, Statistics[Int]](_.statistics.orNull)
+  /** Single tile mean. Convenience for `tileHistogram.statistics.mean`. */
+  private[gt] val tileMean = safeEval[Tile, Double](_.statistics.map(_.mean).getOrElse(Double.NaN))
 
   /** Perform a focal sum over square area with given half/width extent (value of 1 would be a 3x3 tile). This is just a  */
   private[gt] val focalSum: (Tile, Int) ⇒ Tile = safeEval((tile, extent) ⇒ Sum(tile, Square(extent)))

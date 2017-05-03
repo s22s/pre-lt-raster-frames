@@ -42,8 +42,11 @@ package object functions {
   import encoders._
 
   /** Create a row for each pixel in tile. */
-  def explodeTile(cols: Column*) = {
-    val exploder = ExplodeTileExpression(cols.map(_.expr))
+  def explodeTile(cols: Column*): Column = explodeAndSampleTile(1.0, cols: _*)
+
+  /** Create a row for each pixel in tile with random sampling. */
+  def explodeAndSampleTile(sampleFraction: Double, cols: Column*): Column = {
+    val exploder = ExplodeTileExpression(sampleFraction, cols.map(_.expr))
     // Hack to grab the first two non-cell columns
     val metaNames = exploder.elementSchema.fieldNames.take(2)
     val colNames = cols.map(_.expr).map {
@@ -79,11 +82,6 @@ package object functions {
     UDFs.localMin(col)
   ).as[Tile]
 
-  /** Compute the tile-wise mean */
-  def tileMean(col: Column) = withAlias("tileMean", col)(
-    SparkUDF[Double, Tile](UDFs.tileMean).apply(col)
-  ).as[Double]
-
   /** Cellwise addition between two tiles. */
   def localAdd(left: Column, right: Column) = localAlgebra(alg.Add, left, right)
 
@@ -96,17 +94,37 @@ package object functions {
       SparkUDF[Tile, Tile, Tile](op.apply).apply(left, right)
     ).as[Tile]
 
-  /** Compute tileHistogram of tile values. */
-  def tileHistogram(col: Column) = withAlias("tileHistogram", col)(
-    SparkUDF[Histogram[Double], Tile](UDFs.tileHistogram).apply(col)
+  /** Compute tileHistogram of floating point tile values. */
+  def tileHistogramDouble(col: Column) = withAlias("tileHistogramDouble", col)(
+    SparkUDF[Histogram[Double], Tile](UDFs.tileHistogramDouble).apply(col)
   ).as[Histogram[Double]]
 
   /** Compute statistics of tile values. */
-  def tileStatistics(col: Column) = withAlias("tileStatistics", col)(
-    SparkUDF[Statistics[Double], Tile](UDFs.tileStatistics).apply(col)
+  def tileStatisticsDouble(col: Column) = withAlias("tileStatisticsDouble", col)(
+    SparkUDF[Statistics[Double], Tile](UDFs.tileStatisticsDouble).apply(col)
   ).as[Statistics[Double]]
 
-  def histogram(col: Column) = withAlias("histogram", col)(
+  /** Compute the tile-wise mean */
+  def tileMeanDouble(col: Column) = withAlias("tileMeanDouble", col)(
+    SparkUDF[Double, Tile](UDFs.tileMeanDouble).apply(col)
+  ).as[Double]
+
+  /** Compute the tile-wise mean */
+  def tileMean(col: Column) = withAlias("tileMean", col)(
+    SparkUDF[Double, Tile](UDFs.tileMean).apply(col)
+  ).as[Double]
+
+  /** Compute tileHistogram of tile values. */
+  def tileHistogram(col: Column) = withAlias("tileHistogram", col)(
+    SparkUDF[Histogram[Int], Tile](UDFs.tileHistogram).apply(col)
+  ).as[Histogram[Int]]
+
+  /** Compute statistics of tile values. */
+  def tileStatistics(col: Column) = withAlias("tileStatistics", col)(
+    SparkUDF[Statistics[Int], Tile](UDFs.tileStatistics).apply(col)
+  ).as[Statistics[Int]]
+
+  def histogram(col: Column) = withAlias("histogramDouble", col)(
     UDFs.histogram(col)
   ).as[Histogram[Double]]
 
