@@ -27,7 +27,7 @@ import geotrellis.raster.{ByteCellType, MultibandTile, Tile, TileFeature}
 import geotrellis.spark.TemporalProjectedExtent
 import geotrellis.vector.{Extent, ProjectedExtent}
 import org.apache.spark.sql.gt.functions._
-import org.apache.spark.sql.{DataFrame, Dataset, Encoders, SaveMode}
+import org.apache.spark.sql.{DataFrame, Dataset, SaveMode}
 import org.scalatest.{FunSpec, Inspectors, Matchers}
 import org.apache.spark.sql.functions._
 import org.scalactic.Tolerance
