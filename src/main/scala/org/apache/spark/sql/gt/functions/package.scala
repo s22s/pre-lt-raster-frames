@@ -74,8 +74,8 @@ package object functions {
   ).as[Int]
 
   /** Compute the focal sum of a tile with the given radius. */
-  def focalSum(tile: Column, size: Column) = withAlias("focalSum", tile)(
-    SparkUDF[Tile, Tile, Int](UDFs.focalSum).apply(tile, size)
+  def focalSum(tile: Column, size: Int) = withAlias("focalSum", tile)(
+    SparkUDF[Tile, Tile, Int](UDFs.focalSum).apply(tile, lit(size))
   )
 
   /** Compute the cellwise/local max operation between tiles in a column. */
@@ -87,11 +87,6 @@ package object functions {
   def localMin(col: Column) = withAlias("localMin", col)(
     UDFs.localMin(col)
   ).as[Tile]
-
-  /** Compute the cellwise/local min operation between tiles in a column. */
-  def localStats(col: Column) = withAlias("localStats", col)(
-    UDFs.localStats(col)
-  )
 
   /** Cellwise addition between two tiles. */
   def localAdd(left: Column, right: Column) = localAlgebra(alg.Add, left, right)
@@ -135,9 +130,15 @@ package object functions {
     SparkUDF[Statistics[Int], Tile](UDFs.tileStatistics).apply(col)
   ).as[Statistics[Int]]
 
+  /**  Compute the full column aggregate floating point histogram. */
   def histogram(col: Column) = withAlias("histogramDouble", col)(
     UDFs.histogram(col)
   ).as[Histogram[Double]]
+
+  /** Compute cell-local aggregate descriptive statistics for a column of tiles. */
+  def localStats(col: Column) = withAlias("localStats", col)(
+    UDFs.localStats(col)
+  )
 
   /** Render tile as ASCII string for debugging purposes. */
   def renderAscii(col: Column) = withAlias("renderAscii", col)(
