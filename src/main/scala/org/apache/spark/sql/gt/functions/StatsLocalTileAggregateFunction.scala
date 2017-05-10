@@ -17,10 +17,9 @@
 package org.apache.spark.sql.gt.functions
 
 import geotrellis.raster
-import geotrellis.raster.{ArrayTile, BitCellType, IntConstantNoDataCellType, NODATA, Tile, isNoData}
 import geotrellis.raster.mapalgebra.local._
+import geotrellis.raster.{ArrayTile, IntConstantNoDataCellType, Tile, isNoData}
 import org.apache.spark.sql.Row
-import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.apache.spark.sql.expressions.{MutableAggregationBuffer, UserDefinedAggregateFunction}
 import org.apache.spark.sql.gt.types.TileUDT
 import org.apache.spark.sql.types._
@@ -34,8 +33,6 @@ import org.apache.spark.sql.types._
 class StatsLocalTileAggregateFunction() extends UserDefinedAggregateFunction {
   import StatsLocalTileAggregateFunction._
   override def inputSchema: StructType = StructType(StructField("value", TileUDT) :: Nil)
-
-  // CF: geotrellis.raster.mapalgebra.focal.MedianModeCalculation
 
   override def dataType: DataType = StructType(Seq(
     StructField("count", TileUDT),
@@ -101,39 +98,34 @@ class StatsLocalTileAggregateFunction() extends UserDefinedAggregateFunction {
 }
 
 object StatsLocalTileAggregateFunction {
-  object BiasedMin extends LocalTileBinaryOp {
+
+  trait BiasedOp extends LocalTileBinaryOp {
+    def op(z1: Int, z2: Int): Int
+    def op(z1: Double, z2: Double): Double
+
     def combine(z1:Int,z2:Int): Int =
       if (isNoData(z1) && isNoData(z2)) raster.NODATA
       else if(isNoData(z1)) z2 else if(isNoData(z2)) z1
-      else math.min(z1,z2)
+      else op(z1,z2)
 
     def combine(z1:Double,z2:Double): Double =
       if (isNoData(z1) && isNoData(z2)) raster.doubleNODATA
       else if(isNoData(z1)) z2 else if(isNoData(z2)) z1
-      else math.min(z1,z2)
+      else op(z1,z2)
   }
 
-  object BiasedMax extends LocalTileBinaryOp {
-    def combine(z1:Int,z2:Int): Int =
-      if (isNoData(z1) && isNoData(z2)) raster.NODATA
-      else if(isNoData(z1)) z2 else if(isNoData(z2)) z1
-      else math.max(z1,z2)
-
-    def combine(z1:Double,z2:Double): Double =
-      if (isNoData(z1) && isNoData(z2)) raster.doubleNODATA
-      else if(isNoData(z1)) z2 else if(isNoData(z2)) z1
-      else math.max(z1,z2)
+  object BiasedMin extends BiasedOp {
+    def op(z1: Int, z2: Int) =  math.min(z1,z2)
+    def op(z1: Double, z2: Double) =  math.min(z1,z2)
   }
 
-  object BiasedAdd extends LocalTileBinaryOp {
-    def combine(z1:Int,z2:Int): Int =
-      if (isNoData(z1) && isNoData(z2)) raster.NODATA
-      else if(isNoData(z1)) z2 else if(isNoData(z2)) z1
-      else z1 + z2
+  object BiasedMax extends BiasedOp {
+    def op(z1: Int, z2: Int) =  math.max(z1,z2)
+    def op(z1: Double, z2: Double) =  math.max(z1,z2)
+  }
 
-    def combine(z1:Double,z2:Double): Double =
-      if (isNoData(z1) && isNoData(z2)) raster.doubleNODATA
-      else if(isNoData(z1)) z2 else if(isNoData(z2)) z1
-      else z1 + z2
+  object BiasedAdd extends BiasedOp {
+    def op(z1: Int, z2: Int) =  z1 + z2
+    def op(z1: Double, z2: Double) =  z1 + z2
   }
 }
