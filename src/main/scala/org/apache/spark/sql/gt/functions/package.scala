@@ -21,13 +21,14 @@ import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.LocalTileBinaryOp
 import geotrellis.raster.summary.Statistics
 import geotrellis.raster.mapalgebra.{local ⇒ alg}
+import org.apache.spark.sql
 import org.apache.spark.sql.catalyst.analysis.{MultiAlias, UnresolvedAttribute}
 import org.apache.spark.sql.catalyst.expressions.{CreateArray, Expression, Inline}
 import org.apache.spark.sql.types.{StructType, UDTRegistration, UserDefinedType}
 import org.apache.spark.sql._
 
 import scala.reflect.runtime.universe._
-import org.apache.spark.sql.functions.{udf ⇒ SparkUDF}
+import org.apache.spark.sql.functions.{lit, udf ⇒ SparkUDF}
 
 /**
  * GT functions adapted for Spark SQL use.
@@ -40,6 +41,11 @@ package object functions {
     override protected def _sqlContext: SQLContext = ???
   }
   import encoders._
+
+  def randomTile(cols: Int, rows: Int, cellType: String) =
+    SparkUDF[Tile, Int, Int, String](UDFs.randomTile).apply(lit(cols), lit(rows), lit(cellType))
+      .as(s"tile($cols, $rows, $cellType)")
+      .as[Tile]
 
   /** Create a row for each pixel in tile. */
   def explodeTile(cols: Column*): Column = explodeAndSampleTile(1.0, cols: _*)
