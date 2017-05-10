@@ -18,7 +18,7 @@ resolvers ++= Seq(
 )
 
 
-def geotrellis(module: String) = "org.locationtech.geotrellis" %% s"geotrellis-$module" % "1.1.0-RC1"
+def geotrellis(module: String) = "org.locationtech.geotrellis" %% s"geotrellis-$module" % "1.1.0-RC5"
 
 def spark(module: String) = "org.apache.spark" %% s"spark-$module" % "2.1.0"
 

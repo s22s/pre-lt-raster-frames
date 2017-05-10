@@ -82,6 +82,11 @@ package object functions {
     UDFs.localMin(col)
   ).as[Tile]
 
+  /** Compute the cellwise/local min operation between tiles in a column. */
+  def localStats(col: Column) = withAlias("localStats", col)(
+    UDFs.localStats(col)
+  )
+
   /** Cellwise addition between two tiles. */
   def localAdd(left: Column, right: Column) = localAlgebra(alg.Add, left, right)
 

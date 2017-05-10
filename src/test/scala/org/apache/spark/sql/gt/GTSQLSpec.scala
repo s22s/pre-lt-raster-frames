@@ -21,9 +21,10 @@ package org.apache.spark.sql.gt
 import java.nio.file.Files
 import java.sql.Timestamp
 
+import geotrellis.raster
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.{Add, Max, Min, Subtract}
-import geotrellis.raster.{ByteCellType, MultibandTile, Tile, TileFeature}
+import geotrellis.raster.{ByteCellType, FloatConstantNoDataCellType, MultibandTile, Tile, TileFeature}
 import geotrellis.spark.TemporalProjectedExtent
 import geotrellis.vector.{Extent, ProjectedExtent}
 import org.apache.spark.sql.gt.functions._
@@ -31,6 +32,7 @@ import org.apache.spark.sql.{DataFrame, Dataset, SaveMode}
 import org.scalatest.{FunSpec, Inspectors, Matchers}
 import org.apache.spark.sql.functions._
 import org.scalactic.Tolerance
+import spire.random.Random
 //import org.apache.spark.sql.execution.debug._
 
 /**
@@ -258,6 +260,38 @@ class GTSQLSpec extends FunSpec
       val hist2 = sql("select st_histogram(tiles) as hist from tmp").as[Histogram[Double]]
 
       assert(hist2.first.totalCount() === 250)
+    }
+
+    def injectND(num: Int)(t: Tile): Tile = {
+      val locs = (0 until num).map(_ ⇒ (util.Random.nextInt(t.cols), util.Random.nextInt(t.rows)))
+      t.mapDouble((c, r, v) ⇒ {if(locs.contains((c,r))) raster.floatNODATA else v})
+    }
+
+    it("should compute aggregate local stats") {
+      val ave = (nums: Array[Double]) ⇒ nums.sum / nums.length
+
+      val ds = Seq.fill[Tile](30)(UDFs.randomTile(5, 5, "float32"))
+        .map(injectND(2)).toDF("tiles")
+      ds.createOrReplaceTempView("tmp")
+
+      val agg = ds.select(localStats($"tiles") as "stats")
+
+      val stats = agg.select("stats.*")
+
+      // Render debugging form.
+      stats.collect().flatMap(_.toSeq).map(_.asInstanceOf[Tile].asciiDrawDouble(2))
+        .zip(stats.columns)
+        .foreach{case (img, label) ⇒ println(s"$label:\n$img")}
+
+      val min = agg.select($"stats.min".as[Tile]).map(_.toArrayDouble().min).first
+      assert(min < -2.5)
+      val max = agg.select($"stats.max".as[Tile]).map(_.toArrayDouble().max).first
+      assert(max > 2.5)
+      val tendancy = agg.select($"stats.mean".as[Tile]).map(t ⇒ ave(t.toArrayDouble())).first
+      assert(tendancy < 0.2)
+
+      val varg = agg.select($"stats.mean".as[Tile]).map(t ⇒ ave(t.toArrayDouble())).first
+      assert(varg < 1.1)
     }
   }
 }

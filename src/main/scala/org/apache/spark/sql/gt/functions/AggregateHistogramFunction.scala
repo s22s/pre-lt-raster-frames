@@ -53,8 +53,5 @@ class AggregateHistogramFunction extends UserDefinedAggregateFunction {
     buffer1(0) = hist1 merge hist2
   }
 
-  override def evaluate(buffer: Row): Histogram[Double] = {
-    val result = buffer.getAs[Histogram[Double]](0)
-    result
-  }
+  override def evaluate(buffer: Row): Histogram[Double] = buffer.getAs[Histogram[Double]](0)
 }
