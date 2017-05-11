@@ -2,19 +2,15 @@ package org.apache.spark.sql.gt
 
 import geotrellis.vector._
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{Encoder, Encoders}
 import org.scalactic.Tolerance
 import org.scalatest.{FunSpec, Inspectors, Matchers}
-
 
 class GeometryEncodingSpec extends FunSpec
   with Matchers with Inspectors with Tolerance
   with TestEnvironment with TestData {
   import GeometryEncodingSpec._
 
-  implicit def polyEncoder: Encoder[Polygon] = Encoders.kryo
-  implicit def multilineEncoder: Encoder[MultiLine] = Encoders.kryo
-  implicit def featureEncoder: Encoder[Feature[MultiLine, Category]] = Encoders.kryo
+  gtRegister(_spark.sqlContext)
 
   describe("polygon encoding support") {
     it("should not throw a runtime error") {
@@ -24,15 +20,17 @@ class GeometryEncodingSpec extends FunSpec
       val polyC = Polygon(List(Point(100,100), Point(101,100), Point(101,101), Point(100,101), Point(100,100)))
 
       val left: RDD[Polygon] = sc.parallelize(Array(polyA, polyB, polyC))
-      val polygon = left.toDS.first
-      println(polygon)
+      val polygon = left.toDS
+      polygon.show(false)
+      println(polygon.first)
 
       val line1 = Line(Point(0,0), Point(5,5))
       val line2 = Line(Point(13,0), Point(33,0))
 
       val rightline: RDD[Feature[MultiLine, Category]] = sc.parallelize(Seq(Feature(MultiLine(line1, line2), Category(1, "some"))))
-      val right = rightline.toDS.first
-      println(right)
+      val right = rightline.toDS
+      right.show(false)
+      println(right.first)
     }
   }
 }
