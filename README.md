@@ -8,7 +8,11 @@ Experimental facility for encoding [GeoTrellis](https://geotrellis.io/) types in
 
 For usage examples, see the [test specification](src/test/scala/org/apache/spark/sql/gt/GTSQLSpec.scala).
 
-A smattering of functions currentlly available via Spark Dataframes. (Prepend `st_` for access to SQL variants):
+To initialize the GeoTrellis support, call the following function in your Spark setup code: 
+
+    gtRegister(sqlContext)
+
+A smattering of functions currentlly available via Spark Dataframes (prepend `st_` for access to SQL variants):
 
 * `randomTile(columns, rows, cellType)` - Create a tile with random cell values.
 * `explodeTile(tileColumn)` - Create a row for each pixel in tile.

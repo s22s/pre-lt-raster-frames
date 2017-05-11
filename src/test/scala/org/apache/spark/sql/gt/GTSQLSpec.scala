@@ -274,12 +274,13 @@ class GTSQLSpec extends FunSpec
         .map(injectND(2)).toDF("tiles")
       ds.createOrReplaceTempView("tmp")
 
-      val agg = ds.select(localStats($"tiles") as "stats")
 
+      val agg = ds.select(localStats($"tiles") as "stats")
       val stats = agg.select("stats.*")
+      val tiles = stats.collect().flatMap(_.toSeq).map(_.asInstanceOf[Tile])
 
       // Render debugging form.
-      stats.collect().flatMap(_.toSeq).map(_.asInstanceOf[Tile].asciiDrawDouble(2))
+      tiles.map(_.asciiDrawDouble(2))
         .zip(stats.columns)
         .foreach{case (img, label) ⇒ println(s"$label:\n$img")}
 
@@ -292,6 +293,14 @@ class GTSQLSpec extends FunSpec
 
       val varg = agg.select($"stats.mean".as[Tile]).map(t ⇒ ave(t.toArrayDouble())).first
       assert(varg < 1.1)
+
+      val sqlStats = sql("SELECT stats.* from (SELECT st_localStats(tiles) as stats from tmp)")
+
+      val dsTiles = sqlStats.collect().flatMap(_.toSeq).map(_.asInstanceOf[Tile])
+      forEvery(tiles.zip(dsTiles)) { case (t1, t2) ⇒
+        assert(t1 === t2)
+      }
+
     }
   }
 }
