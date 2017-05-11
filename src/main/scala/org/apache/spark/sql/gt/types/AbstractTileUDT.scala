@@ -28,19 +28,17 @@ import scala.reflect._
  * @author sfitch 
  * @since 4/12/17
  */
-private[gt] abstract class GeoTrellisUDT[T >: Null: ClassTag](override val typeName: String)
+private[gt] abstract class AbstractTileUDT[T >: Null: ClassTag](override val typeName: String)
   extends UserDefinedType[T] with KryoBackedUDT[T] {
   private[sql] override def acceptsType(dataType: DataType) = dataType match {
-    case o: GeoTrellisUDT[T] ⇒ o.typeName == this.typeName
+    case o: AbstractTileUDT[T] ⇒ o.typeName == this.typeName
     case _ ⇒ super.acceptsType(dataType)
   }
 
   override val targetClassTag = classTag[T]
 }
 
-private[gt] class TileUDT extends GeoTrellisUDT[Tile]("st_tile")
-case object TileUDT extends TileUDT
 
-private[gt] class MultibandTileUDT extends GeoTrellisUDT[MultibandTile]("st_multibandtile")
-case object MultibandTileUDT extends MultibandTileUDT
+
+
 
