@@ -289,9 +289,9 @@ class GTSQLSpec extends FunSpec
         .foreach{case (img, label) ⇒ println(s"$label:\n$img")}
 
       val min = agg.select($"stats.min".as[Tile]).map(_.toArrayDouble().min).first
-      assert(min < -2.5)
+      assert(min < -2.0)
       val max = agg.select($"stats.max".as[Tile]).map(_.toArrayDouble().max).first
-      assert(max > 2.5)
+      assert(max > 2.0)
       val tendancy = agg.select($"stats.mean".as[Tile]).map(t ⇒ ave(t.toArrayDouble())).first
       assert(tendancy < 0.2)
 
