@@ -15,6 +15,8 @@ class GeoTrellisDataSource extends DataSourceRegister with RelationProvider {
     require(parameters.contains("layer"), "'layer' parameter for raster layer name required.")
     require(parameters.contains("zoom"), "'zoom' parameter for raster layer zoom level required.")
 
+    gt.gtRegister(sqlContext)
+
     val uri: URI = URI.create(parameters("uri"))
     val layerId: LayerId = LayerId(parameters("layer"), parameters("zoom").toInt)
     val bbox: Option[Extent] = parameters.get("bbox").map(Extent.fromString)

@@ -19,7 +19,6 @@ import org.apache.spark.sql.types.{DataTypes, StructField, StructType}
 
 case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId, bbox: Option[Extent])
   extends BaseRelation with PrunedFilteredScan with LazyLogging {
-  gt.gtRegister(sqlContext)
 
   // TODO: implement sizeInBytes
 

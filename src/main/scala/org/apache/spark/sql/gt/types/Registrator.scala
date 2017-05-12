@@ -39,9 +39,11 @@ private[gt] object Registrator {
   }
 
   private def register(udt: UserDefinedType[_])(implicit ctx: SQLContext): Unit = {
-    UDTRegistration.register(
-      udt.userClass.getCanonicalName,
-      udt.getClass.getSuperclass.getName
-    )
+    if (! UDTRegistration.exists(udt.userClass.getCanonicalName)) {
+      UDTRegistration.register(
+        udt.userClass.getCanonicalName,
+        udt.getClass.getSuperclass.getName
+      )
+    }
   }
 }
