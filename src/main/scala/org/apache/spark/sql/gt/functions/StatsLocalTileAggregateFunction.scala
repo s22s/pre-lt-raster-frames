@@ -91,11 +91,14 @@ class StatsLocalTileAggregateFunction() extends UserDefinedAggregateFunction {
 
   override def evaluate(buffer: Row): Row = {
     val count = buffer.getAs[Tile](0)
-    val sum = buffer.getAs[Tile](3)
-    val sumSqr = buffer.getAs[Tile](4)
-    val mean = sum / count
-    val variance = sumSqr / count - mean * mean
-    Row(buffer(0), buffer(1), buffer(2), mean, variance)
+    if(count != null) {
+      val sum = buffer.getAs[Tile](3)
+      val sumSqr = buffer.getAs[Tile](4)
+      val mean = sum / count
+      val variance = sumSqr / count - mean * mean
+      Row(buffer(0), buffer(1), buffer(2), mean, variance)
+    }
+    else null
   }
 }
 

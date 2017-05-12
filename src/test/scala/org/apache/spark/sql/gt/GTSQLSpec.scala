@@ -304,7 +304,31 @@ class GTSQLSpec extends FunSpec
       forEvery(tiles.zip(dsTiles)) { case (t1, t2) ⇒
         assert(t1 === t2)
       }
+    }
 
+    it("local stats should handle null tiles") {
+      withClue("intersperced nulls") {
+        val tiles = Array.fill[Tile](30)(UDFs.randomTile(5, 5, "float32"))
+        tiles(1) = null
+        tiles(11) = null
+        tiles(29) = null
+
+        val ds = tiles.toSeq.toDF("tiles")
+        val agg = ds.select(localStats($"tiles") as "stats")
+        val stats = agg.select("stats.*")
+        val statTiles = stats.collect().flatMap(_.toSeq).map(_.asInstanceOf[Tile])
+        assert(statTiles.length === 5)
+        forAll(statTiles)(t ⇒ assert(t != null))
+      }
+
+      withClue("all null") {
+        val tiles = Seq.fill[Tile](30)(null)
+        val ds = tiles.toDF("tiles")
+        val agg = ds.select(localStats($"tiles") as "stats")
+        val stats = agg.select("stats.*")
+        val statTiles = stats.collect().flatMap(_.toSeq).map(_.asInstanceOf[Tile])
+        forAll(statTiles)(t ⇒ assert(t == null))
+      }
     }
   }
 }
