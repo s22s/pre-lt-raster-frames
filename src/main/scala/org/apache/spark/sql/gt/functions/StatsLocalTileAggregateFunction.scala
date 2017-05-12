@@ -18,7 +18,7 @@ package org.apache.spark.sql.gt.functions
 
 import geotrellis.raster
 import geotrellis.raster.mapalgebra.local._
-import geotrellis.raster.{ArrayTile, IntArrayTile, IntConstantNoDataArrayTile, IntConstantNoDataCellType, IntConstantTile, Tile, isNoData}
+import geotrellis.raster.{IntArrayTile, IntConstantNoDataCellType, Tile, isNoData}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.expressions.{MutableAggregationBuffer, UserDefinedAggregateFunction}
 import org.apache.spark.sql.gt.types.TileUDT
@@ -31,15 +31,28 @@ import org.apache.spark.sql.types._
  * @since 4/17/17
  */
 class StatsLocalTileAggregateFunction() extends UserDefinedAggregateFunction {
+
   import StatsLocalTileAggregateFunction._
   override def inputSchema: StructType = StructType(StructField("value", TileUDT) :: Nil)
 
+  /*
+    This is necessary to avoid this:
+    "java.lang.IllegalArgumentException: Unsupported dataType" from
+      at org.apache.spark.sql.catalyst.parser.LegacyTypeStringParser$.parse(LegacyTypeStringParser.scala:90)
+	    at org.apache.spark.sql.types.StructType$$anonfun$7.apply(StructType.scala:419)
+	    at org.apache.spark.sql.types.StructType$$anonfun$7.apply(StructType.scala:419)
+	    at scala.util.Try.getOrElse(Try.scala:79)
+	    at org.apache.spark.sql.types.StructType$.fromString(StructType.scala:419)
+	    ...
+   */
+  private val reafiableUDT = new TileUDT()
+
   override def dataType: DataType = StructType(Seq(
-    StructField("count", TileUDT),
-    StructField("min", TileUDT),
-    StructField("max", TileUDT),
-    StructField("mean", TileUDT),
-    StructField("variance", TileUDT)
+    StructField("count", reafiableUDT),
+    StructField("min", reafiableUDT),
+    StructField("max", reafiableUDT),
+    StructField("mean", reafiableUDT),
+    StructField("variance", reafiableUDT)
   ))
 
   override def bufferSchema: StructType = StructType(Seq(
