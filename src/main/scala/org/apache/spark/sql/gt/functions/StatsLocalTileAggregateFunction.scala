@@ -18,7 +18,7 @@ package org.apache.spark.sql.gt.functions
 
 import geotrellis.raster
 import geotrellis.raster.mapalgebra.local._
-import geotrellis.raster.{ArrayTile, IntConstantNoDataCellType, Tile, isNoData}
+import geotrellis.raster.{ArrayTile, IntArrayTile, IntConstantNoDataArrayTile, IntConstantNoDataCellType, IntConstantTile, Tile, isNoData}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.expressions.{MutableAggregationBuffer, UserDefinedAggregateFunction}
 import org.apache.spark.sql.gt.types.TileUDT
@@ -66,7 +66,7 @@ class StatsLocalTileAggregateFunction() extends UserDefinedAggregateFunction {
     val tile = input.getAs[Tile](0)
     if(tile != null) {
       if(buffer(0) == null) {
-        buffer(0) = ArrayTile.alloc(IntConstantNoDataCellType, tile.cols, tile.rows)
+        buffer(0) = IntArrayTile.fill(1, tile.cols, tile.rows, IntConstantNoDataCellType)
         buffer(1) = tile
         buffer(2) = tile
         buffer(3) = tile
