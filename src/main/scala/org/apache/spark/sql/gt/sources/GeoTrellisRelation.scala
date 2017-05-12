@@ -47,6 +47,7 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
     implicit val sc = sqlContext.sparkContext
 
     // TODO: check they type of layer before reading, generating time column dynamically
+    // FIX: do not ignore requiredColumns, it breaks DataFrames selection from DataSource
     val reader = GeoTrellisRelation.layerReaderFromUri(uri)
     val query = reader.query[SpatialKey, Tile, TileLayerMetadata[SpatialKey]](layerId)
     val rdd = bbox match {

@@ -11,6 +11,7 @@ import geotrellis.spark.tiling.ZoomedLayoutScheme
 import geotrellis.vector._
 import org.scalatest.{FunSpec, Inspectors, Matchers}
 import org.scalactic.Tolerance
+import org.apache.spark.sql.gt.functions._
 
 class DataSourceSpec extends FunSpec
                              with Matchers with Inspectors with Tolerance
@@ -56,6 +57,11 @@ class DataSourceSpec extends FunSpec
       df.count should be((2 to 5).length * (2 to 5).length)
     }
 
+    it("used produce tile UDT that we can manipulate"){
+      val df = dfr.load().select($"col", $"row", $"extent", tileStatistics($"tile"))
+      df.show()
+      assert(df.count() > 0)
+    }
     it("should respect bbox query"){
       val boundKeys = KeyBounds(SpatialKey(3,4),SpatialKey(4,4))
       val Extent(xmin,ymin,xmax,ymax) = testRdd.metadata.layout.mapTransform(boundKeys.toGridBounds())
