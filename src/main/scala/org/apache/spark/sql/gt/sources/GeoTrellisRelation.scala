@@ -12,7 +12,7 @@ import geotrellis.vector.Extent
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Row, SQLContext, gt}
-import org.apache.spark.sql.gt.types.{ExtentUDT, TileUDT}
+import org.apache.spark.sql.gt.types._
 import org.apache.spark.sql.sources.{BaseRelation, Filter, PrunedFilteredScan}
 import org.apache.spark.sql.types.{DataTypes, StructField, StructType}
 
@@ -25,7 +25,12 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
   override def schema: StructType = StructType(List(
     StructField("col", DataTypes.IntegerType, nullable =false),
     StructField("row", DataTypes.IntegerType, nullable =false),
-    StructField("extent", ExtentUDT, nullable =true),
+    StructField("extent", StructType(List(
+      StructField("xmin", DataTypes.DoubleType, nullable=false),
+      StructField("xmax", DataTypes.DoubleType, nullable=false),
+      StructField("ymin", DataTypes.DoubleType, nullable=false),
+      StructField("ymax", DataTypes.DoubleType, nullable=false)
+    ))),
     StructField("tile", TileUDT, nullable =true)
   ))
 
