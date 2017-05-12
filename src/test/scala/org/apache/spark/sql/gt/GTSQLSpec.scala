@@ -18,21 +18,19 @@
 
 package org.apache.spark.sql.gt
 
-import java.nio.file.Files
-import java.sql.Timestamp
+import java.nio.file.{Files, Paths}
 
 import geotrellis.raster
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.{Add, Max, Min, Subtract}
-import geotrellis.raster.{ByteCellType, FloatConstantNoDataCellType, MultibandTile, Tile, TileFeature}
+import geotrellis.raster.{ByteCellType, MultibandTile, Tile, TileFeature}
 import geotrellis.spark.TemporalProjectedExtent
 import geotrellis.vector.{Extent, ProjectedExtent}
+import org.apache.spark.sql.functions._
 import org.apache.spark.sql.gt.functions._
 import org.apache.spark.sql.{DataFrame, Dataset, SaveMode}
-import org.scalatest.{FunSpec, Inspectors, Matchers}
-import org.apache.spark.sql.functions._
 import org.scalactic.Tolerance
-import spire.random.Random
+import org.scalatest.{FunSpec, Inspectors, Matchers}
 //import org.apache.spark.sql.execution.debug._
 
 /**
@@ -44,12 +42,12 @@ class GTSQLSpec extends FunSpec
   with Matchers with Inspectors with Tolerance
   with TestEnvironment with TestData {
 
-  gtRegister(_spark.sqlContext)
+  gtRegister(sqlContext)
 
   /** This is here so we can test writing UDF generated/modified GeoTrellis types to ensure they are Parquet compliant. */
   def write(df: Dataset[_]): Unit = {
     val sanitized = df.select(df.columns.map(c ⇒ col(c).as(c.replaceAll("[ ,;{}()\n\t=]", "_"))): _*)
-    val dest = Files.createTempFile("GTSQL", ".parquet")
+    val dest = Files.createTempFile(Paths.get(outputLocalPath), "GTSQL", ".parquet")
     print(s"Writing '${sanitized.columns.mkString(", ")}' to '$dest'...")
     sanitized.write.mode(SaveMode.Overwrite).parquet(dest.toString)
     val rows = df.sparkSession.read.parquet(dest.toString).count()
@@ -60,7 +58,7 @@ class GTSQLSpec extends FunSpec
     def firstTile: Tile = df.collect().head.getAs[Tile](0)
   }
 
-  import _spark.implicits._
+  import sqlContext.implicits._
 
   describe("GeoTrellis UDTs") {
     it("should create constant tiles") {
@@ -264,7 +262,13 @@ class GTSQLSpec extends FunSpec
 
     def injectND(num: Int)(t: Tile): Tile = {
       val locs = (0 until num).map(_ ⇒ (util.Random.nextInt(t.cols), util.Random.nextInt(t.rows)))
-      t.mapDouble((c, r, v) ⇒ {if(locs.contains((c,r))) raster.floatNODATA else v})
+
+      if(t.cellType.isFloatingPoint) {
+        t.mapDouble((c, r, v) ⇒ {if(locs.contains((c,r))) raster.doubleNODATA else v})
+      }
+      else {
+        t.map((c, r, v) ⇒ {if(locs.contains((c,r))) raster.NODATA else v})
+      }
     }
 
     it("should compute aggregate local stats") {

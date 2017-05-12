@@ -64,16 +64,18 @@ class StatsLocalTileAggregateFunction() extends UserDefinedAggregateFunction {
 
   override def update(buffer: MutableAggregationBuffer, input: Row): Unit = {
     val tile = input.getAs[Tile](0)
-    if(buffer(0) == null) {
-      buffer(0) = ArrayTile.alloc(IntConstantNoDataCellType, tile.cols, tile.rows)
-      buffer(1) = tile
-      buffer(2) = tile
-      buffer(3) = tile
-      buffer(4) = tile
-    }
-    else {
-      for(i ← stats.indices) {
-        buffer(i) = stats(i)(buffer.getAs[Tile](i), tile)
+    if(tile != null) {
+      if(buffer(0) == null) {
+        buffer(0) = ArrayTile.alloc(IntConstantNoDataCellType, tile.cols, tile.rows)
+        buffer(1) = tile
+        buffer(2) = tile
+        buffer(3) = tile
+        buffer(4) = tile
+      }
+      else {
+        for(i ← stats.indices) {
+          buffer(i) = stats(i)(buffer.getAs[Tile](i), tile)
+        }
       }
     }
   }
