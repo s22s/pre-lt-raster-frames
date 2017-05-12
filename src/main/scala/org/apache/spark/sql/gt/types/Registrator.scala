@@ -30,7 +30,8 @@ private[gt] object Registrator {
     TileUDT,
     MultibandTileUDT,
     CoordinateReferenceSystemUDT,
-    HistogramUDT
+    HistogramUDT,
+    ExtentUDT
   )
 
   def register(implicit sqlContext: SQLContext): Unit = {
