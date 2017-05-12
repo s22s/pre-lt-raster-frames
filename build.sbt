@@ -29,6 +29,8 @@ libraryDependencies ++= Seq(
   spark("sql") % "provided"
 )
 
+parallelExecution in Test := false
+
 scalacOptions += "-feature"
 
 bintrayOrganization := Some("s22s")
