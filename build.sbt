@@ -26,10 +26,11 @@ libraryDependencies ++= Seq(
   geotrellis("spark") % "provided",
   geotrellis("spark-testkit") % Test,
   spark("core") % "provided",
+  spark("mllib") % "provided",
   spark("sql") % "provided"
 )
 
-parallelExecution in Test := false
+fork in Test := true
 
 scalacOptions += "-feature"
 

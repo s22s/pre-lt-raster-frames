@@ -20,6 +20,7 @@ package org.apache.spark.sql.gt
 
 import java.nio.file.{Files, Paths}
 
+import com.typesafe.scalalogging.LazyLogging
 import geotrellis.raster
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.{Add, Max, Min, Subtract}
@@ -31,6 +32,8 @@ import org.apache.spark.sql.gt.functions._
 import org.apache.spark.sql.{DataFrame, Dataset, SaveMode}
 import org.scalactic.Tolerance
 import org.scalatest.{FunSpec, Inspectors, Matchers}
+import org.apache.spark.ml.linalg.{Vector ⇒ MLVector}
+
 //import org.apache.spark.sql.execution.debug._
 
 /**
@@ -40,7 +43,7 @@ import org.scalatest.{FunSpec, Inspectors, Matchers}
  */
 class GTSQLSpec extends FunSpec
   with Matchers with Inspectors with Tolerance
-  with TestEnvironment with TestData {
+  with TestEnvironment with TestData with LazyLogging {
 
   gtRegister(sqlContext)
 
@@ -48,11 +51,24 @@ class GTSQLSpec extends FunSpec
   def write(df: Dataset[_]): Unit = {
     val sanitized = df.select(df.columns.map(c ⇒ col(c).as(c.replaceAll("[ ,;{}()\n\t=]", "_"))): _*)
     val dest = Files.createTempFile(Paths.get(outputLocalPath), "GTSQL", ".parquet")
-    print(s"Writing '${sanitized.columns.mkString(", ")}' to '$dest'...")
+    logger.debug(s"Writing '${sanitized.columns.mkString(", ")}' to '$dest'...")
     sanitized.write.mode(SaveMode.Overwrite).parquet(dest.toString)
     val rows = df.sparkSession.read.parquet(dest.toString).count()
-    println(s" it has $rows row(s)")
+    logger.debug(s" it has $rows row(s)")
   }
+
+
+  def injectND(num: Int)(t: Tile): Tile = {
+    val locs = (0 until num).map(_ ⇒ (util.Random.nextInt(t.cols), util.Random.nextInt(t.rows)))
+
+    if(t.cellType.isFloatingPoint) {
+      t.mapDouble((c, r, v) ⇒ {if(locs.contains((c,r))) raster.doubleNODATA else v})
+    }
+    else {
+      t.map((c, r, v) ⇒ {if(locs.contains((c,r))) raster.NODATA else v})
+    }
+  }
+
 
   implicit class DFExtras(df: DataFrame) {
     def firstTile: Tile = df.collect().head.getAs[Tile](0)
@@ -93,7 +109,7 @@ class GTSQLSpec extends FunSpec
 
     it("should explode tiles") {
       val query = sql(
-        """select st_explodeTile(
+        """select st_explodeTiles(
           |  st_makeConstantTile(1, 10, 10, 'int8raw'),
           |  st_makeConstantTile(2, 10, 10, 'int8raw')
           |)
@@ -101,14 +117,14 @@ class GTSQLSpec extends FunSpec
       write(query)
       assert(query.select("cell_0", "cell_1").as[(Double, Double)].collect().forall(_ == ((1.0, 2.0))))
       val query2 = sql(
-        """|select st_gridRows(tiles) as rows, st_gridCols(tiles) as cols, st_explodeTile(tiles)  from (
+        """|select st_gridRows(tiles) as rows, st_gridCols(tiles) as cols, st_explodeTiles(tiles)  from (
            |select st_makeConstantTile(1, 10, 10, 'int8raw') as tiles)
            |""".stripMargin)
       write(query2)
       assert(query2.columns.length === 5)
 
       val df = Seq[(Tile, Tile)]((byteArrayTile, byteArrayTile)).toDF("tile1", "tile2")
-      val exploded = df.select(explodeTile($"tile1", $"tile2"))
+      val exploded = df.select(explodeTiles($"tile1", $"tile2"))
       //exploded.printSchema()
       assert(exploded.columns.length === 4)
       assert(exploded.count() === 9)
@@ -117,9 +133,29 @@ class GTSQLSpec extends FunSpec
 
     it("should explode tiles with random sampling") {
       val df = Seq[(Tile, Tile)]((byteArrayTile, byteArrayTile)).toDF("tile1", "tile2")
-      val exploded = df.select(explodeAndSampleTile(0.5, $"tile1", $"tile2"))
+      val exploded = df.select(explodeTileSample(0.5, $"tile1", $"tile2"))
       assert(exploded.columns.length === 4)
       assert(exploded.count() < 9)
+    }
+
+    it("should vectorize tiles") {
+      val df = Seq.fill[(Tile, Tile)](30)((UDFs.randomTile(5, 5, "float32"), UDFs.randomTile(5, 5, "int8"))).toDF("tile1", "tile2")
+      val vectored = df.select(vectorizeTiles($"tile1", $"tile2")).as[(Int, Int, MLVector)]
+      assert(vectored.columns.length === 3)
+      write(vectored)
+      assert(vectored.count === 30 * 5 * 5)
+      val features = vectored.collect().map(_._3)
+      forAll(features)(f ⇒ assert(f.size === 2))
+    }
+
+    it("should vectorize tiles with ramdom sampling") {
+      val df = Seq.fill[(Tile, Tile)](30)((UDFs.randomTile(5, 5, "float32"), UDFs.randomTile(5, 5, "int8"))).toDF("tile1", "tile2")
+      val vectored = df.select(vectorizeTileSample(0.5, $"tile1", $"tile2")).as[(Int, Int, MLVector)]
+      assert(vectored.columns.length === 3)
+      write(vectored)
+      vectored.show(false)
+
+      assert(vectored.count < (30 * 5 * 5) * 0.6)
     }
 
     it("should code RDD[(Int, Tile)]") {
@@ -260,24 +296,12 @@ class GTSQLSpec extends FunSpec
       assert(hist2.first.totalCount() === 250)
     }
 
-    def injectND(num: Int)(t: Tile): Tile = {
-      val locs = (0 until num).map(_ ⇒ (util.Random.nextInt(t.cols), util.Random.nextInt(t.rows)))
-
-      if(t.cellType.isFloatingPoint) {
-        t.mapDouble((c, r, v) ⇒ {if(locs.contains((c,r))) raster.doubleNODATA else v})
-      }
-      else {
-        t.map((c, r, v) ⇒ {if(locs.contains((c,r))) raster.NODATA else v})
-      }
-    }
-
     it("should compute aggregate local stats") {
       val ave = (nums: Array[Double]) ⇒ nums.sum / nums.length
 
       val ds = Seq.fill[Tile](30)(UDFs.randomTile(5, 5, "float32"))
         .map(injectND(2)).toDF("tiles")
       ds.createOrReplaceTempView("tmp")
-
 
       val agg = ds.select(localStats($"tiles") as "stats")
       val stats = agg.select("stats.*")

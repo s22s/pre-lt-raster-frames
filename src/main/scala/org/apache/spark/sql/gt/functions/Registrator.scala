@@ -51,5 +51,6 @@ private[gt] object Registrator {
   }
   // Expression-oriented functions have a different registration scheme
   // Currently have to register with the `builtin` registry due to data hiding.
-  FunctionRegistry.builtin.registerFunction("st_explodeTile", ExplodeTileExpression.apply(1.0, _))
+  FunctionRegistry.builtin.registerFunction("st_explodeTiles", ExplodeTileExpression.apply(1.0, _))
+  FunctionRegistry.builtin.registerFunction("st_vectorizeTiles", VectorizeTilesExpression.apply(1.0, _))
 }

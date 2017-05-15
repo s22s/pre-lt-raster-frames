@@ -19,16 +19,16 @@ package org.apache.spark.sql.gt
 import geotrellis.raster.Tile
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.LocalTileBinaryOp
-import geotrellis.raster.summary.Statistics
 import geotrellis.raster.mapalgebra.{local ⇒ alg}
-import org.apache.spark.sql
-import org.apache.spark.sql.catalyst.analysis.{MultiAlias, UnresolvedAttribute}
-import org.apache.spark.sql.catalyst.expressions.{CreateArray, Expression, Inline}
-import org.apache.spark.sql.types.{StructType, UDTRegistration, UserDefinedType}
+import geotrellis.raster.summary.Statistics
+import org.apache.spark.ml.linalg.{Vector ⇒ MLVector}
 import org.apache.spark.sql._
+import org.apache.spark.sql.catalyst.analysis.MultiAlias
+import org.apache.spark.sql.catalyst.expressions.{CreateArray, Expression, Inline}
+import org.apache.spark.sql.functions.{lit, udf ⇒ SparkUDF}
+import org.apache.spark.sql.types.{StructType, UDTRegistration, UserDefinedType}
 
 import scala.reflect.runtime.universe._
-import org.apache.spark.sql.functions.{lit, udf ⇒ SparkUDF}
 
 /**
  * GT functions adapted for Spark SQL use.
@@ -47,20 +47,28 @@ package object functions {
       .as(s"tile($cols, $rows, $cellType)")
       .as[Tile]
 
-  /** Create a row for each pixel in tile. */
-  def explodeTile(cols: Column*): Column = explodeAndSampleTile(1.0, cols: _*)
+  /** Create a row for each cell in tile. */
+  def explodeTiles(cols: Column*): Column = explodeTileSample(1.0, cols: _*)
 
-  /** Create a row for each pixel in tile with random sampling. */
-  def explodeAndSampleTile(sampleFraction: Double, cols: Column*): Column = {
+  /** Create a row for each cell in tile with random sampling. */
+  def explodeTileSample(sampleFraction: Double, cols: Column*): Column = {
     val exploder = ExplodeTileExpression(sampleFraction, cols.map(_.expr))
     // Hack to grab the first two non-cell columns
     val metaNames = exploder.elementSchema.fieldNames.take(2)
-    val colNames = cols.map(_.expr).map {
-      case ua: UnresolvedAttribute ⇒ ua.name
-      case o ⇒ o.prettyName
-    }
-
+    val colNames = cols.map(_.columnName)
     Column(exploder).as(metaNames ++ colNames)
+  }
+
+  /** Create a vector for each cell from each tile column. */
+  def vectorizeTiles(cols: Column*) = vectorizeTileSample(1.0, cols: _*)
+
+  /** Create a vector containing cells from each tile column, with random sampling. */
+  def vectorizeTileSample(sampleFraction: Double, cols: Column*) = {
+    val exploder = VectorizeTilesExpression(sampleFraction, cols.map(_.expr))
+    // Hack to grab the first two non-cell columns
+    val metaNames = exploder.elementSchema.fieldNames.take(2)
+    val vectorName = "cells_" + cols.map(_.columnName).mkString("_")
+    Column(exploder).as(metaNames :+ vectorName)
   }
 
   /** Query the number of rows in a tile. */
@@ -146,14 +154,9 @@ package object functions {
   ).as[String]
 
   // -- Private APIs below --
-  private[gt] def colName(c: Column) = c.expr match {
-    case ua: UnresolvedAttribute ⇒ ua.name
-    case o ⇒ o.prettyName
-  }
-
   /** Tags output column with a nicer name. */
   private[gt] def withAlias(name: String, inputs: Column*)(output: Column) = {
-    val paramNames = inputs.map(colName).mkString(",")
+    val paramNames = inputs.map(_.columnName).mkString(",")
     output.as(s"$name($paramNames)")
   }
 

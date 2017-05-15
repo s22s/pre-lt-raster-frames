@@ -16,6 +16,8 @@
 
 package org.apache.spark.sql
 
+import org.apache.spark.sql.catalyst.analysis.UnresolvedAttribute
+
 /**
  * Module providing support for using GeoTrellis native types in Spark SQL.
  * `import org.apache.spark.sql.gt._`., and then call `gtRegister(SQLContext)`.
@@ -27,5 +29,12 @@ package object gt extends implicits {
   def gtRegister(sqlContext: SQLContext): Unit = {
     gt.types.Registrator.register(sqlContext)
     gt.functions.Registrator.register(sqlContext)
+  }
+
+  private[gt] implicit class NamedColumn(col: Column) {
+    def columnName = col.expr match {
+      case ua: UnresolvedAttribute ⇒ ua.name
+      case o ⇒ o.prettyName
+    }
   }
 }
