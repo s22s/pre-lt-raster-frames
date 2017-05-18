@@ -81,9 +81,49 @@ package object functions {
     SparkUDF[Int, Tile](UDFs.gridCols).apply(col)
   ).as[Int]
 
-  /** Compute the focal sum of a tile with the given radius. */
-  def focalSum(tile: Column, size: Int) = withAlias("focalSum", tile)(
-    SparkUDF[Tile, Tile, Int](UDFs.focalSum).apply(tile, lit(size))
+  /**  Compute the full column aggregate floating point histogram. */
+  def histogram(col: Column) = withAlias("histogram", col)(
+    UDFs.histogram(col)
+  ).as[Histogram[Double]]
+
+  /**  Compute the full column aggregate floating point statistics. */
+  def stats(col: Column) = withAlias("stats", col)(
+    UDFs.statistics(col)
+  ).as[Statistics[Double]]
+
+  /** Compute tileHistogram of floating point tile values. */
+  def tileHistogramDouble(col: Column) = withAlias("tileHistogramDouble", col)(
+    SparkUDF[Histogram[Double], Tile](UDFs.tileHistogramDouble).apply(col)
+  ).as[Histogram[Double]]
+
+  /** Compute statistics of tile values. */
+  def tileStatsDouble(col: Column) = withAlias("tileStatsDouble", col)(
+    SparkUDF[Statistics[Double], Tile](UDFs.tileStatsDouble).apply(col)
+  ).as[Statistics[Double]]
+
+  /** Compute the tile-wise mean */
+  def tileMeanDouble(col: Column) = withAlias("tileMeanDouble", col)(
+    SparkUDF[Double, Tile](UDFs.tileMeanDouble).apply(col)
+  ).as[Double]
+
+  /** Compute the tile-wise mean */
+  def tileMean(col: Column) = withAlias("tileMean", col)(
+    SparkUDF[Double, Tile](UDFs.tileMean).apply(col)
+  ).as[Double]
+
+  /** Compute tileHistogram of tile values. */
+  def tileHistogram(col: Column) = withAlias("tileHistogram", col)(
+    SparkUDF[Histogram[Int], Tile](UDFs.tileHistogram).apply(col)
+  ).as[Histogram[Int]]
+
+  /** Compute statistics of tile values. */
+  def tileStats(col: Column) = withAlias("tileStats", col)(
+    SparkUDF[Statistics[Int], Tile](UDFs.tileStats).apply(col)
+  ).as[Statistics[Int]]
+
+  /** Compute cell-local aggregate descriptive statistics for a column of tiles. */
+  def localStats(col: Column) = withAlias("localStats", col)(
+    UDFs.localStats(col)
   )
 
   /** Compute the cellwise/local max operation between tiles in a column. */
@@ -108,52 +148,14 @@ package object functions {
       SparkUDF[Tile, Tile, Tile](op.apply).apply(left, right)
     ).as[Tile]
 
-  /** Compute tileHistogram of floating point tile values. */
-  def tileHistogramDouble(col: Column) = withAlias("tileHistogramDouble", col)(
-    SparkUDF[Histogram[Double], Tile](UDFs.tileHistogramDouble).apply(col)
-  ).as[Histogram[Double]]
-
-  /** Compute statistics of tile values. */
-  def tileStatisticsDouble(col: Column) = withAlias("tileStatisticsDouble", col)(
-    SparkUDF[Statistics[Double], Tile](UDFs.tileStatisticsDouble).apply(col)
-  ).as[Statistics[Double]]
-
-  /** Compute the tile-wise mean */
-  def tileMeanDouble(col: Column) = withAlias("tileMeanDouble", col)(
-    SparkUDF[Double, Tile](UDFs.tileMeanDouble).apply(col)
-  ).as[Double]
-
-  /** Compute the tile-wise mean */
-  def tileMean(col: Column) = withAlias("tileMean", col)(
-    SparkUDF[Double, Tile](UDFs.tileMean).apply(col)
-  ).as[Double]
-
-  /** Compute tileHistogram of tile values. */
-  def tileHistogram(col: Column) = withAlias("tileHistogram", col)(
-    SparkUDF[Histogram[Int], Tile](UDFs.tileHistogram).apply(col)
-  ).as[Histogram[Int]]
-
-  /** Compute statistics of tile values. */
-  def tileStatistics(col: Column) = withAlias("tileStatistics", col)(
-    SparkUDF[Statistics[Int], Tile](UDFs.tileStatistics).apply(col)
-  ).as[Statistics[Int]]
-
-  /**  Compute the full column aggregate floating point histogram. */
-  def histogram(col: Column) = withAlias("histogramDouble", col)(
-    UDFs.histogram(col)
-  ).as[Histogram[Double]]
-
-  /** Compute cell-local aggregate descriptive statistics for a column of tiles. */
-  def localStats(col: Column) = withAlias("localStats", col)(
-    UDFs.localStats(col)
-  )
-
   /** Render tile as ASCII string for debugging purposes. */
   def renderAscii(col: Column) = withAlias("renderAscii", col)(
     SparkUDF[String, Tile](UDFs.renderAscii).apply(col)
   ).as[String]
 
+  // --------------------------------------------------------------------------------------------
   // -- Private APIs below --
+  // --------------------------------------------------------------------------------------------
   /** Tags output column with a nicer name. */
   private[gt] def withAlias(name: String, inputs: Column*)(output: Column) = {
     val paramNames = inputs.map(_.columnName).mkString(",")

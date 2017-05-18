@@ -16,7 +16,6 @@
 
 package org.apache.spark.sql.gt.functions
 
-import geotrellis.raster.mapalgebra.{local ⇒ alg}
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.sql.catalyst.analysis.FunctionRegistry
 
@@ -29,25 +28,25 @@ import org.apache.spark.sql.catalyst.analysis.FunctionRegistry
 private[gt] object Registrator {
   def register(sqlContext: SQLContext): Unit = {
     sqlContext.udf.register("st_makeConstantTile", UDFs.makeConstantTile)
-    sqlContext.udf.register("st_focalSum", UDFs.focalSum)
-    sqlContext.udf.register("st_makeTiles", UDFs.makeTiles)
     sqlContext.udf.register("st_gridRows", UDFs.gridRows)
     sqlContext.udf.register("st_gridCols", UDFs.gridCols)
+    sqlContext.udf.register("st_histogram", UDFs.histogram)
+    sqlContext.udf.register("st_stats", UDFs.statistics)
+    sqlContext.udf.register("st_tileMean", UDFs.tileMean)
+    sqlContext.udf.register("st_tileHistogram", UDFs.tileHistogram)
+    sqlContext.udf.register("st_tileStats", UDFs.tileStats)
+    sqlContext.udf.register("st_tileMeanDouble", UDFs.tileMeanDouble)
+    sqlContext.udf.register("st_tileHistogramDouble", UDFs.tileHistogramDouble)
+    sqlContext.udf.register("st_tileStatsDouble", UDFs.tileStatsDouble)
+    sqlContext.udf.register("st_localStats", UDFs.localStats)
     sqlContext.udf.register("st_localMax", UDFs.localMax)
     sqlContext.udf.register("st_localMin", UDFs.localMin)
     sqlContext.udf.register("st_localAdd", UDFs.localAdd)
     sqlContext.udf.register("st_localSubtract", UDFs.localSubtract)
-    sqlContext.udf.register("st_tileMean", UDFs.tileMean)
-    sqlContext.udf.register("st_tileHistogram", UDFs.tileHistogram)
-    sqlContext.udf.register("st_tileStatistics", UDFs.tileStatistics)
-    sqlContext.udf.register("st_tileMeanDouble", UDFs.tileMeanDouble)
-    sqlContext.udf.register("st_tileHistogramDouble", UDFs.tileHistogramDouble)
-    sqlContext.udf.register("st_tileStatisticsDouble", UDFs.tileStatisticsDouble)
-    sqlContext.udf.register("st_histogram", UDFs.histogram)
     sqlContext.udf.register("st_randomTile", UDFs.randomTile)
     sqlContext.udf.register("st_cellTypes", UDFs.cellTypes)
     sqlContext.udf.register("st_renderAscii", UDFs.renderAscii)
-    sqlContext.udf.register("st_localStats", UDFs.localStats)
+    sqlContext.udf.register("st_makeTiles", UDFs.makeTiles)
   }
   // Expression-oriented functions have a different registration scheme
   // Currently have to register with the `builtin` registry due to data hiding.

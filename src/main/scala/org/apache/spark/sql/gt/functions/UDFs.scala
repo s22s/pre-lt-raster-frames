@@ -16,11 +16,10 @@
 
 package org.apache.spark.sql.gt.functions
 
-import geotrellis.raster.histogram.Histogram
-import geotrellis.raster.mapalgebra.focal.{Square, Sum}
-import geotrellis.raster.mapalgebra.local.{Max, Min, Add, Subtract}
-import geotrellis.raster.summary.Statistics
 import geotrellis.raster._
+import geotrellis.raster.histogram.Histogram
+import geotrellis.raster.mapalgebra.local.{Add, Max, Min, Subtract}
+import geotrellis.raster.summary.Statistics
 
 import scala.util.Random
 
@@ -44,27 +43,29 @@ object UDFs {
 
   /** Computes the column aggregate histogram */
   private[gt] val histogram = new AggregateHistogramFunction()
+  /** Computes the column aggregate statistics */
+  private[gt] val statistics = new AggregateStatsFunction()
 
   /** Single floating point tile histogram. */
   private[gt] val tileHistogramDouble = safeEval[Tile, Histogram[Double]](_.histogramDouble())
   /** Single floating point tile statistics. Convenience for `tileHistogram.statisticsDouble`. */
-  private[gt] val tileStatisticsDouble = safeEval[Tile, Statistics[Double]](_.statisticsDouble.orNull)
+  private[gt] val tileStatsDouble = safeEval[Tile, Statistics[Double]](_.statisticsDouble.orNull)
   /** Single floating point tile mean. Convenience for `tileHistogram.statisticsDouble.mean`. */
   private[gt] val tileMeanDouble = safeEval[Tile, Double](_.statisticsDouble.map(_.mean).getOrElse(Double.NaN))
 
   /** Single tile histogram. */
   private[gt] val tileHistogram = safeEval[Tile, Histogram[Int]](_.histogram)
   /** Single tile statistics. Convenience for `tileHistogram.statistics`. */
-  private[gt] val tileStatistics = safeEval[Tile, Statistics[Int]](_.statistics.orNull)
+  private[gt] val tileStats = safeEval[Tile, Statistics[Int]](_.statistics.orNull)
   /** Single tile mean. Convenience for `tileHistogram.statistics.mean`. */
   private[gt] val tileMean = safeEval[Tile, Double](_.statistics.map(_.mean).getOrElse(Double.NaN))
 
+  /** Compute summary cell-wise statistics across tiles. */
+  private[gt] val localStats = new StatsLocalTileAggregateFunction()
   /** Compute the cell-wise max across tiles. */
   private[gt] val localMax = new LocalTileAggregateFunction(Max)
   /** Compute the cell-wise min across tiles. */
   private[gt] val localMin = new LocalTileAggregateFunction(Min)
-  /** Compute summary cell-wise statistics across tiles. */
-  private[gt] val localStats = new StatsLocalTileAggregateFunction()
 
   /** Cell-wise addition between tiles. */
   private[gt] val localAdd: (Tile, Tile) ⇒ Tile = safeEval((left, right) ⇒
@@ -72,9 +73,6 @@ object UDFs {
   /** Cell-wise subtraction between tiles. */
   private[gt] val localSubtract: (Tile, Tile) ⇒ Tile = safeEval((left, right) ⇒
     Subtract(left, right))
-
-  /** Perform a focal sum over square area with given half/width extent (value of 1 would be a 3x3 tile). This is just a  */
-  private[gt] val focalSum: (Tile, Int) ⇒ Tile = safeEval((tile, extent) ⇒ Sum(tile, Square(extent)))
 
   /** Render tile as ASCII string. */
   private[gt] val renderAscii: (Tile) ⇒ String = safeEval(_.asciiDraw)

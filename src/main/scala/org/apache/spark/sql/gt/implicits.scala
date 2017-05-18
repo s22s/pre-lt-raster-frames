@@ -18,6 +18,7 @@ package org.apache.spark.sql.gt
 
 import geotrellis.proj4.CRS
 import geotrellis.raster.histogram.Histogram
+import geotrellis.raster.summary.Statistics
 import geotrellis.raster.{MultibandTile, Tile}
 import geotrellis.spark.TemporalProjectedExtent
 import geotrellis.vector.{Extent, ProjectedExtent}
@@ -33,5 +34,6 @@ trait implicits {
   implicit def temporalProjectedExtentEncoder: Encoder[TemporalProjectedExtent] = ExpressionEncoder()
   implicit def histogramDoubleEncoder: Encoder[Histogram[Double]] = ExpressionEncoder()
   implicit def histogramIntEncoder: Encoder[Histogram[Int]] = ExpressionEncoder()
+  implicit def histogramStatsEncoder: Encoder[Statistics[Double]] = ExpressionEncoder()
 }
 object implicits extends implicits

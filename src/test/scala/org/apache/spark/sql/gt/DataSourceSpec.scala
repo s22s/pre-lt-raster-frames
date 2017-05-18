@@ -58,7 +58,7 @@ class DataSourceSpec extends FunSpec
     }
 
     it("used produce tile UDT that we can manipulate"){
-      val df = dfr.load().select($"col", $"row", $"extent", tileStatistics($"tile"))
+      val df = dfr.load().select($"col", $"row", $"extent", tileStats($"tile"))
       df.show()
       assert(df.count() > 0)
     }

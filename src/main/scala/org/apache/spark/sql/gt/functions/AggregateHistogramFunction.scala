@@ -24,7 +24,7 @@ import org.apache.spark.sql.gt.types.{HistogramUDT, TileUDT}
 import org.apache.spark.sql.types.{DataType, StructField, StructType}
 
 /**
- * Statistics aggregation function for tiles.
+ * Histogram aggregation function for a full column of tiles.
  *
  * @author sfitch 
  * @since 4/24/17
@@ -53,5 +53,5 @@ class AggregateHistogramFunction extends UserDefinedAggregateFunction {
     buffer1(0) = hist1 merge hist2
   }
 
-  override def evaluate(buffer: Row): Histogram[Double] = buffer.getAs[Histogram[Double]](0)
+  override def evaluate(buffer: Row): Any = buffer.getAs[Histogram[Double]](0)
 }

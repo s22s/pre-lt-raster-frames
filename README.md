@@ -30,9 +30,10 @@ A smattering of functions currentlly available via Spark Dataframes (prepend `st
 * `tileHistogram(tileColumn)` - Compute the integral value histogram of cellv values in each tile.tile values.
 * `tileHistogramDouble(tileColumn)` - Compute the floating point histogram of cellv values in each tile.
 * `tileStatistics(tileColumn)` - Compute min, max, mean, stddev, median, mode, etc. of integral cell values.tile values.
-* `tileStatisticsDouble(tileColumn)` - Compute min, max, mean, stddev, median, mode, etc. of floating point cell values.
+* `tileStatsDouble(tileColumn)` - Compute min, max, mean, stddev, median, mode, etc. of floating point cell values.
 * `tileMean(tileColumn)` - Compute the mean of all integral cell values in each tile.
 * `tileMeanDouble(tileColumn)` - Compute the mean of all floating point cell values in each tile.
 * `localStats(tileColumn)` -   Compute cell-local aggregate descriptive statistics for a column of tiles.
 * `histogram(tileColumn)` - Compute the full column aggregate floating point histogram.
+* `stats(tileColumn)` - Compute the full column aggregate floating point summary statistics.
 * `renderAscii(tileColumn)` - Render tile as ASCII string for debugging purposes.

@@ -24,6 +24,7 @@ import com.typesafe.scalalogging.LazyLogging
 import geotrellis.raster
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.{Add, Max, Min, Subtract}
+import geotrellis.raster.summary.Statistics
 import geotrellis.raster.{ByteCellType, MultibandTile, Tile, TileFeature}
 import geotrellis.spark.TemporalProjectedExtent
 import geotrellis.vector.{Extent, ProjectedExtent}
@@ -82,14 +83,6 @@ class GTSQLSpec extends FunSpec
       write(query)
       val tile = query.firstTile
       assert((tile.cellType === ByteCellType) (org.scalactic.Equality.default))
-    }
-
-    it("should evaluate UDF on tile") {
-      val query = sql("select st_focalSum(st_makeConstantTile(1, 10, 10, 'int8raw'), 4)")
-      write(query)
-      val tile = query.firstTile
-
-      assert(tile.cellType === ByteCellType)
     }
 
     it("should report dimensions") {
@@ -255,7 +248,7 @@ class GTSQLSpec extends FunSpec
 
     it("should compute tile statistics") {
       val ds = Seq.fill[Tile](3)(UDFs.randomTile(5, 5, "float32")).toDS()
-      val means1 = ds.select(tileStatisticsDouble($"value")).map(_.mean).collect
+      val means1 = ds.select(tileStatsDouble($"value")).map(_.mean).collect
       val means2 = ds.select(tileMeanDouble($"value")).collect
       assert(means1 === means2)
     }
@@ -294,6 +287,17 @@ class GTSQLSpec extends FunSpec
       val hist2 = sql("select st_histogram(tiles) as hist from tmp").as[Histogram[Double]]
 
       assert(hist2.first.totalCount() === 250)
+    }
+
+    it("should compute aggregate statistics") {
+      val ds = Seq.fill[Tile](10)(UDFs.randomTile(5, 5, "float32")).toDF("tiles")
+      ds.createOrReplaceTempView("tmp")
+      val agg = ds.select(stats($"tiles"))
+
+      assert(agg.first().stddev === 1.0 +- 0.1) // <-- playing with statistical fire :)
+
+      val agg2 = sql("select stats.* from (select st_stats(tiles) as stats from tmp)") .as[Statistics[Double]]
+      assert(agg2.first().dataCells === 250)
     }
 
     it("should compute aggregate local stats") {
