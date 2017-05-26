@@ -42,9 +42,9 @@ object UDFs {
   private[gt] val gridRows: (CellGrid) ⇒ (Int) = safeEval(_.rows)
 
   /** Computes the column aggregate histogram */
-  private[gt] val histogram = new AggregateHistogramFunction()
+  private[gt] val aggHistogram = new AggregateHistogramFunction()
   /** Computes the column aggregate statistics */
-  private[gt] val statistics = new AggregateStatsFunction()
+  private[gt] val aggStats = new AggregateStatsFunction()
 
   /** Single floating point tile histogram. */
   private[gt] val tileHistogramDouble = safeEval[Tile, Histogram[Double]](_.histogramDouble())

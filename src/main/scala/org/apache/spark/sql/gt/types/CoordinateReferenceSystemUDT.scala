@@ -17,7 +17,7 @@
 package org.apache.spark.sql.gt.types
 
 import geotrellis.proj4.CRS
-import org.apache.spark.sql.types.{DataType, StringType, UserDefinedType}
+import org.apache.spark.sql.types.{DataType, StringType, UDTRegistration, UserDefinedType}
 import org.apache.spark.unsafe.types.UTF8String
 
 /**
@@ -40,4 +40,6 @@ class CoordinateReferenceSystemUDT extends UserDefinedType[CRS] {
 
   override def userClass: Class[CRS] = classOf[CRS]
 }
-object CoordinateReferenceSystemUDT extends CoordinateReferenceSystemUDT
+object CoordinateReferenceSystemUDT extends CoordinateReferenceSystemUDT {
+  UDTRegistration.register(classOf[CRS].getName, classOf[CoordinateReferenceSystemUDT].getName)
+}

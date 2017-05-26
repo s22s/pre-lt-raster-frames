@@ -34,6 +34,6 @@ A smattering of functions currentlly available via Spark Dataframes (prepend `st
 * `tileMean(tileColumn)` - Compute the mean of all integral cell values in each tile.
 * `tileMeanDouble(tileColumn)` - Compute the mean of all floating point cell values in each tile.
 * `localStats(tileColumn)` -   Compute cell-local aggregate descriptive statistics for a column of tiles.
-* `histogram(tileColumn)` - Compute the full column aggregate floating point histogram.
-* `stats(tileColumn)` - Compute the full column aggregate floating point summary statistics.
+* `aggHistogram(tileColumn)` - Compute the full column aggregate floating point histogram.
+* `aggStats(tileColumn)` - Compute the full column aggregate floating point summary statistics.
 * `renderAscii(tileColumn)` - Render tile as ASCII string for debugging purposes.

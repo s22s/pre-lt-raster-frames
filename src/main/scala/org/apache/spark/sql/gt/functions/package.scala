@@ -82,13 +82,13 @@ package object functions {
   ).as[Int]
 
   /**  Compute the full column aggregate floating point histogram. */
-  def histogram(col: Column) = withAlias("histogram", col)(
-    UDFs.histogram(col)
+  def aggHistogram(col: Column) = withAlias("histogram", col)(
+    UDFs.aggHistogram(col)
   ).as[Histogram[Double]]
 
   /**  Compute the full column aggregate floating point statistics. */
-  def stats(col: Column) = withAlias("stats", col)(
-    UDFs.statistics(col)
+  def aggStats(col: Column) = withAlias("stats", col)(
+    UDFs.aggStats(col)
   ).as[Statistics[Double]]
 
   /** Compute tileHistogram of floating point tile values. */

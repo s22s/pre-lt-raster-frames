@@ -38,4 +38,6 @@ private[gt] class HistogramUDT extends UserDefinedType[Histogram[Double]]
   }
 }
 
-object HistogramUDT extends HistogramUDT
+object HistogramUDT extends HistogramUDT {
+  UDTRegistration.register(classOf[Histogram[Double]].getName, classOf[HistogramUDT].getName)
+}

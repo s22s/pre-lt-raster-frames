@@ -277,7 +277,7 @@ class GTSQLSpec extends FunSpec
     it("should compute aggregate histogram") {
       val ds = Seq.fill[Tile](10)(UDFs.randomTile(5, 5, "float32")).toDF("tiles")
       ds.createOrReplaceTempView("tmp")
-      val agg = ds.select(histogram($"tiles")).as[Histogram[Double]]
+      val agg = ds.select(aggHistogram($"tiles")).as[Histogram[Double]]
       val hist = agg.collect()
       assert(hist.length === 1)
       val stats = agg.map(_.statistics().get).as("stats")
@@ -292,7 +292,7 @@ class GTSQLSpec extends FunSpec
     it("should compute aggregate statistics") {
       val ds = Seq.fill[Tile](10)(UDFs.randomTile(5, 5, "float32")).toDF("tiles")
       ds.createOrReplaceTempView("tmp")
-      val agg = ds.select(stats($"tiles"))
+      val agg = ds.select(aggStats($"tiles"))
 
       assert(agg.first().stddev === 1.0 +- 0.1) // <-- playing with statistical fire :)
 

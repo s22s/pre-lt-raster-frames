@@ -16,33 +16,20 @@
 
 package org.apache.spark.sql.gt.types
 
-import org.apache.spark.sql.SQLContext
-import org.apache.spark.sql.types.{UDTRegistration, UserDefinedType}
-
 /**
+ * Module responsible for ensuring the UDTs are registered with catalyst.
  *
  * @author sfitch 
  * @since 4/12/17
  */
 private[gt] object Registrator {
 
-  val types = Seq(
-    TileUDT,
-    MultibandTileUDT,
-    CoordinateReferenceSystemUDT,
+  def register(): Unit = {
+    // Referencing the companion objects here is intended to have it's constructor called,
+    // which is where the registration actually happens.
+    TileUDT
+    MultibandTileUDT
+    CoordinateReferenceSystemUDT
     HistogramUDT
-  )
-
-  def register(implicit sqlContext: SQLContext): Unit = {
-    types.foreach(register)
-  }
-
-  private def register(udt: UserDefinedType[_])(implicit ctx: SQLContext): Unit = {
-    if (! UDTRegistration.exists(udt.userClass.getCanonicalName)) {
-      UDTRegistration.register(
-        udt.userClass.getCanonicalName,
-        udt.getClass.getSuperclass.getName
-      )
-    }
   }
 }

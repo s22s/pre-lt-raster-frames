@@ -27,7 +27,7 @@ import org.apache.spark.sql.catalyst.analysis.UnresolvedAttribute
  */
 package object gt extends implicits {
   def gtRegister(sqlContext: SQLContext): Unit = {
-    gt.types.Registrator.register(sqlContext)
+    gt.types.Registrator.register()
     gt.functions.Registrator.register(sqlContext)
   }
 
