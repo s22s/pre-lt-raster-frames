@@ -16,24 +16,28 @@
 
 package org.apache.spark.sql.gt.types
 
+import geotrellis.vector.Geometry
+import org.apache.spark.sql.types._
+
+import scala.reflect._
+
 /**
- * Module responsible for ensuring the UDTs are registered with catalyst.
+ * Base class for several of the geometry-related GeoTrellis UDTs.
  *
  * @author sfitch 
  * @since 4/12/17
  */
-private[gt] object Registrator {
-
-  def register(): Unit = {
-    // Referencing the companion objects here is intended to have it's constructor called,
-    // which is where the registration actually happens.
-    TileUDT
-    MultibandTileUDT
-    CoordinateReferenceSystemUDT
-    HistogramUDT
-    LineUDT
-    MultiLineUDT
-    PointUDT
-    PolygonUDT
+private[gt] abstract class AbstractGeometryUDT[T >: Null <: Geometry: ClassTag](override val typeName: String)
+  extends UserDefinedType[T] with WKBBackedUDT[T] {
+  private[sql] override def acceptsType(dataType: DataType) = dataType match {
+    case o: AbstractGeometryUDT[T] ⇒ o.typeName == this.typeName
+    case _ ⇒ super.acceptsType(dataType)
   }
+
+  override val targetClassTag = classTag[T]
 }
+
+
+
+
+
