@@ -36,10 +36,8 @@ object UDFs {
   private def safeEval[P1, P2, R](f: (P1, P2) ⇒ R): (P1, P2) ⇒ R =
     (p1, p2) ⇒ if(p1 == null || p2 == null) null.asInstanceOf[R] else f(p1, p2)
 
-  /** Reports number of columns in a tile. */
-  private[gt] val tileCols: (CellGrid) ⇒ (Int) = safeEval(_.cols)
-  /** Reports number of rows in a tile. */
-  private[gt] val tileRows: (CellGrid) ⇒ (Int) = safeEval(_.rows)
+  /** Reports the dimensions of a tile. */
+  private[gt] val tileDimensions: (CellGrid) ⇒ (Int, Int) = safeEval(_.dimensions)
 
   /** Computes the column aggregate histogram */
   private[gt] val aggHistogram = new AggregateHistogramFunction()

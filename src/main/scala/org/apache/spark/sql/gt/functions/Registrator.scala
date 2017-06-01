@@ -28,8 +28,7 @@ import org.apache.spark.sql.catalyst.analysis.FunctionRegistry
 private[gt] object Registrator {
   def register(sqlContext: SQLContext): Unit = {
     sqlContext.udf.register("st_makeConstantTile", UDFs.makeConstantTile)
-    sqlContext.udf.register("st_tileRows", UDFs.tileRows)
-    sqlContext.udf.register("st_tileCols", UDFs.tileCols)
+    sqlContext.udf.register("st_tileDimensions", UDFs.tileDimensions)
     sqlContext.udf.register("st_histogram", UDFs.aggHistogram)
     sqlContext.udf.register("st_stats", UDFs.aggStats)
     sqlContext.udf.register("st_tileMean", UDFs.tileMean)

@@ -87,8 +87,9 @@ class GTSQLSpec extends FunSpec
 
     it("should report dimensions") {
       val query = sql(
-        """|select st_tileRows(tiles) as rows, st_tileCols(tiles) as cols from (
-           |select st_makeConstantTile(1, 10, 10, 'int8raw') as tiles)
+        """|select dims.* from (
+           |select st_tileDimensions(tiles) as dims from (
+           |select st_makeConstantTile(1, 10, 10, 'int8raw') as tiles))
            |""".stripMargin)
       write(query)
       assert(query.as[(Int, Int)].collect().head === ((10, 10)))
@@ -110,11 +111,11 @@ class GTSQLSpec extends FunSpec
       write(query)
       assert(query.select("cell_0", "cell_1").as[(Double, Double)].collect().forall(_ == ((1.0, 2.0))))
       val query2 = sql(
-        """|select st_tileRows(tiles) as rows, st_tileCols(tiles) as cols, st_explodeTiles(tiles)  from (
+        """|select st_tileDimensions(tiles) as dims, st_explodeTiles(tiles) from (
            |select st_makeConstantTile(1, 10, 10, 'int8raw') as tiles)
            |""".stripMargin)
       write(query2)
-      assert(query2.columns.length === 5)
+      assert(query2.columns.length === 4)
 
       val df = Seq[(Tile, Tile)]((byteArrayTile, byteArrayTile)).toDF("tile1", "tile2")
       val exploded = df.select(explodeTiles($"tile1", $"tile2"))
@@ -294,7 +295,7 @@ class GTSQLSpec extends FunSpec
       ds.createOrReplaceTempView("tmp")
       val agg = ds.select(aggStats($"tiles"))
 
-      assert(agg.first().stddev === 1.0 +- 0.1) // <-- playing with statistical fire :)
+      assert(agg.first().stddev === 1.0 +- 0.2) // <-- playing with statistical fire :)
 
       val agg2 = sql("select stats.* from (select st_stats(tiles) as stats from tmp)") .as[Statistics[Double]]
       assert(agg2.first().dataCells === 250)

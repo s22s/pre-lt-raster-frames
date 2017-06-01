@@ -77,17 +77,11 @@ package object functions {
     Column(exploder).as(metaNames :+ vectorName)
   }
 
-  /** Query the number of rows in a tile. */
+  /** Query the number of (cols, rows) in a tile. */
   @Experimental
-  def tileRows(col: Column) = withAlias("tileRows", col)(
-    SparkUDF[Int, Tile](UDFs.tileRows).apply(col)
-  ).as[Int]
-
-  /** Query the number of columns in a tile. */
-  @Experimental
-  def tileCols(col: Column) = withAlias("tileCols", col)(
-    SparkUDF[Int, Tile](UDFs.tileCols).apply(col)
-  ).as[Int]
+  def tileDimensions(col: Column) = withAlias("tileDimensions", col)(
+    SparkUDF[(Int, Int), Tile](UDFs.tileDimensions).apply(col)
+  ).as[(Int, Int)]
 
   /**  Compute the full column aggregate floating point histogram. */
   @Experimental
