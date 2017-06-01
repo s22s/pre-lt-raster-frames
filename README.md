@@ -19,8 +19,8 @@ A smattering of functions currentlly available via Spark Dataframes (prepend `st
 * `explodeTileSample(sampleFraction, tileColumn)` - Create a row for each pixel in tile with random sampling.
 * `vectorizeTiles(tileColumns)` - Create a vector for each cell from each tile column.
 * `vectorizeTileSample(sampleFraction, tileColumn)` - Create a vector containing cells from each tile column, with random sampling. 
-* `gridRows(tileColumn)` - Query the number of rows in a tile.
-* `gridCols(tileColumn)` - Query the number of columns in a tile.
+* `tileRows(tileColumn)` - Query the number of rows in a tile.
+* `tileCols(tileColumn)` - Query the number of columns in a tile.
 * `focalSum(tileColumn, radius)` - Compute the focal sum of a tile with the given radius.
 * `localMax(tileColumn)` - Compute the cellwise/local max operation between tiles in a column.
 * `localMin(tileColumn)` - Compute the cellwise/local min operation between tiles in a column.

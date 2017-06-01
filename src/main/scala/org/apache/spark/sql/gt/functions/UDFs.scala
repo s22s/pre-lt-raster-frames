@@ -37,9 +37,9 @@ object UDFs {
     (p1, p2) ⇒ if(p1 == null || p2 == null) null.asInstanceOf[R] else f(p1, p2)
 
   /** Reports number of columns in a tile. */
-  private[gt] val gridCols: (CellGrid) ⇒ (Int) = safeEval(_.cols)
+  private[gt] val tileCols: (CellGrid) ⇒ (Int) = safeEval(_.cols)
   /** Reports number of rows in a tile. */
-  private[gt] val gridRows: (CellGrid) ⇒ (Int) = safeEval(_.rows)
+  private[gt] val tileRows: (CellGrid) ⇒ (Int) = safeEval(_.rows)
 
   /** Computes the column aggregate histogram */
   private[gt] val aggHistogram = new AggregateHistogramFunction()

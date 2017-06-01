@@ -87,7 +87,7 @@ class GTSQLSpec extends FunSpec
 
     it("should report dimensions") {
       val query = sql(
-        """|select st_gridRows(tiles) as rows, st_gridCols(tiles) as cols from (
+        """|select st_tileRows(tiles) as rows, st_tileCols(tiles) as cols from (
            |select st_makeConstantTile(1, 10, 10, 'int8raw') as tiles)
            |""".stripMargin)
       write(query)
@@ -110,7 +110,7 @@ class GTSQLSpec extends FunSpec
       write(query)
       assert(query.select("cell_0", "cell_1").as[(Double, Double)].collect().forall(_ == ((1.0, 2.0))))
       val query2 = sql(
-        """|select st_gridRows(tiles) as rows, st_gridCols(tiles) as cols, st_explodeTiles(tiles)  from (
+        """|select st_tileRows(tiles) as rows, st_tileCols(tiles) as cols, st_explodeTiles(tiles)  from (
            |select st_makeConstantTile(1, 10, 10, 'int8raw') as tiles)
            |""".stripMargin)
       write(query2)

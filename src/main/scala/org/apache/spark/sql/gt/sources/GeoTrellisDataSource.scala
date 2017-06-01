@@ -6,7 +6,9 @@ import java.net.URI
 
 import geotrellis.spark._
 import geotrellis.vector.Extent
+import org.apache.spark.annotation.Experimental
 
+@Experimental
 class GeoTrellisDataSource extends DataSourceRegister with RelationProvider {
   def shortName(): String = "geotrellis"
 

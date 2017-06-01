@@ -21,6 +21,7 @@ import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.LocalTileBinaryOp
 import geotrellis.raster.mapalgebra.{local ⇒ alg}
 import geotrellis.raster.summary.Statistics
+import org.apache.spark.annotation.Experimental
 import org.apache.spark.ml.linalg.{Vector ⇒ MLVector}
 import org.apache.spark.sql._
 import org.apache.spark.sql.catalyst.analysis.MultiAlias
@@ -42,15 +43,18 @@ package object functions {
   }
   import encoders._
 
+  @Experimental
   def randomTile(cols: Int, rows: Int, cellType: String) =
     SparkUDF[Tile, Int, Int, String](UDFs.randomTile).apply(lit(cols), lit(rows), lit(cellType))
       .as(s"tile($cols, $rows, $cellType)")
       .as[Tile]
 
   /** Create a row for each cell in tile. */
+  @Experimental
   def explodeTiles(cols: Column*): Column = explodeTileSample(1.0, cols: _*)
 
   /** Create a row for each cell in tile with random sampling. */
+  @Experimental
   def explodeTileSample(sampleFraction: Double, cols: Column*): Column = {
     val exploder = ExplodeTileExpression(sampleFraction, cols.map(_.expr))
     // Hack to grab the first two non-cell columns
@@ -60,9 +64,11 @@ package object functions {
   }
 
   /** Create a vector for each cell from each tile column. */
+  @Experimental
   def vectorizeTiles(cols: Column*) = vectorizeTileSample(1.0, cols: _*)
 
   /** Create a vector containing cells from each tile column, with random sampling. */
+  @Experimental
   def vectorizeTileSample(sampleFraction: Double, cols: Column*) = {
     val exploder = VectorizeTilesExpression(sampleFraction, cols.map(_.expr))
     // Hack to grab the first two non-cell columns
@@ -72,83 +78,100 @@ package object functions {
   }
 
   /** Query the number of rows in a tile. */
-  def gridRows(col: Column) = withAlias("gridRows", col)(
-    SparkUDF[Int, Tile](UDFs.gridRows).apply(col)
+  @Experimental
+  def tileRows(col: Column) = withAlias("tileRows", col)(
+    SparkUDF[Int, Tile](UDFs.tileRows).apply(col)
   ).as[Int]
 
   /** Query the number of columns in a tile. */
-  def gridCols(col: Column) = withAlias("gridCols", col)(
-    SparkUDF[Int, Tile](UDFs.gridCols).apply(col)
+  @Experimental
+  def tileCols(col: Column) = withAlias("tileCols", col)(
+    SparkUDF[Int, Tile](UDFs.tileCols).apply(col)
   ).as[Int]
 
   /**  Compute the full column aggregate floating point histogram. */
+  @Experimental
   def aggHistogram(col: Column) = withAlias("histogram", col)(
     UDFs.aggHistogram(col)
   ).as[Histogram[Double]]
 
   /**  Compute the full column aggregate floating point statistics. */
+  @Experimental
   def aggStats(col: Column) = withAlias("stats", col)(
     UDFs.aggStats(col)
   ).as[Statistics[Double]]
 
   /** Compute tileHistogram of floating point tile values. */
+  @Experimental
   def tileHistogramDouble(col: Column) = withAlias("tileHistogramDouble", col)(
     SparkUDF[Histogram[Double], Tile](UDFs.tileHistogramDouble).apply(col)
   ).as[Histogram[Double]]
 
   /** Compute statistics of tile values. */
+  @Experimental
   def tileStatsDouble(col: Column) = withAlias("tileStatsDouble", col)(
     SparkUDF[Statistics[Double], Tile](UDFs.tileStatsDouble).apply(col)
   ).as[Statistics[Double]]
 
   /** Compute the tile-wise mean */
+  @Experimental
   def tileMeanDouble(col: Column) = withAlias("tileMeanDouble", col)(
     SparkUDF[Double, Tile](UDFs.tileMeanDouble).apply(col)
   ).as[Double]
 
   /** Compute the tile-wise mean */
+  @Experimental
   def tileMean(col: Column) = withAlias("tileMean", col)(
     SparkUDF[Double, Tile](UDFs.tileMean).apply(col)
   ).as[Double]
 
   /** Compute tileHistogram of tile values. */
+  @Experimental
   def tileHistogram(col: Column) = withAlias("tileHistogram", col)(
     SparkUDF[Histogram[Int], Tile](UDFs.tileHistogram).apply(col)
   ).as[Histogram[Int]]
 
   /** Compute statistics of tile values. */
+  @Experimental
   def tileStats(col: Column) = withAlias("tileStats", col)(
     SparkUDF[Statistics[Int], Tile](UDFs.tileStats).apply(col)
   ).as[Statistics[Int]]
 
   /** Compute cell-local aggregate descriptive statistics for a column of tiles. */
+  @Experimental
   def localStats(col: Column) = withAlias("localStats", col)(
     UDFs.localStats(col)
   )
 
   /** Compute the cellwise/local max operation between tiles in a column. */
+  @Experimental
   def localMax(col: Column) = withAlias("localMax", col)(
     UDFs.localMax(col)
   ).as[Tile]
 
   /** Compute the cellwise/local min operation between tiles in a column. */
+  @Experimental
   def localMin(col: Column) = withAlias("localMin", col)(
     UDFs.localMin(col)
   ).as[Tile]
 
   /** Cellwise addition between two tiles. */
+  @Experimental
   def localAdd(left: Column, right: Column) = localAlgebra(alg.Add, left, right)
 
   /** Cellwise subtraction between two tiles. */
+  @Experimental
   def localSubtract(left: Column, right: Column) = localAlgebra(alg.Subtract, left, right)
 
   /** Perform an arbitrary GeoTrellis `LocalTileBinaryOp` between two tile columns. */
+  @Experimental
   def localAlgebra(op: LocalTileBinaryOp, left: Column, right: Column) =
     withAlias(opName(op), left, right)(
       SparkUDF[Tile, Tile, Tile](op.apply).apply(left, right)
     ).as[Tile]
 
   /** Render tile as ASCII string for debugging purposes. */
+  @Experimental
   def renderAscii(col: Column) = withAlias("renderAscii", col)(
     SparkUDF[String, Tile](UDFs.renderAscii).apply(col)
   ).as[String]
