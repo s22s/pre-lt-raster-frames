@@ -70,7 +70,7 @@ package object functions {
   /** Create a vector containing cells from each tile column, with random sampling. */
   @Experimental
   def vectorizeTileSample(sampleFraction: Double, cols: Column*) = {
-    val exploder = VectorizeTilesExpression(sampleFraction, cols.map(_.expr))
+    val exploder = VectorizeTilesExpression(sampleFraction, true, cols.map(_.expr))
     // Hack to grab the first two non-cell columns
     val metaNames = exploder.elementSchema.fieldNames.take(2)
     val vectorName = "cells_" + cols.map(_.columnName).mkString("_")

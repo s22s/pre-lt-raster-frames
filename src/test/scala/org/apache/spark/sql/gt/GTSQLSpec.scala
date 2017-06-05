@@ -70,7 +70,6 @@ class GTSQLSpec extends FunSpec
     }
   }
 
-
   implicit class DFExtras(df: DataFrame) {
     def firstTile: Tile = df.collect().head.getAs[Tile](0)
   }
@@ -133,7 +132,7 @@ class GTSQLSpec extends FunSpec
     }
 
     it("should vectorize tiles") {
-      val df = Seq.fill[(Tile, Tile)](30)((UDFs.randomTile(5, 5, "float32"), UDFs.randomTile(5, 5, "int8"))).toDF("tile1", "tile2")
+      val df = Seq.fill[(Tile, Tile)](30)((UDFs.randomTile(5, 5, "float32"), UDFs.randomTile(5, 5, "int16"))).toDF("tile1", "tile2")
       val vectored = df.select(vectorizeTiles($"tile1", $"tile2")).as[(Int, Int, MLVector)]
       assert(vectored.columns.length === 3)
       write(vectored)
@@ -149,7 +148,15 @@ class GTSQLSpec extends FunSpec
       write(vectored)
       vectored.show(false)
 
-      assert(vectored.count < (30 * 5 * 5) * 0.6)
+      assert(vectored.count < (30 * 5 * 5) * 0.6 && vectored.count > 1)
+    }
+
+    it("should vectorize and eliminate NAs") {
+      val df = Seq.fill[Tile](30)(injectND(2)(UDFs.randomTile(5, 5, "float32"))).toDF("tile")
+      val vectored = df.select(vectorizeTiles($"tile"))
+      val cells = 30 * 5 * 5
+      val maxNAs = 30 * 2
+      assert(vectored.count < cells && vectored.count >= cells - maxNAs)
     }
 
     it("should code RDD[(Int, Tile)]") {

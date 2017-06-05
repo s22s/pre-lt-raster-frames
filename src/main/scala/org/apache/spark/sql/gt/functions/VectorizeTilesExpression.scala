@@ -16,8 +16,11 @@
 
 package org.apache.spark.sql.gt.functions
 
+import geotrellis.raster
+import org.apache.spark.ml.linalg
 import org.apache.spark.ml.linalg.SQLDataTypes.VectorType
 import org.apache.spark.ml.linalg.VectorUDT
+import org.apache.spark.ml.linalg.{Vector ⇒ MLVector}
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.expressions.codegen.CodegenFallback
 import org.apache.spark.sql.catalyst.expressions.{Expression, Generator}
@@ -32,7 +35,9 @@ import org.apache.spark.util.Utils
  * @author sfitch 
  * @since 4/12/17
  */
-private[spark] case class VectorizeTilesExpression(sampleFraction: Double = 1.0,
+private[spark] case class VectorizeTilesExpression(
+  sampleFraction: Double = 1.0,
+  dropHavingNA: Boolean = true,
   override val children: Seq[Expression])
   extends Expression with Generator with CodegenFallback {
 
@@ -49,6 +54,13 @@ private[spark] case class VectorizeTilesExpression(sampleFraction: Double = 1.0,
     else Utils.random.nextDouble() <= sampleFraction
   }
 
+  private def hasNA(vec: MLVector): Boolean = {
+//    var withNA = false
+//    vec.foreachActive((_, value) ⇒ if(raster.isNoData(value)) withNA = true)
+//    withNA
+    linalg.Vectors.norm(vec, 2).isNaN
+  }
+
   override def eval(input: InternalRow): TraversableOnce[InternalRow] = {
     val tiles = for(child ← children) yield
       TileUDT.deserialize(child.eval(input).asInstanceOf[InternalRow])
@@ -61,7 +73,8 @@ private[spark] case class VectorizeTilesExpression(sampleFraction: Double = 1.0,
       row ← 0 until rows
       col ← 0 until cols
       if keep()
-      vector = org.apache.spark.ml.linalg.Vectors.dense(tiles.map(_.getDouble(col, row)).toArray)
+      vector = linalg.Vectors.dense(tiles.map(_.getDouble(col, row)).toArray)
+      if !(dropHavingNA && hasNA(vector))
     } yield InternalRow(row, col, VectorType.asInstanceOf[VectorUDT].serialize(vector))
   }
 }
