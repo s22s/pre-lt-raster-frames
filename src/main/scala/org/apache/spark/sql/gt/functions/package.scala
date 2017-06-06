@@ -63,20 +63,6 @@ package object functions {
     Column(exploder).as(metaNames ++ colNames)
   }
 
-  /** Create a vector for each cell from each tile column. */
-  @Experimental
-  def vectorizeTiles(cols: Column*) = vectorizeTileSample(1.0, cols: _*)
-
-  /** Create a vector containing cells from each tile column, with random sampling. */
-  @Experimental
-  def vectorizeTileSample(sampleFraction: Double, cols: Column*) = {
-    val exploder = VectorizeTilesExpression(sampleFraction, true, cols.map(_.expr))
-    // Hack to grab the first two non-cell columns
-    val metaNames = exploder.elementSchema.fieldNames.take(2)
-    val vectorName = "cells_" + cols.map(_.columnName).mkString("_")
-    Column(exploder).as(metaNames :+ vectorName)
-  }
-
   /** Query the number of (cols, rows) in a tile. */
   @Experimental
   def tileDimensions(col: Column) = withAlias("tileDimensions", col)(

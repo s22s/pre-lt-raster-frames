@@ -131,34 +131,6 @@ class GTSQLSpec extends FunSpec
       assert(exploded.count() < 9)
     }
 
-    it("should vectorize tiles") {
-      val df = Seq.fill[(Tile, Tile)](30)((UDFs.randomTile(5, 5, "float32"), UDFs.randomTile(5, 5, "int16"))).toDF("tile1", "tile2")
-      val vectored = df.select(vectorizeTiles($"tile1", $"tile2")).as[(Int, Int, MLVector)]
-      assert(vectored.columns.length === 3)
-      write(vectored)
-      assert(vectored.count === 30 * 5 * 5)
-      val features = vectored.collect().map(_._3)
-      forAll(features)(f ⇒ assert(f.size === 2))
-    }
-
-    it("should vectorize tiles with ramdom sampling") {
-      val df = Seq.fill[(Tile, Tile)](30)((UDFs.randomTile(5, 5, "float32"), UDFs.randomTile(5, 5, "int8"))).toDF("tile1", "tile2")
-      val vectored = df.select(vectorizeTileSample(0.5, $"tile1", $"tile2")).as[(Int, Int, MLVector)]
-      assert(vectored.columns.length === 3)
-      write(vectored)
-      vectored.show(false)
-
-      assert(vectored.count < (30 * 5 * 5) * 0.6 && vectored.count > 1)
-    }
-
-    it("should vectorize and eliminate NAs") {
-      val df = Seq.fill[Tile](30)(injectND(2)(UDFs.randomTile(5, 5, "float32"))).toDF("tile")
-      val vectored = df.select(vectorizeTiles($"tile"))
-      val cells = 30 * 5 * 5
-      val maxNAs = 30 * 2
-      assert(vectored.count < cells && vectored.count >= cells - maxNAs)
-    }
-
     it("should code RDD[(Int, Tile)]") {
       val ds = Seq((1, byteArrayTile: Tile)).toDS
       write(ds)
