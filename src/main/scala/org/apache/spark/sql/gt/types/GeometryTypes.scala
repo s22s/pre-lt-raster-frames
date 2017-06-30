@@ -32,3 +32,10 @@ private[gt] class PolygonUDT extends AbstractGeometryUDT[Polygon]("st_polygon")
 case object PolygonUDT extends PolygonUDT {
   UDTRegistration.register(classOf[Polygon].getName, classOf[PolygonUDT].getName)
 }
+
+private[gt] class MultiPolygonUDT extends AbstractGeometryUDT[MultiPolygon]("st_multipolygon")
+
+case object MultiPolygonUDT extends MultiPolygonUDT {
+  UDTRegistration.register(classOf[MultiPolygon].getName, classOf[MultiPolygonUDT].getName)
+}
+
