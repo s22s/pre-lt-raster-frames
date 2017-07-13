@@ -27,7 +27,7 @@ import org.apache.spark.sql._
 import org.apache.spark.sql.catalyst.analysis.MultiAlias
 import org.apache.spark.sql.catalyst.expressions.{CreateArray, Expression, Inline}
 import org.apache.spark.sql.functions.{lit, udf ⇒ SparkUDF}
-import org.apache.spark.sql.types.{StructType, UDTRegistration, UserDefinedType}
+import org.apache.spark.sql.types._
 
 import scala.reflect.runtime.universe._
 
@@ -67,7 +67,7 @@ package object functions {
   @Experimental
   def tileDimensions(col: Column) = withAlias("tileDimensions", col)(
     SparkUDF[(Int, Int), Tile](UDFs.tileDimensions).apply(col)
-  ).as[(Int, Int)]
+  ).cast(StructType(Seq(StructField("cols", IntegerType), StructField("rows", IntegerType))))
 
   /**  Compute the full column aggregate floating point histogram. */
   @Experimental
