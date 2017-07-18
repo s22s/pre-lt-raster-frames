@@ -6,7 +6,7 @@ import geotrellis.spark.{Bounds, Metadata}
 import geotrellis.util.{Component, GetComponent}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.gt.functions.ColumnFunctions
-import org.apache.spark.sql.gt.{Implicits, gtRegister}
+import org.apache.spark.sql.gt.Implicits
 import org.apache.spark.sql.{DataFrame, SQLContext, SparkSession, gt}
 import spray.json.{JsObject, JsonFormat}
 
@@ -37,7 +37,7 @@ package object rasterframes extends Implicits with ColumnFunctions {
 
   /** Initialization injection point. */
   def rfInit(sqlContext: SQLContext): Unit = {
-    gtRegister(sqlContext)
+    gt.gtRegister(sqlContext)
   }
 
   implicit class WithDataFrameMethods(val self: DataFrame) extends DataFrameMethods
