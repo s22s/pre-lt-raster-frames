@@ -5,9 +5,9 @@ scalaVersion := "2.11.8"
 
 name := "raster-frames"
 
-organization := "astraea"
+organization := "io.astraea"
 
-version := "0.3.0-SNAPSHOT"
+version := "0.3.0"
 
 licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
 
