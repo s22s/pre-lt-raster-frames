@@ -1,6 +1,7 @@
 package org.apache.spark.sql.gt
 
 
+import astraea.spark.rasterframes.{TestData, TestEnvironment}
 import geotrellis.proj4.LatLng
 import geotrellis.raster._
 import geotrellis.spark._
@@ -9,13 +10,9 @@ import geotrellis.spark.io.file.{FileLayerReader, FileLayerWriter}
 import geotrellis.spark.io.index.ZCurveKeyIndexMethod
 import geotrellis.spark.tiling.ZoomedLayoutScheme
 import geotrellis.vector._
-import org.scalatest.{FunSpec, Inspectors, Matchers}
-import org.scalactic.Tolerance
 import org.apache.spark.sql.gt.functions._
 
-class DataSourceSpec extends FunSpec
-                             with Matchers with Inspectors with Tolerance
-                             with TestEnvironment with TestData {
+class DataSourceSpec extends TestEnvironment with TestData {
 
   import sqlContext.implicits._
 

@@ -1,13 +1,10 @@
 package org.apache.spark.sql.gt
 
+import astraea.spark.rasterframes.{TestData, TestEnvironment}
 import geotrellis.vector._
 import org.apache.spark.rdd.RDD
-import org.scalactic.Tolerance
-import org.scalatest.{FunSpec, Inspectors, Matchers}
 
-class GeometryEncodingSpec extends FunSpec
-  with Matchers with Inspectors with Tolerance
-  with TestEnvironment with TestData {
+class GeometryEncodingSpec extends TestEnvironment with TestData {
   import GeometryEncodingSpec._
 
   gtRegister(sqlContext)

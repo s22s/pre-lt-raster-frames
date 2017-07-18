@@ -26,12 +26,13 @@ libraryDependencies ++= Seq(
   geotrellis("spark-testkit") % Test,
   spark("core"),
   spark("mllib"),
-  spark("sql")
+  spark("sql"),
+  "org.scalatest" %% "scalatest" % "3.0.3" % Test
 )
 
 fork in Test := true
 
-scalacOptions += "-feature"
+scalacOptions ++= Seq("-feature", "-deprecation")
 
 bintrayOrganization := Some("s22s")
 

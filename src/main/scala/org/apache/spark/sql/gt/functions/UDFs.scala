@@ -84,7 +84,7 @@ object UDFs {
 
   /** Constructor for constant tiles */
   private[gt] val makeConstantTile: (Number, Int, Int, String) ⇒ Tile = (value, cols, rows, cellTypeName) ⇒ {
-    val cellType = CellType.fromString(cellTypeName)
+    val cellType = CellType.fromName(cellTypeName)
     cellType match {
       case BitCellType => BitConstantTile(if (value.intValue() == 0) false else true, cols, rows)
       case ct: ByteCells => ByteConstantTile(value.byteValue(), cols, rows, ct)
@@ -99,7 +99,7 @@ object UDFs {
 
   /** Construct a tile of given size and cell type populated with random values. */
   private[gt] val randomTile: (Int, Int, String) ⇒ Tile = (cols, rows, cellTypeName) ⇒ {
-    val cellType = CellType.fromString(cellTypeName)
+    val cellType = CellType.fromName(cellTypeName)
 
     val tile = ArrayTile.alloc(cellType, cols, rows)
     if(cellType.isFloatingPoint) {
@@ -113,7 +113,5 @@ object UDFs {
   /** Create a series of random tiles. */
   private[gt] val makeTiles: (Int) ⇒ Array[Tile] = (count) ⇒
     Array.fill(count)(randomTile(4, 4, "int8raw"))
-
-
 
 }

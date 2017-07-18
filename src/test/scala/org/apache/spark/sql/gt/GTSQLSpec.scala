@@ -20,6 +20,7 @@ package org.apache.spark.sql.gt
 
 import java.nio.file.{Files, Paths}
 
+import astraea.spark.rasterframes.{TestData, TestEnvironment}
 import com.typesafe.scalalogging.LazyLogging
 import geotrellis.raster
 import geotrellis.raster.histogram.Histogram
@@ -42,11 +43,7 @@ import org.apache.spark.ml.linalg.{Vector ⇒ MLVector}
  * @author sfitch
  * @since 3/30/17
  */
-class GTSQLSpec extends FunSpec
-  with Matchers with Inspectors with Tolerance
-  with TestEnvironment with TestData with LazyLogging {
-
-  gtRegister(sqlContext)
+class GTSQLSpec extends TestEnvironment with TestData with LazyLogging {
 
   /** This is here so we can test writing UDF generated/modified GeoTrellis types to ensure they are Parquet compliant. */
   def write(df: Dataset[_]): Unit = {

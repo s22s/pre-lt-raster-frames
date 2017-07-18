@@ -16,7 +16,7 @@
  * the License.
  */
 
-package org.apache.spark.sql.gt
+package astraea.spark.rasterframes
 
 import java.time.ZonedDateTime
 
@@ -24,13 +24,12 @@ import geotrellis.proj4.LatLng
 import geotrellis.raster._
 import geotrellis.spark.{SpaceTimeKey, SpatialKey, TemporalProjectedExtent}
 import geotrellis.vector.{Extent, ProjectedExtent}
-import geotrellis.vectortile.protobuf.ProtobufTile
-import org.apache.commons.io.IOUtils
 
 import scala.reflect.ClassTag
 import scala.util.Random
 
 /**
+ * Pre-configured data constructs for testing.
  *
  * @author sfitch 
  * @since 4/3/17
@@ -67,5 +66,16 @@ trait TestData {
     )
   }
 
+  /** Construct a tile of given size and cell type populated with random values. */
+  def randomTile(cols: Int, rows: Int, cellTypeName: String): Tile = {
+    val cellType = CellType.fromName(cellTypeName)
 
+    val tile = ArrayTile.alloc(cellType, cols, rows)
+    if(cellType.isFloatingPoint) {
+      tile.mapDouble(_ ⇒ Random.nextGaussian())
+    }
+    else {
+      tile.map(_ ⇒ (Random.nextGaussian() * 256).toInt)
+    }
+  }
 }
