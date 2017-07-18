@@ -5,7 +5,8 @@ import geotrellis.raster.{Tile, TileFeature}
 import geotrellis.spark.{Bounds, Metadata}
 import geotrellis.util.{Component, GetComponent}
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.gt.gtRegister
+import org.apache.spark.sql.gt.functions.ColumnFunctions
+import org.apache.spark.sql.gt.{Implicits, gtRegister}
 import org.apache.spark.sql.{DataFrame, SQLContext, SparkSession, gt}
 import spray.json.{JsObject, JsonFormat}
 
@@ -18,7 +19,7 @@ import scala.reflect.runtime.universe._
  * @author sfitch 
  * @since 7/18/17
  */
-package object rasterframes extends org.apache.spark.sql.gt.implicits {
+package object rasterframes extends Implicits with ColumnFunctions {
 
   /**
    * A RasterFrame is just a DataFrame with certain invariants, enforced via the methods that create and transform them:
@@ -50,5 +51,5 @@ package object rasterframes extends org.apache.spark.sql.gt.implicits {
   extends ContextRDDMethods[K,V,M]
 
   private[rasterframes]
-  implicit class WithMetadataMethods[M: JsonFormat](val self: M) extends MetadataMethods
+  implicit class WithMetadataMethods[M: JsonFormat](val self: M) extends MetadataMethods[M]
 }

@@ -20,7 +20,7 @@ package org.apache.spark.sql.gt
 
 import java.nio.file.{Files, Paths}
 
-import astraea.spark.rasterframes.{TestData, TestEnvironment}
+import astraea.spark.rasterframes._
 import com.typesafe.scalalogging.LazyLogging
 import geotrellis.raster
 import geotrellis.raster.histogram.Histogram
@@ -32,14 +32,14 @@ import geotrellis.vector.{Extent, ProjectedExtent}
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.gt.functions._
 import org.apache.spark.sql.{DataFrame, Dataset, SaveMode}
-import org.scalactic.Tolerance
-import org.scalatest.{FunSpec, Inspectors, Matchers}
-import org.apache.spark.ml.linalg.{Vector ⇒ MLVector}
-
-//import org.apache.spark.sql.execution.debug._
 
 /**
  * Test rig for Spark UDTs and friends for GT.
+ * Extra debugging can be enabled by adding this
+ * {{{
+ *   import org.apache.spark.sql.execution.debug._
+ * }}}
+ *
  * @author sfitch
  * @since 3/30/17
  */

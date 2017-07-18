@@ -13,7 +13,7 @@ import org.apache.spark.sql.types.Metadata
 abstract class DataFrameMethods extends MethodExtensions[DataFrame]{
 
   /** Set the metadata for the column with the given name. */
-  def setMetadata(colName: String, metadata: Metadata): DataFrame = {
+  def setColumnMetadata(colName: String, metadata: Metadata): DataFrame = {
     // Wish spark provided a better way of doing this.
     val cols = self.columns.map {
       case c if c == colName ⇒ col(c) as (c, metadata)

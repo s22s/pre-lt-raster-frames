@@ -20,10 +20,13 @@ abstract class ContextRDDMethods[K: ClassTag: TypeTag,
   extends MethodExtensions[RDD[(K, V)] with Metadata[M]] {
   def toRF: RasterFrame = {
     import spark.implicits._
+    // Need to use this instead of `(v: V).getComponent[Tile]`
+    // due to Spark Closure Cleaner error.
     val tileGetter = implicitly[TileComponent[V]]
     val md = self.metadata.asColumnMetadata
-    (self: RDD[(K, V)]).mapValues(tileGetter.get)
-      .toDF
-      .select($"_1" as ("key", md), $"_2" as "tile")
+    (self: RDD[(K, V)])
+      .mapValues(tileGetter.get)
+      .toDF("key", "tile")
+      .setColumnMetadata("key", md)
   }
 }

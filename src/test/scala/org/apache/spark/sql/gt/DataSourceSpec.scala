@@ -1,7 +1,7 @@
 package org.apache.spark.sql.gt
 
 
-import astraea.spark.rasterframes.{TestData, TestEnvironment}
+import astraea.spark.rasterframes._
 import geotrellis.proj4.LatLng
 import geotrellis.raster._
 import geotrellis.spark._
@@ -11,6 +11,7 @@ import geotrellis.spark.io.index.ZCurveKeyIndexMethod
 import geotrellis.spark.tiling.ZoomedLayoutScheme
 import geotrellis.vector._
 import org.apache.spark.sql.gt.functions._
+
 
 class DataSourceSpec extends TestEnvironment with TestData {
 

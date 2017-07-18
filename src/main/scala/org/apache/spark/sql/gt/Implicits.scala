@@ -25,7 +25,7 @@ import geotrellis.vector.{Extent, ProjectedExtent}
 import org.apache.spark.sql.Encoder
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 
-trait implicits {
+trait Implicits {
   implicit def singlebandTileEncoder: Encoder[Tile] = ExpressionEncoder()
   implicit def multibandTileEncoder: Encoder[MultibandTile] = ExpressionEncoder()
   implicit def crsEncoder: Encoder[CRS] = ExpressionEncoder()
@@ -36,4 +36,4 @@ trait implicits {
   implicit def histogramIntEncoder: Encoder[Histogram[Int]] = ExpressionEncoder()
   implicit def histogramStatsEncoder: Encoder[Statistics[Double]] = ExpressionEncoder()
 }
-object implicits extends implicits
+object Implicits extends Implicits

@@ -29,6 +29,9 @@ class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
 
       val rf = tileLayerRDD.toRF
 
+      assert(rf.tileColumns.nonEmpty)
+      assert(rf.spatialKeyColumn == "key")
+
       rf.printSchema()
       rf.orderBy("key").show(false)
       println(rf.schema.head.metadata.json)
