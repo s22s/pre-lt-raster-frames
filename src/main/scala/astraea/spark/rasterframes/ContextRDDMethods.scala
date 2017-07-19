@@ -18,6 +18,9 @@ abstract class ContextRDDMethods[K: ClassTag: TypeTag,
                                  V: TileComponent: ClassTag,
                                  M: JsonFormat: BoundsComponentOf[K]#get](implicit spark: SparkSession)
   extends MethodExtensions[RDD[(K, V)] with Metadata[M]] {
+
+  private[rasterframes] implicit class WithMetadataMethods[M: JsonFormat](val self: M) extends MetadataMethods[M]
+
   def toRF: RasterFrame = {
     import spark.implicits._
     // Need to use this instead of `(v: V).getComponent[Tile]`
