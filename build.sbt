@@ -17,16 +17,16 @@ resolvers ++= Seq(
   "locationtech-releases" at "https://repo.locationtech.org/content/groups/releases"
 )
 
-def geotrellis(module: String) = "org.locationtech.geotrellis" %% s"geotrellis-$module" % "1.1.0" % "provided"
+def geotrellis(module: String) = "org.locationtech.geotrellis" %% s"geotrellis-$module" % "1.1.0"
 
-def spark(module: String) = "org.apache.spark" %% s"spark-$module" % "2.1.0" % "provided"
+def spark(module: String) = "org.apache.spark" %% s"spark-$module" % "2.1.0" % Provided
 
 libraryDependencies ++= Seq(
-  geotrellis("spark"),
-  geotrellis("spark-testkit") % Test,
+  geotrellis("spark") % Provided,
   spark("core"),
   spark("mllib"),
   spark("sql"),
+  geotrellis("spark-testkit") % Test,
   "org.scalatest" %% "scalatest" % "3.0.3" % Test
 )
 
