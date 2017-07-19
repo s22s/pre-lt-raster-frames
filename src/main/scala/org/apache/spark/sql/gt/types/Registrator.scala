@@ -35,5 +35,6 @@ private[gt] object Registrator {
     MultiLineUDT
     PointUDT
     PolygonUDT
+    MultiPolygonUDT
   }
 }
