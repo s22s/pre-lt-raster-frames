@@ -19,13 +19,17 @@ resolvers ++= Seq(
 
 def geotrellis(module: String) = "org.locationtech.geotrellis" %% s"geotrellis-$module" % "1.1.0"
 
-def spark(module: String) = "org.apache.spark" %% s"spark-$module" % "2.1.0" % Provided
+def spark(module: String) = "org.apache.spark" %% s"spark-$module" % "2.1.0"
 
 libraryDependencies ++= Seq(
+  spark("core") % Provided,
+  spark("mllib") % Provided,
+  spark("sql") % Provided,
+  spark("mllib") % "tut",
+  spark("sql") % "tut",
   geotrellis("spark") % Provided,
-  spark("core"),
-  spark("mllib"),
-  spark("sql"),
+  geotrellis("spark") % "tut",
+  geotrellis("raster") % "tut",
   geotrellis("spark-testkit") % Test,
   "org.scalatest" %% "scalatest" % "3.0.3" % Test
 )
@@ -39,3 +43,7 @@ bintrayOrganization := Some("s22s")
 bintrayReleaseOnPublish in ThisBuild := false
 
 publishArtifact in (Compile, packageDoc) := false
+
+enablePlugins(TutPlugin)
+
+tutTargetDirectory := baseDirectory.value
