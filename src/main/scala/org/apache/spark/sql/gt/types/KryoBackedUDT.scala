@@ -48,7 +48,7 @@ trait KryoBackedUDT[T >: Null] { self: UserDefinedType[T] ⇒
 
   override def deserialize(datum: Any): T = {
     Option(datum)
-      .map(_.asInstanceOf[InternalRow])
+      .collect { case row: InternalRow ⇒ row }
       .flatMap(row ⇒ Option(row.getBinary(0)))
       .map(KryoSerializer.deserialize[T](_)(targetClassTag))
       .orNull

@@ -22,7 +22,8 @@ import java.time.ZonedDateTime
 
 import geotrellis.proj4.LatLng
 import geotrellis.raster._
-import geotrellis.spark.{SpaceTimeKey, SpatialKey, TemporalProjectedExtent}
+import geotrellis.spark.tiling.LayoutDefinition
+import geotrellis.spark.{KeyBounds, SpaceTimeKey, SpatialKey, TemporalProjectedExtent, TileLayerMetadata}
 import geotrellis.vector.{Extent, ProjectedExtent}
 
 import scala.reflect.ClassTag
@@ -41,6 +42,16 @@ trait TestData {
   val stk = SpaceTimeKey(sk, instant)
   val pe = ProjectedExtent(extent, LatLng)
   val tpe = TemporalProjectedExtent(pe, instant)
+  val tlm = TileLayerMetadata(
+    CellType.fromName("uint8"),
+    LayoutDefinition(
+      extent,
+      TileLayout(
+        4, 4, 4, 4
+      )
+    ),
+    extent, LatLng, KeyBounds(stk, stk)
+  )
 
   val byteArrayTile = ByteArrayTile((1 to 9).map(_ .toByte).toArray, 3, 3)
 

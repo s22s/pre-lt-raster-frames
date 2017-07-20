@@ -17,7 +17,9 @@
 package org.apache.spark.sql
 
 import org.apache.spark.annotation.Experimental
+import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.analysis.UnresolvedAttribute
+import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 
 /**
  * Module providing support for using GeoTrellis native types in Spark SQL.
@@ -36,6 +38,24 @@ package object gt {
     def columnName: String = col.expr match {
       case ua: UnresolvedAttribute ⇒ ua.name
       case o ⇒ o.prettyName
+    }
+  }
+
+
+  private[gt] implicit class WithDecoder[T](enc: ExpressionEncoder[T])  {
+    def decode(row: InternalRow): T =
+      enc.resolveAndBind(enc.schema.toAttributes).fromRow(row)
+    def decode(row: InternalRow, ordinal: Int): T =
+        decode(row.getStruct(ordinal, enc.schema.length))
+
+    def pprint(): Unit = {
+      println(enc.getClass.getSimpleName + "{")
+      println("\tflat=" + enc.flat)
+      println("\tschema=" + enc.schema)
+      println("\tserializers=" + enc.serializer)
+      println("\tnamedExpressions=" + enc.namedExpressions)
+      println("\tdeserializer=" + enc.deserializer)
+      println("}")
     }
   }
 }
