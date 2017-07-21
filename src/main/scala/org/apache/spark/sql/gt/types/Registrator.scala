@@ -16,6 +16,8 @@
 
 package org.apache.spark.sql.gt.types
 
+import geotrellis.spark.TileLayerMetadata
+
 /**
  * Module responsible for ensuring the UDTs are registered with catalyst.
  *
@@ -36,5 +38,6 @@ private[gt] object Registrator {
     PointUDT
     PolygonUDT
     MultiPolygonUDT
+    TileLayerMetadataUDT
   }
 }

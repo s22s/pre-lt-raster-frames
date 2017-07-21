@@ -1,6 +1,4 @@
-/*
- * Copyright (c) 2017. Astraea, Inc. All rights reserved.
- */
+
 
 package astraea.spark.rasterframes
 
@@ -8,7 +6,6 @@ import com.typesafe.scalalogging.LazyLogging
 import geotrellis.proj4.LatLng
 import geotrellis.spark.io._
 import geotrellis.spark.testkit.TileLayerRDDBuilders
-import org.apache.spark.sql.gt.functions._
 
 /**
  * RasterFrame test rig.

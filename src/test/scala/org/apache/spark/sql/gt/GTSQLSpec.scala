@@ -26,12 +26,14 @@ import geotrellis.raster
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.{Add, Max, Min, Subtract}
 import geotrellis.raster.summary.Statistics
-import geotrellis.raster.{ByteCellType, MultibandTile, Tile, TileFeature}
-import geotrellis.spark.TemporalProjectedExtent
+import geotrellis.raster.{ByteCellType, CellType, MultibandTile, Tile, TileFeature}
+import geotrellis.spark.{SpaceTimeKey, TemporalProjectedExtent, TileLayerMetadata}
 import geotrellis.vector.{Extent, ProjectedExtent}
+import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.gt.functions._
-import org.apache.spark.sql.{DataFrame, Dataset, SaveMode}
+import org.apache.spark.sql.gt.types.CellTypeUDT
+import org.apache.spark.sql._
 
 /**
  * Test rig for Spark UDTs and friends for GT.
@@ -57,7 +59,9 @@ class GTSQLSpec extends TestEnvironment with TestData with LazyLogging {
 
 
   def injectND(num: Int)(t: Tile): Tile = {
-    val locs = (0 until num).map(_ ⇒ (util.Random.nextInt(t.cols), util.Random.nextInt(t.rows)))
+    val locs = (0 until num).map(_ ⇒
+      (scala.util.Random.nextInt(t.cols), scala.util.Random.nextInt(t.rows))
+    )
 
     if(t.cellType.isFloatingPoint) {
       t.mapDouble((c, r, v) ⇒ {if(locs.contains((c,r))) raster.doubleNODATA else v})
@@ -178,6 +182,14 @@ class GTSQLSpec extends TestEnvironment with TestData with LazyLogging {
       val ds = Seq(tpe).toDS()
       write(ds)
       assert(ds.toDF.as[TemporalProjectedExtent].collect().head === tpe)
+    }
+
+    it("should code RDD[TileLayerMetadata[SpaceTimeKey]]") {
+      val ds = Seq(tlm).toDS()
+      ds.printSchema()
+      ds.show(false)
+      write(ds)
+      assert(ds.toDF.as[TileLayerMetadata[SpaceTimeKey]].first() === tlm)
     }
 
     it("should support local min/max") {
