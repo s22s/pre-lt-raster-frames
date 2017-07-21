@@ -7,7 +7,7 @@ name := "raster-frames"
 
 organization := "io.astraea"
 
-version := "0.3.1-SNAPSHOT"
+version := "0.3.1"
 
 licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
 
@@ -17,7 +17,7 @@ resolvers ++= Seq(
   "locationtech-releases" at "https://repo.locationtech.org/content/groups/releases"
 )
 
-def geotrellis(module: String) = "org.locationtech.geotrellis" %% s"geotrellis-$module" % "1.1.0"
+def geotrellis(module: String) = "org.locationtech.geotrellis" %% s"geotrellis-$module" % "1.1.1"
 
 def spark(module: String) = "org.apache.spark" %% s"spark-$module" % "2.1.0"
 
