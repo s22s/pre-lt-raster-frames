@@ -28,10 +28,7 @@ class TileLayerMetadataUDT extends UserDefinedType[TileLayerMetadata[SpaceTimeKe
     StructField("bounds", stkBoundsEncoder.schema, false)
   ))
 
-  // NB: This is correct
   def serialize(obj: TileLayerMetadata[SpaceTimeKey]): Any = {
-    extentEncoder.pprint()
-    crsEncoder.pprint()
     Option(obj)
       .map(o ⇒ {
         InternalRow(
@@ -46,7 +43,6 @@ class TileLayerMetadataUDT extends UserDefinedType[TileLayerMetadata[SpaceTimeKe
   }
 
   def deserialize(datum: Any): TileLayerMetadata[SpaceTimeKey] = {
-    //println(sqlType.prettyJson)
     Option(datum)
       .collect { case row: InternalRow ⇒ row }
       .map(row ⇒ {

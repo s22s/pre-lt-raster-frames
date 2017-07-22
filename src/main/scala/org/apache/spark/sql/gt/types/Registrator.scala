@@ -38,6 +38,6 @@ private[gt] object Registrator {
     PointUDT
     PolygonUDT
     MultiPolygonUDT
-    TileLayerMetadataUDT
+    //TileLayerMetadataUDT
   }
 }
