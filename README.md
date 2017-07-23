@@ -1,5 +1,7 @@
 # RasterFrames
 
+[ ![Download](https://api.bintray.com/packages/s22s/maven/raster-frames/images/download.svg) ](https://bintray.com/s22s/maven/raster-frames/_latestVersion)
+
 _RasterFrames_ brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer operations of [GeoTrellis](https://geotrellis.io/).
 
 Here are some examples on how to use it.
@@ -9,7 +11,8 @@ Here are some examples on how to use it.
 0\. sbt configuration
 
 ```scala
-// TODO
+resolvers += Resolver.bintrayRepo("s22s", "maven")
+libraryDependencies += "io.astraea" %% "raster-frames" % "{version}"
 ```
 
 1\. First, apply `import`s, initialize the `SparkSession`, and initialize RasterFrames with Spark:  
@@ -48,11 +51,11 @@ scala> rf.show(5, false)
 +-------+--------------------------------------------------------+
 |key    |tile                                                    |
 +-------+--------------------------------------------------------+
-|[40,13]|geotrellis.raster.UShortConstantNoDataArrayTile@7bfca44c|
-|[19,37]|geotrellis.raster.UShortConstantNoDataArrayTile@5ee61078|
-|[10,38]|geotrellis.raster.UShortConstantNoDataArrayTile@24a268d1|
-|[43,23]|geotrellis.raster.UShortConstantNoDataArrayTile@3a51694b|
-|[3,1]  |geotrellis.raster.UShortConstantNoDataArrayTile@24116489|
+|[40,13]|geotrellis.raster.UShortConstantNoDataArrayTile@345135e7|
+|[19,37]|geotrellis.raster.UShortConstantNoDataArrayTile@65161dda|
+|[10,38]|geotrellis.raster.UShortConstantNoDataArrayTile@32e9af8e|
+|[43,23]|geotrellis.raster.UShortConstantNoDataArrayTile@6f7e4f72|
+|[3,1]  |geotrellis.raster.UShortConstantNoDataArrayTile@523db177|
 +-------+--------------------------------------------------------+
 only showing top 5 rows
 
@@ -164,7 +167,7 @@ scala> import geotrellis.raster.equalization._
 import geotrellis.raster.equalization._
 
 scala> val equalizer = udf((t: Tile) => t.equalize())
-equalizer: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(<function1>,org.apache.spark.sql.gt.types.TileUDT@30347142,Some(List(org.apache.spark.sql.gt.types.TileUDT@30347142)))
+equalizer: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(<function1>,org.apache.spark.sql.gt.types.TileUDT@7109842e,Some(List(org.apache.spark.sql.gt.types.TileUDT@7109842e)))
 
 scala> rf.select(tileMean(equalizer($"tile")) as "equalizedMean").show(5, false)
 +------------------+
@@ -180,11 +183,11 @@ only showing top 5 rows
 
 
 scala> val downsample = udf((t: Tile) => t.resample(4, 4))
-downsample: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(<function1>,org.apache.spark.sql.gt.types.TileUDT@30347142,Some(List(org.apache.spark.sql.gt.types.TileUDT@30347142)))
+downsample: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(<function1>,org.apache.spark.sql.gt.types.TileUDT@7109842e,Some(List(org.apache.spark.sql.gt.types.TileUDT@7109842e)))
 
-scala> rf.select(renderAscii(downsample($"tile") as "minime")).show(5, false)
+scala> rf.select(renderAscii(downsample($"tile")) as "minime").show(5, false)
 +-----------------------------------------------------------------------------------------------------+
-|renderAscii(alias)                                                                                   |
+|minime                                                                                               |
 +-----------------------------------------------------------------------------------------------------+
 | 11218 12580 12183 11717
  11207 12357 12412 12735
@@ -224,35 +227,19 @@ only showing top 5 rows
 ## Basic Interop with SparkML
 
 ```scala
-scala> import org.apache.spark.ml._
 import org.apache.spark.ml._
-
-scala> import org.apache.spark.ml.feature._
 import org.apache.spark.ml.feature._
+val exploded = rf.select($"key", explodeTiles($"tile")).withColumnRenamed("tile", "pixel")
+exploded.printSchema
+val discretizer = new QuantileDiscretizer().
+  setInputCol("pixel").
+  setOutputCol("binned").
+  setHandleInvalid("skip").
+  setNumBuckets(5)
+val binned = discretizer.fit(exploded).transform(exploded)
+```
 
-scala> val exploded = rf.select($"key", explodeTiles($"tile")).withColumnRenamed("tile", "pixel")
-exploded: org.apache.spark.sql.DataFrame = [key: struct<col: int, row: int>, column: int ... 2 more fields]
-
-scala> exploded.printSchema
-root
- |-- key: struct (nullable = true)
- |    |-- col: integer (nullable = true)
- |    |-- row: integer (nullable = true)
- |-- column: integer (nullable = false)
- |-- row: integer (nullable = false)
- |-- pixel: double (nullable = false)
-
-
-scala> val discretizer = new QuantileDiscretizer().
-     |   setInputCol("pixel").
-     |   setOutputCol("binned").
-     |   setHandleInvalid("skip").
-     |   setNumBuckets(5)
-discretizer: org.apache.spark.ml.feature.QuantileDiscretizer = quantileDiscretizer_94bd6711b9b4
-
-scala> val binned = discretizer.fit(exploded).transform(exploded)
-binned: org.apache.spark.sql.DataFrame = [key: struct<col: int, row: int>, column: int ... 3 more fields]
-
+```scala
 scala> binned.show(false)
 +-------+------+---+-------+------+
 |key    |column|row|pixel  |binned|
@@ -293,7 +280,6 @@ scala> binned.groupBy("binned").count().show(false)
 +------+-----+
 
 ```
-
 
 
 
