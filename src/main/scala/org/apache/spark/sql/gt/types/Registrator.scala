@@ -31,7 +31,7 @@ private[gt] object Registrator {
     // which is where the registration actually happens.
     TileUDT
     MultibandTileUDT
-    CoordinateReferenceSystemUDT
+    //CoordinateReferenceSystemUDT
     HistogramUDT
     LineUDT
     MultiLineUDT

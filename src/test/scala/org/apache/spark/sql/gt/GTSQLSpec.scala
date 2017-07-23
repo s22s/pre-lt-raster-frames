@@ -195,6 +195,7 @@ class GTSQLSpec extends TestEnvironment with TestData with LazyLogging {
     it("should code RDD[TileLayerMetadata[SpaceTimeKey]]") {
       val ds = Seq(tlm).toDS()
       ds.printSchema()
+      println("end of schema")
       ds.show(false)
       write(ds)
       assert(ds.toDF.as[TileLayerMetadata[SpaceTimeKey]].first() === tlm)

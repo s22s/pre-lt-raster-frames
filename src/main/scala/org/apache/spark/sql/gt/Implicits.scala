@@ -28,25 +28,27 @@ import org.apache.spark.sql.catalyst.ScalaReflection
 import org.apache.spark.sql.catalyst.analysis.GetColumnByOrdinal
 import org.apache.spark.sql.catalyst.encoders.{ExpressionEncoder, RowEncoder}
 import org.apache.spark.sql.catalyst.expressions.{BoundReference, Expression}
-import org.apache.spark.sql.gt.types.CellTypeEncoder
+import org.apache.spark.sql.gt.types.{CRSEncoder, CellTypeEncoder, TileLayerMetadataEncoder}
 import org.apache.spark.sql.types.{ObjectType, StringType, StructField, StructType}
 import org.apache.spark.unsafe.types.UTF8String
 
 import scala.reflect._
+import scala.reflect.runtime.universe._
+
 
 trait Implicits {
   implicit def singlebandTileEncoder: Encoder[Tile] = ExpressionEncoder()
   implicit def multibandTileEncoder: Encoder[MultibandTile] = ExpressionEncoder()
-  implicit def crsEncoder: ExpressionEncoder[CRS] = ExpressionEncoder()
+  implicit def crsEncoder: ExpressionEncoder[CRS] = CRSEncoder()
   implicit def extentEncoder: ExpressionEncoder[Extent] = ExpressionEncoder()
   implicit def projectedExtentEncoder: Encoder[ProjectedExtent] = ExpressionEncoder()
   implicit def temporalProjectedExtentEncoder: Encoder[TemporalProjectedExtent] = ExpressionEncoder()
   implicit def histogramDoubleEncoder: Encoder[Histogram[Double]] = ExpressionEncoder()
   implicit def histogramIntEncoder: Encoder[Histogram[Int]] = ExpressionEncoder()
   implicit def histogramStatsEncoder: Encoder[Statistics[Double]] = ExpressionEncoder()
-  //implicit def tileLayerMetadataSTKEncoder: Encoder[TileLayerMetadata[SpaceTimeKey]] = ExpressionEncoder()
+  implicit def tileLayerMetadataEncoder[K: Encoder: TypeTag]: Encoder[TileLayerMetadata[K]] = TileLayerMetadataEncoder[K]
   implicit def layoutDefinitionEncoder: ExpressionEncoder[LayoutDefinition] = ExpressionEncoder()
   implicit def stkBoundsEncoder: ExpressionEncoder[KeyBounds[SpaceTimeKey]] = ExpressionEncoder()
-  implicit def cellTypeEncoder: Encoder[CellType] = CellTypeEncoder()
+  implicit def cellTypeEncoder: ExpressionEncoder[CellType] = CellTypeEncoder()
 }
 object Implicits extends Implicits

@@ -16,8 +16,8 @@
 
 package org.apache.spark.sql.gt.types
 
+import geotrellis.proj4.CRS
 import geotrellis.raster.{CellType, DataType}
-import org.apache.spark.sql.Encoder
 import org.apache.spark.sql.catalyst.ScalaReflection
 import org.apache.spark.sql.catalyst.analysis.GetColumnByOrdinal
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
@@ -32,32 +32,36 @@ import scala.reflect.classTag
  * @author sfitch 
  * @since 7/21/17
  */
-object CellTypeEncoder {
-  def apply(): ExpressionEncoder[CellType] = {
+object CRSEncoder {
+  def apply(): ExpressionEncoder[CRS] = {
     import org.apache.spark.sql.catalyst.expressions._
     import org.apache.spark.sql.catalyst.expressions.objects._
-    val ctType = ScalaReflection.dataTypeFor[DataType]
-    val schema = StructType(Seq(StructField("cellTypeName", StringType, false)))
+    val ctType = ScalaReflection.dataTypeFor[CRS]
+    val schema = StructType(Seq(StructField("crsProj4", StringType, false)))
     val inputObject = BoundReference(0, ctType, nullable = false)
 
     val intermediateType = ObjectType(classOf[String])
     val serializer: Expression =
       StaticInvoke(classOf[UTF8String], StringType, "fromString",
-        Invoke(inputObject, "name", intermediateType, Nil) :: Nil
+        Invoke(inputObject, "toProj4String", intermediateType, Nil) :: Nil
       )
 
     val inputRow = GetColumnByOrdinal(0, schema)
     val deserializer: Expression =
-      StaticInvoke(CellType.getClass, ctType, "fromName",
+      StaticInvoke(CRSEncoder.getClass, ctType, "fromString",
         Invoke(inputRow, "toString", intermediateType, Nil) :: Nil
       )
 
-    ExpressionEncoder[CellType](
+    ExpressionEncoder[CRS](
       schema,
       flat = false,
       Seq(serializer),
       deserializer,
-      classTag[CellType]
+      classTag[CRS]
     )
   }
+
+  // Not sure why this delegate is necessary, but doGenCode fails without it.
+  def fromString(str: String): CRS =  CRS.fromString(str)
+
 }
