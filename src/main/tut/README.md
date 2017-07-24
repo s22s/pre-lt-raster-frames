@@ -1,5 +1,7 @@
 # RasterFrames
 
+[ ![Download](https://api.bintray.com/packages/s22s/maven/raster-frames/images/download.svg) ](https://bintray.com/s22s/maven/raster-frames/_latestVersion)
+
 _RasterFrames_ brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer operations of [GeoTrellis](https://geotrellis.io/).
 
 Here are some examples on how to use it.
@@ -9,7 +11,8 @@ Here are some examples on how to use it.
 0\. sbt configuration
 
 ```scala
-// TODO
+resolvers += Resolver.bintrayRepo("s22s", "maven")
+libraryDependencies += "io.astraea" %% "raster-frames" % "{version}"
 ```
 
 1\. First, apply `import`s, initialize the `SparkSession`, and initialize RasterFrames with Spark:  
@@ -83,12 +86,12 @@ import geotrellis.raster.equalization._
 val equalizer = udf((t: Tile) => t.equalize())
 rf.select(tileMean(equalizer($"tile")) as "equalizedMean").show(5, false)
 val downsample = udf((t: Tile) => t.resample(4, 4))
-rf.select(renderAscii(downsample($"tile") as "minime")).show(5, false)
+rf.select(renderAscii(downsample($"tile")) as "minime").show(5, false)
 ```
 
 ## Basic Interop with SparkML
 
-```tut
+```tut:silent
 import org.apache.spark.ml._
 import org.apache.spark.ml.feature._
 val exploded = rf.select($"key", explodeTiles($"tile")).withColumnRenamed("tile", "pixel")
@@ -99,10 +102,12 @@ val discretizer = new QuantileDiscretizer().
   setHandleInvalid("skip").
   setNumBuckets(5)
 val binned = discretizer.fit(exploded).transform(exploded)
+```
+
+```tut
 binned.show(false)
 binned.groupBy("binned").count().show(false)
 ```
-
 
 
 ```tut:invisible

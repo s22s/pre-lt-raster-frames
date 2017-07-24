@@ -32,7 +32,6 @@ import geotrellis.vector.{Extent, ProjectedExtent}
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.gt.functions._
-import org.apache.spark.sql.gt.types.CellTypeUDT
 import org.apache.spark.sql._
 
 /**
@@ -184,9 +183,19 @@ class GTSQLSpec extends TestEnvironment with TestData with LazyLogging {
       assert(ds.toDF.as[TemporalProjectedExtent].collect().head === tpe)
     }
 
+    it("should code RDD[CellType]") {
+      val ct = CellType.fromName("uint8")
+      val ds = localSeqToDatasetHolder(Seq(ct)).toDS()
+      ds.printSchema()
+      ds.show(false)
+      write(ds)
+      assert(ds.toDF.as[CellType].first() === ct)
+    }
+
     it("should code RDD[TileLayerMetadata[SpaceTimeKey]]") {
       val ds = Seq(tlm).toDS()
       ds.printSchema()
+      println("end of schema")
       ds.show(false)
       write(ds)
       assert(ds.toDF.as[TileLayerMetadata[SpaceTimeKey]].first() === tlm)
