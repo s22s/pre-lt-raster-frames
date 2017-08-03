@@ -20,16 +20,13 @@ import geotrellis.raster.{Tile, TileFeature}
 import geotrellis.spark.Metadata
 import geotrellis.util.MethodExtensions
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
-import org.apache.spark.sql.{Encoder, Encoders, SparkSession}
+import org.apache.spark.sql.SparkSession
 import spray.json.JsonFormat
-import org.apache.spark.sql.gt._
 
-import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
 
 /**
- * Extension method on `ContextRDD`-shaped things with appropriate context bounds to create a RasterFrame.
+ * Extension method on `ContextRDD`-shaped [[Tile]] RDDs with appropriate context bounds to create a RasterFrame.
  * @author sfitch 
  * @since 7/18/17
  */
@@ -48,7 +45,11 @@ abstract class ContextRDDMethods[K: TypeTag,
   }
 }
 
-
+/**
+ * Extension method on `ContextRDD`-shaped [[TileFeature]] RDDs with appropriate context bounds to create a RasterFrame.
+ * @author sfitch
+ * @since 7/18/17
+ */
 abstract class TFContextRDDMethods[K: TypeTag,
                                    D: TypeTag,
                                    M: JsonFormat: BoundsComponentOf[K]#get](implicit spark: SparkSession)
@@ -58,11 +59,12 @@ abstract class TFContextRDDMethods[K: TypeTag,
     import spark.implicits._
     val md = self.metadata.asColumnMetadata
     val rdd = self: RDD[(K, TileFeature[Tile, D])]
-    val keyEncoder = ExpressionEncoder[K]
-    val valueEncoder = ExpressionEncoder[TileFeature[Tile, D]]
-    implicit val encoder = Encoders.tuple(keyEncoder, valueEncoder)
+
     rdd
-      .toDF("key", "tile", "data")
+      .toDF("key", "tileFeature")
       .setColumnMetadata("key", md)
+      .withColumn("tile", $"tileFeature.tile")
+      .withColumn("tileData", $"tileFeature.data")
+      .drop("tileFeature")
   }
 }

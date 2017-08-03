@@ -2,7 +2,6 @@
 
 package astraea.spark.rasterframes
 
-import astraea.spark.rasterframes
 import com.typesafe.scalalogging.LazyLogging
 import geotrellis.proj4.LatLng
 import geotrellis.raster.{Tile, TileFeature, TileLayout}
@@ -10,8 +9,7 @@ import geotrellis.spark._
 import geotrellis.spark.io._
 import geotrellis.spark.testkit.TileLayerRDDBuilders
 import geotrellis.spark.tiling._
-import geotrellis.vector.{Extent, ProjectedExtent}
-import org.apache.spark.rdd.RDD
+import geotrellis.vector.ProjectedExtent
 
 /**
  * RasterFrame test rig.
@@ -20,8 +18,6 @@ import org.apache.spark.rdd.RDD
  * @since 7/10/17
  */
 class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
-  import RasterFrameTest._
-
   import spark.implicits._
 
   describe("RasterFrame") {
@@ -56,7 +52,7 @@ class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
     it("should implicitly convert layer of TileFeature") {
 
 
-      val tile: TileFeature[Tile, Payload] = TileFeature(randomTile(20, 20, "uint8"), (1, "b", 3.0))
+      val tile = TileFeature(randomTile(20, 20, "uint8"), (1, "b", 3.0))
 
       val tileLayout = TileLayout(1, 1, 20, 20)
 
@@ -75,15 +71,4 @@ class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
 
     }
   }
-}
-
-object RasterFrameTest {
-  type Payload = (Int, String, Double)
-
-
-  type TileFeatureLayerRDD[K, D] = RDD[(K, TileFeature[Tile, D])] with Metadata[TileLayerMetadata[K]]
-  object TileFeatureLayerRDD {
-    def apply[K, D](rdd: RDD[(K, TileFeature[Tile, D])], metadata: TileLayerMetadata[K]): TileFeatureLayerRDD[K,D] =  new ContextRDD(rdd, metadata)
-  }
-
 }

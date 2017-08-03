@@ -18,7 +18,7 @@ package astraea.spark
 
 
 import geotrellis.raster.{Tile, TileFeature}
-import geotrellis.spark.{Bounds, Metadata}
+import geotrellis.spark.{Bounds, ContextRDD, Metadata, TileLayerMetadata}
 import geotrellis.util.{Component, GetComponent}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.gt.functions.ColumnFunctions
@@ -67,6 +67,11 @@ package object rasterframes extends Implicits with ColumnFunctions {
 
   type BoundsComponentOf[K] = {
     type get[M] = GetComponent[M, Bounds[K]]
+  }
+
+  type TileFeatureLayerRDD[K, D] = RDD[(K, TileFeature[Tile, D])] with Metadata[TileLayerMetadata[K]]
+  object TileFeatureLayerRDD {
+    def apply[K, D](rdd: RDD[(K, TileFeature[Tile, D])], metadata: TileLayerMetadata[K]): TileFeatureLayerRDD[K,D] =  new ContextRDD(rdd, metadata)
   }
 
   private[rasterframes] implicit class WithMetadataMethods[R: JsonFormat](val self: R) extends MetadataMethods[R]
