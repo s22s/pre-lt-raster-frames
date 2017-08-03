@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-package org.apache.spark.sql.gt
+package org.apache.spark.sql.gt.types
 
-import scala.reflect.ClassTag
-import scala.reflect.runtime.universe._
+import geotrellis.vector.ProjectedExtent
+import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
+import org.apache.spark.sql.gt.Implicits
 
 /**
- * Module of GeoTrellis UDTs for Spark/Catalyst.
+ * Custom encoder for [[ProjectedExtent]]. Necessary because CRS isn't a case class.
  *
  * @author sfitch 
- * @since 4/12/17
+ * @since 8/2/17
  */
-package object types {
-  private[gt] def runtimeClass[T: TypeTag]: Class[T] =
-    typeTag[T].mirror.runtimeClass(typeTag[T].tpe).asInstanceOf[Class[T]]
-
-  private[gt] def typeToClassTag[T: TypeTag]: ClassTag[T] = {
-    ClassTag[T](typeTag[T].mirror.runtimeClass(typeTag[T].tpe))
+object ProjectedExtentEncoder extends DelegatingSubfieldEncoder {
+  def apply(): ExpressionEncoder[ProjectedExtent] = {
+    create(Seq(
+      "extent" -> Implicits.extentEncoder,
+      "crs" -> Implicits.crsEncoder
+    ))
   }
 }

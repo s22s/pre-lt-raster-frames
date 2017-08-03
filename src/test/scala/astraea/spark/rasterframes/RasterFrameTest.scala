@@ -4,8 +4,12 @@ package astraea.spark.rasterframes
 
 import com.typesafe.scalalogging.LazyLogging
 import geotrellis.proj4.LatLng
+import geotrellis.raster.{Tile, TileFeature, TileLayout}
+import geotrellis.spark._
 import geotrellis.spark.io._
 import geotrellis.spark.testkit.TileLayerRDDBuilders
+import geotrellis.spark.tiling._
+import geotrellis.vector.ProjectedExtent
 
 /**
  * RasterFrame test rig.
@@ -14,15 +18,14 @@ import geotrellis.spark.testkit.TileLayerRDDBuilders
  * @since 7/10/17
  */
 class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
+  import spark.implicits._
 
   describe("RasterFrame") {
     it("should implicitly convert from layer type") {
-      implicit val spark = sqlContext.sparkSession
-      import spark.implicits._
 
       val tile = randomTile(20, 20, "uint8")
 
-      val tileLayerRDD = TileLayerRDDBuilders.createTileLayerRDD(tile, 2, 2, LatLng)._2
+      val tileLayerRDD: TileLayerRDD[SpatialKey] = TileLayerRDDBuilders.createTileLayerRDD(tile, 2, 2, LatLng)._2
 
       val rf = tileLayerRDD.toRF
 
@@ -31,7 +34,7 @@ class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
 
       rf.printSchema()
       rf.orderBy("key").show(false)
-      println(rf.schema.head.metadata.json)
+      assert(rf.schema.head.metadata.json.contains("tileLayout"))
 
       assert(rf.schema.head.metadata.contains("extent"))
 
@@ -44,6 +47,28 @@ class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
       )
 
       assert(rf.count() === 4)
+    }
+
+    it("should implicitly convert layer of TileFeature") {
+
+
+      val tile = TileFeature(randomTile(20, 20, "uint8"), (1, "b", 3.0))
+
+      val tileLayout = TileLayout(1, 1, 20, 20)
+
+      val layoutScheme = FloatingLayoutScheme(tileLayout.tileCols, tileLayout.tileRows)
+      val inputRdd = sc.parallelize(Seq((ProjectedExtent(LatLng.worldExtent, LatLng), tile)))
+
+      val (_, metadata) = inputRdd.collectMetadata[SpatialKey](LatLng, layoutScheme)
+
+      val tileRDD = inputRdd.map{case (k, v) ⇒ (metadata.mapTransform(k.extent.center), v)}
+
+      val tileLayerRDD = TileFeatureLayerRDD(tileRDD, metadata)
+
+      val rf = WithTFContextRDDMethods(tileLayerRDD).toRF
+
+      rf.show(false)
+
     }
   }
 }
