@@ -16,36 +16,53 @@
 
 package astraea.spark.rasterframes
 
+import geotrellis.raster.{Tile, TileFeature}
 import geotrellis.spark.Metadata
 import geotrellis.util.MethodExtensions
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
+import org.apache.spark.sql.{Encoder, Encoders, SparkSession}
 import spray.json.JsonFormat
+import org.apache.spark.sql.gt._
 
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
 
 /**
- *
+ * Extension method on `ContextRDD`-shaped things with appropriate context bounds to create a RasterFrame.
  * @author sfitch 
  * @since 7/18/17
  */
-abstract class ContextRDDMethods[K: ClassTag: TypeTag,
-                                 V: TileComponent: ClassTag,
+abstract class ContextRDDMethods[K: TypeTag,
                                  M: JsonFormat: BoundsComponentOf[K]#get](implicit spark: SparkSession)
-  extends MethodExtensions[RDD[(K, V)] with Metadata[M]] {
-
-  private[rasterframes] implicit class WithMetadataMethods[M: JsonFormat](val self: M) extends MetadataMethods[M]
+  extends MethodExtensions[RDD[(K, Tile)] with Metadata[M]] {
 
   def toRF: RasterFrame = {
     import spark.implicits._
-    // Need to use this instead of `(v: V).getComponent[Tile]`
-    // due to Spark Closure Cleaner error.
-    val tileGetter = implicitly[TileComponent[V]]
     val md = self.metadata.asColumnMetadata
-    (self: RDD[(K, V)])
-      .mapValues(tileGetter.get)
+
+    val rdd = self: RDD[(K, Tile)]
+    rdd
       .toDF("key", "tile")
+      .setColumnMetadata("key", md)
+  }
+}
+
+
+abstract class TFContextRDDMethods[K: TypeTag,
+                                   D: TypeTag,
+                                   M: JsonFormat: BoundsComponentOf[K]#get](implicit spark: SparkSession)
+  extends MethodExtensions[RDD[(K, TileFeature[Tile, D])] with Metadata[M]] {
+
+  def toRF: RasterFrame = {
+    import spark.implicits._
+    val md = self.metadata.asColumnMetadata
+    val rdd = self: RDD[(K, TileFeature[Tile, D])]
+    val keyEncoder = ExpressionEncoder[K]
+    val valueEncoder = ExpressionEncoder[TileFeature[Tile, D]]
+    implicit val encoder = Encoders.tuple(keyEncoder, valueEncoder)
+    rdd
+      .toDF("key", "tile", "data")
       .setColumnMetadata("key", md)
   }
 }

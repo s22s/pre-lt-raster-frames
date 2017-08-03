@@ -19,36 +19,31 @@ package org.apache.spark.sql.gt
 import geotrellis.proj4.CRS
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.summary.Statistics
-import geotrellis.raster.{CellType, DataType, MultibandTile, Tile}
+import geotrellis.raster.{CellType, MultibandTile, Tile, TileFeature}
 import geotrellis.spark.tiling.LayoutDefinition
 import geotrellis.spark.{KeyBounds, SpaceTimeKey, TemporalProjectedExtent, TileLayerMetadata}
 import geotrellis.vector.{Extent, ProjectedExtent}
 import org.apache.spark.sql.Encoder
-import org.apache.spark.sql.catalyst.ScalaReflection
-import org.apache.spark.sql.catalyst.analysis.GetColumnByOrdinal
-import org.apache.spark.sql.catalyst.encoders.{ExpressionEncoder, RowEncoder}
-import org.apache.spark.sql.catalyst.expressions.{BoundReference, Expression}
-import org.apache.spark.sql.gt.types.{CRSEncoder, CellTypeEncoder, TileLayerMetadataEncoder}
-import org.apache.spark.sql.types.{ObjectType, StringType, StructField, StructType}
-import org.apache.spark.unsafe.types.UTF8String
+import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
+import org.apache.spark.sql.gt.types._
 
-import scala.reflect._
 import scala.reflect.runtime.universe._
 
 
 trait Implicits {
-  implicit def singlebandTileEncoder: Encoder[Tile] = ExpressionEncoder()
+  implicit def singlebandTileEncoder: ExpressionEncoder[Tile] = ExpressionEncoder()
   implicit def multibandTileEncoder: Encoder[MultibandTile] = ExpressionEncoder()
   implicit def crsEncoder: ExpressionEncoder[CRS] = CRSEncoder()
   implicit def extentEncoder: ExpressionEncoder[Extent] = ExpressionEncoder()
-  implicit def projectedExtentEncoder: Encoder[ProjectedExtent] = ExpressionEncoder()
-  implicit def temporalProjectedExtentEncoder: Encoder[TemporalProjectedExtent] = ExpressionEncoder()
+  implicit def projectedExtentEncoder = ProjectedExtentEncoder()
+  implicit def temporalProjectedExtentEncoder = TemporalProjectedExtentEncoder()
   implicit def histogramDoubleEncoder: Encoder[Histogram[Double]] = ExpressionEncoder()
   implicit def histogramIntEncoder: Encoder[Histogram[Int]] = ExpressionEncoder()
   implicit def histogramStatsEncoder: Encoder[Statistics[Double]] = ExpressionEncoder()
-  implicit def tileLayerMetadataEncoder[K: Encoder: TypeTag]: Encoder[TileLayerMetadata[K]] = TileLayerMetadataEncoder[K]
+  implicit def tileLayerMetadataEncoder[K: TypeTag]: Encoder[TileLayerMetadata[K]] = TileLayerMetadataEncoder[K]()
   implicit def layoutDefinitionEncoder: ExpressionEncoder[LayoutDefinition] = ExpressionEncoder()
   implicit def stkBoundsEncoder: ExpressionEncoder[KeyBounds[SpaceTimeKey]] = ExpressionEncoder()
   implicit def cellTypeEncoder: ExpressionEncoder[CellType] = CellTypeEncoder()
+  //implicit def tileFeatureEncoder[D: TypeTag]: Encoder[TileFeature[Tile, D]] = TileFeatureEncoder[D]()
 }
 object Implicits extends Implicits

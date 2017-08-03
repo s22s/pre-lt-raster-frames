@@ -23,8 +23,8 @@ import geotrellis.util.{Component, GetComponent}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.gt.functions.ColumnFunctions
 import org.apache.spark.sql.gt.Implicits
-import org.apache.spark.sql.{DataFrame, SQLContext, SparkSession, gt}
-import spray.json.{JsObject, JsonFormat}
+import org.apache.spark.sql._
+import spray.json.{JsNull, JsObject, JsValue, JsonFormat}
 
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
@@ -33,7 +33,7 @@ import scala.reflect.runtime.universe._
  *  Module providing support for RasterFrames.
  * `import astraea.spark.rasterframes._`., and then call `rfInit(SQLContext)`.
  *
- * @author sfitch 
+ * @author sfitch
  * @since 7/18/17
  */
 package object rasterframes extends Implicits with ColumnFunctions {
@@ -55,15 +55,19 @@ package object rasterframes extends Implicits with ColumnFunctions {
   implicit class WithRasterFrameMethods(val self: RasterFrame) extends RasterFrameMethods
 
   implicit class WithContextRDDMethods[
-    K: ClassTag: TypeTag,
-    V: TileComponent: ClassTag,
+    K: TypeTag,
     M: JsonFormat: BoundsComponentOf[K]#get
-  ](val self: RDD[(K, V)] with Metadata[M])(implicit spark: SparkSession) extends ContextRDDMethods[K,V,M]
+  ](val self: RDD[(K, Tile)] with Metadata[M])(implicit spark: SparkSession) extends ContextRDDMethods[K,M]
 
+  implicit class WithTFContextRDDMethods[
+    K: TypeTag,
+    D: TypeTag,
+    M: JsonFormat: BoundsComponentOf[K]#get
+  ](val self: RDD[(K, TileFeature[Tile, D])] with Metadata[M])(implicit spark: SparkSession) extends TFContextRDDMethods[K, D, M]
 
   type BoundsComponentOf[K] = {
     type get[M] = GetComponent[M, Bounds[K]]
   }
 
-  type TileComponent[T] = GetComponent[T, Tile]
+  private[rasterframes] implicit class WithMetadataMethods[R: JsonFormat](val self: R) extends MetadataMethods[R]
 }

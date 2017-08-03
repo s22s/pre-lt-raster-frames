@@ -16,6 +16,7 @@
 
 package org.apache.spark.sql.gt
 
+import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
 
 /**
@@ -27,4 +28,8 @@ import scala.reflect.runtime.universe._
 package object types {
   private[gt] def runtimeClass[T: TypeTag]: Class[T] =
     typeTag[T].mirror.runtimeClass(typeTag[T].tpe).asInstanceOf[Class[T]]
+
+  private[gt] def typeToClassTag[T: TypeTag]: ClassTag[T] = {
+    ClassTag[T](typeTag[T].mirror.runtimeClass(typeTag[T].tpe))
+  }
 }
