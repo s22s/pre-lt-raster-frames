@@ -17,8 +17,9 @@ import org.apache.spark.sql.gt.Implicits
 object TemporalProjectedExtentEncoder extends DelegatingSubfieldEncoder {
   def apply(): ExpressionEncoder[TemporalProjectedExtent] = {
     create(Seq(
-      "time" -> Encoders.kryo[ZonedDateTime].asInstanceOf[ExpressionEncoder[ZonedDateTime]],
-      "projectedExtent" -> Implicits.projectedExtentEncoder
+      "extent" -> Implicits.extentEncoder,
+      "crs" -> Implicits.crsEncoder,
+      "instant" -> Encoders.scalaLong.asInstanceOf[ExpressionEncoder[Long]]
     ))
   }
 }

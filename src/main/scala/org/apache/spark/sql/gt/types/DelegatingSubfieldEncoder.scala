@@ -5,10 +5,11 @@ import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 import org.apache.spark.sql.catalyst.expressions.{BoundReference, CreateNamedStruct, CreateStruct, Expression, GetStructField, If, IsNull, Literal}
 import org.apache.spark.sql.catalyst.expressions.objects.{Invoke, NewInstance}
 import org.apache.spark.sql.types.{StructField, StructType}
-import org.apache.spark.sql.gt._
+
 import scala.reflect.runtime.universe._
 
 /**
+ * Encoder builder for types composed of other fields with {{ExpressionEncoder}}s.
  *
  * @author sfitch 
  * @since 8/2/17
@@ -36,20 +37,13 @@ trait DelegatingSubfieldEncoder {
 
     val fieldDeserializers = fieldEncoders.map(_._2)
       .zipWithIndex.map { case (enc, index) =>
-      enc.pprint()
-      if (enc.flat) {
-        enc.deserializer.transform {
-          case g: GetColumnByOrdinal => g.copy(ordinal = index)
-        }
-      } else {
-        val input = GetColumnByOrdinal(index, enc.schema)
-        val deserialized = enc.deserializer.transformUp {
-          case UnresolvedAttribute(nameParts) =>
-            UnresolvedExtractValue(input, Literal(nameParts.head))
-          case GetColumnByOrdinal(ordinal, _) => GetStructField(input, ordinal)
-        }
-        If(IsNull(input), Literal.create(null, deserialized.dataType), deserialized)
+      val input = GetColumnByOrdinal(index, enc.schema)
+      val deserialized = enc.deserializer.transformUp {
+        case UnresolvedAttribute(nameParts) =>
+          UnresolvedExtractValue(input, Literal(nameParts.head))
+        case GetColumnByOrdinal(ordinal, _) => GetStructField(input, ordinal)
       }
+      If(IsNull(input), Literal.create(null, deserialized.dataType), deserialized)
     }
 
     val deserializer: Expression = NewInstance(
