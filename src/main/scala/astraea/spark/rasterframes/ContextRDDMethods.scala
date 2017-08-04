@@ -64,7 +64,7 @@ abstract class TFContextRDDMethods[K: TypeTag,
       .toDF("key", "tileFeature")
       .setColumnMetadata("key", md)
       .withColumn("tile", $"tileFeature.tile")
-      .withColumn("tileData", $"tileFeature.data")
+      .withColumn("tile_data", $"tileFeature.data")
       .drop("tileFeature")
   }
 }
