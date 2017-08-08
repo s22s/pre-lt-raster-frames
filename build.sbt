@@ -47,19 +47,22 @@ enablePlugins(TutPlugin)
 tutTargetDirectory := baseDirectory.value
 
 import ReleaseTransformations._
+import com.servicerocket.sbt.release.git.flow.Steps._
 
 lazy val runTut = releaseStepTask(tut)
 
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
+  checkGitFlowExists,
   inquireVersions,
-  runClean,
   runTest,
-  runTut,
+  gitFlowReleaseStart,
   setReleaseVersion,
+  runTut,
   commitReleaseVersion,
-  tagRelease,
   publishArtifacts,
+  gitFlowReleaseFinish,
+  pushMaster,
   setNextVersion,
   commitNextVersion
 )
