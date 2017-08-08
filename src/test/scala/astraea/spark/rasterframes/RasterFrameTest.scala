@@ -25,7 +25,8 @@ class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
 
       val tile = randomTile(20, 20, "uint8")
 
-      val tileLayerRDD: TileLayerRDD[SpatialKey] = TileLayerRDDBuilders.createTileLayerRDD(tile, 2, 2, LatLng)._2
+      val tileLayerRDD: TileLayerRDD[SpatialKey] =
+        TileLayerRDDBuilders.createTileLayerRDD(tile, 2, 2, LatLng)._2
 
       val rf = tileLayerRDD.toRF
 
@@ -34,9 +35,9 @@ class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
 
       rf.printSchema()
       rf.orderBy("key").show(false)
-      assert(rf.schema.head.metadata.json.contains("tileLayout"))
 
-      assert(rf.schema.head.metadata.contains("extent"))
+      assert(rf.schema.head.metadata.contains(CONTEXT_METADATA_KEY))
+      assert(rf.schema.head.metadata.json.contains("tileLayout"))
 
       assert(
         rf.select(tileDimensions($"tile"))

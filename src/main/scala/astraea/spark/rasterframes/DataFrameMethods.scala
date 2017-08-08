@@ -19,7 +19,7 @@ package astraea.spark.rasterframes
 import geotrellis.util.MethodExtensions
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions.col
-import org.apache.spark.sql.types.Metadata
+import org.apache.spark.sql.types.{Metadata, MetadataBuilder}
 
 /**
  * Extension methods over [[DataFrame]].
@@ -28,11 +28,17 @@ import org.apache.spark.sql.types.Metadata
  */
 abstract class DataFrameMethods extends MethodExtensions[DataFrame]{
 
-  /** Set the metadata for the column with the given name. */
-  def setColumnMetadata(colName: String, metadata: Metadata): DataFrame = {
+  /** Add the metadata for the column with the given name. */
+  def addColumnMetadata(colName: String, metadataKey: String, metadata: Metadata): DataFrame = {
+    val mergedMD = self.schema.find(_.name == colName).map(col ⇒ {
+      new MetadataBuilder().withMetadata(col.metadata).putMetadata(metadataKey, metadata).build()
+    }).getOrElse(metadata)
+
     // Wish spark provided a better way of doing this.
+    val df: DataFrame = self
+    import df.sparkSession.implicits._
     val cols = self.columns.map {
-      case c if c == colName ⇒ col(c) as (c, metadata)
+      case c if c == colName ⇒ col(c) as (c, mergedMD)
       case c ⇒ col(c)
     }
     self.select(cols: _*)
