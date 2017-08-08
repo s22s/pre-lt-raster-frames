@@ -7,8 +7,6 @@ name := "raster-frames"
 
 organization := "io.astraea"
 
-version := "0.3.4-SNAPSHOT"
-
 licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
 
 headers := CommentStyleMapping.createFrom(Apache2_0, "2017", "Astraea, Inc.")
