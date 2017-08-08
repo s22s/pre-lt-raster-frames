@@ -51,11 +51,11 @@ scala> rf.show(5, false)
 +-------+--------------------------------------------------------+
 |key    |tile                                                    |
 +-------+--------------------------------------------------------+
-|[40,13]|geotrellis.raster.UShortConstantNoDataArrayTile@7803d5d1|
-|[19,37]|geotrellis.raster.UShortConstantNoDataArrayTile@54c867ba|
-|[10,38]|geotrellis.raster.UShortConstantNoDataArrayTile@1963d58 |
-|[43,23]|geotrellis.raster.UShortConstantNoDataArrayTile@7a0931cf|
-|[3,1]  |geotrellis.raster.UShortConstantNoDataArrayTile@1cc2ce02|
+|[40,13]|geotrellis.raster.UShortConstantNoDataArrayTile@70271c1d|
+|[19,37]|geotrellis.raster.UShortConstantNoDataArrayTile@534db0ad|
+|[10,38]|geotrellis.raster.UShortConstantNoDataArrayTile@7798d96f|
+|[43,23]|geotrellis.raster.UShortConstantNoDataArrayTile@5ad2657f|
+|[3,1]  |geotrellis.raster.UShortConstantNoDataArrayTile@12dd5dcc|
 +-------+--------------------------------------------------------+
 only showing top 5 rows
 
@@ -167,7 +167,7 @@ scala> import geotrellis.raster.equalization._
 import geotrellis.raster.equalization._
 
 scala> val equalizer = udf((t: Tile) => t.equalize())
-equalizer: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(<function1>,org.apache.spark.sql.gt.types.TileUDT@729e1bf7,Some(List(org.apache.spark.sql.gt.types.TileUDT@729e1bf7)))
+equalizer: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(<function1>,org.apache.spark.sql.gt.types.TileUDT@6b0a1cd6,Some(List(org.apache.spark.sql.gt.types.TileUDT@6b0a1cd6)))
 
 scala> rf.select(tileMean(equalizer($"tile")) as "equalizedMean").show(5, false)
 +------------------+
@@ -183,7 +183,7 @@ only showing top 5 rows
 
 
 scala> val downsample = udf((t: Tile) => t.resample(4, 4))
-downsample: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(<function1>,org.apache.spark.sql.gt.types.TileUDT@729e1bf7,Some(List(org.apache.spark.sql.gt.types.TileUDT@729e1bf7)))
+downsample: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(<function1>,org.apache.spark.sql.gt.types.TileUDT@6b0a1cd6,Some(List(org.apache.spark.sql.gt.types.TileUDT@6b0a1cd6)))
 
 scala> rf.select(renderAscii(downsample($"tile")) as "minime").show(5, false)
 +-----------------------------------------------------------------------------------------------------+
