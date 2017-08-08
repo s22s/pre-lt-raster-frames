@@ -32,8 +32,8 @@ abstract class RasterFrameMethods extends MethodExtensions[RasterFrame] {
 
   /** Get the spatial column. */
   def spatialKeyColumn: String = {
-    val key = self.schema.fields.find(_.metadata.contains("bounds"))
-    require(key.nonEmpty, "All RasterFrames must have a column tagged as the spatial key")
+    val key = self.schema.fields.find(_.metadata.contains(CONTEXT_METADATA_KEY))
+    require(key.nonEmpty, "All RasterFrames must have a column tagged with context")
     key.get.name
   }
 

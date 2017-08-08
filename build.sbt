@@ -7,8 +7,6 @@ name := "raster-frames"
 
 organization := "io.astraea"
 
-version := "0.3.3"
-
 licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
 
 headers := CommentStyleMapping.createFrom(Apache2_0, "2017", "Astraea, Inc.")
@@ -47,3 +45,23 @@ publishArtifact in (Compile, packageDoc) := false
 enablePlugins(TutPlugin)
 
 tutTargetDirectory := baseDirectory.value
+
+import ReleaseTransformations._
+
+lazy val runTut = releaseStepTask(tut)
+
+releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies,
+  inquireVersions,
+  runClean,
+  runTest,
+  runTut,
+  setReleaseVersion,
+  commitReleaseVersion,
+  tagRelease,
+  publishArtifacts,
+  setNextVersion,
+  commitNextVersion
+)
+
+

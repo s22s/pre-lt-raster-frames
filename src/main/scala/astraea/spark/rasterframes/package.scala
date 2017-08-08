@@ -19,14 +19,13 @@ package astraea.spark
 
 import geotrellis.raster.{Tile, TileFeature}
 import geotrellis.spark.{Bounds, ContextRDD, Metadata, TileLayerMetadata}
-import geotrellis.util.{Component, GetComponent}
+import geotrellis.util.GetComponent
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.gt.functions.ColumnFunctions
-import org.apache.spark.sql.gt.Implicits
 import org.apache.spark.sql._
-import spray.json.{JsNull, JsObject, JsValue, JsonFormat}
+import org.apache.spark.sql.gt.Implicits
+import org.apache.spark.sql.gt.functions.ColumnFunctions
+import spray.json.JsonFormat
 
-import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
 
 /**
@@ -37,6 +36,11 @@ import scala.reflect.runtime.universe._
  * @since 7/18/17
  */
 package object rasterframes extends Implicits with ColumnFunctions {
+  /** Key under which ContextRDD metadata is stored. */
+  val CONTEXT_METADATA_KEY = "context"
+  val SPATIAL_KEY_COLUMN = "key"
+  val TILE_COLUMN = "tile"
+  val TILE_FEATURE_DATA_COLUMN = "tile_data"
 
   /**
    * A RasterFrame is just a DataFrame with certain invariants, enforced via the methods that create and transform them:

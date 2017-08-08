@@ -40,8 +40,8 @@ abstract class ContextRDDMethods[K: TypeTag,
 
     val rdd = self: RDD[(K, Tile)]
     rdd
-      .toDF("key", "tile")
-      .setColumnMetadata("key", md)
+      .toDF(SPATIAL_KEY_COLUMN, TILE_COLUMN)
+      .addColumnMetadata(SPATIAL_KEY_COLUMN, CONTEXT_METADATA_KEY, md)
   }
 }
 
@@ -55,16 +55,18 @@ abstract class TFContextRDDMethods[K: TypeTag,
                                    M: JsonFormat: BoundsComponentOf[K]#get](implicit spark: SparkSession)
   extends MethodExtensions[RDD[(K, TileFeature[Tile, D])] with Metadata[M]] {
 
+  val TF_COL = "tileFeature"
+
   def toRF: RasterFrame = {
     import spark.implicits._
     val md = self.metadata.asColumnMetadata
     val rdd = self: RDD[(K, TileFeature[Tile, D])]
 
     rdd
-      .toDF("key", "tileFeature")
-      .setColumnMetadata("key", md)
-      .withColumn("tile", $"tileFeature.tile")
-      .withColumn("tileData", $"tileFeature.data")
-      .drop("tileFeature")
+      .toDF(SPATIAL_KEY_COLUMN, TF_COL)
+      .addColumnMetadata(SPATIAL_KEY_COLUMN, CONTEXT_METADATA_KEY, md)
+      .withColumn(TILE_COLUMN, $"$TF_COL.tile")
+      .withColumn(TILE_FEATURE_DATA_COLUMN, $"$TF_COL.data")
+      .drop(TF_COL)
   }
 }
