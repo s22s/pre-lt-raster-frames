@@ -45,3 +45,23 @@ publishArtifact in (Compile, packageDoc) := false
 enablePlugins(TutPlugin)
 
 tutTargetDirectory := baseDirectory.value
+
+import ReleaseTransformations._
+
+lazy val runTut = releaseStepTask(tut)
+
+releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies,
+  inquireVersions,
+  runClean,
+  runTest,
+  runTut,
+  setReleaseVersion,
+  commitReleaseVersion,
+  tagRelease,
+  publishArtifacts,
+  setNextVersion,
+  commitNextVersion
+)
+
+
