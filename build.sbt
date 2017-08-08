@@ -1,3 +1,4 @@
+import com.servicerocket.sbt.release.git.flow.StandardLogger
 import de.heikoseeberger.sbtheader.CommentStyleMapping
 import de.heikoseeberger.sbtheader.license.Apache2_0
 import sbt._
@@ -56,10 +57,10 @@ lazy val runTut = releaseStepTask(tut)
 lazy val commitTut = ReleaseStep((st: State) ⇒ {
   val extracted = Project.extract(st)
   val vcs = extracted.get(releaseVcs).get
-  vcs.add("README.md").!
+  vcs.add("README.md") ! StandardLogger
   val status = vcs.status.!!.trim
   if (status.nonEmpty) {
-    vcs.commit("Updated README.md") ! st.log
+    vcs.commit("Updated README.md") ! StandardLogger
   }
   st
 })
@@ -76,7 +77,6 @@ releaseProcess := Seq[ReleaseStep](
   commitReleaseVersion,
   publishArtifacts,
   gitFlowReleaseFinish,
-  pushMaster,
   setNextVersion,
   commitNextVersion
 )
