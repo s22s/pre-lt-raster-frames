@@ -1,5 +1,8 @@
 import de.heikoseeberger.sbtheader.CommentStyleMapping
 import de.heikoseeberger.sbtheader.license.Apache2_0
+import sbt._
+import sbt.Keys._
+import sbtrelease.Vcs
 
 scalaVersion := "2.11.8"
 
@@ -50,6 +53,16 @@ import ReleaseTransformations._
 import com.servicerocket.sbt.release.git.flow.Steps._
 
 lazy val runTut = releaseStepTask(tut)
+lazy val commitTut = ReleaseStep((st: State) ⇒ {
+  val extracted = Project.extract(st)
+  val vcs = extracted.get(releaseVcs).get
+  vcs.add("README.md").!
+  val status = vcs.status.!!.trim
+  if (status.nonEmpty) {
+    vcs.commit("Updated README.md") ! st.log
+  }
+  st
+})
 
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
@@ -59,6 +72,7 @@ releaseProcess := Seq[ReleaseStep](
   gitFlowReleaseStart,
   setReleaseVersion,
   runTut,
+  commitTut,
   commitReleaseVersion,
   publishArtifacts,
   gitFlowReleaseFinish,
