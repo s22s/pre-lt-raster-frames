@@ -56,11 +56,18 @@ import com.servicerocket.sbt.release.git.flow.Steps._
 lazy val runTut = releaseStepTask(tut)
 lazy val commitTut = ReleaseStep((st: State) ⇒ {
   val extracted = Project.extract(st)
+
+  val logger = new ProcessLogger {
+    def error(s: ⇒ String): Unit = st.log.debug(s)
+    def buffer[T](f: ⇒ T): T = f
+    def info(s: ⇒ String): Unit = st.log.info(s)
+  }
+
   val vcs = extracted.get(releaseVcs).get
-  vcs.add("README.md") ! StandardLogger
+  vcs.add("README.md") ! logger
   val status = vcs.status.!!.trim
   if (status.nonEmpty) {
-    vcs.commit("Updated README.md") ! StandardLogger
+    vcs.commit("Updated README.md") ! logger
   }
   st
 })

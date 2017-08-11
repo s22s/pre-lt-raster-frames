@@ -4,7 +4,7 @@ package astraea.spark.rasterframes
 
 import com.typesafe.scalalogging.LazyLogging
 import geotrellis.proj4.LatLng
-import geotrellis.raster.{Tile, TileFeature, TileLayout}
+import geotrellis.raster.{ProjectedRaster, Tile, TileFeature, TileLayout}
 import geotrellis.spark._
 import geotrellis.spark.io._
 import geotrellis.spark.testkit.TileLayerRDDBuilders
@@ -51,8 +51,6 @@ class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
     }
 
     it("should implicitly convert layer of TileFeature") {
-
-
       val tile = TileFeature(randomTile(20, 20, "uint8"), (1, "b", 3.0))
 
       val tileLayout = TileLayout(1, 1, 20, 20)
@@ -69,7 +67,17 @@ class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
       val rf = WithTFContextRDDMethods(tileLayerRDD).toRF
 
       rf.show(false)
+    }
 
+    it("should convert a GeoTiff") {
+      val praster: ProjectedRaster[Tile] = sampleGeoTiff.projectedRaster
+      val (cols, rows) = praster.raster.dimensions
+
+      val layoutCols = math.ceil(cols / 128.0).toInt
+      val layoutRows = math.ceil(rows / 128.0).toInt
+
+      assert(praster.toRF.count() === 1)
+      assert(praster.toRF(128, 128).count() === (layoutCols * layoutRows))
     }
   }
 }

@@ -17,7 +17,7 @@
 package astraea.spark
 
 
-import geotrellis.raster.{Tile, TileFeature}
+import geotrellis.raster.{ProjectedRaster, Tile, TileFeature}
 import geotrellis.spark.{Bounds, ContextRDD, Metadata, TileLayerMetadata}
 import geotrellis.util.GetComponent
 import org.apache.spark.rdd.RDD
@@ -38,8 +38,11 @@ import scala.reflect.runtime.universe._
 package object rasterframes extends Implicits with ColumnFunctions {
   /** Key under which ContextRDD metadata is stored. */
   val CONTEXT_METADATA_KEY = "context"
+  /** Default RasterFrame spatial column name. */
   val SPATIAL_KEY_COLUMN = "key"
+  /** Default RasterFrame tile column name. */
   val TILE_COLUMN = "tile"
+  /** Default RasterFrame [[TileFeature.data]] column name. */
   val TILE_FEATURE_DATA_COLUMN = "tile_data"
 
   /**
@@ -50,11 +53,23 @@ package object rasterframes extends Implicits with ColumnFunctions {
    */
   type RasterFrame = DataFrame
 
-  /** Initialization injection point. */
+  /**
+   * Type lambda alias for components that have bounds with parameterized key.
+   * @tparam K bounds key type
+   */
+  type BoundsComponentOf[K] = {
+    type get[M] = GetComponent[M, Bounds[K]]
+  }
+
+  /**
+   * Initialization injection point.
+   */
   def rfInit(sqlContext: SQLContext): Unit = {
+    // TODO: Can this be automatically done via some SPI-like construct in Spark?
     gt.gtRegister(sqlContext)
   }
 
+  implicit class WithProjectedRasterMethods(val self: ProjectedRaster[Tile]) extends ProjectedRasterMethods
   implicit class WithDataFrameMethods(val self: DataFrame) extends DataFrameMethods
   implicit class WithRasterFrameMethods(val self: RasterFrame) extends RasterFrameMethods
 
@@ -68,10 +83,6 @@ package object rasterframes extends Implicits with ColumnFunctions {
     D: TypeTag,
     M: JsonFormat: BoundsComponentOf[K]#get
   ](val self: RDD[(K, TileFeature[Tile, D])] with Metadata[M])(implicit spark: SparkSession) extends TFContextRDDMethods[K, D, M]
-
-  type BoundsComponentOf[K] = {
-    type get[M] = GetComponent[M, Bounds[K]]
-  }
 
   type TileFeatureLayerRDD[K, D] = RDD[(K, TileFeature[Tile, D])] with Metadata[TileLayerMetadata[K]]
   object TileFeatureLayerRDD {

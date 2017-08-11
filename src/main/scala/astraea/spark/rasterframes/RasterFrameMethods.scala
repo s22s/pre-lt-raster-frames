@@ -24,7 +24,7 @@ import org.apache.spark.sql.gt.types.TileUDT
  * @author sfitch
  * @since 7/18/17
  */
-abstract class RasterFrameMethods extends MethodExtensions[RasterFrame] {
+trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
   /** Get the names of the columns that are of type `Tile` */
   def tileColumns: Seq[String] = self.schema.fields
     .filter(_.dataType.typeName.equalsIgnoreCase(TileUDT.typeName))
