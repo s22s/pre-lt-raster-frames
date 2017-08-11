@@ -18,7 +18,7 @@ package astraea.spark
 
 
 import geotrellis.raster.{ProjectedRaster, Tile, TileFeature}
-import geotrellis.spark.{Bounds, ContextRDD, Metadata, TileLayerMetadata}
+import geotrellis.spark.{Bounds, ContextRDD, Metadata, SpatialComponent, TileLayerMetadata}
 import geotrellis.util.GetComponent
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql._
@@ -72,21 +72,19 @@ package object rasterframes extends Implicits with ColumnFunctions {
   implicit class WithProjectedRasterMethods(val self: ProjectedRaster[Tile]) extends ProjectedRasterMethods
   implicit class WithDataFrameMethods(val self: DataFrame) extends DataFrameMethods
   implicit class WithRasterFrameMethods(val self: RasterFrame) extends RasterFrameMethods
-
-  implicit class WithContextRDDMethods[
-    K: TypeTag,
-    M: JsonFormat: BoundsComponentOf[K]#get
-  ](val self: RDD[(K, Tile)] with Metadata[M])(implicit spark: SparkSession) extends ContextRDDMethods[K,M]
+  implicit class WithContextRDDMethods[K: SpatialComponent: JsonFormat: TypeTag](val self: RDD[(K, Tile)] with Metadata[TileLayerMetadata[K]])
+    (implicit spark: SparkSession) extends ContextRDDMethods[K]
 
   implicit class WithTFContextRDDMethods[
-    K: TypeTag,
-    D: TypeTag,
-    M: JsonFormat: BoundsComponentOf[K]#get
-  ](val self: RDD[(K, TileFeature[Tile, D])] with Metadata[M])(implicit spark: SparkSession) extends TFContextRDDMethods[K, D, M]
+    K: SpatialComponent: JsonFormat: TypeTag,
+    D: TypeTag
+  ](val self: RDD[(K, TileFeature[Tile, D])] with Metadata[TileLayerMetadata[K]])
+    (implicit spark: SparkSession) extends TFContextRDDMethods[K, D]
 
   type TileFeatureLayerRDD[K, D] = RDD[(K, TileFeature[Tile, D])] with Metadata[TileLayerMetadata[K]]
   object TileFeatureLayerRDD {
-    def apply[K, D](rdd: RDD[(K, TileFeature[Tile, D])], metadata: TileLayerMetadata[K]): TileFeatureLayerRDD[K,D] =  new ContextRDD(rdd, metadata)
+    def apply[K, D](rdd: RDD[(K, TileFeature[Tile, D])], metadata: TileLayerMetadata[K]): TileFeatureLayerRDD[K,D] =
+      new ContextRDD(rdd, metadata)
   }
 
   private[rasterframes] implicit class WithMetadataMethods[R: JsonFormat](val self: R) extends MetadataMethods[R]
