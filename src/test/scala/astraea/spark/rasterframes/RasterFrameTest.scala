@@ -60,7 +60,7 @@ class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
 
       val (_, metadata) = inputRdd.collectMetadata[SpatialKey](LatLng, layoutScheme)
 
-      val tileRDD = inputRdd.map{case (k, v) ⇒ (metadata.mapTransform(k.extent.center), v)}
+      val tileRDD = inputRdd.map {case (k, v) ⇒ (metadata.mapTransform(k.extent.center), v)}
 
       val tileLayerRDD = TileFeatureLayerRDD(tileRDD, metadata)
 
@@ -69,7 +69,7 @@ class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
       rf.show(false)
     }
 
-    it("should convert a GeoTiff") {
+    it("should convert a GeoTiff to RasterFrame") {
       val praster: ProjectedRaster[Tile] = sampleGeoTiff.projectedRaster
       val (cols, rows) = praster.raster.dimensions
 
@@ -78,6 +78,12 @@ class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
 
       assert(praster.toRF.count() === 1)
       assert(praster.toRF(128, 128).count() === (layoutCols * layoutRows))
+    }
+
+    it("should provide TileLayerMetadata") {
+      val rf = sampleGeoTiff.projectedRaster.toRF(256, 256)
+      val tlm = rf.tileLayerMetadata[SpatialKey]
+      println(tlm)
     }
   }
 }

@@ -19,8 +19,9 @@ package org.apache.spark.sql.gt.functions
 import geotrellis.raster
 import geotrellis.raster.mapalgebra.local._
 import geotrellis.raster.{IntArrayTile, IntConstantNoDataCellType, Tile, isNoData}
-import org.apache.spark.sql.Row
+import org.apache.spark.sql.{Row, gt}
 import org.apache.spark.sql.expressions.{MutableAggregationBuffer, UserDefinedAggregateFunction}
+import org.apache.spark.sql.gt.safeBinaryOp
 import org.apache.spark.sql.gt.types.TileUDT
 import org.apache.spark.sql.types._
 
@@ -45,7 +46,7 @@ class StatsLocalTileAggregateFunction() extends UserDefinedAggregateFunction {
 	    at org.apache.spark.sql.types.StructType$.fromString(StructType.scala:419)
 	    ...
    */
-  private val reafiableUDT = new TileUDT()
+  protected val reafiableUDT = new TileUDT()
 
   override def dataType: DataType = StructType(Seq(
     StructField("count", reafiableUDT),
@@ -63,12 +64,20 @@ class StatsLocalTileAggregateFunction() extends UserDefinedAggregateFunction {
     StructField("sumSqr", TileUDT)
   ))
 
-  private val stats = Seq(
-    (t1: Tile, t2: Tile) ⇒ Add(t1, Defined(t2)),
-    (t1: Tile, t2: Tile) ⇒ BiasedMin(t1, t2),
-    (t1: Tile, t2: Tile) ⇒ BiasedMax(t1, t2),
-    (t1: Tile, t2: Tile) ⇒ BiasedAdd(t1, t2),
-    (t1: Tile, t2: Tile) ⇒ BiasedAdd(t1, Multiply(t2, t2))
+  private val updateFunctions = Seq(
+    safeBinaryOp((t1: Tile, t2: Tile) ⇒ Add(t1, Defined(t2))),
+    safeBinaryOp((t1: Tile, t2: Tile) ⇒ BiasedMin(t1, t2)),
+    safeBinaryOp((t1: Tile, t2: Tile) ⇒ BiasedMax(t1, t2)),
+    safeBinaryOp((t1: Tile, t2: Tile) ⇒ BiasedAdd(t1, t2)),
+    safeBinaryOp((t1: Tile, t2: Tile) ⇒ BiasedAdd(t1, Multiply(t2, t2)))
+  )
+
+  private val mergeFunctions = Seq(
+    safeBinaryOp((t1: Tile, t2: Tile) ⇒ Add(t1, t2)),
+    updateFunctions(1),
+    updateFunctions(2),
+    updateFunctions(3),
+    safeBinaryOp((t1: Tile, t2: Tile) ⇒ Add(t1, t2))
   )
 
   override def deterministic: Boolean = true
@@ -76,39 +85,47 @@ class StatsLocalTileAggregateFunction() extends UserDefinedAggregateFunction {
   override def initialize(buffer: MutableAggregationBuffer): Unit = ()
 
   override def update(buffer: MutableAggregationBuffer, input: Row): Unit = {
-    val tile = input.getAs[Tile](0)
-    if(tile != null) {
+    val right = input.getAs[Tile](0)
+    if(right != null) {
       if(buffer(0) == null) {
-        buffer(0) = IntArrayTile.fill(1, tile.cols, tile.rows, IntConstantNoDataCellType)
-        buffer(1) = tile
-        buffer(2) = tile
-        buffer(3) = tile
-        buffer(4) = tile
+        buffer(0) = Defined(right).convert(IntConstantNoDataCellType)
+        for(i ← 1 until updateFunctions.length) {
+          buffer(i) = right
+        }
       }
       else {
-        for(i ← stats.indices) {
-          buffer(i) = stats(i)(buffer.getAs[Tile](i), tile)
+        for(i ← updateFunctions.indices) {
+          val left = buffer.getAs[Tile](i)
+          buffer(i) = updateFunctions(i)(left, right)
         }
       }
     }
   }
 
   override def merge(buffer1: MutableAggregationBuffer, buffer2: Row): Unit = {
-    val pickOrApply = (t1: Tile, t2: Tile, op: (Tile, Tile) ⇒ Tile) ⇒
-      if(t1 == null) t2 else if(t2 == null) t1 else op(t1, t2)
-
-    for(i ← stats.indices) {
-      buffer1(i) = pickOrApply(buffer1.getAs[Tile](i), buffer2.getAs[Tile](i), stats(i))
+    for(i ← mergeFunctions.indices) {
+      val left = buffer1.getAs[Tile](i)
+      val right = buffer2.getAs[Tile](i)
+      buffer1(i) = mergeFunctions(i)(left, right)
     }
   }
 
-  override def evaluate(buffer: Row): Row = {
+  override def evaluate(buffer: Row): Any = {
     val count = buffer.getAs[Tile](0)
     if(count != null) {
       val sum = buffer.getAs[Tile](3)
       val sumSqr = buffer.getAs[Tile](4)
       val mean = sum / count
       val variance = sumSqr / count - mean * mean
+      if(variance.get(0, 1) < 0) {
+        println("sum:\n" + sum.asciiDraw())
+        println("sumSqr:\n" + sumSqr.asciiDraw())
+        println("mean:\n" + mean.asciiDraw())
+        println("variance:\n" + variance.asciiDraw())
+        println("oops")
+
+
+      }
       Row(buffer(0), buffer(1), buffer(2), mean, variance)
     }
     else null

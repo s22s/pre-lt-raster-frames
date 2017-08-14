@@ -38,6 +38,8 @@ libraryDependencies ++= Seq(
 
 fork in Test := true
 
+parallelExecution in Test := false
+
 scalacOptions ++= Seq("-feature", "-deprecation")
 
 bintrayOrganization := Some("s22s")

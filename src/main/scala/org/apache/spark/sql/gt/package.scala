@@ -41,6 +41,12 @@ package object gt {
     }
   }
 
+  private[gt] def safeBinaryOp[T <: AnyRef, R >: T](op: (T, T) ⇒ R): ((T, T) ⇒ R) =
+  (o1: T, o2: T) ⇒ {
+    if(o1 == null) o2
+    else if (o2 == null) o1
+    else op(o1, o2)
+  }
 
   private[gt] implicit class WithDecoder[T](enc: ExpressionEncoder[T])  {
     def decode(row: InternalRow): T =

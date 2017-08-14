@@ -16,21 +16,20 @@
 
 package org.apache.spark.sql.gt.functions
 
-import org.apache.spark.sql.gt._
-
 import geotrellis.raster.Tile
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.LocalTileBinaryOp
 import geotrellis.raster.mapalgebra.{local ⇒ alg}
 import geotrellis.raster.summary.Statistics
 import org.apache.spark.annotation.Experimental
-import org.apache.spark.ml.linalg.{Vector ⇒ MLVector}
 import org.apache.spark.sql._
 import org.apache.spark.sql.catalyst.analysis.MultiAlias
 import org.apache.spark.sql.catalyst.expressions.{CreateArray, Expression, Inline}
 import org.apache.spark.sql.functions.{lit, udf ⇒ SparkUDF}
-import org.apache.spark.sql.types._
 import org.apache.spark.sql.gt.Implicits._
+import org.apache.spark.sql.gt._
+import org.apache.spark.sql.types._
+
 import scala.reflect.runtime.universe._
 
 /**
@@ -78,7 +77,7 @@ trait ColumnFunctions {
     UDFs.aggHistogram(col)
   ).as[Histogram[Double]]
 
-  /**  Compute the full column aggregate floating point statistics. */
+  /** Compute the full column aggregate floating point statistics. */
   @Experimental
   def aggStats(col: Column): TypedColumn[Any, Statistics[Double]] =
   withAlias("stats", col)(
@@ -129,23 +128,37 @@ trait ColumnFunctions {
 
   /** Compute cell-local aggregate descriptive statistics for a column of tiles. */
   @Experimental
-  def localStats(col: Column): Column =
-  withAlias("localStats", col)(
-    UDFs.localStats(col)
+  def localAggStats(col: Column): Column =
+  withAlias("localAggStats", col)(
+    UDFs.localAggStats(col)
   )
 
   /** Compute the cellwise/local max operation between tiles in a column. */
   @Experimental
-  def localMax(col: Column): TypedColumn[Any, Tile] =
-  withAlias("localMax", col)(
-    UDFs.localMax(col)
+  def localAggMax(col: Column): TypedColumn[Any, Tile] =
+  withAlias("localAggMax", col)(
+    UDFs.localAggMax(col)
   ).as[Tile]
 
   /** Compute the cellwise/local min operation between tiles in a column. */
   @Experimental
-  def localMin(col: Column): TypedColumn[Any, Tile] =
-  withAlias("localMin", col)(
-    UDFs.localMin(col)
+  def localAggMin(col: Column): TypedColumn[Any, Tile] =
+  withAlias("localAggMin", col)(
+    UDFs.localAggMin(col)
+  ).as[Tile]
+
+  /** Compute the cellwise/local mean operation between tiles in a column. */
+  @Experimental
+  def localAggMean(col: Column): TypedColumn[Any, Tile] =
+  withAlias("localAggMean", col)(
+    UDFs.localAggMean(col)
+  ).as[Tile]
+
+  /** Compute the cellwise/local count of non-NoData cells for all tiles in a column. */
+  @Experimental
+  def localAggCount(col: Column): TypedColumn[Any, Tile] =
+  withAlias("localCount", col)(
+    UDFs.localAggCount(col)
   ).as[Tile]
 
   /** Cellwise addition between two tiles. */

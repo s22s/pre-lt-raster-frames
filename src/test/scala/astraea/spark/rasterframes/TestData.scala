@@ -55,8 +55,9 @@ trait TestData {
     extent, LatLng, KeyBounds(stk, stk)
   )
 
-  val byteArrayTile = ByteArrayTile((1 to 9).map(_ .toByte).toArray, 3, 3)
+  def squareIncrementingTile(size: Int): Tile = ByteArrayTile((1 to (size * size)).map(_.toByte).toArray, size, size)
 
+  val byteArrayTile: Tile = squareIncrementingTile(3)
   val bitConstantTile = BitConstantTile(1, 2, 2)
   val byteConstantTile = ByteConstantTile(7, 3, 3)
 
