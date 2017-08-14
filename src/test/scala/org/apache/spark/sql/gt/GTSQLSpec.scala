@@ -26,7 +26,7 @@ import geotrellis.raster
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.{Add, Max, Min, Subtract}
 import geotrellis.raster.summary.Statistics
-import geotrellis.raster.{ByteCellType, CellType, MultibandTile, Tile, TileFeature}
+import geotrellis.raster.{ByteCellType, CellType, IntConstantNoDataCellType, MultibandTile, Tile, TileFeature}
 import geotrellis.spark.{SpaceTimeKey, TemporalProjectedExtent, TileLayerMetadata}
 import geotrellis.vector.{Extent, ProjectedExtent}
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
@@ -206,23 +206,23 @@ class GTSQLSpec extends TestEnvironment with TestData with LazyLogging {
       ds.createOrReplaceTempView("tmp")
 
       withClue("max") {
-        val max = ds.agg(localMax($"tiles"))
+        val max = ds.agg(localAggMax($"tiles"))
         val expected = Max(byteArrayTile, byteConstantTile)
         write(max)
         assert(max.as[Tile].first() === expected)
 
-        val sqlMax = sql("select st_localMax(tiles) from tmp")
+        val sqlMax = sql("select st_localAggMax(tiles) from tmp")
         assert(sqlMax.as[Tile].first() === expected)
 
       }
 
       withClue("min") {
-        val min = ds.agg(localMin($"tiles"))
+        val min = ds.agg(localAggMin($"tiles"))
         val expected = Min(byteArrayTile, byteConstantTile)
         write(min)
         assert(min.as[Tile].first() === Min(byteArrayTile, byteConstantTile))
 
-        val sqlMin = sql("select st_localMin(tiles) from tmp")
+        val sqlMin = sql("select st_localAggMin(tiles) from tmp")
         assert(sqlMin.as[Tile].first() === expected)
       }
     }
@@ -305,6 +305,15 @@ class GTSQLSpec extends TestEnvironment with TestData with LazyLogging {
       assert(agg2.first().dataCells === 250)
     }
 
+    def printStatsRows(df: DataFrame): Unit = {
+      val tiles = df.collect().flatMap(_.toSeq).map(_.asInstanceOf[Tile])
+
+      // Render debugging form.
+      tiles.map(_.asciiDraw())
+        .zip(df.columns)
+        .foreach{case (img, label) ⇒ println(s"$label:\n$img")}
+    }
+
     it("should compute aggregate local stats") {
       val ave = (nums: Array[Double]) ⇒ nums.sum / nums.length
 
@@ -312,14 +321,10 @@ class GTSQLSpec extends TestEnvironment with TestData with LazyLogging {
         .map(injectND(2)).toDF("tiles")
       ds.createOrReplaceTempView("tmp")
 
-      val agg = ds.select(localStats($"tiles") as "stats")
+      val agg = ds.select(localAggStats($"tiles") as "stats")
       val stats = agg.select("stats.*")
-      val tiles = stats.collect().flatMap(_.toSeq).map(_.asInstanceOf[Tile])
 
-      // Render debugging form.
-      tiles.map(_.asciiDrawDouble(2))
-        .zip(stats.columns)
-        .foreach{case (img, label) ⇒ println(s"$label:\n$img")}
+      printStatsRows(stats)
 
       val min = agg.select($"stats.min".as[Tile]).map(_.toArrayDouble().min).first
       assert(min < -2.0)
@@ -331,37 +336,63 @@ class GTSQLSpec extends TestEnvironment with TestData with LazyLogging {
       val varg = agg.select($"stats.mean".as[Tile]).map(t ⇒ ave(t.toArrayDouble())).first
       assert(varg < 1.1)
 
-      val sqlStats = sql("SELECT stats.* from (SELECT st_localStats(tiles) as stats from tmp)")
+      val sqlStats = sql("SELECT stats.* from (SELECT st_localAggStats(tiles) as stats from tmp)")
 
+      val tiles = stats.collect().flatMap(_.toSeq).map(_.asInstanceOf[Tile])
       val dsTiles = sqlStats.collect().flatMap(_.toSeq).map(_.asInstanceOf[Tile])
       forEvery(tiles.zip(dsTiles)) { case (t1, t2) ⇒
         assert(t1 === t2)
       }
     }
 
-    it("local stats should handle null tiles") {
-      withClue("intersperced nulls") {
-        val tiles = Array.fill[Tile](30)(UDFs.randomTile(5, 5, "float32"))
-        tiles(1) = null
-        tiles(11) = null
-        tiles(29) = null
+    it("aggregate functions should handle null tiles") {
+      val aggs = Seq(localAggMax _, localAggMin _, localAggCount _)
 
-        val ds = tiles.toSeq.toDF("tiles")
-        val agg = ds.select(localStats($"tiles") as "stats")
+      val datasets = Seq(
+        {
+          val tiles = Array.fill[Tile](30)(UDFs.randomTile(5, 5, "float32"))
+          tiles(1) = null
+          tiles(11) = null
+          tiles(29) = null
+          tiles.toSeq
+        },
+        Seq.fill[Tile](30)(null)
+      )
+
+      forEvery(datasets) { tiles ⇒
+        val ds = tiles.toDF("tiles")
+        val agg = ds.select(localAggStats($"tiles") as "stats")
         val stats = agg.select("stats.*")
         val statTiles = stats.collect().flatMap(_.toSeq).map(_.asInstanceOf[Tile])
         assert(statTiles.length === 5)
-        forAll(statTiles)(t ⇒ assert(t != null))
-      }
 
-      withClue("all null") {
-        val tiles = Seq.fill[Tile](30)(null)
-        val ds = tiles.toDF("tiles")
-        val agg = ds.select(localStats($"tiles") as "stats")
-        val stats = agg.select("stats.*")
-        val statTiles = stats.collect().flatMap(_.toSeq).map(_.asInstanceOf[Tile])
-        forAll(statTiles)(t ⇒ assert(t == null))
+        forEvery(aggs) { aggregate ⇒
+          assert(ds.select(aggregate($"tiles")).count() === 1)
+        }
       }
+    }
+
+    it("should compute accurate statistics") {
+      val tile = squareIncrementingTile(4).convert(IntConstantNoDataCellType)
+
+      val ds = Seq.fill(20)(tile).toDF("tiles")
+
+      val stats = ds.select(localAggStats($"tiles") as "stats").select("stats.*")
+      printStatsRows(stats)
+
+      // counted everything properly
+      val countTile = ds.select(localAggCount($"tiles")).first()
+      forAll(countTile.toArray())(i ⇒ assert(i === 20))
+
+      val meanTile = ds.select(localAggMean($"tiles")).first()
+      assert(meanTile.toArray() === tile.toArray())
+
+      val minTile = ds.select(localAggMin($"tiles")).first()
+      assert(minTile.toArray() === tile.toArray())
+
+      val maxTile = ds.select(localAggMax($"tiles")).first()
+      assert(maxTile.toArray() === tile.toArray())
+
     }
   }
 }

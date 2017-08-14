@@ -17,8 +17,8 @@
 package astraea.spark
 
 
-import geotrellis.raster.{Tile, TileFeature}
-import geotrellis.spark.{Bounds, ContextRDD, Metadata, TileLayerMetadata}
+import geotrellis.raster.{ProjectedRaster, Tile, TileFeature}
+import geotrellis.spark.{Bounds, ContextRDD, Metadata, SpatialComponent, TileLayerMetadata}
 import geotrellis.util.GetComponent
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql._
@@ -38,8 +38,11 @@ import scala.reflect.runtime.universe._
 package object rasterframes extends Implicits with ColumnFunctions {
   /** Key under which ContextRDD metadata is stored. */
   val CONTEXT_METADATA_KEY = "context"
+  /** Default RasterFrame spatial column name. */
   val SPATIAL_KEY_COLUMN = "key"
+  /** Default RasterFrame tile column name. */
   val TILE_COLUMN = "tile"
+  /** Default RasterFrame [[TileFeature.data]] column name. */
   val TILE_FEATURE_DATA_COLUMN = "tile_data"
 
   /**
@@ -50,32 +53,38 @@ package object rasterframes extends Implicits with ColumnFunctions {
    */
   type RasterFrame = DataFrame
 
-  /** Initialization injection point. */
-  def rfInit(sqlContext: SQLContext): Unit = {
-    gt.gtRegister(sqlContext)
-  }
-
-  implicit class WithDataFrameMethods(val self: DataFrame) extends DataFrameMethods
-  implicit class WithRasterFrameMethods(val self: RasterFrame) extends RasterFrameMethods
-
-  implicit class WithContextRDDMethods[
-    K: TypeTag,
-    M: JsonFormat: BoundsComponentOf[K]#get
-  ](val self: RDD[(K, Tile)] with Metadata[M])(implicit spark: SparkSession) extends ContextRDDMethods[K,M]
-
-  implicit class WithTFContextRDDMethods[
-    K: TypeTag,
-    D: TypeTag,
-    M: JsonFormat: BoundsComponentOf[K]#get
-  ](val self: RDD[(K, TileFeature[Tile, D])] with Metadata[M])(implicit spark: SparkSession) extends TFContextRDDMethods[K, D, M]
-
+  /**
+   * Type lambda alias for components that have bounds with parameterized key.
+   * @tparam K bounds key type
+   */
   type BoundsComponentOf[K] = {
     type get[M] = GetComponent[M, Bounds[K]]
   }
 
+  /**
+   * Initialization injection point.
+   */
+  def rfInit(sqlContext: SQLContext): Unit = {
+    // TODO: Can this be automatically done via some SPI-like construct in Spark?
+    gt.gtRegister(sqlContext)
+  }
+
+  implicit class WithProjectedRasterMethods(val self: ProjectedRaster[Tile]) extends ProjectedRasterMethods
+  implicit class WithDataFrameMethods(val self: DataFrame) extends DataFrameMethods
+  implicit class WithRasterFrameMethods(val self: RasterFrame) extends RasterFrameMethods
+  implicit class WithContextRDDMethods[K: SpatialComponent: JsonFormat: TypeTag](val self: RDD[(K, Tile)] with Metadata[TileLayerMetadata[K]])
+    (implicit spark: SparkSession) extends ContextRDDMethods[K]
+
+  implicit class WithTFContextRDDMethods[
+    K: SpatialComponent: JsonFormat: TypeTag,
+    D: TypeTag
+  ](val self: RDD[(K, TileFeature[Tile, D])] with Metadata[TileLayerMetadata[K]])
+    (implicit spark: SparkSession) extends TFContextRDDMethods[K, D]
+
   type TileFeatureLayerRDD[K, D] = RDD[(K, TileFeature[Tile, D])] with Metadata[TileLayerMetadata[K]]
   object TileFeatureLayerRDD {
-    def apply[K, D](rdd: RDD[(K, TileFeature[Tile, D])], metadata: TileLayerMetadata[K]): TileFeatureLayerRDD[K,D] =  new ContextRDD(rdd, metadata)
+    def apply[K, D](rdd: RDD[(K, TileFeature[Tile, D])], metadata: TileLayerMetadata[K]): TileFeatureLayerRDD[K,D] =
+      new ContextRDD(rdd, metadata)
   }
 
   private[rasterframes] implicit class WithMetadataMethods[R: JsonFormat](val self: R) extends MetadataMethods[R]

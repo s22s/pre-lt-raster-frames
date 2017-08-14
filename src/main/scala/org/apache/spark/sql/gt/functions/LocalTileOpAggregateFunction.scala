@@ -16,11 +16,12 @@
 
 package org.apache.spark.sql.gt.functions
 
-import geotrellis.raster.{BitConstantTile, Tile}
+import geotrellis.raster.Tile
 import geotrellis.raster.mapalgebra.local.LocalTileBinaryOp
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.expressions.{MutableAggregationBuffer, UserDefinedAggregateFunction}
 import org.apache.spark.sql.gt.types.TileUDT
+import org.apache.spark.sql.gt.safeBinaryOp
 import org.apache.spark.sql.types._
 
 /**
@@ -29,7 +30,10 @@ import org.apache.spark.sql.types._
  * @author sfitch 
  * @since 4/17/17
  */
-class LocalTileAggregateFunction(op: LocalTileBinaryOp) extends UserDefinedAggregateFunction {
+class LocalTileOpAggregateFunction(op: LocalTileBinaryOp) extends UserDefinedAggregateFunction {
+
+  private val safeOp = safeBinaryOp(op.apply(_: Tile, _: Tile))
+
   override def inputSchema: StructType = StructType(StructField("value", TileUDT) :: Nil)
 
   override def bufferSchema: StructType = inputSchema
@@ -38,7 +42,8 @@ class LocalTileAggregateFunction(op: LocalTileBinaryOp) extends UserDefinedAggre
 
   override def deterministic: Boolean = true
 
-  override def initialize(buffer: MutableAggregationBuffer): Unit = ()
+  override def initialize(buffer: MutableAggregationBuffer): Unit =
+    buffer(0) = null
 
   override def update(buffer: MutableAggregationBuffer, input: Row): Unit = {
     if(buffer(0) == null) {
@@ -47,7 +52,7 @@ class LocalTileAggregateFunction(op: LocalTileBinaryOp) extends UserDefinedAggre
     else {
       val t1 = buffer.getAs[Tile](0)
       val t2 = input.getAs[Tile](0)
-      buffer(0) = op(t1, t2)
+      buffer(0) = safeOp(t1, t2)
     }
   }
 

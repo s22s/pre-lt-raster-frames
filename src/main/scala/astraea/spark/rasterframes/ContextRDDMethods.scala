@@ -17,11 +17,13 @@
 package astraea.spark.rasterframes
 
 import geotrellis.raster.{Tile, TileFeature}
-import geotrellis.spark.Metadata
+import geotrellis.spark._
+import geotrellis.spark.io._
 import geotrellis.util.MethodExtensions
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 import spray.json.JsonFormat
+import spray.json.DefaultJsonProtocol._
 
 import scala.reflect.runtime.universe._
 
@@ -30,9 +32,8 @@ import scala.reflect.runtime.universe._
  * @author sfitch 
  * @since 7/18/17
  */
-abstract class ContextRDDMethods[K: TypeTag,
-                                 M: JsonFormat: BoundsComponentOf[K]#get](implicit spark: SparkSession)
-  extends MethodExtensions[RDD[(K, Tile)] with Metadata[M]] {
+abstract class ContextRDDMethods[K: SpatialComponent: JsonFormat: TypeTag](implicit spark: SparkSession)
+  extends MethodExtensions[RDD[(K, Tile)] with Metadata[TileLayerMetadata[K]]] {
 
   def toRF: RasterFrame = {
     import spark.implicits._
@@ -50,10 +51,9 @@ abstract class ContextRDDMethods[K: TypeTag,
  * @author sfitch
  * @since 7/18/17
  */
-abstract class TFContextRDDMethods[K: TypeTag,
-                                   D: TypeTag,
-                                   M: JsonFormat: BoundsComponentOf[K]#get](implicit spark: SparkSession)
-  extends MethodExtensions[RDD[(K, TileFeature[Tile, D])] with Metadata[M]] {
+abstract class TFContextRDDMethods[K: SpatialComponent: JsonFormat: TypeTag, D: TypeTag]
+(implicit spark: SparkSession)
+  extends MethodExtensions[RDD[(K, TileFeature[Tile, D])] with Metadata[TileLayerMetadata[K]]] {
 
   val TF_COL = "tileFeature"
 

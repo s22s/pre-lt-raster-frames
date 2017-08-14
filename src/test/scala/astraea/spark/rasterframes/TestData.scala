@@ -22,9 +22,11 @@ import java.time.ZonedDateTime
 
 import geotrellis.proj4.LatLng
 import geotrellis.raster._
+import geotrellis.raster.io.geotiff.{GeoTiff, SinglebandGeoTiff}
 import geotrellis.spark.tiling.LayoutDefinition
 import geotrellis.spark.{KeyBounds, SpaceTimeKey, SpatialKey, TemporalProjectedExtent, TileLayerMetadata}
 import geotrellis.vector.{Extent, ProjectedExtent}
+import org.apache.commons.io.IOUtils
 
 import scala.reflect.ClassTag
 import scala.util.Random
@@ -53,8 +55,9 @@ trait TestData {
     extent, LatLng, KeyBounds(stk, stk)
   )
 
-  val byteArrayTile = ByteArrayTile((1 to 9).map(_ .toByte).toArray, 3, 3)
+  def squareIncrementingTile(size: Int): Tile = ByteArrayTile((1 to (size * size)).map(_.toByte).toArray, size, size)
 
+  val byteArrayTile: Tile = squareIncrementingTile(3)
   val bitConstantTile = BitConstantTile(1, 2, 2)
   val byteConstantTile = ByteConstantTile(7, 3, 3)
 
@@ -89,4 +92,6 @@ trait TestData {
       tile.map(_ ⇒ (Random.nextGaussian() * 256).toInt)
     }
   }
+
+  def sampleGeoTiff = SinglebandGeoTiff(IOUtils.toByteArray(getClass.getResourceAsStream("/L8-B8-Robinson-IL.tiff")))
 }

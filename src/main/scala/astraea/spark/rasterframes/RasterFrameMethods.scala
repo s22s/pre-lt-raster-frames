@@ -16,15 +16,20 @@
 
 package astraea.spark.rasterframes
 
-import geotrellis.util.{LazyLogging, MethodExtensions}
+import geotrellis.raster.io.geotiff.GeoTiff
+import geotrellis.spark._
+import geotrellis.spark.io._
+import geotrellis.util.MethodExtensions
 import org.apache.spark.sql.gt.types.TileUDT
+import org.apache.spark.sql.types.Metadata
+import spray.json._
 
 /**
  * Extension methods on [[RasterFrame]] type.
  * @author sfitch
  * @since 7/18/17
  */
-abstract class RasterFrameMethods extends MethodExtensions[RasterFrame] {
+trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
   /** Get the names of the columns that are of type `Tile` */
   def tileColumns: Seq[String] = self.schema.fields
     .filter(_.dataType.typeName.equalsIgnoreCase(TileUDT.typeName))
@@ -36,6 +41,23 @@ abstract class RasterFrameMethods extends MethodExtensions[RasterFrame] {
     require(key.nonEmpty, "All RasterFrames must have a column tagged with context")
     key.get.name
   }
+
+  def tileLayerMetadata[K: SpatialComponent: JsonFormat]: TileLayerMetadata[K] = {
+    self.schema
+      .find(_.name == SPATIAL_KEY_COLUMN)
+      .map(_.metadata)
+      .map(extract[TileLayerMetadata[K]](CONTEXT_METADATA_KEY))
+      .get
+  }
+
+  private def extract[M: JsonFormat](metadataKey: String)(md: Metadata) = {
+    md.getMetadata(metadataKey).json.parseJson.convertTo[M]
+  }
+
+
+//  def toGeoTIFF(): GeoTiff = {
+//
+//  }
 
 //  def spatialJoin(right: RasterFrame): RasterFrame = {
 //    val metadata = self.schema.head.metadata

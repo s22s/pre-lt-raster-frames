@@ -59,11 +59,15 @@ object UDFs {
   private[gt] val tileMean = safeEval[Tile, Double](_.statistics.map(_.mean).getOrElse(Double.NaN))
 
   /** Compute summary cell-wise statistics across tiles. */
-  private[gt] val localStats = new StatsLocalTileAggregateFunction()
+  private[gt] val localAggStats = new StatsLocalTileAggregateFunction()
   /** Compute the cell-wise max across tiles. */
-  private[gt] val localMax = new LocalTileAggregateFunction(Max)
+  private[gt] val localAggMax = new LocalTileOpAggregateFunction(Max)
   /** Compute the cell-wise min across tiles. */
-  private[gt] val localMin = new LocalTileAggregateFunction(Min)
+  private[gt] val localAggMin = new LocalTileOpAggregateFunction(Min)
+  /** Compute the cell-wise main across tiles. */
+  private[gt] val localAggMean = new LocalMeanAggregateFunction()
+  /** Compute the cell-wise count of non-NA across tiles. */
+  private[gt] val localAggCount = new LocalCountAggregateFunction()
 
   /** Cell-wise addition between tiles. */
   private[gt] val localAdd: (Tile, Tile) ⇒ Tile = safeEval((left, right) ⇒
