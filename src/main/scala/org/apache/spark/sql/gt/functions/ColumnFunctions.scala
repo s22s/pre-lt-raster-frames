@@ -44,12 +44,6 @@ trait ColumnFunctions {
   }
   import encoders._
 
-  @Experimental
-  def randomTile(cols: Int, rows: Int, cellType: String): TypedColumn[Any, Tile] =
-    SparkUDF[Tile, Int, Int, String](UDFs.randomTile).apply(lit(cols), lit(rows), lit(cellType))
-      .as(s"tile($cols, $rows, $cellType)")
-      .as[Tile]
-
   /** Create a row for each cell in tile. */
   @Experimental
   def explodeTiles(cols: Column*): Column = explodeTileSample(1.0, cols: _*)

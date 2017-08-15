@@ -29,7 +29,6 @@ import geotrellis.raster.summary.Statistics
 import geotrellis.raster.{ByteCellType, CellType, IntConstantNoDataCellType, MultibandTile, Tile, TileFeature}
 import geotrellis.spark.{SpaceTimeKey, TemporalProjectedExtent, TileLayerMetadata}
 import geotrellis.vector.{Extent, ProjectedExtent}
-import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.gt.functions._
 import org.apache.spark.sql._
@@ -45,6 +44,8 @@ import org.apache.spark.sql._
  * @since 3/30/17
  */
 class GTSQLSpec extends TestEnvironment with TestData with LazyLogging {
+  import GTSQLSpec._
+  import TestData.{makeTiles, randomTile}
 
   /** This is here so we can test writing UDF generated/modified GeoTrellis types to ensure they are Parquet compliant. */
   def write(df: Dataset[_]): Unit = {
@@ -56,25 +57,9 @@ class GTSQLSpec extends TestEnvironment with TestData with LazyLogging {
     logger.debug(s" it has $rows row(s)")
   }
 
-
-  def injectND(num: Int)(t: Tile): Tile = {
-    val locs = (0 until num).map(_ ⇒
-      (scala.util.Random.nextInt(t.cols), scala.util.Random.nextInt(t.rows))
-    )
-
-    if(t.cellType.isFloatingPoint) {
-      t.mapDouble((c, r, v) ⇒ {if(locs.contains((c,r))) raster.doubleNODATA else v})
-    }
-    else {
-      t.map((c, r, v) ⇒ {if(locs.contains((c,r))) raster.NODATA else v})
-    }
-  }
-
-  implicit class DFExtras(df: DataFrame) {
-    def firstTile: Tile = df.collect().head.getAs[Tile](0)
-  }
-
   import sqlContext.implicits._
+
+  sqlContext.udf.register("st_makeTiles", makeTiles)
 
   describe("GeoTrellis UDTs") {
     it("should create constant tiles") {
@@ -252,7 +237,7 @@ class GTSQLSpec extends TestEnvironment with TestData with LazyLogging {
     }
 
     it("should compute tile statistics") {
-      val ds = Seq.fill[Tile](3)(UDFs.randomTile(5, 5, "float32")).toDS()
+      val ds = Seq.fill[Tile](3)(randomTile(5, 5, "float32")).toDS()
       val means1 = ds.select(tileStatsDouble($"value")).map(_.mean).collect
       val means2 = ds.select(tileMeanDouble($"value")).collect
       assert(means1 === means2)
@@ -266,7 +251,7 @@ class GTSQLSpec extends TestEnvironment with TestData with LazyLogging {
     }
 
     it("should compute per-tile histogram") {
-      val ds = Seq.fill[Tile](3)(UDFs.randomTile(5, 5, "float32")).toDF("tiles")
+      val ds = Seq.fill[Tile](3)(randomTile(5, 5, "float32")).toDF("tiles")
       ds.createOrReplaceTempView("tmp")
 
       val r1 = ds.select(tileHistogram($"tiles").as[Histogram[Double]])
@@ -280,14 +265,14 @@ class GTSQLSpec extends TestEnvironment with TestData with LazyLogging {
     }
 
     it("should compute aggregate histogram") {
-      val ds = Seq.fill[Tile](10)(UDFs.randomTile(5, 5, "float32")).toDF("tiles")
+      val ds = Seq.fill[Tile](10)(randomTile(5, 5, "float32")).toDF("tiles")
       ds.createOrReplaceTempView("tmp")
       val agg = ds.select(aggHistogram($"tiles")).as[Histogram[Double]]
       val hist = agg.collect()
       assert(hist.length === 1)
       val stats = agg.map(_.statistics().get).as("stats")
       stats.select("stats.*").show(false)
-      assert(stats.first().stddev === 1.0 +- 0.1) // <-- playing with statistical fire :)
+      assert(stats.first().stddev === 1.0 +- 0.3) // <-- playing with statistical fire :)
 
       val hist2 = sql("select st_histogram(tiles) as hist from tmp").as[Histogram[Double]]
 
@@ -295,11 +280,11 @@ class GTSQLSpec extends TestEnvironment with TestData with LazyLogging {
     }
 
     it("should compute aggregate statistics") {
-      val ds = Seq.fill[Tile](10)(UDFs.randomTile(5, 5, "float32")).toDF("tiles")
+      val ds = Seq.fill[Tile](10)(randomTile(5, 5, "float32")).toDF("tiles")
       ds.createOrReplaceTempView("tmp")
       val agg = ds.select(aggStats($"tiles"))
 
-      assert(agg.first().stddev === 1.0 +- 0.2) // <-- playing with statistical fire :)
+      assert(agg.first().stddev === 1.0 +- 0.3) // <-- playing with statistical fire :)
 
       val agg2 = sql("select stats.* from (select st_stats(tiles) as stats from tmp)") .as[Statistics[Double]]
       assert(agg2.first().dataCells === 250)
@@ -317,7 +302,7 @@ class GTSQLSpec extends TestEnvironment with TestData with LazyLogging {
     it("should compute aggregate local stats") {
       val ave = (nums: Array[Double]) ⇒ nums.sum / nums.length
 
-      val ds = Seq.fill[Tile](30)(UDFs.randomTile(5, 5, "float32"))
+      val ds = Seq.fill[Tile](30)(randomTile(5, 5, "float32"))
         .map(injectND(2)).toDF("tiles")
       ds.createOrReplaceTempView("tmp")
 
@@ -350,7 +335,7 @@ class GTSQLSpec extends TestEnvironment with TestData with LazyLogging {
 
       val datasets = Seq(
         {
-          val tiles = Array.fill[Tile](30)(UDFs.randomTile(5, 5, "float32"))
+          val tiles = Array.fill[Tile](30)(randomTile(5, 5, "float32"))
           tiles(1) = null
           tiles(11) = null
           tiles(29) = null
@@ -394,5 +379,26 @@ class GTSQLSpec extends TestEnvironment with TestData with LazyLogging {
       assert(maxTile.toArray() === tile.toArray())
 
     }
+  }
+}
+
+object GTSQLSpec {
+  val rnd = new scala.util.Random(79)
+
+  def injectND(num: Int)(t: Tile): Tile = {
+    val locs = (0 until num).map(_ ⇒
+      (rnd.nextInt(t.cols), rnd.nextInt(t.rows))
+    )
+
+    if(t.cellType.isFloatingPoint) {
+      t.mapDouble((c, r, v) ⇒ {if(locs.contains((c,r))) raster.doubleNODATA else v})
+    }
+    else {
+      t.map((c, r, v) ⇒ {if(locs.contains((c,r))) raster.NODATA else v})
+    }
+  }
+
+  implicit class DFExtras(df: DataFrame) {
+    def firstTile: Tile = df.collect().head.getAs[Tile](0)
   }
 }

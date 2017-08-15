@@ -100,22 +100,4 @@ object UDFs {
       case ct: DoubleCells => DoubleConstantTile(value.doubleValue(), cols, rows, ct)
     }
   }
-
-  /** Construct a tile of given size and cell type populated with random values. */
-  private[gt] val randomTile: (Int, Int, String) ⇒ Tile = (cols, rows, cellTypeName) ⇒ {
-    val cellType = CellType.fromName(cellTypeName)
-
-    val tile = ArrayTile.alloc(cellType, cols, rows)
-    if(cellType.isFloatingPoint) {
-      tile.mapDouble(_ ⇒ Random.nextGaussian())
-    }
-    else {
-      tile.map(_ ⇒ (Random.nextGaussian() * 256).toInt)
-    }
-  }
-
-  /** Create a series of random tiles. */
-  private[gt] val makeTiles: (Int) ⇒ Array[Tile] = (count) ⇒
-    Array.fill(count)(randomTile(4, 4, "int8raw"))
-
 }

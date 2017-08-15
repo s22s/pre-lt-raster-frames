@@ -19,6 +19,7 @@ import geotrellis.vector.ProjectedExtent
  */
 class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
   import spark.implicits._
+  import TestData.randomTile
 
   describe("RasterFrame") {
     it("should implicitly convert from layer type") {

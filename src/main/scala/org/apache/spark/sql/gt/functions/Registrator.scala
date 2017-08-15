@@ -44,10 +44,8 @@ private[gt] object Registrator {
     sqlContext.udf.register("st_localAggCount", UDFs.localAggCount)
     sqlContext.udf.register("st_localAdd", UDFs.localAdd)
     sqlContext.udf.register("st_localSubtract", UDFs.localSubtract)
-    sqlContext.udf.register("st_randomTile", UDFs.randomTile)
     sqlContext.udf.register("st_cellTypes", UDFs.cellTypes)
     sqlContext.udf.register("st_renderAscii", UDFs.renderAscii)
-    sqlContext.udf.register("st_makeTiles", UDFs.makeTiles)
   }
   // Expression-oriented functions have a different registration scheme
   // Currently have to register with the `builtin` registry due to data hiding.
