@@ -1,21 +1,20 @@
-# RasterFrames
-
-[ ![Download](https://api.bintray.com/packages/s22s/maven/raster-frames/images/download.svg) ](https://bintray.com/s22s/maven/raster-frames/_latestVersion)
-
+---
+layout: page
+title: "RasterFrames"
+section: "Home"
+---
 _RasterFrames_ brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer operations of [GeoTrellis](https://geotrellis.io/).
 
-Here are some examples on how to use it.
-
-## Setup
-
-0\. sbt configuration
+## Configuration
 
 ```scala
 resolvers += Resolver.bintrayRepo("s22s", "maven")
 libraryDependencies += "io.astraea" %% "raster-frames" % "{version}"
 ```
 
-1\. First, apply `import`s, initialize the `SparkSession`, and initialize RasterFrames with Spark:  
+## Usage
+1\. First, apply `import`s, initialize the `SparkSession`, and initialize RasterFrames with Spark:
+  
 ```tut:silent
 import astraea.spark.rasterframes._
 import geotrellis.proj4.LatLng
@@ -43,6 +42,7 @@ val tiled: TileLayerRDD[SpatialKey] = ContextRDD(scene.tileToLayout(layerMetadat
 ```
 
 3\. The `astraea.spark.rasterframes._` import adds the `.toRF` extension method to `TileLayerRDD`.
+
 ```tut
 val rf: RasterFrame = tiled.toRF
 rf.show(5, false)
@@ -50,13 +50,16 @@ rf.show(5, false)
 
 4\. Now that we have a `RasterFrame`, we have access to a number of extension methods and columnar functions for performing analysis on tiles.
 
+
 ## Inspection
+
 ```tut
 rf.tileColumns
 rf.spatialKeyColumn
 ```
 
 ## Tile Statistics 
+
 ```tut
 rf.select(tileDimensions($"tile")).show(5)
 rf.select(tileMean($"tile")).show(5)
@@ -109,8 +112,8 @@ binned.show(false)
 binned.groupBy("binned").count().show(false)
 ```
 
-
 ```tut:invisible
 spark.stop()
 ```
+
 
