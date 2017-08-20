@@ -4,6 +4,7 @@ package astraea.spark.rasterframes
 
 import com.typesafe.scalalogging.LazyLogging
 import geotrellis.proj4.LatLng
+import geotrellis.raster.render.{ColorMap, ColorMaps, ColorRamp, ColorRamps}
 import geotrellis.raster.{ProjectedRaster, Tile, TileFeature, TileLayout}
 import geotrellis.spark._
 import geotrellis.spark.io._
@@ -84,7 +85,35 @@ class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
     it("should provide TileLayerMetadata") {
       val rf = sampleGeoTiff.projectedRaster.toRF(256, 256)
       val tlm = rf.tileLayerMetadata[SpatialKey]
-      println(tlm)
+      assert(tlm.bounds.get._1 === SpatialKey(0, 0))
+      assert(tlm.bounds.get._2 === SpatialKey(4, 2))
+    }
+
+    def Greyscale(stops: Int): ColorRamp = {
+      val colors = (0 to stops)
+        .map(i ⇒ {
+          val c = java.awt.Color.HSBtoRGB(0f, 0f, i / stops.toFloat)
+          (c << 8) | 0xFF // Add alpha channel.
+        })
+      ColorRamp(colors)
+    }
+
+    it("should restitch to raster") {
+      // 774 × 500
+      val praster: ProjectedRaster[Tile] = sampleGeoTiff.projectedRaster
+      println("1", praster.projectedExtent)
+      val (cols, rows) = praster.raster.dimensions
+      val rf = praster.toRF(64, 64)
+      println("2", rf.tileLayerMetadata[SpatialKey].extent)
+      val raster = rf.toRaster($"tile", cols, rows)
+      println(raster.extent)
+
+      val colors = ColorMap.fromQuantileBreaks(raster.tile.histogram, Greyscale(128))
+      raster.tile.color(colors).renderPng().write("/tmp/test.png")
+
+
+      assert(raster.raster.dimensions ===  (cols, rows))
+
     }
   }
 }

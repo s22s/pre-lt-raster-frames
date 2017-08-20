@@ -16,13 +16,19 @@
 
 package astraea.spark.rasterframes
 
+import geotrellis.raster.{ProjectedRaster, Tile, TileLayout}
 import geotrellis.raster.io.geotiff.GeoTiff
 import geotrellis.spark._
 import geotrellis.spark.io._
+import geotrellis.spark.tiling.LayoutDefinition
 import geotrellis.util.MethodExtensions
+import geotrellis.vector.ProjectedExtent
+import org.apache.spark.sql.Column
 import org.apache.spark.sql.gt.types.TileUDT
 import org.apache.spark.sql.types.Metadata
+import org.apache.spark.sql.functions._
 import spray.json._
+import DefaultJsonProtocol._
 
 /**
  * Extension methods on [[RasterFrame]] type.
@@ -54,17 +60,23 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
     md.getMetadata(metadataKey).json.parseJson.convertTo[M]
   }
 
+  def toRaster(tile: Column, rasterCols: Int, rasterRows: Int, viewport: Option[ProjectedExtent] = None): ProjectedRaster[Tile] = {
+    val df = self
+    import df.sqlContext.implicits._
 
-//  def toGeoTIFF(): GeoTiff = {
-//
-//  }
+    // TODO: support STK too.
+    val md = tileLayerMetadata[SpatialKey]
+    val keyCol = spatialKeyColumn
+    val newLayout = LayoutDefinition(md.extent, TileLayout(1, 1, rasterCols, rasterRows))
+    val newLayerMetadata = md.copy(layout = newLayout, bounds = Bounds(SpatialKey(0, 0), SpatialKey(1, 1)))
 
-//  def spatialJoin(right: RasterFrame): RasterFrame = {
-//    val metadata = self.schema.head.metadata
-//    // TODO: WARNING this is not a proper spatial join, but just a placeholder.
-//    logger.warn("Multi-layer query assumes same tile layout")
-//    val joined = self.join(right, Seq("key"), "outer")
-//    joined.setColumnMetadata("key", metadata)
-//  }
+    val newLayer = self.select(col(keyCol), tile).as[(SpatialKey, Tile)].rdd
+      .map { case (k, v) ⇒
+        (ProjectedExtent(md.mapTransform(k), md.crs), v)
+      }
+      .tileToLayout(newLayerMetadata)
+    val rasterTile = newLayer.stitch()
+    ProjectedRaster(rasterTile, md.extent, md.crs)
+  }
 }
 
