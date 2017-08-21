@@ -16,19 +16,19 @@
 
 package astraea.spark.rasterframes
 
+import geotrellis.raster.resample.{CubicSpline, ResampleMethod}
 import geotrellis.raster.{ProjectedRaster, Tile, TileLayout}
-import geotrellis.raster.io.geotiff.GeoTiff
 import geotrellis.spark._
 import geotrellis.spark.io._
-import geotrellis.spark.tiling.LayoutDefinition
+import geotrellis.spark.tiling.{LayoutDefinition, Tiler}
 import geotrellis.util.MethodExtensions
 import geotrellis.vector.ProjectedExtent
+import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Column
+import org.apache.spark.sql.functions._
 import org.apache.spark.sql.gt.types.TileUDT
 import org.apache.spark.sql.types.Metadata
-import org.apache.spark.sql.functions._
 import spray.json._
-import DefaultJsonProtocol._
 
 /**
  * Extension methods on [[RasterFrame]] type.
@@ -60,7 +60,9 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
     md.getMetadata(metadataKey).json.parseJson.convertTo[M]
   }
 
-  def toRaster(tile: Column, rasterCols: Int, rasterRows: Int, viewport: Option[ProjectedExtent] = None): ProjectedRaster[Tile] = {
+  def toRaster(tileCol: Column, rasterCols: Int, rasterRows: Int,
+    resampler: ResampleMethod = CubicSpline): ProjectedRaster[Tile] = {
+
     val df = self
     import df.sqlContext.implicits._
 
@@ -70,13 +72,29 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
     val newLayout = LayoutDefinition(md.extent, TileLayout(1, 1, rasterCols, rasterRows))
     val newLayerMetadata = md.copy(layout = newLayout, bounds = Bounds(SpatialKey(0, 0), SpatialKey(1, 1)))
 
-    val newLayer = self.select(col(keyCol), tile).as[(SpatialKey, Tile)].rdd
-      .map { case (k, v) ⇒
-        (ProjectedExtent(md.mapTransform(k), md.crs), v)
+    val rdd: RDD[(SpatialKey, Tile)] = self.select(col(keyCol), tileCol).as[(SpatialKey, Tile)].rdd
+    val newLayer = rdd
+      .map { case (key, tile) ⇒
+        (ProjectedExtent(md.mapTransform(key), md.crs), tile)
       }
-      .tileToLayout(newLayerMetadata)
-    val rasterTile = newLayer.stitch()
-    ProjectedRaster(rasterTile, md.extent, md.crs)
+      .tileToLayout(newLayerMetadata, Tiler.Options(resampler))
+
+    // Attempt to get cross-tile interpolation to work. Generates empty tiles.
+//    val bufferSize = 2
+//    val newLayer = rdd.bufferTiles(bufferSize)
+//      .map { case (key, BufferedTile(tile, targetBounds)) ⇒
+//        val keyExtent = md.mapTransform(key)
+//        val re = RasterExtent(keyExtent, targetBounds.width, targetBounds.height)
+//        val adjustedExtent = re.rasterExtentFor(GridBounds(-bufferSize, -bufferSize, re.cols - 1 + bufferSize, re.rows - 1 + bufferSize))
+//        (ProjectedExtent(adjustedExtent.extent, md.crs), tile)
+//      }
+//      .tileToLayout(newLayerMetadata, Tiler.Options(resampler))
+
+    val stitchedTile = newLayer.stitch()
+
+    val croppedTile = stitchedTile.crop(rasterCols, rasterRows)
+
+    ProjectedRaster(croppedTile, md.extent, md.crs)
   }
 }
 
