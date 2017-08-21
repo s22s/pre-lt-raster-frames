@@ -4,6 +4,7 @@ package astraea.spark.rasterframes
 
 import com.typesafe.scalalogging.LazyLogging
 import geotrellis.proj4.LatLng
+import geotrellis.raster.render.{ColorMap, ColorRamp}
 import geotrellis.raster.{ProjectedRaster, Tile, TileFeature, TileLayout}
 import geotrellis.spark._
 import geotrellis.spark.io._
@@ -18,8 +19,8 @@ import geotrellis.vector.ProjectedExtent
  * @since 7/10/17
  */
 class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
-  import spark.implicits._
   import TestData.randomTile
+  import spark.implicits._
 
   describe("RasterFrame") {
     it("should implicitly convert from layer type") {
@@ -84,7 +85,47 @@ class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
     it("should provide TileLayerMetadata") {
       val rf = sampleGeoTiff.projectedRaster.toRF(256, 256)
       val tlm = rf.tileLayerMetadata[SpatialKey]
-      println(tlm)
+      assert(tlm.bounds.get._1 === SpatialKey(0, 0))
+      assert(tlm.bounds.get._2 === SpatialKey(4, 2))
+    }
+
+    def Greyscale(stops: Int): ColorRamp = {
+      val colors = (0 to stops)
+        .map(i ⇒ {
+          val c = java.awt.Color.HSBtoRGB(0f, 0f, i / stops.toFloat)
+          (c << 8) | 0xFF // Add alpha channel.
+        })
+      ColorRamp(colors)
+    }
+
+    def render(tile: Tile, tag: String): Unit = {
+      val colors = ColorMap.fromQuantileBreaks(tile.histogram, Greyscale(128))
+      val path = s"/tmp/${getClass.getSimpleName}_$tag.png"
+      logger.info(s"Writing '$path'")
+      tile.color(colors).renderPng().write(path)
+    }
+
+    it("should restitch to raster") {
+      // 774 × 500
+      val praster: ProjectedRaster[Tile] = sampleGeoTiff.projectedRaster
+      val (cols, rows) = praster.raster.dimensions
+      val rf = praster.toRF(64, 64)
+      val raster = rf.toRaster($"tile", cols, rows)
+
+      render(raster.tile, "normal")
+      assert(raster.raster.dimensions ===  (cols, rows))
+
+      val smaller = rf.toRaster($"tile", cols/4, rows/4)
+      render(smaller.tile, "smaller")
+      assert(smaller.raster.dimensions ===  (cols/4, rows/4))
+
+      val bigger = rf.toRaster($"tile", cols*4, rows*4)
+      render(bigger.tile, "bigger")
+      assert(bigger.raster.dimensions ===  (cols*4, rows*4))
+
+      val squished = rf.toRaster($"tile", cols*5/4, rows*3/4)
+      render(squished.tile, "squished")
+      assert(squished.raster.dimensions === (cols*5/4, rows*3/4))
     }
   }
 }
