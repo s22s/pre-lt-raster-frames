@@ -11,6 +11,7 @@ import geotrellis.spark.io._
 import geotrellis.spark.testkit.TileLayerRDDBuilders
 import geotrellis.spark.tiling._
 import geotrellis.vector.ProjectedExtent
+import org.apache.spark.sql.functions._
 
 /**
  * RasterFrame test rig.
@@ -84,7 +85,7 @@ class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
 
     it("should provide TileLayerMetadata") {
       val rf = sampleGeoTiff.projectedRaster.toRF(256, 256)
-      val tlm = rf.tileLayerMetadata[SpatialKey]
+      val tlm = rf.tileLayerMetadata
       assert(tlm.bounds.get._1 === SpatialKey(0, 0))
       assert(tlm.bounds.get._2 === SpatialKey(4, 2))
     }
@@ -126,6 +127,19 @@ class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
       val squished = rf.toRaster($"tile", cols*5/4, rows*3/4)
       render(squished.tile, "squished")
       assert(squished.raster.dimensions === (cols*5/4, rows*3/4))
+    }
+
+    it("should restitch raster that's has derived tiles") {
+      val praster: ProjectedRaster[Tile] = sampleGeoTiff.projectedRaster
+      val rf = praster.toRF(64, 64)
+
+      val equalizer = udf((t: Tile) => t.equalize())
+
+      val equalized = rf.select(equalizer($"tile") as "equalized")
+
+      intercept[IllegalArgumentException] {
+        equalized.asRF.toRaster($"equalized", 128, 128)
+      }
     }
   }
 }

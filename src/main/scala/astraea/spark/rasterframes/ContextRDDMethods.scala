@@ -43,6 +43,7 @@ abstract class ContextRDDMethods[K: SpatialComponent: JsonFormat: TypeTag](impli
     rdd
       .toDF(SPATIAL_KEY_COLUMN, TILE_COLUMN)
       .addColumnMetadata(SPATIAL_KEY_COLUMN, CONTEXT_METADATA_KEY, md)
+      .certify
   }
 }
 
@@ -68,5 +69,6 @@ abstract class TFContextRDDMethods[K: SpatialComponent: JsonFormat: TypeTag, D: 
       .withColumn(TILE_COLUMN, $"$TF_COL.tile")
       .withColumn(TILE_FEATURE_DATA_COLUMN, $"$TF_COL.data")
       .drop(TF_COL)
+      .certify
   }
 }
