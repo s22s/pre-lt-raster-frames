@@ -39,7 +39,7 @@ The simplest mechanism for getting a RasterFrame is to use the `toRF(tileCols, t
 
 ```scala
 scala> val scene = SinglebandGeoTiff("src/test/resources/L8-B8-Robinson-IL.tiff")
-scene: geotrellis.raster.io.geotiff.SinglebandGeoTiff = SinglebandGeoTiff(geotrellis.raster.UShortConstantNoDataArrayTile@44d1f8d9,Extent(431902.5, 4313647.5, 443512.5, 4321147.5),geotrellis.proj4.CRS$$anon$3@87f96f9f,Tags(Map(AREA_OR_POINT -> POINT),List(Map())),GeoTiffOptions(geotrellis.raster.io.geotiff.Striped@35d46006,geotrellis.raster.io.geotiff.compression.DeflateCompression$@7e885155,1,None))
+scene: geotrellis.raster.io.geotiff.SinglebandGeoTiff = SinglebandGeoTiff(geotrellis.raster.UShortConstantNoDataArrayTile@402bd015,Extent(431902.5, 4313647.5, 443512.5, 4321147.5),geotrellis.proj4.CRS$$anon$3@87f96f9f,Tags(Map(AREA_OR_POINT -> POINT),List(Map())),GeoTiffOptions(geotrellis.raster.io.geotiff.Striped@737cbac8,geotrellis.raster.io.geotiff.compression.DeflateCompression$@6dc977ca,1,None))
 
 scala> val rf = scene.projectedRaster.toRF(128, 128)
 rf: astraea.spark.rasterframes.RasterFrame = [key: struct<col: int, row: int>, tile: st_tile]
@@ -48,11 +48,11 @@ scala> rf.show(5, false)
 +-----+--------------------------------------------------------+
 |key  |tile                                                    |
 +-----+--------------------------------------------------------+
-|[0,0]|geotrellis.raster.UShortConstantNoDataArrayTile@42305b12|
-|[1,1]|geotrellis.raster.UShortConstantNoDataArrayTile@3bbedb39|
-|[6,1]|geotrellis.raster.UShortConstantNoDataArrayTile@42ae30b6|
-|[3,1]|geotrellis.raster.UShortConstantNoDataArrayTile@643daa8d|
-|[4,2]|geotrellis.raster.UShortConstantNoDataArrayTile@249595d3|
+|[0,0]|geotrellis.raster.UShortConstantNoDataArrayTile@12e06760|
+|[1,1]|geotrellis.raster.UShortConstantNoDataArrayTile@409c3d49|
+|[6,1]|geotrellis.raster.UShortConstantNoDataArrayTile@39287485|
+|[3,1]|geotrellis.raster.UShortConstantNoDataArrayTile@205299ee|
+|[4,2]|geotrellis.raster.UShortConstantNoDataArrayTile@319821e3|
 +-----+--------------------------------------------------------+
 only showing top 5 rows
 
@@ -168,7 +168,7 @@ scala> import geotrellis.raster.equalization._
 import geotrellis.raster.equalization._
 
 scala> val equalizer = udf((t: Tile) => t.equalize())
-equalizer: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(<function1>,org.apache.spark.sql.gt.types.TileUDT@60bdbd95,Some(List(org.apache.spark.sql.gt.types.TileUDT@60bdbd95)))
+equalizer: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(<function1>,org.apache.spark.sql.gt.types.TileUDT@7a00d81d,Some(List(org.apache.spark.sql.gt.types.TileUDT@7a00d81d)))
 
 scala> val equalized = rf.select(equalizer($"tile") as "equalized")
 equalized: org.apache.spark.sql.DataFrame = [equalized: st_tile]
@@ -187,7 +187,7 @@ only showing top 5 rows
 
 
 scala> val downsample = udf((t: Tile) => t.resample(4, 4))
-downsample: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(<function1>,org.apache.spark.sql.gt.types.TileUDT@60bdbd95,Some(List(org.apache.spark.sql.gt.types.TileUDT@60bdbd95)))
+downsample: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(<function1>,org.apache.spark.sql.gt.types.TileUDT@7a00d81d,Some(List(org.apache.spark.sql.gt.types.TileUDT@7a00d81d)))
 
 scala> val downsampled = rf.select(renderAscii(downsample($"tile")) as "minime")
 downsampled: org.apache.spark.sql.DataFrame = [minime: string]
