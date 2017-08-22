@@ -8,22 +8,22 @@ Here are some examples on how to use it.
 
 ## Setup
 
-0\. sbt configuration
+### `sbt` configuration
 
 ```scala
 resolvers += Resolver.bintrayRepo("s22s", "maven")
 libraryDependencies += "io.astraea" %% "raster-frames" % "{version}"
 ```
 
-1\. First, apply `import`s, initialize the `SparkSession`, and initialize RasterFrames with Spark:  
+### Imports and Spark Session Initialization
+
+First, apply `import`s, initialize the `SparkSession`, and initialize RasterFrames with Spark:
+
 ```scala
 import astraea.spark.rasterframes._
-import geotrellis.proj4.LatLng
 import geotrellis.raster._
-import geotrellis.spark._
-import geotrellis.spark.io._
-import geotrellis.spark.io.hadoop._
-import geotrellis.spark.tiling._
+import geotrellis.raster.render._
+import geotrellis.raster.io.geotiff.SinglebandGeoTiff
 import org.apache.spark.sql._
 import org.apache.spark.sql.functions._
 
@@ -33,37 +33,37 @@ rfInit(spark.sqlContext)
 import spark.implicits._
 ```
 
-2\. Next, we go through the steps to create an example GeoTrellis `TileLayerRDD`. Another option is to use a GeoTrellis [`LayerReader`](https://docs.geotrellis.io/en/latest/guide/tile-backends.html). Ther are other mechanisms, but you currently you need a `TileLayerRDD` to create a `RasterFrame`
+## Creating a RasterFrame
+
+The simplest mechanism for getting a RasterFrame is to use the `toRF(tileCols, tileRows)` extension method on `ProjectedRaster`. Another option is to use a GeoTrellis [`LayerReader`](https://docs.geotrellis.io/en/latest/guide/tile-backends.html), to get a `TileLayerRDD` for which there's also a `toRF` extension method. 
 
 ```scala
-val scene = spark.sparkContext.hadoopGeoTiffRDD("src/test/resources/L8-B8-Robinson-IL.tiff")
-val layout = FloatingLayoutScheme(10, 10)
-val layerMetadata = TileLayerMetadata.fromRdd(scene, LatLng, layout)._2
-val tiled: TileLayerRDD[SpatialKey] = ContextRDD(scene.tileToLayout(layerMetadata), layerMetadata)
-```
+scala> val scene = SinglebandGeoTiff("src/test/resources/L8-B8-Robinson-IL.tiff")
+scene: geotrellis.raster.io.geotiff.SinglebandGeoTiff = SinglebandGeoTiff(geotrellis.raster.UShortConstantNoDataArrayTile@402bd015,Extent(431902.5, 4313647.5, 443512.5, 4321147.5),geotrellis.proj4.CRS$$anon$3@87f96f9f,Tags(Map(AREA_OR_POINT -> POINT),List(Map())),GeoTiffOptions(geotrellis.raster.io.geotiff.Striped@737cbac8,geotrellis.raster.io.geotiff.compression.DeflateCompression$@6dc977ca,1,None))
 
-3\. The `astraea.spark.rasterframes._` import adds the `.toRF` extension method to `TileLayerRDD`.
-```scala
-scala> val rf: RasterFrame = tiled.toRF
+scala> val rf = scene.projectedRaster.toRF(128, 128)
 rf: astraea.spark.rasterframes.RasterFrame = [key: struct<col: int, row: int>, tile: st_tile]
 
 scala> rf.show(5, false)
-+-------+--------------------------------------------------------+
-|key    |tile                                                    |
-+-------+--------------------------------------------------------+
-|[40,13]|geotrellis.raster.UShortConstantNoDataArrayTile@3bdc2b23|
-|[19,37]|geotrellis.raster.UShortConstantNoDataArrayTile@1cd125bd|
-|[10,38]|geotrellis.raster.UShortConstantNoDataArrayTile@3130a68a|
-|[43,23]|geotrellis.raster.UShortConstantNoDataArrayTile@c6d238  |
-|[3,1]  |geotrellis.raster.UShortConstantNoDataArrayTile@5a996430|
-+-------+--------------------------------------------------------+
++-----+--------------------------------------------------------+
+|key  |tile                                                    |
++-----+--------------------------------------------------------+
+|[0,0]|geotrellis.raster.UShortConstantNoDataArrayTile@12e06760|
+|[1,1]|geotrellis.raster.UShortConstantNoDataArrayTile@409c3d49|
+|[6,1]|geotrellis.raster.UShortConstantNoDataArrayTile@39287485|
+|[3,1]|geotrellis.raster.UShortConstantNoDataArrayTile@205299ee|
+|[4,2]|geotrellis.raster.UShortConstantNoDataArrayTile@319821e3|
++-----+--------------------------------------------------------+
 only showing top 5 rows
 
 ```
 
-4\. Now that we have a `RasterFrame`, we have access to a number of extension methods and columnar functions for performing analysis on tiles.
+## Raster Analysis
 
-## Inspection
+Now that we have a `RasterFrame`, we have access to a number of extension methods and columnar functions for performing analysis on tiles.
+
+### Inspection
+
 ```scala
 scala> rf.tileColumns
 res4: Seq[String] = ArraySeq(tile)
@@ -72,17 +72,18 @@ scala> rf.spatialKeyColumn
 res5: String = key
 ```
 
-## Tile Statistics 
+### Tile Statistics 
+
 ```scala
 scala> rf.select(tileDimensions($"tile")).show(5)
 +--------------------+
 |tileDimensions(tile)|
 +--------------------+
-|             [10,10]|
-|             [10,10]|
-|             [10,10]|
-|             [10,10]|
-|             [10,10]|
+|           [128,128]|
+|           [128,128]|
+|           [128,128]|
+|           [128,128]|
+|           [128,128]|
 +--------------------+
 only showing top 5 rows
 
@@ -91,11 +92,11 @@ scala> rf.select(tileMean($"tile")).show(5)
 +------------------+
 |    tileMean(tile)|
 +------------------+
-| 9890.929999999997|
-|10691.170000000002|
-| 7832.290000000001|
-|11429.979999999996|
-| 8726.010000000007|
+| 10338.11999511721|
+|10194.718322753917|
+|10729.164062499996|
+| 9544.470825195294|
+|10782.311645507827|
 +------------------+
 only showing top 5 rows
 
@@ -104,38 +105,38 @@ scala> rf.select(tileStats($"tile")).show(5)
 +---------+------------------+------+-----+------------------+----+-----+
 |dataCells|              mean|median| mode|            stddev|zmin| zmax|
 +---------+------------------+------+-----+------------------+----+-----+
-|      100| 9890.929999999997|  9021| 8016| 1939.854619578488|7930|13766|
-|      100|10691.170000000002| 10703|10695|152.81616766559748|9999|11071|
-|      100| 7832.290000000001|  7753| 7734|329.10388314330174|7586| 9930|
-|      100|11429.979999999996| 10876| 8396| 2897.988108947309|7976|20848|
-|      100| 8726.010000000007|  8649| 8421|411.32166232767264|7903| 9733|
+|    16384| 10338.11999511721| 10685| 7737|1840.2361521578157|7291|23077|
+|    16384|10194.718322753917|  9919| 9782|2005.9484818489861|7412|28869|
+|      768|10729.164062499996| 11094| 9663|   861.51768587969|7952|12282|
+|    16384| 9544.470825195294|  8850| 7781|  2050.22247610873|7470|29722|
+|    16384|10782.311645507827| 10990|11026|1473.6688528093296|7485|23590|
 +---------+------------------+------+-----+------------------+----+-----+
 only showing top 5 rows
 
 
 scala> // Extract quantile breaks from histogram computation
      | rf.select(tileHistogram($"tile")).map(_.quantileBreaks(5)).show(5, false)
-+-----------------------------------+
-|value                              |
-+-----------------------------------+
-|[8090, 8191, 10424, 12081, 13766]  |
-|[10587, 10679, 10729, 10816, 11071]|
-|[7695, 7731, 7761, 7793, 9930]     |
-|[8674, 10026, 11325, 13664, 20848] |
-|[8403, 8595, 8715, 9095, 9733]     |
-+-----------------------------------+
++----------------------------------+
+|value                             |
++----------------------------------+
+|[8155, 9931, 11126, 12042, 23077] |
+|[8670, 9524, 10303, 11212, 28869] |
+|[9708, 10744, 11235, 11455, 12282]|
+|[7987, 8503, 9260, 10875, 29722]  |
+|[9661, 10629, 11293, 11997, 23590]|
++----------------------------------+
 only showing top 5 rows
 
 ```
 
-## Aggregate Statistics
+### Aggregate Statistics
 
 ```scala
 scala> rf.select(aggStats($"tile")).show()
 +---------+------------------+-----------------+------------------+------------------+-----------------+-------+
 |dataCells|              mean|           median|              mode|            stddev|             zmin|   zmax|
 +---------+------------------+-----------------+------------------+------------------+-----------------+-------+
-|   384421|10165.074296149278|9899.587602968166|11247.958326988448|1818.5590590509848|7502.598896044158|39158.0|
+|   386941|10160.503048268341|9900.027479106197|10389.873462922193|1817.3730199562644|7397.635610766046|39158.0|
 +---------+------------------+-----------------+------------------+------------------+-----------------+-------+
 
 
@@ -150,73 +151,79 @@ scala> // Extract bin counts from bins
 +------------------+-----+
 |             value|count|
 +------------------+-----+
-| 7502.598896044158|  100|
-|10359.457614971237|   92|
-|10760.714442208247|   90|
-|11247.958326988448|   85|
-| 8108.176962676963|   81|
+| 9997.062125524271|   96|
+| 7397.635610766046|   94|
+|10769.854489164087|   92|
+| 8078.005156192453|   87|
+| 9267.153062053289|   83|
 +------------------+-----+
 only showing top 5 rows
 
 ```
 
-## Arbitrary GeoTrellis Operations
+### Arbitrary GeoTrellis Operations
 
 ```scala
 scala> import geotrellis.raster.equalization._
 import geotrellis.raster.equalization._
 
 scala> val equalizer = udf((t: Tile) => t.equalize())
-equalizer: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(<function1>,org.apache.spark.sql.gt.types.TileUDT@48317005,Some(List(org.apache.spark.sql.gt.types.TileUDT@48317005)))
+equalizer: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(<function1>,org.apache.spark.sql.gt.types.TileUDT@7a00d81d,Some(List(org.apache.spark.sql.gt.types.TileUDT@7a00d81d)))
 
-scala> rf.select(tileMean(equalizer($"tile")) as "equalizedMean").show(5, false)
+scala> val equalized = rf.select(equalizer($"tile") as "equalized")
+equalized: org.apache.spark.sql.DataFrame = [equalized: st_tile]
+
+scala> equalized.select(tileMean($"equalized") as "equalizedMean").show(5, false)
 +------------------+
 |equalizedMean     |
 +------------------+
-|33138.121212121216|
-|33198.30303030304 |
-|33238.42424242424 |
-|33111.37373737374 |
-|33124.74747474747 |
+|32776.88976377951 |
+|32775.50851492398 |
+|30774.931392296898|
+|32777.86241836048 |
+|32775.866507965664|
 +------------------+
 only showing top 5 rows
 
 
 scala> val downsample = udf((t: Tile) => t.resample(4, 4))
-downsample: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(<function1>,org.apache.spark.sql.gt.types.TileUDT@48317005,Some(List(org.apache.spark.sql.gt.types.TileUDT@48317005)))
+downsample: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(<function1>,org.apache.spark.sql.gt.types.TileUDT@7a00d81d,Some(List(org.apache.spark.sql.gt.types.TileUDT@7a00d81d)))
 
-scala> rf.select(renderAscii(downsample($"tile")) as "minime").show(5, false)
+scala> val downsampled = rf.select(renderAscii(downsample($"tile")) as "minime")
+downsampled: org.apache.spark.sql.DataFrame = [minime: string]
+
+scala> downsampled.show(5, false)
 +-----------------------------------------------------------------------------------------------------+
 |minime                                                                                               |
 +-----------------------------------------------------------------------------------------------------+
-| 11218 12580 12183 11717
- 11207 12357 12412 12735
-  8275  8098  8015  8099
-  8043  8035  8143  8163
+|  8837  8316 10855 10780
+  8125 10082  9930  8290
+  7624 10739 12019 11287
+ 11738  8125 11830 11260
 
 |
-| 10668 10707 10403 10421
- 10778 10634 10868 10755
- 10760 10758 10725 10529
- 10870 10729 10651 10545
+| 11278  8090  9976 10251
+  9152  9952  8598  7867
+ 11155 10279  9599  7892
+ 16544 12812  9280 12004
 
 |
-|  7730  7736  7696  7801
-  7761  7762  7672  7730
-  7734  7633  7775  7768
-  7770  7793  9930  7709
+|    ND    ND    ND    ND
+    ND    ND    ND    ND
+    ND    ND    ND    ND
+    ND    ND    ND    ND
 
 |
-| 12273 10686 14906 13276
-  9209  9149 18211 19635
-  8876  8202  9653 10219
-  8942 10277 12429 13860
+|  8116  7766 10988 11587
+  8844  8386  8538  7900
+  8219  8007  8739  8615
+ 10438 13469  8790 13562
 
 |
-|  9518  9733  9423  9501
-  8265  8710  8595  8649
-  9292  8102  8421  8448
-  8843  7991  9170  9102
+|  8149  7967 16175 11629
+  8453  8974 10055 10609
+ 12485 12847 11454  9899
+  7913 10969 11147  9728
 
 |
 +-----------------------------------------------------------------------------------------------------+
@@ -224,7 +231,19 @@ only showing top 5 rows
 
 ```
 
-## Basic Interop with SparkML
+### Reassembling Rasters
+
+For the purposes of debugging, the RasterFrame tiles can be reassembled back into a raster for viewing. However, keep in mind that this will download all the data to the driver, and reassemble it in-memory. So it's not appropriate for very large coverages.
+
+```scala
+val image = rf.toRaster($"tile", 774, 500)
+val colors = ColorMap.fromQuantileBreaks(image.tile.histogram, ColorRamps.BlueToOrange)
+image.tile.color(colors).renderPng().write("src/main/tut/raster.png")
+```
+
+![](src/main/tut/raster.png)
+
+### Basic Interop with SparkML
 
 ```scala
 import org.apache.spark.ml._
@@ -241,30 +260,30 @@ val binned = discretizer.fit(exploded).transform(exploded)
 
 ```scala
 scala> binned.show(false)
-+-------+------+---+-------+------+
-|key    |column|row|pixel  |binned|
-+-------+------+---+-------+------+
-|[40,13]|0     |0  |11342.0|3.0   |
-|[40,13]|1     |0  |11364.0|3.0   |
-|[40,13]|2     |0  |11840.0|4.0   |
-|[40,13]|3     |0  |12211.0|4.0   |
-|[40,13]|4     |0  |11942.0|4.0   |
-|[40,13]|5     |0  |11999.0|4.0   |
-|[40,13]|6     |0  |12017.0|4.0   |
-|[40,13]|7     |0  |12242.0|4.0   |
-|[40,13]|8     |0  |11661.0|4.0   |
-|[40,13]|9     |0  |11449.0|3.0   |
-|[40,13]|0     |1  |11255.0|3.0   |
-|[40,13]|1     |1  |11218.0|3.0   |
-|[40,13]|2     |1  |11766.0|4.0   |
-|[40,13]|3     |1  |12580.0|4.0   |
-|[40,13]|4     |1  |12496.0|4.0   |
-|[40,13]|5     |1  |12694.0|4.0   |
-|[40,13]|6     |1  |12183.0|4.0   |
-|[40,13]|7     |1  |12087.0|4.0   |
-|[40,13]|8     |1  |11717.0|4.0   |
-|[40,13]|9     |1  |11813.0|4.0   |
-+-------+------+---+-------+------+
++-----+------+---+-------+------+
+|key  |column|row|pixel  |binned|
++-----+------+---+-------+------+
+|[0,0]|0     |0  |14294.0|4.0   |
+|[0,0]|1     |0  |14277.0|4.0   |
+|[0,0]|2     |0  |13939.0|4.0   |
+|[0,0]|3     |0  |13604.0|4.0   |
+|[0,0]|4     |0  |14182.0|4.0   |
+|[0,0]|5     |0  |14851.0|4.0   |
+|[0,0]|6     |0  |15584.0|4.0   |
+|[0,0]|7     |0  |13905.0|4.0   |
+|[0,0]|8     |0  |10834.0|3.0   |
+|[0,0]|9     |0  |10284.0|2.0   |
+|[0,0]|10    |0  |8973.0 |1.0   |
+|[0,0]|11    |0  |8314.0 |0.0   |
+|[0,0]|12    |0  |8051.0 |0.0   |
+|[0,0]|13    |0  |8242.0 |0.0   |
+|[0,0]|14    |0  |8448.0 |1.0   |
+|[0,0]|15    |0  |8002.0 |0.0   |
+|[0,0]|16    |0  |8302.0 |0.0   |
+|[0,0]|17    |0  |8419.0 |1.0   |
+|[0,0]|18    |0  |8044.0 |0.0   |
+|[0,0]|19    |0  |8362.0 |0.0   |
++-----+------+---+-------+------+
 only showing top 20 rows
 
 
@@ -272,11 +291,11 @@ scala> binned.groupBy("binned").count().show(false)
 +------+-----+
 |binned|count|
 +------+-----+
-|0.0   |77045|
-|1.0   |77725|
-|4.0   |77701|
-|3.0   |76873|
-|2.0   |77656|
+|0.0   |77442|
+|1.0   |77246|
+|4.0   |77473|
+|3.0   |77019|
+|2.0   |77820|
 +------+-----+
 
 ```

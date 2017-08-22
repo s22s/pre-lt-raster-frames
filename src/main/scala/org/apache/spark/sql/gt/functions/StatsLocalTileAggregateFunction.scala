@@ -64,6 +64,14 @@ class StatsLocalTileAggregateFunction() extends UserDefinedAggregateFunction {
     StructField("sumSqr", TileUDT)
   ))
 
+  private val initFunctions = Seq(
+    (t: Tile) ⇒ Defined(t).convert(IntConstantNoDataCellType),
+    identity[Tile] _,
+    identity[Tile] _,
+    identity[Tile] _,
+    (t: Tile) ⇒ Multiply(t, t)
+  )
+
   private val updateFunctions = Seq(
     safeBinaryOp((t1: Tile, t2: Tile) ⇒ Add(t1, Defined(t2))),
     safeBinaryOp((t1: Tile, t2: Tile) ⇒ BiasedMin(t1, t2)),
@@ -88,9 +96,8 @@ class StatsLocalTileAggregateFunction() extends UserDefinedAggregateFunction {
     val right = input.getAs[Tile](0)
     if(right != null) {
       if(buffer(0) == null) {
-        buffer(0) = Defined(right).convert(IntConstantNoDataCellType)
-        for(i ← 1 until updateFunctions.length) {
-          buffer(i) = right
+        for(i ← initFunctions.indices) {
+          buffer(i) = initFunctions(i)(right)
         }
       }
       else {
@@ -117,15 +124,6 @@ class StatsLocalTileAggregateFunction() extends UserDefinedAggregateFunction {
       val sumSqr = buffer.getAs[Tile](4)
       val mean = sum / count
       val variance = sumSqr / count - mean * mean
-      if(variance.get(0, 1) < 0) {
-        println("sum:\n" + sum.asciiDraw())
-        println("sumSqr:\n" + sumSqr.asciiDraw())
-        println("mean:\n" + mean.asciiDraw())
-        println("variance:\n" + variance.asciiDraw())
-        println("oops")
-
-
-      }
       Row(buffer(0), buffer(1), buffer(2), mean, variance)
     }
     else null

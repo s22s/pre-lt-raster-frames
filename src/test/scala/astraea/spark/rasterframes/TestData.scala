@@ -80,6 +80,11 @@ trait TestData {
     )
   }
 
+  def sampleGeoTiff = SinglebandGeoTiff(IOUtils.toByteArray(getClass.getResourceAsStream("/L8-B8-Robinson-IL.tiff")))
+}
+
+object TestData extends TestData {
+
   /** Construct a tile of given size and cell type populated with random values. */
   def randomTile(cols: Int, rows: Int, cellTypeName: String): Tile = {
     val cellType = CellType.fromName(cellTypeName)
@@ -93,5 +98,7 @@ trait TestData {
     }
   }
 
-  def sampleGeoTiff = SinglebandGeoTiff(IOUtils.toByteArray(getClass.getResourceAsStream("/L8-B8-Robinson-IL.tiff")))
+  /** Create a series of random tiles. */
+  val makeTiles: (Int) ⇒ Array[Tile] = (count) ⇒
+    Array.fill(count)(randomTile(4, 4, "int8raw"))
 }
