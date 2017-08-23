@@ -56,6 +56,7 @@ object ProjectPlugin extends AutoPlugin {
     ),
     publishArtifact in Test := false,
     fork in Test := true,
+    javaOptions in Test := Seq("-Xmx2G"),
     parallelExecution in Test := false
   )
 
