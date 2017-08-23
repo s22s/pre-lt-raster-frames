@@ -27,6 +27,8 @@ import org.apache.spark.sql.gt.functions.ColumnFunctions
 import spray.json.JsonFormat
 
 import scala.reflect.runtime.universe._
+import shapeless.tag
+import shapeless.tag.@@
 
 /**
  *  Module providing support for RasterFrames.
@@ -51,7 +53,13 @@ package object rasterframes extends Implicits with ColumnFunctions {
    *   2. One or more columns is a [[Tile]] UDT.
    *   3. The `TileLayerMetadata` is encoded and attached to the key column.
    */
-  type RasterFrame = DataFrame
+  type RasterFrame = DataFrame @@ RasterFrameTag
+
+  /** Tagged type for allowing compiler to help keep track of what has RasterFrame assurances applied to it. */
+  trait RasterFrameTag
+
+  /** Internal method for slapping the RasterFreame seal of approval on a DataFrame. */
+  private[rasterframes] def certifyRasterframe(df: DataFrame): RasterFrame = tag[RasterFrameTag][DataFrame](df)
 
   /**
    * Type lambda alias for components that have bounds with parameterized key.

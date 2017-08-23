@@ -43,17 +43,19 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
 
   /** Get the spatial column. */
   def spatialKeyColumn: String = {
-    val key = self.schema.fields.find(_.metadata.contains(CONTEXT_METADATA_KEY))
+    val key = findSpatialKeyColumn
     require(key.nonEmpty, "All RasterFrames must have a column tagged with context")
     key.get.name
   }
 
-  def tileLayerMetadata[K: SpatialComponent: JsonFormat]: TileLayerMetadata[K] = {
+  private[rasterframes] def findSpatialKeyColumn = self.schema.fields.find(_.metadata.contains(CONTEXT_METADATA_KEY))
+
+  def tileLayerMetadata: TileLayerMetadata[SpatialKey] = {
     self.schema
       .find(_.name == SPATIAL_KEY_COLUMN)
       .map(_.metadata)
-      .map(extract[TileLayerMetadata[K]](CONTEXT_METADATA_KEY))
-      .get
+      .map(extract[TileLayerMetadata[SpatialKey]](CONTEXT_METADATA_KEY))
+      .getOrElse(throw new IllegalArgumentException(s"RasterFrame operation requsted on non-RasterFrame: $self"))
   }
 
   private def extract[M: JsonFormat](metadataKey: String)(md: Metadata) = {
@@ -67,7 +69,7 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
     import df.sqlContext.implicits._
 
     // TODO: support STK too.
-    val md = tileLayerMetadata[SpatialKey]
+    val md = tileLayerMetadata
     val keyCol = spatialKeyColumn
     val newLayout = LayoutDefinition(md.extent, TileLayout(1, 1, rasterCols, rasterRows))
     val newLayerMetadata = md.copy(layout = newLayout, bounds = Bounds(SpatialKey(0, 0), SpatialKey(1, 1)))
