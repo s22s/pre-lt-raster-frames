@@ -102,5 +102,5 @@ abstract class DataFrameMethods extends MethodExtensions[DataFrame]{
 
   /** Internal method for slapping the RasterFreame seal of approval on a DataFrame.
    * Only call if if you are sure it has a spatial key and tile columns and TileLayerMetadata. */
-  private[rasterframes] def certify = certifyRasterframe(self)
+  private[astraea] def certify = certifyRasterframe(self)
 }
