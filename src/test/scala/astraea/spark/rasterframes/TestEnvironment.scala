@@ -34,4 +34,6 @@ trait TestEnvironment extends FunSpec with GeoTrellisTestEnvironment
   }
   lazy val sql: (String) ⇒ DataFrame = sqlContext.sql
   implicit lazy val spark = sqlContext.sparkSession
+
+  def isCI: Boolean = sys.env.get("CI").contains("true")
 }

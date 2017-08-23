@@ -100,10 +100,12 @@ class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
     }
 
     def render(tile: Tile, tag: String): Unit = {
-      val colors = ColorMap.fromQuantileBreaks(tile.histogram, Greyscale(128))
-      val path = s"/tmp/${getClass.getSimpleName}_$tag.png"
-      logger.info(s"Writing '$path'")
-      tile.color(colors).renderPng().write(path)
+      if(!isCI) {
+        val colors = ColorMap.fromQuantileBreaks(tile.histogram, Greyscale(128))
+        val path = s"/tmp/${getClass.getSimpleName}_$tag.png"
+        logger.info(s"Writing '$path'")
+        tile.color(colors).renderPng().write(path)
+      }
     }
 
     it("should restitch to raster") {
