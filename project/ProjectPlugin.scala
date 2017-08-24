@@ -80,6 +80,7 @@ object ProjectPlugin extends AutoPlugin {
         }
         st
       })
+      val releaseArtifacts = releaseStepTask(bintrayRelease)
       Seq(
         bintrayOrganization := Some("s22s"),
         bintrayReleaseOnPublish in ThisBuild := false,
@@ -95,6 +96,7 @@ object ProjectPlugin extends AutoPlugin {
           commitTut,
           commitReleaseVersion,
           publishArtifacts,
+          releaseArtifacts,
           gitFlowReleaseFinish,
           setNextVersion,
           commitNextVersion
