@@ -41,7 +41,9 @@ package object rasterframes extends Implicits with ColumnFunctions {
   /** Key under which ContextRDD metadata is stored. */
   val CONTEXT_METADATA_KEY = "context"
   /** Default RasterFrame spatial column name. */
-  val SPATIAL_KEY_COLUMN = "key"
+  val SPATIAL_KEY_COLUMN = "spatial_key"
+  /** Default RasterFrame temporal column name. */
+  val TEMPORAL_KEY_COLUMN = "temporal_key"
   /** Default RasterFrame tile column name. */
   val TILE_COLUMN = "tile"
   /** Default RasterFrame [[TileFeature.data]] column name. */
