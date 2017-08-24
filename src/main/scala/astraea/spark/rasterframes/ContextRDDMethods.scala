@@ -40,9 +40,11 @@ abstract class ContextRDDMethods[K: SpatialComponent: JsonFormat: TypeTag](impli
     val md = self.metadata.asColumnMetadata
 
     val rdd = self: RDD[(K, Tile)]
-    rdd
+    val df = rdd
       .toDF(SPATIAL_KEY_COLUMN, TILE_COLUMN)
-      .addColumnMetadata(SPATIAL_KEY_COLUMN, CONTEXT_METADATA_KEY, md)
+
+    df
+      .addColumnMetadata(df(SPATIAL_KEY_COLUMN), CONTEXT_METADATA_KEY, md)
       .certify
   }
 }
@@ -63,9 +65,11 @@ abstract class TFContextRDDMethods[K: SpatialComponent: JsonFormat: TypeTag, D: 
     val md = self.metadata.asColumnMetadata
     val rdd = self: RDD[(K, TileFeature[Tile, D])]
 
-    rdd
+    val df = rdd
       .toDF(SPATIAL_KEY_COLUMN, TF_COL)
-      .addColumnMetadata(SPATIAL_KEY_COLUMN, CONTEXT_METADATA_KEY, md)
+
+    df
+      .addColumnMetadata(df(SPATIAL_KEY_COLUMN), CONTEXT_METADATA_KEY, md)
       .withColumn(TILE_COLUMN, $"$TF_COL.tile")
       .withColumn(TILE_FEATURE_DATA_COLUMN, $"$TF_COL.data")
       .drop(TF_COL)

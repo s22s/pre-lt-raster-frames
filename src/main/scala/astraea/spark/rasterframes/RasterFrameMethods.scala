@@ -16,7 +16,7 @@
 
 package astraea.spark.rasterframes
 
-import geotrellis.raster.resample.{CubicSpline, ResampleMethod}
+import geotrellis.raster.resample.{Bilinear, CubicSpline, ResampleMethod}
 import geotrellis.raster.{ProjectedRaster, Tile, TileLayout}
 import geotrellis.spark._
 import geotrellis.spark.io._
@@ -24,7 +24,7 @@ import geotrellis.spark.tiling.{LayoutDefinition, Tiler}
 import geotrellis.util.MethodExtensions
 import geotrellis.vector.ProjectedExtent
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.Column
+import org.apache.spark.sql.{Column, TypedColumn}
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.gt.types.TileUDT
 import org.apache.spark.sql.types.Metadata
@@ -37,21 +37,24 @@ import spray.json._
  */
 trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
   /** Get the names of the columns that are of type `Tile` */
-  def tileColumns: Seq[Column] = self.schema.fields
+  def tileColumns: Seq[TypedColumn[Any, Tile]] = self.schema.fields
     .filter(_.dataType.typeName.equalsIgnoreCase(TileUDT.typeName))
-    .map(f ⇒ self(f.name))
+    .map(f ⇒ self(f.name).as[Tile])
 
   /** Get the spatial column. */
-  def spatialKeyColumn: Column = {
+  def spatialKeyColumn: TypedColumn[Any, SpatialKey] = {
+    val spark = self.sparkSession
+    import spark.implicits._
     val key = findSpatialKeyField
     require(key.nonEmpty, "All RasterFrames must have a column tagged with context")
-    self(key.get.name)
+    self(key.get.name).as[SpatialKey]
   }
 
   /** The spatial key is the first on found with context metadata attached to it. */
   private[rasterframes] def findSpatialKeyField =
     self.schema.fields.find(_.metadata.contains(CONTEXT_METADATA_KEY))
 
+  // TODO: Change to Either[TileLayerMetadata[SpatialKey], TileLayerMetadata[SpaceTimeKey]]
   def tileLayerMetadata: TileLayerMetadata[SpatialKey] = {
     self.schema
       .find(_.name == SPATIAL_KEY_COLUMN)
@@ -66,7 +69,7 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
 
   /** Convert the tiles in the RasterFrame into a single raster. */
   def toRaster(tileCol: Column, rasterCols: Int, rasterRows: Int,
-    resampler: ResampleMethod = CubicSpline): ProjectedRaster[Tile] = {
+    resampler: ResampleMethod = Bilinear): ProjectedRaster[Tile] = {
 
     val df = self
     import df.sqlContext.implicits._
