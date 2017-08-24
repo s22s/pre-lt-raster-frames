@@ -108,7 +108,7 @@ image.tile.color(colors).renderPng().write("src/main/tut/raster.png")
 ```tut:silent
 import org.apache.spark.ml._
 import org.apache.spark.ml.feature._
-val exploded = rf.select($"key", explodeTiles($"tile")).withColumnRenamed("tile", "pixel")
+val exploded = rf.select(rf.spatialKeyColumn, explodeTiles($"tile")).withColumnRenamed("tile", "pixel")
 exploded.printSchema
 val discretizer = new QuantileDiscretizer().
   setInputCol("pixel").
