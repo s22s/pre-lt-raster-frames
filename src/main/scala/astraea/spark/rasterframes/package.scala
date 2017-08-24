@@ -95,5 +95,5 @@ package object rasterframes extends Implicits with ColumnFunctions {
       new ContextRDD(rdd, metadata)
   }
 
-  private[rasterframes] implicit class WithMetadataMethods[R: JsonFormat](val self: R) extends MetadataMethods[R]
+  private[astraea] implicit class WithMetadataMethods[R: JsonFormat](val self: R) extends MetadataMethods[R]
 }

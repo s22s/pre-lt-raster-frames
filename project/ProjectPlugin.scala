@@ -48,11 +48,15 @@ object ProjectPlugin extends AutoPlugin {
       geotrellis("spark") % Tut,
       geotrellis("raster") % Provided,
       geotrellis("raster") % Tut,
-      geotrellis("spark-testkit") % Test,
+      geotrellis("spark-testkit") % Test excludeAll(
+        ExclusionRule(organization = "org.scalastic"),
+        ExclusionRule(organization = "org.scalatest")
+      ),
       "org.scalatest" %% "scalatest" % "3.0.3" % Test
     ),
     publishArtifact in Test := false,
     fork in Test := true,
+    javaOptions in Test := Seq("-Xmx2G"),
     parallelExecution in Test := false
   )
 
