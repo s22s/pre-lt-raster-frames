@@ -37,18 +37,20 @@ import spray.json._
  */
 trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
   /** Get the names of the columns that are of type `Tile` */
-  def tileColumns: Seq[String] = self.schema.fields
+  def tileColumns: Seq[Column] = self.schema.fields
     .filter(_.dataType.typeName.equalsIgnoreCase(TileUDT.typeName))
-    .map(_.name)
+    .map(f ⇒ self(f.name))
 
   /** Get the spatial column. */
-  def spatialKeyColumn: String = {
-    val key = findSpatialKeyColumn
+  def spatialKeyColumn: Column = {
+    val key = findSpatialKeyField
     require(key.nonEmpty, "All RasterFrames must have a column tagged with context")
-    key.get.name
+    self(key.get.name)
   }
 
-  private[rasterframes] def findSpatialKeyColumn = self.schema.fields.find(_.metadata.contains(CONTEXT_METADATA_KEY))
+  /** The spatial key is the first on found with context metadata attached to it. */
+  private[rasterframes] def findSpatialKeyField =
+    self.schema.fields.find(_.metadata.contains(CONTEXT_METADATA_KEY))
 
   def tileLayerMetadata: TileLayerMetadata[SpatialKey] = {
     self.schema
@@ -62,6 +64,7 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
     md.getMetadata(metadataKey).json.parseJson.convertTo[M]
   }
 
+  /** Convert the tiles in the RasterFrame into a single raster. */
   def toRaster(tileCol: Column, rasterCols: Int, rasterRows: Int,
     resampler: ResampleMethod = CubicSpline): ProjectedRaster[Tile] = {
 
@@ -74,7 +77,7 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
     val newLayout = LayoutDefinition(md.extent, TileLayout(1, 1, rasterCols, rasterRows))
     val newLayerMetadata = md.copy(layout = newLayout, bounds = Bounds(SpatialKey(0, 0), SpatialKey(1, 1)))
 
-    val rdd: RDD[(SpatialKey, Tile)] = self.select(col(keyCol), tileCol).as[(SpatialKey, Tile)].rdd
+    val rdd: RDD[(SpatialKey, Tile)] = self.select(keyCol, tileCol).as[(SpatialKey, Tile)].rdd
     val newLayer = rdd
       .map { case (key, tile) ⇒
         (ProjectedExtent(md.mapTransform(key), md.crs), tile)

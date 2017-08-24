@@ -65,7 +65,7 @@ abstract class DataFrameMethods extends MethodExtensions[DataFrame]{
   def asRF: RasterFrame = {
     val potentialRF = certifyRasterframe(self)
 
-    require(potentialRF.findSpatialKeyColumn.nonEmpty, "A RasterFrame requires a column identified as a spatial key")
+    require(potentialRF.findSpatialKeyField.nonEmpty, "A RasterFrame requires a column identified as a spatial key")
 
     require(potentialRF.tileColumns.nonEmpty, "A RasterFrame requires at least one tile colulmn")
 
