@@ -39,21 +39,21 @@ The simplest mechanism for getting a RasterFrame is to use the `toRF(tileCols, t
 
 ```scala
 scala> val scene = SinglebandGeoTiff("src/test/resources/L8-B8-Robinson-IL.tiff")
-scene: geotrellis.raster.io.geotiff.SinglebandGeoTiff = SinglebandGeoTiff(geotrellis.raster.UShortConstantNoDataArrayTile@402bd015,Extent(431902.5, 4313647.5, 443512.5, 4321147.5),geotrellis.proj4.CRS$$anon$3@87f96f9f,Tags(Map(AREA_OR_POINT -> POINT),List(Map())),GeoTiffOptions(geotrellis.raster.io.geotiff.Striped@737cbac8,geotrellis.raster.io.geotiff.compression.DeflateCompression$@6dc977ca,1,None))
+scene: geotrellis.raster.io.geotiff.SinglebandGeoTiff = SinglebandGeoTiff(geotrellis.raster.UShortConstantNoDataArrayTile@1c96fc57,Extent(431902.5, 4313647.5, 443512.5, 4321147.5),geotrellis.proj4.CRS$$anon$3@87f96f9f,Tags(Map(AREA_OR_POINT -> POINT),List(Map())),GeoTiffOptions(geotrellis.raster.io.geotiff.Striped@632a2801,geotrellis.raster.io.geotiff.compression.DeflateCompression$@48750477,1,None))
 
 scala> val rf = scene.projectedRaster.toRF(128, 128)
-rf: astraea.spark.rasterframes.RasterFrame = [key: struct<col: int, row: int>, tile: st_tile]
+rf: astraea.spark.rasterframes.RasterFrame = [spatial_key: struct<col: int, row: int>, tile: st_tile]
 
 scala> rf.show(5, false)
-+-----+--------------------------------------------------------+
-|key  |tile                                                    |
-+-----+--------------------------------------------------------+
-|[0,0]|geotrellis.raster.UShortConstantNoDataArrayTile@12e06760|
-|[1,1]|geotrellis.raster.UShortConstantNoDataArrayTile@409c3d49|
-|[6,1]|geotrellis.raster.UShortConstantNoDataArrayTile@39287485|
-|[3,1]|geotrellis.raster.UShortConstantNoDataArrayTile@205299ee|
-|[4,2]|geotrellis.raster.UShortConstantNoDataArrayTile@319821e3|
-+-----+--------------------------------------------------------+
++-----------+--------------------------------------------------------+
+|spatial_key|tile                                                    |
++-----------+--------------------------------------------------------+
+|[0,0]      |geotrellis.raster.UShortConstantNoDataArrayTile@4e77f047|
+|[1,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@5e9d4078|
+|[6,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@679a7399|
+|[3,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@741180bc|
+|[4,2]      |geotrellis.raster.UShortConstantNoDataArrayTile@515b3b1 |
++-----------+--------------------------------------------------------+
 only showing top 5 rows
 
 ```
@@ -66,10 +66,10 @@ Now that we have a `RasterFrame`, we have access to a number of extension method
 
 ```scala
 scala> rf.tileColumns
-res4: Seq[String] = ArraySeq(tile)
+res4: Seq[org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.Tile]] = ArraySeq(tile)
 
 scala> rf.spatialKeyColumn
-res5: String = key
+res5: org.apache.spark.sql.TypedColumn[Any,geotrellis.spark.SpatialKey] = spatial_key
 ```
 
 ### Tile Statistics 
@@ -168,7 +168,7 @@ scala> import geotrellis.raster.equalization._
 import geotrellis.raster.equalization._
 
 scala> val equalizer = udf((t: Tile) => t.equalize())
-equalizer: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(<function1>,org.apache.spark.sql.gt.types.TileUDT@7a00d81d,Some(List(org.apache.spark.sql.gt.types.TileUDT@7a00d81d)))
+equalizer: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(<function1>,org.apache.spark.sql.gt.types.TileUDT@51744e28,Some(List(org.apache.spark.sql.gt.types.TileUDT@51744e28)))
 
 scala> val equalized = rf.select(equalizer($"tile") as "equalized")
 equalized: org.apache.spark.sql.DataFrame = [equalized: st_tile]
@@ -187,7 +187,7 @@ only showing top 5 rows
 
 
 scala> val downsample = udf((t: Tile) => t.resample(4, 4))
-downsample: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(<function1>,org.apache.spark.sql.gt.types.TileUDT@7a00d81d,Some(List(org.apache.spark.sql.gt.types.TileUDT@7a00d81d)))
+downsample: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(<function1>,org.apache.spark.sql.gt.types.TileUDT@51744e28,Some(List(org.apache.spark.sql.gt.types.TileUDT@51744e28)))
 
 scala> val downsampled = rf.select(renderAscii(downsample($"tile")) as "minime")
 downsampled: org.apache.spark.sql.DataFrame = [minime: string]
@@ -248,7 +248,7 @@ image.tile.color(colors).renderPng().write("src/main/tut/raster.png")
 ```scala
 import org.apache.spark.ml._
 import org.apache.spark.ml.feature._
-val exploded = rf.select($"key", explodeTiles($"tile")).withColumnRenamed("tile", "pixel")
+val exploded = rf.select(rf.spatialKeyColumn, explodeTiles($"tile")).withColumnRenamed("tile", "pixel")
 exploded.printSchema
 val discretizer = new QuantileDiscretizer().
   setInputCol("pixel").
@@ -260,30 +260,30 @@ val binned = discretizer.fit(exploded).transform(exploded)
 
 ```scala
 scala> binned.show(false)
-+-----+------+---+-------+------+
-|key  |column|row|pixel  |binned|
-+-----+------+---+-------+------+
-|[0,0]|0     |0  |14294.0|4.0   |
-|[0,0]|1     |0  |14277.0|4.0   |
-|[0,0]|2     |0  |13939.0|4.0   |
-|[0,0]|3     |0  |13604.0|4.0   |
-|[0,0]|4     |0  |14182.0|4.0   |
-|[0,0]|5     |0  |14851.0|4.0   |
-|[0,0]|6     |0  |15584.0|4.0   |
-|[0,0]|7     |0  |13905.0|4.0   |
-|[0,0]|8     |0  |10834.0|3.0   |
-|[0,0]|9     |0  |10284.0|2.0   |
-|[0,0]|10    |0  |8973.0 |1.0   |
-|[0,0]|11    |0  |8314.0 |0.0   |
-|[0,0]|12    |0  |8051.0 |0.0   |
-|[0,0]|13    |0  |8242.0 |0.0   |
-|[0,0]|14    |0  |8448.0 |1.0   |
-|[0,0]|15    |0  |8002.0 |0.0   |
-|[0,0]|16    |0  |8302.0 |0.0   |
-|[0,0]|17    |0  |8419.0 |1.0   |
-|[0,0]|18    |0  |8044.0 |0.0   |
-|[0,0]|19    |0  |8362.0 |0.0   |
-+-----+------+---+-------+------+
++-----------+------+---+-------+------+
+|spatial_key|column|row|pixel  |binned|
++-----------+------+---+-------+------+
+|[0,0]      |0     |0  |14294.0|4.0   |
+|[0,0]      |1     |0  |14277.0|4.0   |
+|[0,0]      |2     |0  |13939.0|4.0   |
+|[0,0]      |3     |0  |13604.0|4.0   |
+|[0,0]      |4     |0  |14182.0|4.0   |
+|[0,0]      |5     |0  |14851.0|4.0   |
+|[0,0]      |6     |0  |15584.0|4.0   |
+|[0,0]      |7     |0  |13905.0|4.0   |
+|[0,0]      |8     |0  |10834.0|3.0   |
+|[0,0]      |9     |0  |10284.0|2.0   |
+|[0,0]      |10    |0  |8973.0 |1.0   |
+|[0,0]      |11    |0  |8314.0 |0.0   |
+|[0,0]      |12    |0  |8051.0 |0.0   |
+|[0,0]      |13    |0  |8242.0 |0.0   |
+|[0,0]      |14    |0  |8448.0 |1.0   |
+|[0,0]      |15    |0  |8002.0 |0.0   |
+|[0,0]      |16    |0  |8302.0 |0.0   |
+|[0,0]      |17    |0  |8419.0 |1.0   |
+|[0,0]      |18    |0  |8044.0 |0.0   |
+|[0,0]      |19    |0  |8362.0 |0.0   |
++-----------+------+---+-------+------+
 only showing top 20 rows
 
 
