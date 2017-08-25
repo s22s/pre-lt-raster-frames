@@ -20,7 +20,7 @@ import org.apache.spark.annotation.Experimental
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.analysis.UnresolvedAttribute
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
-import org.apache.spark.sql.catalyst.expressions.AttributeReference
+import org.apache.spark.sql.catalyst.expressions.{Alias, AttributeReference}
 
 /**
  * Module providing support for using GeoTrellis native types in Spark SQL.
@@ -39,6 +39,7 @@ package object gt {
     def columnName: String = col.expr match {
       case ua: UnresolvedAttribute ⇒ ua.name
       case ar: AttributeReference ⇒ ar.name
+      case as: Alias ⇒ as.name
       case o ⇒ o.prettyName
     }
   }

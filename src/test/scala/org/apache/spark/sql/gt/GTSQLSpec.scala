@@ -62,6 +62,12 @@ class GTSQLSpec extends TestEnvironment with TestData with LazyLogging {
   sqlContext.udf.register("st_makeTiles", makeTiles)
 
   describe("GeoTrellis UDTs") {
+    it("should resolve column names") {
+      // This tests an internal utility.
+      assert(col("fred").columnName === "fred")
+      assert(col("fred").as("barney").columnName === "barney")
+    }
+
     it("should create constant tiles") {
       val query = sql("select st_makeConstantTile(1, 10, 10, 'int8raw')")
       write(query)

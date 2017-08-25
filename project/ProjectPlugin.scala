@@ -105,6 +105,7 @@ object ProjectPlugin extends AutoPlugin {
     }
 
     def docSettings: Seq[Def.Setting[_]] = Seq(
+      tutTargetDirectory := baseDirectory.value
     )
   }
 }
