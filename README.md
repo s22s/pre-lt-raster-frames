@@ -18,11 +18,11 @@ libraryDependencies += "io.astraea" %% "raster-frames" % "{version}"
 
 ## <a name="documentation" href="#documentation"></a>Documentation
 
-See [the user docs](https://s22s.github.io/raster-frames/) for setup and examples on how to use it.
+See [the user docs](http://rasterframes.io/) for setup and examples on how to use it.
 
-For a list of available UDFs, go [here](https://s22s.github.io/raster-frames/reference.html).
+For a list of available UDFs, go [here](http://rasterframes.io/reference.html).
 
-Scaladoc API Documentation is available [here](https://s22s.github.io/raster-frames/latest/api/index.html).
+Scaladoc API Documentation is available [here](http://rasterframes.io/latest/api/index.html).
 
 
 ## <a name="copyright" href="#copyright"></a>Copyright and License
