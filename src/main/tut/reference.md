@@ -1,5 +1,7 @@
 # Reference
 
+API Scaladoc can be found [here](latest/api/index.html).
+
 Here's a preliminary list of RasterFrame UDFs available. For the most up to date list, look at the source code for `ColumnFunctions`. These UDFs are also registered with the SQL engine under the same name but with a `st_` prefix (e.g. `localMin` becomes `st_localMin`).
 
 * `explodeTiles(tileColumn)` - Create a row for each pixel in tile.

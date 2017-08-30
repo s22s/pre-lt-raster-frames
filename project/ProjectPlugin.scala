@@ -5,12 +5,16 @@ import sbtrelease.ReleasePlugin.autoImport._
 
 import _root_.bintray.BintrayPlugin.autoImport._
 import com.servicerocket.sbt.release.git.flow.Steps._
+import com.typesafe.sbt.SbtGit.git
+import com.typesafe.sbt.sbtghpages.GhpagesPlugin
 import com.typesafe.sbt.site.SitePlugin.autoImport._
 import com.typesafe.sbt.site.paradox.ParadoxSitePlugin.autoImport._
 import de.heikoseeberger.sbtheader.CommentStyleMapping
 import de.heikoseeberger.sbtheader.HeaderKey.headers
 import de.heikoseeberger.sbtheader.license.Apache2_0
 import tut.TutPlugin.autoImport._
+import GhpagesPlugin.autoImport._
+import com.lightbend.paradox.sbt.ParadoxPlugin.autoImport._
 
 /**
  * @author sfitch
@@ -68,24 +72,7 @@ object ProjectPlugin extends AutoPlugin {
 
   object autoImport {
     def releaseSettings: Seq[Def.Setting[_]] = {
-      val runTut: (State) ⇒ State = releaseStepTask(tut)
-      val commitTut = ReleaseStep((st: State) ⇒ {
-        val extracted = Project.extract(st)
-
-        val logger = new ProcessLogger {
-          def error(s: ⇒ String): Unit = st.log.debug(s)
-          def buffer[T](f: ⇒ T): T = f
-          def info(s: ⇒ String): Unit = st.log.info(s)
-        }
-
-        val vcs = extracted.get(releaseVcs).get
-        vcs.add("README.md") ! logger
-        val status = vcs.status.!!.trim
-        if (status.nonEmpty) {
-          vcs.commit("Updated README.md") ! logger
-        }
-        st
-      })
+      val buildSite: (State) ⇒ State = releaseStepTask(makeSite)
       val releaseArtifacts = releaseStepTask(bintrayRelease)
       Seq(
         bintrayOrganization := Some("s22s"),
@@ -98,8 +85,7 @@ object ProjectPlugin extends AutoPlugin {
           runTest,
           gitFlowReleaseStart,
           setReleaseVersion,
-          //runTut,
-          //commitTut,
+          buildSite,
           commitReleaseVersion,
           publishArtifacts,
           releaseArtifacts,
@@ -111,8 +97,13 @@ object ProjectPlugin extends AutoPlugin {
     }
 
     def docSettings: Seq[Def.Setting[_]] = Seq(
+      paradoxProperties in Paradox ++= Map(
+        "github.base_url" -> s"https://github.com/s22s/raster-frames/tree/${version.value}"
+      ),
       sourceDirectory in Paradox := tutTargetDirectory.value,
-      makeSite := makeSite.dependsOn(tut).value
+      makeSite := makeSite.dependsOn(tut).value,
+      git.remoteRepo := "git@github.com:s22s/raster-frames.git",
+      ghpagesNoJekyll := true
 //      tutTargetDirectory := baseDirectory.value
     )
   }

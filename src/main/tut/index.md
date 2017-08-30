@@ -14,3 +14,6 @@ RasterFrames is a new project under active development. Feedback and contributio
 * [GeoTrellis Operations](geotrellis-ops.md)
 * [UDF Reference](reference.md)
 @@@
+
+
+API Scaladoc can be found [here](latest/api/index.html).
