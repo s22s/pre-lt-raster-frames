@@ -10,6 +10,7 @@ import geotrellis.spark._
 import geotrellis.spark.io._
 import geotrellis.spark.tiling._
 import geotrellis.vector.{Extent, ProjectedExtent}
+import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions._
 
 /**

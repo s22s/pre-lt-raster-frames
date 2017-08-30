@@ -3,12 +3,18 @@ import sbt._
 import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 import sbtrelease.ReleasePlugin.autoImport._
 
-import bintray.BintrayPlugin.autoImport._
+import _root_.bintray.BintrayPlugin.autoImport._
 import com.servicerocket.sbt.release.git.flow.Steps._
+import com.typesafe.sbt.SbtGit.git
+import com.typesafe.sbt.sbtghpages.GhpagesPlugin
+import com.typesafe.sbt.site.SitePlugin.autoImport._
+import com.typesafe.sbt.site.paradox.ParadoxSitePlugin.autoImport._
 import de.heikoseeberger.sbtheader.CommentStyleMapping
 import de.heikoseeberger.sbtheader.HeaderKey.headers
 import de.heikoseeberger.sbtheader.license.Apache2_0
 import tut.TutPlugin.autoImport._
+import GhpagesPlugin.autoImport._
+import com.lightbend.paradox.sbt.ParadoxPlugin.autoImport._
 
 /**
  * @author sfitch
@@ -29,6 +35,10 @@ object ProjectPlugin extends AutoPlugin {
 
   override def projectSettings = Seq(
     organization := "io.astraea",
+    organizationName := "Astraea",
+    homepage := Some(url("https://github.com/s22s/raster-frames")),
+    scmInfo := Some(ScmInfo(url("https://github.com/s22s/raster-frames"), "git@github.com:s22s/raster-frames.git")),
+    description := "RasterFrames brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer operations of GeoTrellis",
     startYear := Some(2017),
     licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html")),
     headers := CommentStyleMapping.createFrom(Apache2_0, "2017", "Astraea, Inc."),
@@ -57,29 +67,17 @@ object ProjectPlugin extends AutoPlugin {
     publishArtifact in Test := false,
     fork in Test := true,
     javaOptions in Test := Seq("-Xmx2G"),
-    parallelExecution in Test := false
+    parallelExecution in Test := false,
+    fork in tut := true
+//    javaOptions in tut := Seq(
+//      "-Dlog4j.configuration=file:src/test/resources/log4j.properties"
+//    )
   )
 
   object autoImport {
     def releaseSettings: Seq[Def.Setting[_]] = {
-      val runTut: (State) ⇒ State = releaseStepTask(tut)
-      val commitTut = ReleaseStep((st: State) ⇒ {
-        val extracted = Project.extract(st)
-
-        val logger = new ProcessLogger {
-          def error(s: ⇒ String): Unit = st.log.debug(s)
-          def buffer[T](f: ⇒ T): T = f
-          def info(s: ⇒ String): Unit = st.log.info(s)
-        }
-
-        val vcs = extracted.get(releaseVcs).get
-        vcs.add("README.md") ! logger
-        val status = vcs.status.!!.trim
-        if (status.nonEmpty) {
-          vcs.commit("Updated README.md") ! logger
-        }
-        st
-      })
+      val buildSite: (State) ⇒ State = releaseStepTask(makeSite)
+      val publishSite: (State) ⇒ State = releaseStepTask(ghpagesPushSite)
       val releaseArtifacts = releaseStepTask(bintrayRelease)
       Seq(
         bintrayOrganization := Some("s22s"),
@@ -92,8 +90,8 @@ object ProjectPlugin extends AutoPlugin {
           runTest,
           gitFlowReleaseStart,
           setReleaseVersion,
-          runTut,
-          commitTut,
+          buildSite,
+          publishSite,
           commitReleaseVersion,
           publishArtifacts,
           releaseArtifacts,
@@ -105,7 +103,18 @@ object ProjectPlugin extends AutoPlugin {
     }
 
     def docSettings: Seq[Def.Setting[_]] = Seq(
-      tutTargetDirectory := baseDirectory.value
+      git.remoteRepo := "git@github.com:s22s/raster-frames.git",
+      apiURL := Some(url("http://rasterfrarmes.io/latest")),
+      //apiMappings += (),
+      autoAPIMappings := true,
+      //paradoxTheme := Some(builtinParadoxTheme("generic")),
+      paradoxProperties in Compile ++= Map(
+        "github.base_url" -> s"https://github.com/s22s/raster-frames",
+        "scaladoc.geotrellis.base_url" -> "https://geotrellis.github.io/scaladocs/latest"
+      ),
+      sourceDirectory in Paradox := tutTargetDirectory.value,
+      makeSite := makeSite.dependsOn(tut).value,
+      ghpagesNoJekyll := true
     )
   }
 }

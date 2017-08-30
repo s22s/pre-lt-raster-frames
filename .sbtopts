@@ -1,1 +1,2 @@
 -Djava.awt.headless=true
+-J-Xmx6g
