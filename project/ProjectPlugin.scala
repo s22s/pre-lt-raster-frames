@@ -77,6 +77,7 @@ object ProjectPlugin extends AutoPlugin {
   object autoImport {
     def releaseSettings: Seq[Def.Setting[_]] = {
       val buildSite: (State) ⇒ State = releaseStepTask(makeSite)
+      val publishSite: (State) ⇒ State = releaseStepTask(ghpagesPushSite)
       val releaseArtifacts = releaseStepTask(bintrayRelease)
       Seq(
         bintrayOrganization := Some("s22s"),
@@ -90,6 +91,7 @@ object ProjectPlugin extends AutoPlugin {
           gitFlowReleaseStart,
           setReleaseVersion,
           buildSite,
+          publishSite,
           commitReleaseVersion,
           publishArtifacts,
           releaseArtifacts,
