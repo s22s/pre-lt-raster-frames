@@ -16,7 +16,7 @@
 
 package astraea.spark.rasterframes
 
-import geotrellis.raster.resample.{Bilinear, CubicSpline, ResampleMethod}
+import geotrellis.raster.resample.{Bilinear, ResampleMethod}
 import geotrellis.raster.{ProjectedRaster, Tile, TileLayout}
 import geotrellis.spark._
 import geotrellis.spark.io._
@@ -36,8 +36,13 @@ import spray.json._
  * @since 7/18/17
  */
 trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
+  type TileColumn = TypedColumn[Any, Tile]
+
+  private val _df = self
+  import _df.sqlContext.implicits._
+
   /** Get the names of the columns that are of type `Tile` */
-  def tileColumns: Seq[TypedColumn[Any, Tile]] = self.schema.fields
+  def tileColumns: Seq[TileColumn] = self.schema.fields
     .filter(_.dataType.typeName.equalsIgnoreCase(TileUDT.typeName))
     .map(f ⇒ self(f.name).as[Tile])
 
@@ -54,49 +59,65 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
   private[rasterframes] def findSpatialKeyField =
     self.schema.fields.find(_.metadata.contains(CONTEXT_METADATA_KEY))
 
-  // TODO: Change to Either[TileLayerMetadata[SpatialKey], TileLayerMetadata[SpaceTimeKey]]
-  def tileLayerMetadata: TileLayerMetadata[SpatialKey] = {
+  /**
+   * Reassemble the [[TileLayerMetadata]] record from DataFrame metadata.
+   * TODO: Change to Either[TileLayerMetadata[SpatialKey], TileLayerMetadata[SpaceTimeKey]]
+   */
+  def tileLayerMetadata: TileLayerMetadata[SpatialKey] =
     self.schema
       .find(_.name == SPATIAL_KEY_COLUMN)
       .map(_.metadata)
       .map(extract[TileLayerMetadata[SpatialKey]](CONTEXT_METADATA_KEY))
       .getOrElse(throw new IllegalArgumentException(s"RasterFrame operation requsted on non-RasterFrame: $self"))
+
+  /**
+   * Performs a full RDD scans of the key column for the data extent, and updates the [[TileLayerMetadata]] data extent to match.
+   */
+  def clipLayerExtent: RasterFrame = {
+    val metadata = tileLayerMetadata
+
+    val trans = metadata.layout.mapTransform
+    val keyBounds = self.select(spatialKeyColumn)
+      .map(k ⇒ KeyBounds(k, k))
+      .reduce(_ combine _)
+
+    val gridExtent = trans(keyBounds.toGridBounds())
+
+    val newExtent = gridExtent.intersection(metadata.extent).getOrElse(gridExtent)
+
+    val updatedMetadata = metadata.copy(extent = newExtent, bounds = keyBounds)
+
+    self.addColumnMetadata(spatialKeyColumn, CONTEXT_METADATA_KEY, updatedMetadata.asColumnMetadata).certify
   }
 
-  private def extract[M: JsonFormat](metadataKey: String)(md: Metadata) = {
+  /**
+   * Convert from RasterFrame to a GeoTrellis [[TileLayerMetadata]]
+   * @param tileCol column with tiles to be the
+   */
+  def toTileLayerRDD(tileCol: TileColumn): TileLayerRDD[SpatialKey] =
+    ContextRDD(self.select(spatialKeyColumn, tileCol).rdd, tileLayerMetadata)
+
+  /** Extract metadata value. */
+  private def extract[M: JsonFormat](metadataKey: String)(md: Metadata) =
     md.getMetadata(metadataKey).json.parseJson.convertTo[M]
-  }
 
   /** Convert the tiles in the RasterFrame into a single raster. */
   def toRaster(tileCol: Column, rasterCols: Int, rasterRows: Int,
     resampler: ResampleMethod = Bilinear): ProjectedRaster[Tile] = {
 
-    val df = self
-    import df.sqlContext.implicits._
+    val clipped = clipLayerExtent
 
-    // TODO: support STK too.
-    val md = tileLayerMetadata
-    val keyCol = spatialKeyColumn
+    val md = clipped.tileLayerMetadata
+    val keyCol = clipped.spatialKeyColumn
     val newLayout = LayoutDefinition(md.extent, TileLayout(1, 1, rasterCols, rasterRows))
-    val newLayerMetadata = md.copy(layout = newLayout, bounds = Bounds(SpatialKey(0, 0), SpatialKey(1, 1)))
+    val newLayerMetadata = md.copy(layout = newLayout, bounds = Bounds(SpatialKey(0, 0), SpatialKey(0, 0)))
 
-    val rdd: RDD[(SpatialKey, Tile)] = self.select(keyCol, tileCol).as[(SpatialKey, Tile)].rdd
+    val rdd: RDD[(SpatialKey, Tile)] = clipped.select(keyCol, tileCol).as[(SpatialKey, Tile)].rdd
     val newLayer = rdd
       .map { case (key, tile) ⇒
         (ProjectedExtent(md.mapTransform(key), md.crs), tile)
       }
       .tileToLayout(newLayerMetadata, Tiler.Options(resampler))
-
-    // Attempt to get cross-tile interpolation to work. Generates empty tiles.
-//    val bufferSize = 2
-//    val newLayer = rdd.bufferTiles(bufferSize)
-//      .map { case (key, BufferedTile(tile, targetBounds)) ⇒
-//        val keyExtent = md.mapTransform(key)
-//        val re = RasterExtent(keyExtent, targetBounds.width, targetBounds.height)
-//        val adjustedExtent = re.rasterExtentFor(GridBounds(-bufferSize, -bufferSize, re.cols - 1 + bufferSize, re.rows - 1 + bufferSize))
-//        (ProjectedExtent(adjustedExtent.extent, md.crs), tile)
-//      }
-//      .tileToLayout(newLayerMetadata, Tiler.Options(resampler))
 
     val stitchedTile = newLayer.stitch()
 

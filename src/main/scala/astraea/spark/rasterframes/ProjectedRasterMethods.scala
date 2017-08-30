@@ -38,7 +38,7 @@ trait ProjectedRasterMethods extends MethodExtensions[ProjectedRaster[Tile]] {
     (implicit spark: SparkSession): RasterFrame = {
 
     val layout = LayoutDefinition(self.rasterExtent, tileCols, tileRows)
-    val kb = KeyBounds(SpatialKey(0, 0), SpatialKey(layout.layoutCols, layout.layoutRows))
+    val kb = KeyBounds(SpatialKey(0, 0), SpatialKey(layout.layoutCols - 1, layout.layoutRows - 1))
     val tlm = TileLayerMetadata(
       self.tile.cellType, layout, self.extent, self.crs, kb)
 

@@ -23,10 +23,13 @@ import java.time.ZonedDateTime
 import geotrellis.proj4.LatLng
 import geotrellis.raster._
 import geotrellis.raster.io.geotiff.{GeoTiff, SinglebandGeoTiff}
-import geotrellis.spark.tiling.LayoutDefinition
-import geotrellis.spark.{KeyBounds, SpaceTimeKey, SpatialKey, TemporalProjectedExtent, TileLayerMetadata}
+import geotrellis.spark.testkit.TileLayerRDDBuilders
+import geotrellis.spark.tiling.{CRSWorldExtent, LayoutDefinition}
+import geotrellis.spark._
 import geotrellis.vector.{Extent, ProjectedExtent}
 import org.apache.commons.io.IOUtils
+import org.apache.spark.SparkContext
+import org.apache.spark.sql.SparkSession
 
 import scala.reflect.ClassTag
 import scala.util.Random
@@ -81,6 +84,21 @@ trait TestData {
   }
 
   def sampleGeoTiff = SinglebandGeoTiff(IOUtils.toByteArray(getClass.getResourceAsStream("/L8-B8-Robinson-IL.tiff")))
+
+  def sampleTileLayerRDD(implicit spark: SparkSession): TileLayerRDD[SpatialKey] = {
+
+    val raster = sampleGeoTiff.projectedRaster.reproject(LatLng)
+
+    val layout = LayoutDefinition(LatLng.worldExtent, TileLayout(36, 18, 128, 128))
+
+    val kb = KeyBounds(SpatialKey(0, 0), SpatialKey(layout.layoutCols, layout.layoutRows))
+
+    val tlm = TileLayerMetadata(raster.tile.cellType, layout, layout.extent, LatLng, kb)
+
+    val rdd = spark.sparkContext.makeRDD(Seq((raster.projectedExtent, raster.tile)))
+
+    ContextRDD(rdd.tileToLayout(tlm), tlm)
+  }
 }
 
 object TestData extends TestData {
@@ -101,4 +119,11 @@ object TestData extends TestData {
   /** Create a series of random tiles. */
   val makeTiles: (Int) ⇒ Array[Tile] = (count) ⇒
     Array.fill(count)(randomTile(4, 4, "int8raw"))
+
+  def randomTileLayerRDD(
+    rasterCols: Int, rasterRows: Int,
+    layoutCols: Int, layoutRows: Int)(implicit sc: SparkContext): TileLayerRDD[SpatialKey] = {
+    val tile = randomTile(rasterCols, rasterRows, "uint8")
+    TileLayerRDDBuilders.createTileLayerRDD(tile, layoutCols, layoutRows, LatLng)._2
+  }
 }
