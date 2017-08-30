@@ -35,6 +35,10 @@ object ProjectPlugin extends AutoPlugin {
 
   override def projectSettings = Seq(
     organization := "io.astraea",
+    organizationName := "Astraea",
+    homepage := Some(url("https://github.com/s22s/raster-frames")),
+    scmInfo := Some(ScmInfo(url("https://github.com/s22s/raster-frames"), "git@github.com:s22s/raster-frames.git")),
+    description := "RasterFrames brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer operations of GeoTrellis",
     startYear := Some(2017),
     licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html")),
     headers := CommentStyleMapping.createFrom(Apache2_0, "2017", "Astraea, Inc."),
@@ -97,14 +101,18 @@ object ProjectPlugin extends AutoPlugin {
     }
 
     def docSettings: Seq[Def.Setting[_]] = Seq(
-      paradoxProperties in Paradox ++= Map(
-        "github.base_url" -> s"https://github.com/s22s/raster-frames/tree/${version.value}"
+      git.remoteRepo := "git@github.com:s22s/raster-frames.git",
+      apiURL := Some(url("http://rasterfrarmes.io/latest")),
+      //apiMappings += (),
+      autoAPIMappings := true,
+      //paradoxTheme := Some(builtinParadoxTheme("generic")),
+      paradoxProperties in Compile ++= Map(
+        "github.base_url" -> s"https://github.com/s22s/raster-frames",
+        "scaladoc.geotrellis.base_url" -> "https://geotrellis.github.io/scaladocs/latest"
       ),
       sourceDirectory in Paradox := tutTargetDirectory.value,
       makeSite := makeSite.dependsOn(tut).value,
-      git.remoteRepo := "git@github.com:s22s/raster-frames.git",
       ghpagesNoJekyll := true
-//      tutTargetDirectory := baseDirectory.value
     )
   }
 }

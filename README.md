@@ -8,7 +8,7 @@ _RasterFrames_ brings the power of Spark DataFrames to geospatial raster data, e
   development</strong>. Feedback and contributions are welcomed as we look
   to improve it.</p></div>
 
-## <a name="getting-started" href="#getting-started"></a>Getting Started
+## Getting Started
 
 RasterFrames is currently available for Scala 2.11 + Spark 2.1.0 and is published via Bintray's JCenter, one of the default sbt resolvers. To use, just add the following library dependency:
 
@@ -16,16 +16,14 @@ RasterFrames is currently available for Scala 2.11 + Spark 2.1.0 and is publishe
 libraryDependencies += "io.astraea" %% "raster-frames" % "{version}"
 ```
 
-## <a name="documentation" href="#documentation"></a>Documentation
+## Documentation
 
-See [the user docs](http://rasterframes.io/) for setup and examples on how to use it.
-
-For a list of available UDFs, go [here](http://rasterframes.io/reference.html).
-
-Scaladoc API Documentation is available [here](http://rasterframes.io/latest/api/index.html).
+* [Users' Manual](http://rasterframes.io/)
+* [API Documentation](http://rasterframes.io/latest/api/index.html) 
+* [List of available UDFs](http://rasterframes.io/reference.html)
 
 
-## <a name="copyright" href="#copyright"></a>Copyright and License
+## Copyright and License
 
 All code is available to you under the Apache 2.0 License, copyright Astraea, Inc. 2017.
 

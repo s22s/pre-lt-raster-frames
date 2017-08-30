@@ -6,6 +6,12 @@ _RasterFrames_ brings the power of Spark DataFrames to geospatial raster data, e
 RasterFrames is a new project under active development. Feedback and contributions are welcomed as we look to improve it.
 @@@
 
+## Related Links
+
+* [API Documentation](latest/api/index.html)
+* [GitHub Repository](https://github.com/s22s/raster-frames)
+* [GeoTrellis Documentation](https://docs.geotrellis.io/en/latest/)
+
 @@@ index
 * [Getting Started](getting-started.md)
 * [Creating RasterFrames](creating-rasterframes.md)
@@ -15,5 +21,3 @@ RasterFrames is a new project under active development. Feedback and contributio
 * [UDF Reference](reference.md)
 @@@
 
-
-API Scaladoc can be found [here](latest/api/index.html).
