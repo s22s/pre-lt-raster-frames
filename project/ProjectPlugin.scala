@@ -59,7 +59,11 @@ object ProjectPlugin extends AutoPlugin {
     publishArtifact in Test := false,
     fork in Test := true,
     javaOptions in Test := Seq("-Xmx2G"),
-    parallelExecution in Test := false
+    parallelExecution in Test := false,
+    fork in tut := true
+//    javaOptions in tut := Seq(
+//      "-Dlog4j.configuration=file:src/test/resources/log4j.properties"
+//    )
   )
 
   object autoImport {
