@@ -1,14 +1,15 @@
-import bintray.BintrayPlugin.autoImport._
+import sbt.Keys._
+import sbt._
+import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
+import sbtrelease.ReleasePlugin.autoImport._
+
+import _root_.bintray.BintrayPlugin.autoImport._
 import com.servicerocket.sbt.release.git.flow.Steps._
 import com.typesafe.sbt.site.SitePlugin.autoImport._
 import com.typesafe.sbt.site.paradox.ParadoxSitePlugin.autoImport._
 import de.heikoseeberger.sbtheader.CommentStyleMapping
 import de.heikoseeberger.sbtheader.HeaderKey.headers
 import de.heikoseeberger.sbtheader.license.Apache2_0
-import sbt.Keys._
-import sbt._
-import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
-import sbtrelease.ReleasePlugin.autoImport._
 import tut.TutPlugin.autoImport._
 
 /**
@@ -49,11 +50,15 @@ object ProjectPlugin extends AutoPlugin {
       geotrellis("spark") % Tut,
       geotrellis("raster") % Provided,
       geotrellis("raster") % Tut,
-      geotrellis("spark-testkit") % Test,
+      geotrellis("spark-testkit") % Test excludeAll(
+        ExclusionRule(organization = "org.scalastic"),
+        ExclusionRule(organization = "org.scalatest")
+      ),
       "org.scalatest" %% "scalatest" % "3.0.3" % Test
     ),
     publishArtifact in Test := false,
     fork in Test := true,
+    javaOptions in Test := Seq("-Xmx2G"),
     parallelExecution in Test := false
   )
 
@@ -77,6 +82,7 @@ object ProjectPlugin extends AutoPlugin {
         }
         st
       })
+      val releaseArtifacts = releaseStepTask(bintrayRelease)
       Seq(
         bintrayOrganization := Some("s22s"),
         bintrayReleaseOnPublish in ThisBuild := false,
@@ -92,6 +98,7 @@ object ProjectPlugin extends AutoPlugin {
           //commitTut,
           commitReleaseVersion,
           publishArtifacts,
+          releaseArtifacts,
           gitFlowReleaseFinish,
           setNextVersion,
           commitNextVersion
@@ -102,6 +109,7 @@ object ProjectPlugin extends AutoPlugin {
     def docSettings: Seq[Def.Setting[_]] = Seq(
       sourceDirectory in Paradox := tutTargetDirectory.value,
       makeSite := makeSite.dependsOn(tut).value
+//      tutTargetDirectory := baseDirectory.value
     )
   }
 }

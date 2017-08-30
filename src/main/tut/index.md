@@ -1,6 +1,6 @@
 # RasterFrames
 
-[ ![Download](https://api.bintray.com/packages/s22s/maven/raster-frames/images/download.svg) ](https://bintray.com/s22s/maven/raster-frames/_latestVersion)
+[ ![Download](https://api.bintray.com/packages/s22s/maven/raster-frames/images/download.svg) ](https://bintray.com/s22s/maven/raster-frames/_latestVersion) [![Build Status](https://travis-ci.org/s22s/raster-frames.svg?branch=develop)](https://travis-ci.org/s22s/raster-frames)
 
 _RasterFrames_ brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer operations of [GeoTrellis](https://geotrellis.io/).
 
@@ -108,7 +108,7 @@ image.tile.color(colors).renderPng().write("src/main/tut/raster.png")
 ```tut:silent
 import org.apache.spark.ml._
 import org.apache.spark.ml.feature._
-val exploded = rf.select($"key", explodeTiles($"tile")).withColumnRenamed("tile", "pixel")
+val exploded = rf.select(rf.spatialKeyColumn, explodeTiles($"tile")).withColumnRenamed("tile", "pixel")
 exploded.printSchema
 val discretizer = new QuantileDiscretizer().
   setInputCol("pixel").
