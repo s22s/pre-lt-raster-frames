@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+<head>
+<title>Creating RasterFrames · RasterFrames</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content='RasterFrames'/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:100normal,100italic,300normal,300italic,400normal,400italic,500normal,500italic,700normal,700italic,900normal,900italicc" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="lib/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="js/page.js"></script>
+<script type="text/javascript" src="js/groups.js"></script>
+<link rel="stylesheet" type="text/css" href="lib/normalize.css/normalize.css"/>
+<link rel="stylesheet" type="text/css" href="lib/foundation/dist/foundation.min.css"/>
+<link rel="stylesheet" type="text/css" href="css/page.css"/>
+
+<!--
+<link rel="shortcut icon" href="images/favicon.ico" />
+-->
+</head>
+
+<body>
+<div class="off-canvas-wrapper">
+<div class="off-canvas-wrapper-inner" data-off-canvas-wrapper>
+
+<div class="off-canvas position-left" id="off-canvas-menu" data-off-canvas>
+<nav class="off-canvas-nav">
+<div class="nav-home">
+<a href="index.html" >
+<span class="home-icon">⌂</span>RasterFrames
+</a>
+<div class="version-number">
+0.4.1*
+</div>
+</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="getting-started.html" class="page">Getting Started</a></li>
+  <li><a href="creating-rasterframes.html" class="active page">Creating RasterFrames</a></li>
+  <li><a href="tile-statistics.html" class="page">Tile Statistics</a></li>
+  <li><a href="machine-learning.html" class="page">Machine Learning</a></li>
+  <li><a href="geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
+  <li><a href="reference.html" class="page">Reference</a></li>
+</ul>
+</div>
+
+</nav>
+</div>
+
+<div class="off-canvas-content" data-off-canvas-content>
+
+<header class="site-header expanded row">
+<div class="small-12 column">
+<a href="#" class="off-canvas-toggle hide-for-medium" data-toggle="off-canvas-menu"><svg class="svg-icon svg-icon-menu" version="1.1" id="Menu" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" enable-background="new 0 0 20 20" xml:space="preserve"> <path class="svg-icon-menu-path" fill="#53CDEC" d="M16.4,9H3.6C3.048,9,3,9.447,3,10c0,0.553,0.048,1,0.6,1H16.4c0.552,0,0.6-0.447,0.6-1C17,9.447,16.952,9,16.4,9z M16.4,13
+H3.6C3.048,13,3,13.447,3,14c0,0.553,0.048,1,0.6,1H16.4c0.552,0,0.6-0.447,0.6-1C17,13.447,16.952,13,16.4,13z M3.6,7H16.4
+C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.048,7,3.6,7z"/></svg>
+</a>
+<div class="title"><a href="index.html">RasterFrames</a></div>
+
+<!--
+<a href="https://www.example.com" class="logo show-for-medium">logo</a>
+-->
+</div>
+</header>
+
+<div class="expanded row">
+
+<div class="medium-3 large-2 show-for-medium column">
+<nav class="site-nav">
+<div class="nav-home">
+<a href="index.html" >
+<span class="home-icon">⌂</span>RasterFrames
+</a>
+<div class="version-number">
+0.4.1*
+</div>
+</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="getting-started.html" class="page">Getting Started</a></li>
+  <li><a href="creating-rasterframes.html" class="active page">Creating RasterFrames</a></li>
+  <li><a href="tile-statistics.html" class="page">Tile Statistics</a></li>
+  <li><a href="machine-learning.html" class="page">Machine Learning</a></li>
+  <li><a href="geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
+  <li><a href="reference.html" class="page">Reference</a></li>
+</ul>
+</div>
+
+</nav>
+</div>
+
+<div class="small-12 medium-9 large-10 column">
+<section class="site-content">
+
+<div class="page-header row">
+<div class="medium-12 show-for-medium column">
+<div class="nav-breadcrumbs">
+<ul>
+  <li><a href="index.html">RasterFrames</a></li>
+  <li>Creating RasterFrames</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div class="page-content row">
+<div class="small-12 large-9 column" id="docs">
+<h1><a href="#creating-rasterframes" name="creating-rasterframes" class="anchor"><span class="anchor-link"></span></a>Creating RasterFrames</h1>
+<h2><a href="#from-projectedextent" name="from-projectedextent" class="anchor"><span class="anchor-link"></span></a>From <code>ProjectedExtent</code></h2>
+<p>The simplest mechanism for getting a RasterFrame is to use the <code>toRF(tileCols, tileRows)</code> extension method on <code>ProjectedRaster</code>. </p>
+<pre class="prettyprint"><code class="language-scala">scala&gt; val scene = SinglebandGeoTiff(&quot;src/test/resources/L8-B8-Robinson-IL.tiff&quot;)
+scene: geotrellis.raster.io.geotiff.SinglebandGeoTiff = SinglebandGeoTiff(geotrellis.raster.UShortConstantNoDataArrayTile@9cd3492,Extent(431902.5, 4313647.5, 443512.5, 4321147.5),geotrellis.proj4.CRS$$anon$3@87f96f9f,Tags(Map(AREA_OR_POINT -&gt; POINT),List(Map())),GeoTiffOptions(geotrellis.raster.io.geotiff.Striped@fe7219b,geotrellis.raster.io.geotiff.compression.DeflateCompression$@6f6eed51,1,None))
+
+scala&gt; val rf = scene.projectedRaster.toRF(128, 128)
+rf: astraea.spark.rasterframes.RasterFrame = [spatial_key: struct&lt;col: int, row: int&gt;, tile: st_tile]
+
+scala&gt; rf.show(5, false)
++-----------+--------------------------------------------------------+
+|spatial_key|tile                                                    |
++-----------+--------------------------------------------------------+
+|[0,0]      |geotrellis.raster.UShortConstantNoDataArrayTile@dca17b1 |
+|[1,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@3db814f7|
+|[6,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@7b6e824e|
+|[3,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@5ef49a2f|
+|[4,2]      |geotrellis.raster.UShortConstantNoDataArrayTile@35e79df |
++-----------+--------------------------------------------------------+
+only showing top 5 rows
+
+</code></pre>
+<h2><a href="#from-tilelayerrdd" name="from-tilelayerrdd" class="anchor"><span class="anchor-link"></span></a>From <code>TileLayerRDD</code></h2>
+<p>Another option is to use a GeoTrellis <a href="https://docs.geotrellis.io/en/latest/guide/tile-backends.html"><code>LayerReader</code></a>, to get a <code>TileLayerRDD</code> for which there&rsquo;s also a <code>toRF</code> extension method. </p>
+<pre class="prettyprint"><code class="language-scala">scala&gt; import geotrellis.spark._
+import geotrellis.spark._
+
+scala&gt; val tiledLayer: TileLayerRDD[SpatialKey] = ???
+scala.NotImplementedError: an implementation is missing
+  at scala.Predef$.$qmark$qmark$qmark(Predef.scala:230)
+  ... 250 elided
+
+scala&gt; val rf = tiledLayer.toRF
+&lt;console&gt;:35: error: not found: value tiledLayer
+       val rf = tiledLayer.toRF
+                ^
+</code></pre>
+<h2><a href="#reassembling-rasters" name="reassembling-rasters" class="anchor"><span class="anchor-link"></span></a>Reassembling Rasters</h2>
+<p>For the purposes of debugging, the RasterFrame tiles can be reassembled back into a raster for viewing. However, keep in mind that this will download all the data to the driver, and reassemble it in-memory. So it&rsquo;s not appropriate for very large coverages.</p>
+<pre class="prettyprint"><code class="language-scala">val image = rf.toRaster($&quot;tile&quot;, 774, 500)
+val colors = ColorMap.fromQuantileBreaks(image.tile.histogram, ColorRamps.BlueToOrange)
+image.tile.color(colors).renderPng().write(&quot;target/scala-2.11/tut/rf-raster.png&quot;)
+</code></pre>
+<p><img src="rf-raster.png" /></p>
+<p>Now that we have a <code>RasterFrame</code> to work with, let&rsquo;s explore in the next section what we can do with it.</p>
+<div class="source-github">
+The source code for this page can be found <a href="https://github.com/s22s/raster-frames/tree/master/target/scala-2.11/tut/creating-rasterframes.md">here</a>.
+</div>
+
+<div class="nav-next">
+<p><strong>Next:</strong> <a href="tile-statistics.html">Tile Statistics</a></p>
+</div>
+</div>
+<div class="large-3 show-for-large column" data-sticky-container>
+<nav class="sidebar sticky" data-sticky data-anchor="docs" data-sticky-on="large">
+<div class="page-nav">
+<div class="nav-title">On this page:</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="creating-rasterframes.html#creating-rasterframes" class="header">Creating RasterFrames</a>
+  <ul>
+    <li><a href="creating-rasterframes.html#from-projectedextent" class="header">From <code>ProjectedExtent</code></a></li>
+    <li><a href="creating-rasterframes.html#from-tilelayerrdd" class="header">From <code>TileLayerRDD</code></a></li>
+    <li><a href="creating-rasterframes.html#reassembling-rasters" class="header">Reassembling Rasters</a></li>
+  </ul></li>
+</ul>
+</div>
+</div>
+</nav>
+</div>
+</div>
+
+</section>
+</div>
+
+</div>
+
+<footer class="site-footer">
+
+<section class="site-footer-nav">
+<div class="expanded row">
+<div class="small-12 large-offset-2 large-10 column">
+<div class="row site-footer-content">
+
+<div class="small-12 medium-4 large-3 text-center column">
+<div class="nav-links">
+<ul>
+<!-- <li><a href="https://www.example.com/products/">Products</a> -->
+</ul>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</section>
+
+<section class="site-footer-base">
+<div class="expanded row">
+<div class="small-12 large-offset-2 large-10 column">
+<div class="row site-footer-content">
+
+<div class="small-12 text-center large-9 column">
+
+<!--
+<div class="copyright">
+<span class="text">&copy; 2017</span>
+<a href="https://www.example.com" class="logo">logo</a>
+</div>
+-->
+</div>
+
+</div>
+</div>
+</div>
+</section>
+</footer>
+
+</div>
+</div>
+</div>
+</body>
+
+<script type="text/javascript" src="lib/foundation/dist/foundation.min.js"></script>
+<script type="text/javascript">jQuery(document).foundation();</script>
+<script type="text/javascript" src="js/magellan.js"></script>
+
+<style type="text/css">@import "lib/prettify/prettify.css";</style>
+<script type="text/javascript" src="lib/prettify/prettify.js"></script>
+<script type="text/javascript" src="lib/prettify/lang-scala.js"></script>
+<script type="text/javascript">jQuery(function(){window.prettyPrint && prettyPrint()});</script>
+
+</html>
