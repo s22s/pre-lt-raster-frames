@@ -5,7 +5,7 @@
 <title>Creating RasterFrames · RasterFrames</title>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<meta name="description" content='RasterFrames'/>
+<meta name="description" content='RasterFrames brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer operations of GeoTrellis'/>
 <link href="https://fonts.googleapis.com/css?family=Roboto:100normal,100italic,300normal,300italic,400normal,400italic,500normal,500italic,700normal,700italic,900normal,900italicc" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="lib/jquery/jquery.min.js"></script>
 <script type="text/javascript" src="js/page.js"></script>
@@ -109,7 +109,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <h2><a href="#from-projectedextent" name="from-projectedextent" class="anchor"><span class="anchor-link"></span></a>From <code>ProjectedExtent</code></h2>
 <p>The simplest mechanism for getting a RasterFrame is to use the <code>toRF(tileCols, tileRows)</code> extension method on <code>ProjectedRaster</code>. </p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; val scene = SinglebandGeoTiff(&quot;src/test/resources/L8-B8-Robinson-IL.tiff&quot;)
-scene: geotrellis.raster.io.geotiff.SinglebandGeoTiff = SinglebandGeoTiff(geotrellis.raster.UShortConstantNoDataArrayTile@1b46ad47,Extent(431902.5, 4313647.5, 443512.5, 4321147.5),geotrellis.proj4.CRS$$anon$3@87f96f9f,Tags(Map(AREA_OR_POINT -&gt; POINT),List(Map())),GeoTiffOptions(geotrellis.raster.io.geotiff.Striped@2d06b944,geotrellis.raster.io.geotiff.compression.DeflateCompression$@3040536,1,None))
+scene: geotrellis.raster.io.geotiff.SinglebandGeoTiff = SinglebandGeoTiff(geotrellis.raster.UShortConstantNoDataArrayTile@4c3fd0c,Extent(431902.5, 4313647.5, 443512.5, 4321147.5),geotrellis.proj4.CRS$$anon$3@87f96f9f,Tags(Map(AREA_OR_POINT -&gt; POINT),List(Map())),GeoTiffOptions(geotrellis.raster.io.geotiff.Striped@5216a0e,geotrellis.raster.io.geotiff.compression.DeflateCompression$@1e91cc3b,1,None))
 
 scala&gt; val rf = scene.projectedRaster.toRF(128, 128)
 rf: astraea.spark.rasterframes.RasterFrame = [spatial_key: struct&lt;col: int, row: int&gt;, tile: st_tile]
@@ -118,11 +118,11 @@ scala&gt; rf.show(5, false)
 +-----------+--------------------------------------------------------+
 |spatial_key|tile                                                    |
 +-----------+--------------------------------------------------------+
-|[0,0]      |geotrellis.raster.UShortConstantNoDataArrayTile@5018fa7c|
-|[1,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@f65a5f  |
-|[6,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@2e9fb50d|
-|[3,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@7c3ef982|
-|[4,2]      |geotrellis.raster.UShortConstantNoDataArrayTile@6be23763|
+|[0,0]      |geotrellis.raster.UShortConstantNoDataArrayTile@166c8b41|
+|[1,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@41681bf1|
+|[6,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@3a0ab18b|
+|[3,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@f504399 |
+|[4,2]      |geotrellis.raster.UShortConstantNoDataArrayTile@7d94f7b1|
 +-----------+--------------------------------------------------------+
 only showing top 5 rows
 
@@ -135,7 +135,7 @@ import geotrellis.spark._
 scala&gt; val tiledLayer: TileLayerRDD[SpatialKey] = ???
 scala.NotImplementedError: an implementation is missing
   at scala.Predef$.$qmark$qmark$qmark(Predef.scala:230)
-  ... 250 elided
+  ... 254 elided
 
 scala&gt; val rf = tiledLayer.toRF
 &lt;console&gt;:35: error: not found: value tiledLayer
