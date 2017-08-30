@@ -8,7 +8,6 @@ import geotrellis.raster.render.{ColorMap, ColorRamp}
 import geotrellis.raster.{ProjectedRaster, Tile, TileFeature, TileLayout}
 import geotrellis.spark._
 import geotrellis.spark.io._
-import geotrellis.spark.testkit.TileLayerRDDBuilders
 import geotrellis.spark.tiling._
 import geotrellis.vector.{Extent, ProjectedExtent}
 import org.apache.spark.sql.functions._
@@ -32,9 +31,6 @@ class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
 
       assert(rf.tileColumns.nonEmpty)
       assert(rf.spatialKeyColumn.toString() == "spatial_key")
-
-//      rf.printSchema()
-//      rf.orderBy("spatial_key").show(false)
 
       assert(rf.schema.head.metadata.contains(CONTEXT_METADATA_KEY))
       assert(rf.schema.head.metadata.json.contains("tileLayout"))
@@ -66,7 +62,7 @@ class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
 
       val rf = WithTFContextRDDMethods(tileLayerRDD).toRF
 
-      rf.show(false)
+      assert(rf === rf)
     }
 
     it("should convert a GeoTiff to RasterFrame") {
@@ -83,7 +79,6 @@ class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
     it("should provide TileLayerMetadata") {
       val rf = sampleGeoTiff.projectedRaster.toRF(256, 256)
       val tlm = rf.tileLayerMetadata
-      rf.select(rf.spatialKeyColumn).show(100)
       assert(tlm.bounds.get._1 === SpatialKey(0, 0))
       assert(tlm.bounds.get._2 === SpatialKey(3, 1))
     }
@@ -124,7 +119,8 @@ class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
       val computed = rf.clipLayerExtent.tileLayerMetadata.extent
       basicallySame(expected, computed)
 
-      val rf2 = sampleGeoTiff.projectedRaster.toRF(256, 256)
+      val pr = sampleGeoTiff.projectedRaster
+      val rf2 = pr.toRF(256, 256)
       val expected2 = rf2.tileLayerMetadata.extent
       val computed2 = rf2.clipLayerExtent.tileLayerMetadata.extent
       basicallySame(expected2, computed2)

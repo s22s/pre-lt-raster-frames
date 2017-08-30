@@ -81,15 +81,11 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
       .map(k ⇒ KeyBounds(k, k))
       .reduce(_ combine _)
 
-    val realExtent = trans(keyBounds.toGridBounds())
+    val gridExtent = trans(keyBounds.toGridBounds())
 
-//    println(metadata)
-//    println(realExtent)
-//    println(keyBounds)
+    val newExtent = gridExtent.intersection(metadata.extent).getOrElse(gridExtent)
 
-    val updatedMetadata = metadata.copy(extent = realExtent, bounds = keyBounds) //, layout = metadata.layout.copy(realExtent))
-
-//    println(updatedMetadata)
+    val updatedMetadata = metadata.copy(extent = newExtent, bounds = keyBounds)
 
     self.addColumnMetadata(spatialKeyColumn, CONTEXT_METADATA_KEY, updatedMetadata.asColumnMetadata).certify
   }
