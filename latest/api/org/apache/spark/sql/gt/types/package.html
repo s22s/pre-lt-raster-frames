@@ -1,0 +1,410 @@
+<!DOCTYPE html >
+<html>
+        <head>
+          <title>types - org.apache.spark.sql.gt.types</title>
+          <meta name="description" content="types - org.apache.spark.sql.gt.types" />
+          <meta name="keywords" content="types org.apache.spark.sql.gt.types" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../../lib/tools.tooltip.js"></script>
+      
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../../../index.html';
+            var hash = 'org.apache.spark.sql.gt.types.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img alt="Package" src="../../../../../../lib/package_big.png" />
+        <p id="owner"><a href="../../../../../package.html" class="extype" name="org">org</a>.<a href="../../../../package.html" class="extype" name="org.apache">apache</a>.<a href="../../../package.html" class="extype" name="org.apache.spark">spark</a>.<a href="../../package.html" class="extype" name="org.apache.spark.sql">sql</a>.<a href="../package.html" class="extype" name="org.apache.spark.sql.gt">gt</a></p>
+        <h1>types</h1><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.package" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">types</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Module of GeoTrellis UDTs for Spark/Catalyst.
+</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>4/12/17</p></dd></dl><div class="toggleContainer block">
+          <span class="toggle">Linear Supertypes</span>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+        </div></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        <div id="order">
+              <span class="filtertype">Ordering</span>
+              <ol>
+                
+                <li class="alpha in"><span>Alphabetic</span></li>
+                <li class="inherit out"><span>By Inheritance</span></li>
+              </ol>
+            </div>
+        <div id="ancestors">
+                <span class="filtertype">Inherited<br />
+                </span>
+                <ol id="linearization">
+                  <li class="in" name="org.apache.spark.sql.gt.types"><span>types</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                </ol>
+              </div><div id="ancestors">
+            <span class="filtertype"></span>
+            <ol>
+              <li class="hideall out"><span>Hide All</span></li>
+              <li class="showall in"><span>Show All</span></li>
+            </ol>
+          </div>
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="org.apache.spark.sql.gt.types.DelegatingSubfieldEncoder" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="DelegatingSubfieldEncoderextendsAnyRef"></a>
+      <a id="DelegatingSubfieldEncoder:DelegatingSubfieldEncoder"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="DelegatingSubfieldEncoder.html"><span class="name">DelegatingSubfieldEncoder</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.package@DelegatingSubfieldEncoderextendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Encoder builder for types composed of other fields with {{ExpressionEncoder}}s.</p><div class="fullcomment"><div class="comment cmt"><p>Encoder builder for types composed of other fields with {{ExpressionEncoder}}s.
+</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>8/2/17</p></dd></dl></div>
+    </li><li name="org.apache.spark.sql.gt.types.KryoBackedUDT" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="KryoBackedUDT[T&gt;:Null]extendsAnyRef"></a>
+      <a id="KryoBackedUDT[T&gt;:Null]:KryoBackedUDT[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="KryoBackedUDT.html"><span class="name">KryoBackedUDT</span></a><span class="tparams">[<span name="T">T &gt;: <span class="extype" name="scala.Null">Null</span></span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.package@KryoBackedUDT[T&gt;:Null]extendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>Since</dt><dd><p>4/18/17</p></dd></dl></div>
+    </li><li name="org.apache.spark.sql.gt.types.WKBBackedUDT" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="WKBBackedUDT[T&gt;:Null&lt;:geotrellis.vector.Geometry]extendsAnyRef"></a>
+      <a id="WKBBackedUDT[T&lt;:Geometry&gt;:Null]:WKBBackedUDT[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="WKBBackedUDT.html"><span class="name">WKBBackedUDT</span></a><span class="tparams">[<span name="T">T &gt;: <span class="extype" name="scala.Null">Null</span> &lt;: <span class="extype" name="geotrellis.vector.Geometry">Geometry</span></span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.package@WKBBackedUDT[T&gt;:Null&lt;:geotrellis.vector.Geometry]extendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>Since</dt><dd><p>4/18/17</p></dd></dl></div>
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="org.apache.spark.sql.gt.types.CRSEncoder" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="CRSEncoder"></a>
+      <a id="CRSEncoder:CRSEncoder"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="CRSEncoder$.html"><span class="name">CRSEncoder</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.package@CRSEncoder" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Custom encoder for GT <span class="extype" name="CellType">CellType</span>.</p><div class="fullcomment"><div class="comment cmt"><p>Custom encoder for GT <span class="extype" name="CellType">CellType</span>. It's necessary since <span class="extype" name="CellType">CellType</span> is a type alias of
+a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>7/21/17</p></dd></dl></div>
+    </li><li name="org.apache.spark.sql.gt.types.CellTypeEncoder" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="CellTypeEncoder"></a>
+      <a id="CellTypeEncoder:CellTypeEncoder"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="CellTypeEncoder$.html"><span class="name">CellTypeEncoder</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.package@CellTypeEncoder" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Custom encoder for GT <span class="extype" name="CellType">CellType</span>.</p><div class="fullcomment"><div class="comment cmt"><p>Custom encoder for GT <span class="extype" name="CellType">CellType</span>. It's necessary since <span class="extype" name="CellType">CellType</span> is a type alias of
+a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>7/21/17</p></dd></dl></div>
+    </li><li name="org.apache.spark.sql.gt.types.HistogramUDT" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="HistogramUDT"></a>
+      <a id="HistogramUDT:HistogramUDT"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="HistogramUDT$.html"><span class="name">HistogramUDT</span></a><span class="result"> extends <span class="extype" name="org.apache.spark.sql.gt.types.HistogramUDT">HistogramUDT</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.package@HistogramUDT" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="org.apache.spark.sql.gt.types.LineUDT" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LineUDT"></a>
+      <a id="LineUDT:LineUDT"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="LineUDT$.html"><span class="name">LineUDT</span></a><span class="result"> extends <span class="extype" name="org.apache.spark.sql.gt.types.LineUDT">LineUDT</span> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.package@LineUDT" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="org.apache.spark.sql.gt.types.MultiLineUDT" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="MultiLineUDT"></a>
+      <a id="MultiLineUDT:MultiLineUDT"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="MultiLineUDT$.html"><span class="name">MultiLineUDT</span></a><span class="result"> extends <span class="extype" name="org.apache.spark.sql.gt.types.MultiLineUDT">MultiLineUDT</span> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.package@MultiLineUDT" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="org.apache.spark.sql.gt.types.MultiPolygonUDT" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="MultiPolygonUDT"></a>
+      <a id="MultiPolygonUDT:MultiPolygonUDT"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="MultiPolygonUDT$.html"><span class="name">MultiPolygonUDT</span></a><span class="result"> extends <span class="extype" name="org.apache.spark.sql.gt.types.MultiPolygonUDT">MultiPolygonUDT</span> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.package@MultiPolygonUDT" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="org.apache.spark.sql.gt.types.MultibandTileUDT" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="MultibandTileUDT"></a>
+      <a id="MultibandTileUDT:MultibandTileUDT"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="MultibandTileUDT$.html"><span class="name">MultibandTileUDT</span></a><span class="result"> extends <span class="extype" name="org.apache.spark.sql.gt.types.MultibandTileUDT">MultibandTileUDT</span> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.package@MultibandTileUDT" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="org.apache.spark.sql.gt.types.PointUDT" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="PointUDT"></a>
+      <a id="PointUDT:PointUDT"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="PointUDT$.html"><span class="name">PointUDT</span></a><span class="result"> extends <span class="extype" name="org.apache.spark.sql.gt.types.PointUDT">PointUDT</span> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.package@PointUDT" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="org.apache.spark.sql.gt.types.PolygonUDT" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="PolygonUDT"></a>
+      <a id="PolygonUDT:PolygonUDT"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="PolygonUDT$.html"><span class="name">PolygonUDT</span></a><span class="result"> extends <span class="extype" name="org.apache.spark.sql.gt.types.PolygonUDT">PolygonUDT</span> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.package@PolygonUDT" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="org.apache.spark.sql.gt.types.ProjectedExtentEncoder" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ProjectedExtentEncoder"></a>
+      <a id="ProjectedExtentEncoder:ProjectedExtentEncoder"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="ProjectedExtentEncoder$.html"><span class="name">ProjectedExtentEncoder</span></a><span class="result"> extends <a href="DelegatingSubfieldEncoder.html" class="extype" name="org.apache.spark.sql.gt.types.DelegatingSubfieldEncoder">DelegatingSubfieldEncoder</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.package@ProjectedExtentEncoder" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Custom encoder for <span class="extype" name="ProjectedExtent">ProjectedExtent</span>.</p><div class="fullcomment"><div class="comment cmt"><p>Custom encoder for <span class="extype" name="ProjectedExtent">ProjectedExtent</span>. Necessary because CRS isn't a case class.
+</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>8/2/17</p></dd></dl></div>
+    </li><li name="org.apache.spark.sql.gt.types.TemporalProjectedExtentEncoder" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TemporalProjectedExtentEncoder"></a>
+      <a id="TemporalProjectedExtentEncoder:TemporalProjectedExtentEncoder"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="TemporalProjectedExtentEncoder$.html"><span class="name">TemporalProjectedExtentEncoder</span></a><span class="result"> extends <a href="DelegatingSubfieldEncoder.html" class="extype" name="org.apache.spark.sql.gt.types.DelegatingSubfieldEncoder">DelegatingSubfieldEncoder</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.package@TemporalProjectedExtentEncoder" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Custom encoder for <span class="extype" name="ProjectedExtent">ProjectedExtent</span>.</p><div class="fullcomment"><div class="comment cmt"><p>Custom encoder for <span class="extype" name="ProjectedExtent">ProjectedExtent</span>. Necessary because <span class="extype" name="geotrellis.proj4.CRS">geotrellis.proj4.CRS</span> within <span class="extype" name="ProjectedExtent">ProjectedExtent</span> isn't a case class, and <span class="extype" name="ZonedDateTime">ZonedDateTime</span> doesn't have a natural encoder.
+</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>8/2/17</p></dd></dl></div>
+    </li><li name="org.apache.spark.sql.gt.types.TileLayerMetadataEncoder" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TileLayerMetadataEncoder"></a>
+      <a id="TileLayerMetadataEncoder:TileLayerMetadataEncoder"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="TileLayerMetadataEncoder$.html"><span class="name">TileLayerMetadataEncoder</span></a><span class="result"> extends <a href="DelegatingSubfieldEncoder.html" class="extype" name="org.apache.spark.sql.gt.types.DelegatingSubfieldEncoder">DelegatingSubfieldEncoder</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.package@TileLayerMetadataEncoder" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Specialized encoder for <span class="extype" name="TileLayerMetadata">TileLayerMetadata</span>, necessary to be able to delegate to the
+speciallized cell type and crs encoders.</p><div class="fullcomment"><div class="comment cmt"><p>Specialized encoder for <span class="extype" name="TileLayerMetadata">TileLayerMetadata</span>, necessary to be able to delegate to the
+speciallized cell type and crs encoders.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>7/21/17</p></dd></dl></div>
+    </li><li name="org.apache.spark.sql.gt.types.TileUDT" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="TileUDT"></a>
+      <a id="TileUDT:TileUDT"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="TileUDT$.html"><span class="name">TileUDT</span></a><span class="result"> extends <span class="extype" name="org.apache.spark.sql.gt.types.TileUDT">TileUDT</span> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.package@TileUDT" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        <div class="parent" name="scala.AnyRef">
+              <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
+            </div><div class="parent" name="scala.Any">
+              <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
+            </div>
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+
+
+    </body>
+      </html>
