@@ -28,7 +28,7 @@ rf.show(5, false)
 
 Another option is to use a GeoTrellis [`LayerReader`](https://docs.geotrellis.io/en/latest/guide/tile-backends.html), to get a `TileLayerRDD` for which there's also a `toRF` extension method. 
 
-```tut:nofail
+```scala
 import geotrellis.spark._
 val tiledLayer: TileLayerRDD[SpatialKey] = ???
 val rf = tiledLayer.toRF
