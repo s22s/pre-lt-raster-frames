@@ -13,10 +13,7 @@
 <link rel="stylesheet" type="text/css" href="lib/normalize.css/normalize.css"/>
 <link rel="stylesheet" type="text/css" href="lib/foundation/dist/foundation.min.css"/>
 <link rel="stylesheet" type="text/css" href="css/page.css"/>
-
-<!--
-<link rel="shortcut icon" href="images/favicon.ico" />
--->
+<link rel="shortcut icon" href="images/astraea.ico" />
 </head>
 
 <body>
@@ -30,7 +27,7 @@
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.4.1
+0.4.2*
 </div>
 </div>
 <div class="nav-toc">
@@ -57,9 +54,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 </a>
 <div class="title"><a href="index.html">RasterFrames</a></div>
 
-<!--
-<a href="https://www.example.com" class="logo show-for-medium">logo</a>
--->
+<a href="http://www.astraea.earth" class="logo show-for-medium"><img style="height: 40px;" src="images/astraea.png"/></a>
 </div>
 </header>
 
@@ -72,7 +67,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.4.1
+0.4.2*
 </div>
 </div>
 <div class="nav-toc">
@@ -112,7 +107,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 import geotrellis.raster.equalization._
 
 scala&gt; val equalizer = udf((t: Tile) =&gt; t.equalize())
-equalizer: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(&lt;function1&gt;,org.apache.spark.sql.gt.types.TileUDT@32cee847,Some(List(org.apache.spark.sql.gt.types.TileUDT@32cee847)))
+equalizer: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(&lt;function1&gt;,org.apache.spark.sql.gt.types.TileUDT@3ab53584,Some(List(org.apache.spark.sql.gt.types.TileUDT@3ab53584)))
 
 scala&gt; val equalized = rf.select(equalizer($&quot;tile&quot;) as &quot;equalized&quot;)
 equalized: org.apache.spark.sql.DataFrame = [equalized: st_tile]
@@ -132,7 +127,7 @@ only showing top 5 rows
 </code></pre>
 <p>Here&rsquo;s an example downsampling a tile and rendering each tile as a matrix of numerical values.</p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; val downsample = udf((t: Tile) =&gt; t.resample(4, 4))
-downsample: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(&lt;function1&gt;,org.apache.spark.sql.gt.types.TileUDT@32cee847,Some(List(org.apache.spark.sql.gt.types.TileUDT@32cee847)))
+downsample: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(&lt;function1&gt;,org.apache.spark.sql.gt.types.TileUDT@3ab53584,Some(List(org.apache.spark.sql.gt.types.TileUDT@3ab53584)))
 
 scala&gt; val downsampled = rf.select(renderAscii(downsample($&quot;tile&quot;)) as &quot;minime&quot;)
 downsampled: org.apache.spark.sql.DataFrame = [minime: string]
@@ -175,10 +170,6 @@ scala&gt; downsampled.show(5, false)
 only showing top 5 rows
 
 </code></pre>
-<div class="source-github">
-The source code for this page can be found <a href="https://github.com/s22s/raster-frames/tree/master/target/scala-2.11/tut/geotrellis-ops.md">here</a>.
-</div>
-
 <div class="nav-next">
 <p><strong>Next:</strong> <a href="reference.html">Reference</a></p>
 </div>
@@ -216,23 +207,19 @@ The source code for this page can be found <a href="https://github.com/s22s/rast
 <div class="expanded row">
 <div class="small-12 large-offset-2 large-10 column">
 <div class="row site-footer-content">
-
 <div class="small-12 text-center large-9 column">
-
 <!--
 <div class="copyright">
 <span class="text">&copy; 2017</span>
-<a href="https://www.example.com" class="logo">logo</a>
+<a href="http://www.astraea.earth/" class="logo"><img src="images/astraea.png"/></a>
 </div>
 -->
 </div>
-
 </div>
 </div>
 </div>
 </section>
 </footer>
-
 </div>
 </div>
 </div>

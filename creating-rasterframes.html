@@ -13,10 +13,7 @@
 <link rel="stylesheet" type="text/css" href="lib/normalize.css/normalize.css"/>
 <link rel="stylesheet" type="text/css" href="lib/foundation/dist/foundation.min.css"/>
 <link rel="stylesheet" type="text/css" href="css/page.css"/>
-
-<!--
-<link rel="shortcut icon" href="images/favicon.ico" />
--->
+<link rel="shortcut icon" href="images/astraea.ico" />
 </head>
 
 <body>
@@ -30,7 +27,7 @@
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.4.1
+0.4.2*
 </div>
 </div>
 <div class="nav-toc">
@@ -57,9 +54,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 </a>
 <div class="title"><a href="index.html">RasterFrames</a></div>
 
-<!--
-<a href="https://www.example.com" class="logo show-for-medium">logo</a>
--->
+<a href="http://www.astraea.earth" class="logo show-for-medium"><img style="height: 40px;" src="images/astraea.png"/></a>
 </div>
 </header>
 
@@ -72,7 +67,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.4.1
+0.4.2*
 </div>
 </div>
 <div class="nav-toc">
@@ -109,7 +104,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <h2><a href="#from-projectedextent" name="from-projectedextent" class="anchor"><span class="anchor-link"></span></a>From <code>ProjectedExtent</code></h2>
 <p>The simplest mechanism for getting a RasterFrame is to use the <code>toRF(tileCols, tileRows)</code> extension method on <code>ProjectedRaster</code>. </p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; val scene = SinglebandGeoTiff(&quot;src/test/resources/L8-B8-Robinson-IL.tiff&quot;)
-scene: geotrellis.raster.io.geotiff.SinglebandGeoTiff = SinglebandGeoTiff(geotrellis.raster.UShortConstantNoDataArrayTile@49ffd7a2,Extent(431902.5, 4313647.5, 443512.5, 4321147.5),geotrellis.proj4.CRS$$anon$3@87f96f9f,Tags(Map(AREA_OR_POINT -&gt; POINT),List(Map())),GeoTiffOptions(geotrellis.raster.io.geotiff.Striped@758abc02,geotrellis.raster.io.geotiff.compression.DeflateCompression$@42ff37d6,1,None))
+scene: geotrellis.raster.io.geotiff.SinglebandGeoTiff = SinglebandGeoTiff(geotrellis.raster.UShortConstantNoDataArrayTile@2c6f0d39,Extent(431902.5, 4313647.5, 443512.5, 4321147.5),geotrellis.proj4.CRS$$anon$3@87f96f9f,Tags(Map(AREA_OR_POINT -&gt; POINT),List(Map())),GeoTiffOptions(geotrellis.raster.io.geotiff.Striped@98a2adc,geotrellis.raster.io.geotiff.compression.DeflateCompression$@5dd8e811,1,None))
 
 scala&gt; val rf = scene.projectedRaster.toRF(128, 128)
 rf: astraea.spark.rasterframes.RasterFrame = [spatial_key: struct&lt;col: int, row: int&gt;, tile: st_tile]
@@ -118,11 +113,11 @@ scala&gt; rf.show(5, false)
 +-----------+--------------------------------------------------------+
 |spatial_key|tile                                                    |
 +-----------+--------------------------------------------------------+
-|[0,0]      |geotrellis.raster.UShortConstantNoDataArrayTile@525e757 |
-|[1,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@b5f942d |
-|[6,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@2337117c|
-|[3,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@1081701 |
-|[4,2]      |geotrellis.raster.UShortConstantNoDataArrayTile@2b3d5728|
+|[0,0]      |geotrellis.raster.UShortConstantNoDataArrayTile@2e190356|
+|[1,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@6991dc4 |
+|[6,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@447a2bed|
+|[3,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@2f82c36b|
+|[4,2]      |geotrellis.raster.UShortConstantNoDataArrayTile@4967767e|
 +-----------+--------------------------------------------------------+
 only showing top 5 rows
 
@@ -150,10 +145,6 @@ image.tile.color(colors).renderPng().write(&quot;target/scala-2.11/tut/rf-raster
 </code></pre>
 <p><img src="rf-raster.png" /></p>
 <p>Now that we have a <code>RasterFrame</code> to work with, let&rsquo;s explore in the next section what we can do with it.</p>
-<div class="source-github">
-The source code for this page can be found <a href="https://github.com/s22s/raster-frames/tree/master/target/scala-2.11/tut/creating-rasterframes.md">here</a>.
-</div>
-
 <div class="nav-next">
 <p><strong>Next:</strong> <a href="tile-statistics.html">Tile Statistics</a></p>
 </div>
@@ -206,23 +197,19 @@ The source code for this page can be found <a href="https://github.com/s22s/rast
 <div class="expanded row">
 <div class="small-12 large-offset-2 large-10 column">
 <div class="row site-footer-content">
-
 <div class="small-12 text-center large-9 column">
-
 <!--
 <div class="copyright">
 <span class="text">&copy; 2017</span>
-<a href="https://www.example.com" class="logo">logo</a>
+<a href="http://www.astraea.earth/" class="logo"><img src="images/astraea.png"/></a>
 </div>
 -->
 </div>
-
 </div>
 </div>
 </div>
 </section>
 </footer>
-
 </div>
 </div>
 </div>
