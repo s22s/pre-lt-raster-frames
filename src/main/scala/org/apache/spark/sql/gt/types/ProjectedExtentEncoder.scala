@@ -23,14 +23,11 @@ import org.apache.spark.sql.gt.Implicits
 /**
  * Custom encoder for [[ProjectedExtent]]. Necessary because CRS isn't a case class.
  *
- * @author sfitch 
+ * @author sfitch
  * @since 8/2/17
  */
 object ProjectedExtentEncoder extends DelegatingSubfieldEncoder {
   def apply(): ExpressionEncoder[ProjectedExtent] = {
-    create(Seq(
-      "extent" -> Implicits.extentEncoder,
-      "crs" -> Implicits.crsEncoder
-    ))
+    create(Seq("extent" -> Implicits.extentEncoder, "crs" -> Implicits.crsEncoder))
   }
 }

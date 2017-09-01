@@ -29,7 +29,7 @@ import scala.reflect.classTag
 /**
  * Custom encoder for GT [[CellType]]. It's necessary since [[CellType]] is a type alias of
  * a type intersection.
- * @author sfitch 
+ * @author sfitch
  * @since 7/21/17
  */
 object CellTypeEncoder {
@@ -42,22 +42,17 @@ object CellTypeEncoder {
 
     val intermediateType = ObjectType(classOf[String])
     val serializer: Expression =
-      StaticInvoke(classOf[UTF8String], StringType, "fromString",
+      StaticInvoke(
+        classOf[UTF8String],
+        StringType,
+        "fromString",
         Invoke(inputObject, "name", intermediateType, Nil) :: Nil
       )
 
     val inputRow = GetColumnByOrdinal(0, schema)
     val deserializer: Expression =
-      StaticInvoke(CellType.getClass, ctType, "fromName",
-        Invoke(inputRow, "toString", intermediateType, Nil) :: Nil
-      )
+      StaticInvoke(CellType.getClass, ctType, "fromName", Invoke(inputRow, "toString", intermediateType, Nil) :: Nil)
 
-    ExpressionEncoder[CellType](
-      schema,
-      flat = false,
-      Seq(serializer),
-      deserializer,
-      classTag[CellType]
-    )
+    ExpressionEncoder[CellType](schema, flat = false, Seq(serializer), deserializer, classTag[CellType])
   }
 }

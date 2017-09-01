@@ -39,6 +39,7 @@ import scala.reflect.runtime.universe._
  * @since 4/3/17
  */
 trait ColumnFunctions {
+  // format: off
   private val encoders = new SQLImplicits {
     override protected def _sqlContext: SQLContext = ???
   }

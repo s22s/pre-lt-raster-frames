@@ -22,7 +22,7 @@ import org.apache.spark.sql.catalyst.analysis.FunctionRegistry
 /**
  * Object responsible for registering functions with Catalyst
  *
- * @author sfitch 
+ * @author sfitch
  * @since 4/12/17
  */
 private[gt] object Registrator {

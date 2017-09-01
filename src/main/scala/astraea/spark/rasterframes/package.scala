@@ -16,7 +16,6 @@
 
 package astraea.spark
 
-
 import geotrellis.raster.{ProjectedRaster, Tile, TileFeature}
 import geotrellis.spark.{Bounds, ContextRDD, Metadata, SpatialComponent, TileLayerMetadata}
 import geotrellis.util.GetComponent
@@ -38,14 +37,19 @@ import shapeless.tag.@@
  * @since 7/18/17
  */
 package object rasterframes extends Implicits with ColumnFunctions {
+
   /** Key under which ContextRDD metadata is stored. */
   val CONTEXT_METADATA_KEY = "context"
+
   /** Default RasterFrame spatial column name. */
   val SPATIAL_KEY_COLUMN = "spatial_key"
+
   /** Default RasterFrame temporal column name. */
   val TEMPORAL_KEY_COLUMN = "temporal_key"
+
   /** Default RasterFrame tile column name. */
   val TILE_COLUMN = "tile"
+
   /** Default RasterFrame [[TileFeature.data]] column name. */
   val TILE_FEATURE_DATA_COLUMN = "tile_data"
 
@@ -82,18 +86,19 @@ package object rasterframes extends Implicits with ColumnFunctions {
   implicit class WithProjectedRasterMethods(val self: ProjectedRaster[Tile]) extends ProjectedRasterMethods
   implicit class WithDataFrameMethods(val self: DataFrame) extends DataFrameMethods
   implicit class WithRasterFrameMethods(val self: RasterFrame) extends RasterFrameMethods
-  implicit class WithContextRDDMethods[K: SpatialComponent: JsonFormat: TypeTag](val self: RDD[(K, Tile)] with Metadata[TileLayerMetadata[K]])
-    (implicit spark: SparkSession) extends ContextRDDMethods[K]
+  implicit class WithContextRDDMethods[K: SpatialComponent: JsonFormat: TypeTag](
+    val self: RDD[(K, Tile)] with Metadata[TileLayerMetadata[K]]
+  )(implicit spark: SparkSession)
+      extends ContextRDDMethods[K]
 
-  implicit class WithTFContextRDDMethods[
-    K: SpatialComponent: JsonFormat: TypeTag,
-    D: TypeTag
-  ](val self: RDD[(K, TileFeature[Tile, D])] with Metadata[TileLayerMetadata[K]])
-    (implicit spark: SparkSession) extends TFContextRDDMethods[K, D]
+  implicit class WithTFContextRDDMethods[K: SpatialComponent: JsonFormat: TypeTag, D: TypeTag](
+    val self: RDD[(K, TileFeature[Tile, D])] with Metadata[TileLayerMetadata[K]]
+  )(implicit spark: SparkSession)
+      extends TFContextRDDMethods[K, D]
 
   type TileFeatureLayerRDD[K, D] = RDD[(K, TileFeature[Tile, D])] with Metadata[TileLayerMetadata[K]]
   object TileFeatureLayerRDD {
-    def apply[K, D](rdd: RDD[(K, TileFeature[Tile, D])], metadata: TileLayerMetadata[K]): TileFeatureLayerRDD[K,D] =
+    def apply[K, D](rdd: RDD[(K, TileFeature[Tile, D])], metadata: TileLayerMetadata[K]): TileFeatureLayerRDD[K, D] =
       new ContextRDD(rdd, metadata)
   }
 

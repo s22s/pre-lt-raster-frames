@@ -11,7 +11,7 @@ import org.apache.spark.sql.types.{DataType, StructField, StructType}
 /**
  * Catalyst aggregate function that counts non-`NoData` values in a cell-wise fashion.
  *
- * @author sfitch 
+ * @author sfitch
  * @since 8/11/17
  */
 class LocalCountAggregateFunction extends UserDefinedAggregateFunction {
@@ -19,7 +19,6 @@ class LocalCountAggregateFunction extends UserDefinedAggregateFunction {
 
   private val incCount = safeBinaryOp((t1: Tile, t2: Tile) ⇒ Add(t1, Defined(t2)))
   private val add = safeBinaryOp(Add.apply(_: Tile, _: Tile))
-
 
   override def dataType: DataType = new TileUDT()
 
@@ -32,11 +31,10 @@ class LocalCountAggregateFunction extends UserDefinedAggregateFunction {
 
   override def update(buffer: MutableAggregationBuffer, input: Row): Unit = {
     val right = input.getAs[Tile](0)
-    if(right != null) {
-      if(buffer(0) == null) {
+    if (right != null) {
+      if (buffer(0) == null) {
         buffer(0) = Defined(right).convert(IntConstantNoDataCellType)
-      }
-      else {
+      } else {
         val left = buffer.getAs[Tile](0)
         buffer(0) = incCount(left, right)
       }

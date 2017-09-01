@@ -27,7 +27,7 @@ import org.apache.spark.sql.types._
 /**
  * Aggregation function for applying a [[LocalTileBinaryOp]] pairwise across all tiles. Assumes Monoid algebra.
  *
- * @author sfitch 
+ * @author sfitch
  * @since 4/17/17
  */
 class LocalTileOpAggregateFunction(op: LocalTileBinaryOp) extends UserDefinedAggregateFunction {
@@ -46,10 +46,9 @@ class LocalTileOpAggregateFunction(op: LocalTileBinaryOp) extends UserDefinedAgg
     buffer(0) = null
 
   override def update(buffer: MutableAggregationBuffer, input: Row): Unit = {
-    if(buffer(0) == null) {
+    if (buffer(0) == null) {
       buffer(0) = input(0)
-    }
-    else {
+    } else {
       val t1 = buffer.getAs[Tile](0)
       val t2 = input.getAs[Tile](0)
       buffer(0) = safeOp(t1, t2)

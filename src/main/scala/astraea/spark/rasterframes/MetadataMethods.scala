@@ -22,7 +22,7 @@ import org.apache.spark.sql.types.{Metadata ⇒ SQLMetadata}
 /**
  * Extension methods used for transforming the metadata in a ContextRDD.
  *
- * @author sfitch 
+ * @author sfitch
  * @since 7/18/17
  */
 abstract class MetadataMethods[M: JsonFormat] extends MethodExtensions[M] {
@@ -34,4 +34,3 @@ abstract class MetadataMethods[M: JsonFormat] extends MethodExtensions[M] {
     }
   }
 }
-

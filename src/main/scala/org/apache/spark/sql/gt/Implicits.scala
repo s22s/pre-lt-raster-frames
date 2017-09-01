@@ -29,7 +29,6 @@ import org.apache.spark.sql.gt.types._
 
 import scala.reflect.runtime.universe._
 
-
 trait Implicits {
   implicit def singlebandTileEncoder: ExpressionEncoder[Tile] = ExpressionEncoder()
   implicit def multibandTileEncoder: Encoder[MultibandTile] = ExpressionEncoder()

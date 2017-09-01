@@ -25,16 +25,19 @@ import scala.util.Try
 /**
  * Extension methods over [[DataFrame]].
  *
- * @author sfitch 
+ * @author sfitch
  * @since 7/18/17
  */
-abstract class DataFrameMethods extends MethodExtensions[DataFrame]{
+abstract class DataFrameMethods extends MethodExtensions[DataFrame] {
 
   /** Add the metadata for the column with the given name. */
   def addColumnMetadata(column: Column, metadataKey: String, metadata: Metadata): DataFrame = {
-    val mergedMD = self.schema.find(_.name == column.columnName).map(col ⇒ {
-      new MetadataBuilder().withMetadata(col.metadata).putMetadata(metadataKey, metadata).build()
-    }).getOrElse(metadata)
+    val mergedMD = self.schema
+      .find(_.name == column.columnName)
+      .map(col ⇒ {
+        new MetadataBuilder().withMetadata(col.metadata).putMetadata(metadataKey, metadata).build()
+      })
+      .getOrElse(metadata)
 
     // Wish spark provided a better way of doing this.
     val df: DataFrame = self

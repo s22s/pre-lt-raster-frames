@@ -10,7 +10,7 @@ import org.apache.spark.sql.SparkSession
 /**
  * Extension methods on [[ProjectedRaster]] for creating [[RasterFrame]]s.
  *
- * @author sfitch 
+ * @author sfitch
  * @since 8/10/17
  */
 trait ProjectedRasterMethods extends MethodExtensions[ProjectedRaster[Tile]] {
@@ -34,13 +34,11 @@ trait ProjectedRasterMethods extends MethodExtensions[ProjectedRaster[Tile]] {
    * @param tileRows Max number of vertical cells per tile.
    * @param spark [[SparkSession]] in which to create [[RasterFrame]]
    */
-  def toRF(tileCols: Int, tileRows: Int)
-    (implicit spark: SparkSession): RasterFrame = {
+  def toRF(tileCols: Int, tileRows: Int)(implicit spark: SparkSession): RasterFrame = {
 
     val layout = LayoutDefinition(self.rasterExtent, tileCols, tileRows)
     val kb = KeyBounds(SpatialKey(0, 0), SpatialKey(layout.layoutCols - 1, layout.layoutRows - 1))
-    val tlm = TileLayerMetadata(
-      self.tile.cellType, layout, self.extent, self.crs, kb)
+    val tlm = TileLayerMetadata(self.tile.cellType, layout, self.extent, self.crs, kb)
 
     val rdd = spark.sparkContext.makeRDD(Seq((self.projectedExtent, self.tile)))
 

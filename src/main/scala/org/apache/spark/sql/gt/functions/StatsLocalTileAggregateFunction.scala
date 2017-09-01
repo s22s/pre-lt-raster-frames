@@ -28,7 +28,7 @@ import org.apache.spark.sql.types._
 /**
  * Aggregation function for computing multiple local (cell-wise) statistics across all tiles.
  *
- * @author sfitch 
+ * @author sfitch
  * @since 4/17/17
  */
 class StatsLocalTileAggregateFunction() extends UserDefinedAggregateFunction {
@@ -48,21 +48,27 @@ class StatsLocalTileAggregateFunction() extends UserDefinedAggregateFunction {
    */
   protected val reafiableUDT = new TileUDT()
 
-  override def dataType: DataType = StructType(Seq(
-    StructField("count", reafiableUDT),
-    StructField("min", reafiableUDT),
-    StructField("max", reafiableUDT),
-    StructField("mean", reafiableUDT),
-    StructField("variance", reafiableUDT)
-  ))
+  override def dataType: DataType =
+    StructType(
+      Seq(
+        StructField("count", reafiableUDT),
+        StructField("min", reafiableUDT),
+        StructField("max", reafiableUDT),
+        StructField("mean", reafiableUDT),
+        StructField("variance", reafiableUDT)
+      )
+    )
 
-  override def bufferSchema: StructType = StructType(Seq(
-    StructField("count", TileUDT),
-    StructField("min", TileUDT),
-    StructField("max", TileUDT),
-    StructField("sum", TileUDT),
-    StructField("sumSqr", TileUDT)
-  ))
+  override def bufferSchema: StructType =
+    StructType(
+      Seq(
+        StructField("count", TileUDT),
+        StructField("min", TileUDT),
+        StructField("max", TileUDT),
+        StructField("sum", TileUDT),
+        StructField("sumSqr", TileUDT)
+      )
+    )
 
   private val initFunctions = Seq(
     (t: Tile) ⇒ Defined(t).convert(IntConstantNoDataCellType),
@@ -94,14 +100,13 @@ class StatsLocalTileAggregateFunction() extends UserDefinedAggregateFunction {
 
   override def update(buffer: MutableAggregationBuffer, input: Row): Unit = {
     val right = input.getAs[Tile](0)
-    if(right != null) {
-      if(buffer(0) == null) {
-        for(i ← initFunctions.indices) {
+    if (right != null) {
+      if (buffer(0) == null) {
+        for (i ← initFunctions.indices) {
           buffer(i) = initFunctions(i)(right)
         }
-      }
-      else {
-        for(i ← updateFunctions.indices) {
+      } else {
+        for (i ← updateFunctions.indices) {
           val left = buffer.getAs[Tile](i)
           buffer(i) = updateFunctions(i)(left, right)
         }
@@ -110,7 +115,7 @@ class StatsLocalTileAggregateFunction() extends UserDefinedAggregateFunction {
   }
 
   override def merge(buffer1: MutableAggregationBuffer, buffer2: Row): Unit = {
-    for(i ← mergeFunctions.indices) {
+    for (i ← mergeFunctions.indices) {
       val left = buffer1.getAs[Tile](i)
       val right = buffer2.getAs[Tile](i)
       buffer1(i) = mergeFunctions(i)(left, right)
@@ -119,14 +124,13 @@ class StatsLocalTileAggregateFunction() extends UserDefinedAggregateFunction {
 
   override def evaluate(buffer: Row): Any = {
     val count = buffer.getAs[Tile](0)
-    if(count != null) {
+    if (count != null) {
       val sum = buffer.getAs[Tile](3)
       val sumSqr = buffer.getAs[Tile](4)
       val mean = sum / count
       val variance = sumSqr / count - mean * mean
       Row(buffer(0), buffer(1), buffer(2), mean, variance)
-    }
-    else null
+    } else null
   }
 }
 
@@ -136,29 +140,31 @@ object StatsLocalTileAggregateFunction {
     def op(z1: Int, z2: Int): Int
     def op(z1: Double, z2: Double): Double
 
-    def combine(z1:Int,z2:Int): Int =
+    def combine(z1: Int, z2: Int): Int =
       if (isNoData(z1) && isNoData(z2)) raster.NODATA
-      else if(isNoData(z1)) z2 else if(isNoData(z2)) z1
-      else op(z1,z2)
+      else if (isNoData(z1)) z2
+      else if (isNoData(z2)) z1
+      else op(z1, z2)
 
-    def combine(z1:Double,z2:Double): Double =
+    def combine(z1: Double, z2: Double): Double =
       if (isNoData(z1) && isNoData(z2)) raster.doubleNODATA
-      else if(isNoData(z1)) z2 else if(isNoData(z2)) z1
-      else op(z1,z2)
+      else if (isNoData(z1)) z2
+      else if (isNoData(z2)) z1
+      else op(z1, z2)
   }
 
   object BiasedMin extends BiasedOp {
-    def op(z1: Int, z2: Int) =  math.min(z1,z2)
-    def op(z1: Double, z2: Double) =  math.min(z1,z2)
+    def op(z1: Int, z2: Int) = math.min(z1, z2)
+    def op(z1: Double, z2: Double) = math.min(z1, z2)
   }
 
   object BiasedMax extends BiasedOp {
-    def op(z1: Int, z2: Int) =  math.max(z1,z2)
-    def op(z1: Double, z2: Double) =  math.max(z1,z2)
+    def op(z1: Int, z2: Int) = math.max(z1, z2)
+    def op(z1: Double, z2: Double) = math.max(z1, z2)
   }
 
   object BiasedAdd extends BiasedOp {
-    def op(z1: Int, z2: Int) =  z1 + z2
-    def op(z1: Double, z2: Double) =  z1 + z2
+    def op(z1: Int, z2: Int) = z1 + z2
+    def op(z1: Double, z2: Double) = z1 + z2
   }
 }

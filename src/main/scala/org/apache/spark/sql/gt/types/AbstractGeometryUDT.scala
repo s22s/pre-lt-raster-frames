@@ -24,11 +24,12 @@ import scala.reflect._
 /**
  * Base class for several of the geometry-related GeoTrellis UDTs.
  *
- * @author sfitch 
+ * @author sfitch
  * @since 4/12/17
  */
 private[gt] abstract class AbstractGeometryUDT[T >: Null <: Geometry: ClassTag](override val typeName: String)
-  extends UserDefinedType[T] with WKBBackedUDT[T] {
+    extends UserDefinedType[T]
+    with WKBBackedUDT[T] {
   private[sql] override def acceptsType(dataType: DataType) = dataType match {
     case o: AbstractGeometryUDT[T] ⇒ o.typeName == this.typeName
     case _ ⇒ super.acceptsType(dataType)
@@ -36,8 +37,3 @@ private[gt] abstract class AbstractGeometryUDT[T >: Null <: Geometry: ClassTag](
 
   override val targetClassTag = classTag[T]
 }
-
-
-
-
-

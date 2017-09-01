@@ -21,7 +21,7 @@ import geotrellis.spark.TileLayerMetadata
 /**
  * Module responsible for ensuring the UDTs are registered with catalyst.
  *
- * @author sfitch 
+ * @author sfitch
  * @since 4/12/17
  */
 private[gt] object Registrator {
