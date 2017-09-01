@@ -106,7 +106,7 @@ object ProjectPlugin extends AutoPlugin {
       git.remoteRepo := "git@github.com:s22s/raster-frames.git",
       apiURL := Some(url("http://rasterfrarmes.io/latest")),
       autoAPIMappings := true,
-      paradoxProperties in Compile ++= Map(
+      paradoxProperties in Paradox ++= Map(
         "github.base_url" -> s"https://github.com/s22s/raster-frames",
         "scaladoc.geotrellis.base_url" -> "https://geotrellis.github.io/scaladocs/latest"
       ),
