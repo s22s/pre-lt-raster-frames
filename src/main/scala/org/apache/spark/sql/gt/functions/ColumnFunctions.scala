@@ -33,18 +33,17 @@ import org.apache.spark.sql.types._
 import scala.reflect.runtime.universe._
 
 /**
- * GT functions adapted for Spark SQL use.
+ * UDFs for working with tiles in Spark DataFrames.
  *
  * @author sfitch
  * @since 4/3/17
  */
 trait ColumnFunctions {
-  // format: off
-  private val encoders = new SQLImplicits {
-    override protected def _sqlContext: SQLContext = ???
-  }
-  import encoders._
+  private implicit val stringEnc: Encoder[String] = Encoders.STRING
+  private implicit val doubleEnc: Encoder[Double] = Encoders.scalaDouble
+  private implicit val statsEnc: Encoder[Statistics[Int]] = Encoders.product[Statistics[Int]]
 
+  // format: off
   /** Create a row for each cell in tile. */
   @Experimental
   def explodeTiles(cols: Column*): Column = explodeTileSample(1.0, cols: _*)
