@@ -17,7 +17,7 @@
 package astraea.spark.rasterframes
 
 import geotrellis.util.MethodExtensions
-import org.apache.spark.sql.catalyst.expressions.AttributeReference
+import org.apache.spark.sql.catalyst.expressions.{Attribute, AttributeReference}
 import org.apache.spark.sql.{Column, DataFrame}
 import org.apache.spark.sql.types.{Metadata, MetadataBuilder, StructType}
 import org.apache.spark.sql.gt._
@@ -32,27 +32,29 @@ import scala.util.Try
  */
 trait DataFrameMethods extends MethodExtensions[DataFrame] {
 
+  private def selector(column: Column) = (attr: Attribute) ⇒
+    attr.name == column.columnName || attr.semanticEquals(column.expr)
+
   /** Add the metadata for the column with the given name. */
   def addColumnMetadata(column: Column, metadataKey: String, metadata: Metadata): DataFrame = {
 
-//    val query = self.queryExecution.analyzed.output
-    val targetCol = self.select(column).schema.headOption
-    require(targetCol.nonEmpty, "Couldn't find specified column in dataframe.")
-
-    // Wish spark provided a better way of doing this.
-    val cols = self.schema.fields.map { field ⇒
-      if(field == targetCol.get) {
-        val md = new MetadataBuilder().withMetadata(field.metadata).putMetadata(metadataKey, metadata).build()
-        self(field.name) as (field.name, md)
+    val analyzed = self.queryExecution.analyzed.output
+    val selects = selector(column)
+    val attrs = analyzed.map { attr ⇒
+      if(selects(attr)) {
+        val md = new MetadataBuilder().withMetadata(attr.metadata).putMetadata(metadataKey, metadata).build()
+        attr.withMetadata(md)
       }
-      else self(field.name)
+      else attr
     }
-    self.select(cols: _*)
+
+    self.select(attrs.map(a ⇒ new Column(a)): _*)
   }
 
   /** Get the metadata attached to the given column with the given key */
   def getColumnMetadata(column: Column, metadataKey: String): Option[Metadata] = {
-    self.select(column).schema.fields.headOption.map(_.metadata.getMetadata(metadataKey))
+    val analyzed = self.queryExecution.analyzed.output
+    analyzed.find(selector(column)).map(_.metadata.getMetadata(metadataKey))
   }
 
   /** Converts this DataFrame to a RasterFrame after ensuring it has:

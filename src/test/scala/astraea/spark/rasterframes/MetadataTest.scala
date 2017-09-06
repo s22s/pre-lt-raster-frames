@@ -25,7 +25,7 @@ class MetadataTest extends TestEnvironment with TestData  {
       assert(Some(sampleMetadata) === meta2)
     }
 
-    it("should handle post-join duplicate column names") { // can't be done?
+    it("should handle post-join duplicate column names") {
       val df1 = spark.createDataset(Seq((1, "one"), (2, "two"), (3, "three"))).toDF("num", "str")
       val df2 = spark.createDataset(Seq((1, "a"), (2, "b"), (3, "c"))).toDF("num", "str")
       val joined = df1.as("a").join(df2.as("b"), "num")
@@ -33,7 +33,7 @@ class MetadataTest extends TestEnvironment with TestData  {
       joined.printSchema()
       joined.show()
 
-      val withmeta = joined.addColumnMetadata($"str", "stuff", sampleMetadata)
+      val withmeta = joined.addColumnMetadata(df1("str"), "stuff", sampleMetadata)
       val meta2 = withmeta.getColumnMetadata($"str", "stuff")
 
       assert(Some(sampleMetadata) === meta2)
