@@ -27,7 +27,7 @@
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.4.2*
+0.4.2
 </div>
 </div>
 <div class="nav-toc">
@@ -67,7 +67,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.4.2*
+0.4.2
 </div>
 </div>
 <div class="nav-toc">
@@ -104,7 +104,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <h2><a href="#from-projectedextent" name="from-projectedextent" class="anchor"><span class="anchor-link"></span></a>From <code>ProjectedExtent</code></h2>
 <p>The simplest mechanism for getting a RasterFrame is to use the <code>toRF(tileCols, tileRows)</code> extension method on <code>ProjectedRaster</code>. </p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; val scene = SinglebandGeoTiff(&quot;src/test/resources/L8-B8-Robinson-IL.tiff&quot;)
-scene: geotrellis.raster.io.geotiff.SinglebandGeoTiff = SinglebandGeoTiff(geotrellis.raster.UShortConstantNoDataArrayTile@2c6f0d39,Extent(431902.5, 4313647.5, 443512.5, 4321147.5),geotrellis.proj4.CRS$$anon$3@87f96f9f,Tags(Map(AREA_OR_POINT -&gt; POINT),List(Map())),GeoTiffOptions(geotrellis.raster.io.geotiff.Striped@98a2adc,geotrellis.raster.io.geotiff.compression.DeflateCompression$@5dd8e811,1,None))
+scene: geotrellis.raster.io.geotiff.SinglebandGeoTiff = SinglebandGeoTiff(geotrellis.raster.UShortConstantNoDataArrayTile@ad04693,Extent(431902.5, 4313647.5, 443512.5, 4321147.5),geotrellis.proj4.CRS$$anon$3@87f96f9f,Tags(Map(AREA_OR_POINT -&gt; POINT),List(Map())),GeoTiffOptions(geotrellis.raster.io.geotiff.Striped@3ff70f00,geotrellis.raster.io.geotiff.compression.DeflateCompression$@379b22b3,1,None))
 
 scala&gt; val rf = scene.projectedRaster.toRF(128, 128)
 rf: astraea.spark.rasterframes.RasterFrame = [spatial_key: struct&lt;col: int, row: int&gt;, tile: st_tile]
@@ -113,29 +113,20 @@ scala&gt; rf.show(5, false)
 +-----------+--------------------------------------------------------+
 |spatial_key|tile                                                    |
 +-----------+--------------------------------------------------------+
-|[0,0]      |geotrellis.raster.UShortConstantNoDataArrayTile@2e190356|
-|[1,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@6991dc4 |
-|[6,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@447a2bed|
-|[3,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@2f82c36b|
-|[4,2]      |geotrellis.raster.UShortConstantNoDataArrayTile@4967767e|
+|[0,0]      |geotrellis.raster.UShortConstantNoDataArrayTile@13f06027|
+|[1,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@d3d2ec9 |
+|[6,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@7d2df4ac|
+|[3,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@7da887cd|
+|[4,2]      |geotrellis.raster.UShortConstantNoDataArrayTile@6dc92107|
 +-----------+--------------------------------------------------------+
 only showing top 5 rows
 
 </code></pre>
 <h2><a href="#from-tilelayerrdd" name="from-tilelayerrdd" class="anchor"><span class="anchor-link"></span></a>From <code>TileLayerRDD</code></h2>
 <p>Another option is to use a GeoTrellis <a href="https://docs.geotrellis.io/en/latest/guide/tile-backends.html"><code>LayerReader</code></a>, to get a <code>TileLayerRDD</code> for which there&rsquo;s also a <code>toRF</code> extension method. </p>
-<pre class="prettyprint"><code class="language-scala">scala&gt; import geotrellis.spark._
-import geotrellis.spark._
-
-scala&gt; val tiledLayer: TileLayerRDD[SpatialKey] = ???
-scala.NotImplementedError: an implementation is missing
-  at scala.Predef$.$qmark$qmark$qmark(Predef.scala:230)
-  ... 254 elided
-
-scala&gt; val rf = tiledLayer.toRF
-&lt;console&gt;:35: error: not found: value tiledLayer
-       val rf = tiledLayer.toRF
-                ^
+<pre class="prettyprint"><code class="language-scala">import geotrellis.spark._
+val tiledLayer: TileLayerRDD[SpatialKey] = ???
+val rf = tiledLayer.toRF
 </code></pre>
 <h2><a href="#reassembling-rasters" name="reassembling-rasters" class="anchor"><span class="anchor-link"></span></a>Reassembling Rasters</h2>
 <p>For the purposes of debugging, the RasterFrame tiles can be reassembled back into a raster for viewing. However, keep in mind that this will download all the data to the driver, and reassemble it in-memory. So it&rsquo;s not appropriate for very large coverages.</p>

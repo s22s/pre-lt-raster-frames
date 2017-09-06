@@ -28,7 +28,7 @@
         </head>
         <body class="type">
       <div id="definition">
-        <img alt="Class" src="../../../lib/class_big.png" />
+        <img alt="Trait" src="../../../lib/trait_big.png" />
         <p id="owner"><a href="../../package.html" class="extype" name="astraea">astraea</a>.<a href="../package.html" class="extype" name="astraea.spark">spark</a>.<a href="package.html" class="extype" name="astraea.spark.rasterframes">rasterframes</a></p>
         <h1>DataFrameMethods</h1><h3><span class="morelinks"><div>Related Doc:
             <a href="package.html" class="extype" name="astraea.spark.rasterframes">package rasterframes</a>
@@ -41,8 +41,8 @@
 
       <h4 id="signature" class="signature">
       <span class="modifier_kind">
-        <span class="modifier">abstract </span>
-        <span class="kind">class</span>
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
       </span>
       <span class="symbol">
         <span class="name">DataFrameMethods</span><span class="result"> extends <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-util_2.11/1.1.1/geotrellis-util_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.util.MethodExtensions" class="extype" target="_top">MethodExtensions</a>[<a href="../../../org/apache/spark/sql/package.html#DataFrame=org.apache.spark.sql.Dataset[org.apache.spark.sql.Row]" class="extmbr" name="org.apache.spark.sql.DataFrame">DataFrame</a>]</span>
@@ -90,27 +90,7 @@
 
       <div id="template">
         <div id="allMembers">
-        <div id="constructors" class="members">
-              <h3>Instance Constructors</h3>
-              <ol><li name="astraea.spark.rasterframes.DataFrameMethods#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;():astraea.spark.rasterframes.DataFrameMethods"></a>
-      <a id="&lt;init&gt;:DataFrameMethods"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">new</span>
-      </span>
-      <span class="symbol">
-        <span class="name">DataFrameMethods</span><span class="params">()</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.DataFrameMethods@&lt;init&gt;():astraea.spark.rasterframes.DataFrameMethods" title="Permalink" target="_top">
-        <img src="../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      
-    </li></ol>
-            </div>
+        
 
         
 
@@ -361,6 +341,23 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.DataFrameMethods#getColumnMetadata" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="getColumnMetadata(column:org.apache.spark.sql.Column,metadataKey:String):Option[org.apache.spark.sql.types.Metadata]"></a>
+      <a id="getColumnMetadata(Column,String):Option[Metadata]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">getColumnMetadata</span><span class="params">(<span name="column">column: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>, <span name="metadataKey">metadataKey: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.types.Metadata" class="extype" target="_top">Metadata</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#astraea.spark.rasterframes.DataFrameMethods@getColumnMetadata(column:org.apache.spark.sql.Column,metadataKey:String):Option[org.apache.spark.sql.types.Metadata]" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Get the metadata attached to the given column with the given key</p>
     </li><li name="scala.AnyRef#hashCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="hashCode():Int"></a>
       <a id="hashCode():Int"></a>
