@@ -13,13 +13,10 @@
   <link rel="stylesheet" type="text/css" href="$page.base$lib/normalize.css/normalize.css"/>
   <link rel="stylesheet" type="text/css" href="$page.base$lib/foundation/dist/foundation.min.css"/>
   <link rel="stylesheet" type="text/css" href="$page.base$css/page.css"/>
-
-  <!--
-  <link rel="shortcut icon" href="$page.base$images/favicon.ico" />
-  -->
+  <link rel="shortcut icon" href="$page.base$images/astraea.ico" />
 </head>
 
-<body style="color: purple;">
+<body>
 <div class="off-canvas-wrapper">
   <div class="off-canvas-wrapper-inner" data-off-canvas-wrapper>
 
@@ -35,9 +32,7 @@
         <div class="small-12 column">
           <a href="#" class="off-canvas-toggle hide-for-medium" data-toggle="off-canvas-menu">$menu()$</a>
           $title()$
-          <!--
-          <a href="https://www.example.com" class="logo show-for-medium">logo</a>
-          -->
+          <a href="http://www.astraea.earth" class="logo show-for-medium"><img style="height: 40px;" src="$page.base$images/astraea.png"/></a>
         </div>
       </header>
 
@@ -114,23 +109,19 @@
           <div class="expanded row">
             <div class="small-12 large-offset-2 large-10 column">
               <div class="row site-footer-content">
-
                 <div class="small-12 text-center large-9 column">
-
                   <!--
                   <div class="copyright">
-                  <span class="text">&copy; $page.properties.("date.year")$</span>
-                  <a href="https://www.example.com" class="logo">logo</a>
+                    <span class="text">&copy; $page.properties.("date.year")$</span>
+                    <a href="http://www.astraea.earth/" class="logo"><img src="$page.base$images/astraea.png"/></a>
                   </div>
                   -->
                 </div>
-
               </div>
             </div>
           </div>
         </section>
       </footer>
-
     </div>
   </div>
 </div>

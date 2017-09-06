@@ -21,15 +21,15 @@ import org.apache.spark.sql.types._
 
 import scala.reflect._
 
-
 /**
  * Base class for several of the tile-related GeoTrellis UDTs.
  *
- * @author sfitch 
+ * @author sfitch
  * @since 4/12/17
  */
 private[gt] abstract class AbstractTileUDT[T >: Null: ClassTag](override val typeName: String)
-  extends UserDefinedType[T] with KryoBackedUDT[T] {
+    extends UserDefinedType[T]
+    with KryoBackedUDT[T] {
   private[sql] override def acceptsType(dataType: DataType) = dataType match {
     case o: AbstractTileUDT[T] ⇒ o.typeName == this.typeName
     case _ ⇒ super.acceptsType(dataType)
@@ -37,8 +37,3 @@ private[gt] abstract class AbstractTileUDT[T >: Null: ClassTag](override val typ
 
   override val targetClassTag = classTag[T]
 }
-
-
-
-
-

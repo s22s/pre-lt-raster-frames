@@ -21,7 +21,7 @@ import org.apache.spark.sql.types.UDTRegistration
 
 /**
  * UDT for singleband tiles.
- * @author sfitch 
+ * @author sfitch
  * @since 5/11/17
  */
 private[gt] class TileUDT extends AbstractTileUDT[Tile]("st_tile")

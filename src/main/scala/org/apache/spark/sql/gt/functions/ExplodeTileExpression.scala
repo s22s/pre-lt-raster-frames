@@ -26,35 +26,33 @@ import org.apache.spark.util.Utils
 /**
  * Catalyst expression for converting a tile column into a pixel column, with each tile pixel occupying a separate row.
  *
- * @author sfitch 
+ * @author sfitch
  * @since 4/12/17
  */
-private[spark] case class ExplodeTileExpression(sampleFraction: Double = 1.0,
-  override val children: Seq[Expression])
-  extends Expression with Generator with CodegenFallback {
-
+private[spark] case class ExplodeTileExpression(sampleFraction: Double = 1.0, override val children: Seq[Expression])
+    extends Expression
+    with Generator
+    with CodegenFallback {
 
   override def elementSchema: StructType = {
-    val names = if(children.size == 1) Seq("cell")
-    else children.indices.map(i ⇒ s"cell_$i")
+    val names =
+      if (children.size == 1) Seq("cell")
+      else children.indices.map(i ⇒ s"cell_$i")
 
-    StructType(Seq(
-      StructField("column", IntegerType, false),
-      StructField("row", IntegerType, false)
-    ) ++ names.map(n ⇒
-      StructField(n, DoubleType, false)
-    ))
+    StructType(
+      Seq(StructField("column", IntegerType, false), StructField("row", IntegerType, false)) ++ names
+        .map(n ⇒ StructField(n, DoubleType, false))
+    )
   }
 
   private def keep(): Boolean = {
-    if(sampleFraction >= 1.0) true
+    if (sampleFraction >= 1.0) true
     else Utils.random.nextDouble() <= sampleFraction
   }
 
   override def eval(input: InternalRow): TraversableOnce[InternalRow] = {
     // Do we need to worry about deserializing all the tiles in a row like this?
-    val tiles = for(child ← children) yield
-      TileUDT.deserialize(child.eval(input).asInstanceOf[InternalRow])
+    val tiles = for (child ← children) yield TileUDT.deserialize(child.eval(input).asInstanceOf[InternalRow])
 
     require(tiles.map(_.dimensions).distinct.size == 1, "Multi-column explode requires equally sized tiles")
 

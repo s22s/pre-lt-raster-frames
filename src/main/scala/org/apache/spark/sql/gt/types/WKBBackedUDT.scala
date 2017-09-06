@@ -25,7 +25,7 @@ import scala.reflect.ClassTag
 
 /**
  *
- * @author sfitch 
+ * @author sfitch
  * @since 4/18/17
  */
 trait WKBBackedUDT[T >: Null <: Geometry] { self: UserDefinedType[T] ⇒
@@ -34,9 +34,7 @@ trait WKBBackedUDT[T >: Null <: Geometry] { self: UserDefinedType[T] ⇒
 
   override val simpleString = typeName
 
-  override def sqlType: DataType = StructType(Array(
-    StructField(typeName + "_wkb", BinaryType)
-  ))
+  override def sqlType: DataType = StructType(Array(StructField(typeName + "_wkb", BinaryType)))
 
   override def userClass: Class[T] = targetClassTag.runtimeClass.asInstanceOf[Class[T]]
 

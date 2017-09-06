@@ -105,14 +105,13 @@ object ProjectPlugin extends AutoPlugin {
     def docSettings: Seq[Def.Setting[_]] = Seq(
       git.remoteRepo := "git@github.com:s22s/raster-frames.git",
       apiURL := Some(url("http://rasterfrarmes.io/latest")),
-      //apiMappings += (),
       autoAPIMappings := true,
-      //paradoxTheme := Some(builtinParadoxTheme("generic")),
-      paradoxProperties in Compile ++= Map(
+      paradoxProperties in Paradox ++= Map(
         "github.base_url" -> s"https://github.com/s22s/raster-frames",
         "scaladoc.geotrellis.base_url" -> "https://geotrellis.github.io/scaladocs/latest"
       ),
       sourceDirectory in Paradox := tutTargetDirectory.value,
+      sourceDirectory in Paradox in paradoxTheme := sourceDirectory.value / "main" / "paradox" / "_template",
       makeSite := makeSite.dependsOn(tut).value,
       ghpagesNoJekyll := true
     )

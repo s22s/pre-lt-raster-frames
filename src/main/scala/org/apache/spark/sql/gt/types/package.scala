@@ -22,7 +22,7 @@ import scala.reflect.runtime.universe._
 /**
  * Module of GeoTrellis UDTs for Spark/Catalyst.
  *
- * @author sfitch 
+ * @author sfitch
  * @since 4/12/17
  */
 package object types {

@@ -17,34 +17,44 @@
 package astraea.spark.rasterframes
 
 import geotrellis.util.MethodExtensions
+import org.apache.spark.sql.catalyst.expressions.{Attribute, AttributeReference}
 import org.apache.spark.sql.{Column, DataFrame}
-import org.apache.spark.sql.types.{Metadata, MetadataBuilder}
+import org.apache.spark.sql.types.{Metadata, MetadataBuilder, StructType}
 import org.apache.spark.sql.gt._
+
 import scala.util.Try
 
 /**
  * Extension methods over [[DataFrame]].
  *
- * @author sfitch 
+ * @author sfitch
  * @since 7/18/17
  */
-abstract class DataFrameMethods extends MethodExtensions[DataFrame]{
+trait DataFrameMethods extends MethodExtensions[DataFrame] {
+
+  private def selector(column: Column) = (attr: Attribute) ⇒
+    attr.name == column.columnName || attr.semanticEquals(column.expr)
 
   /** Add the metadata for the column with the given name. */
   def addColumnMetadata(column: Column, metadataKey: String, metadata: Metadata): DataFrame = {
-    val mergedMD = self.schema.find(_.name == column.columnName).map(col ⇒ {
-      new MetadataBuilder().withMetadata(col.metadata).putMetadata(metadataKey, metadata).build()
-    }).getOrElse(metadata)
 
-    // Wish spark provided a better way of doing this.
-    val df: DataFrame = self
-    import df.sparkSession.implicits._
-    val colName = column.columnName
-    val cols = self.columns.map {
-      case c if c == colName ⇒ self(c) as (c, mergedMD)
-      case c ⇒ self(c)
+    val analyzed = self.queryExecution.analyzed.output
+    val selects = selector(column)
+    val attrs = analyzed.map { attr ⇒
+      if(selects(attr)) {
+        val md = new MetadataBuilder().withMetadata(attr.metadata).putMetadata(metadataKey, metadata).build()
+        attr.withMetadata(md)
+      }
+      else attr
     }
-    self.select(cols: _*)
+
+    self.select(attrs.map(a ⇒ new Column(a)): _*)
+  }
+
+  /** Get the metadata attached to the given column with the given key */
+  def getColumnMetadata(column: Column, metadataKey: String): Option[Metadata] = {
+    val analyzed = self.queryExecution.analyzed.output
+    analyzed.find(selector(column)).map(_.metadata.getMetadata(metadataKey))
   }
 
   /** Converts this DataFrame to a RasterFrame after ensuring it has:
@@ -64,11 +74,17 @@ abstract class DataFrameMethods extends MethodExtensions[DataFrame]{
   def asRF: RasterFrame = {
     val potentialRF = certifyRasterframe(self)
 
-    require(potentialRF.findSpatialKeyField.nonEmpty, "A RasterFrame requires a column identified as a spatial key")
+    require(
+      potentialRF.findSpatialKeyField.nonEmpty,
+      "A RasterFrame requires a column identified as a spatial key"
+    )
 
     require(potentialRF.tileColumns.nonEmpty, "A RasterFrame requires at least one tile colulmn")
 
-    require(Try(potentialRF.tileLayerMetadata).isSuccess, "A RasterFrame requires embedded TileLayerMetadata")
+    require(
+      Try(potentialRF.tileLayerMetadata).isSuccess,
+      "A RasterFrame requires embedded TileLayerMetadata"
+    )
 
     potentialRF
   }

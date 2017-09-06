@@ -42,9 +42,10 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
   import _df.sqlContext.implicits._
 
   /** Get the names of the columns that are of type `Tile` */
-  def tileColumns: Seq[TileColumn] = self.schema.fields
-    .filter(_.dataType.typeName.equalsIgnoreCase(TileUDT.typeName))
-    .map(f ⇒ self(f.name).as[Tile])
+  def tileColumns: Seq[TileColumn] =
+    self.schema.fields
+      .filter(_.dataType.typeName.equalsIgnoreCase(TileUDT.typeName))
+      .map(f ⇒ self(f.name).as[Tile])
 
   /** Get the spatial column. */
   def spatialKeyColumn: TypedColumn[Any, SpatialKey] = {
@@ -77,7 +78,8 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
     val metadata = tileLayerMetadata
 
     val trans = metadata.layout.mapTransform
-    val keyBounds = self.select(spatialKeyColumn)
+    val keyBounds = self
+      .select(spatialKeyColumn)
       .map(k ⇒ KeyBounds(k, k))
       .reduce(_ combine _)
 
@@ -102,8 +104,10 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
     md.getMetadata(metadataKey).json.parseJson.convertTo[M]
 
   /** Convert the tiles in the RasterFrame into a single raster. */
-  def toRaster(tileCol: Column, rasterCols: Int, rasterRows: Int,
-    resampler: ResampleMethod = Bilinear): ProjectedRaster[Tile] = {
+  def toRaster(tileCol: Column,
+               rasterCols: Int,
+               rasterRows: Int,
+               resampler: ResampleMethod = Bilinear): ProjectedRaster[Tile] = {
 
     val clipped = clipLayerExtent
 
@@ -114,8 +118,9 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
 
     val rdd: RDD[(SpatialKey, Tile)] = clipped.select(keyCol, tileCol).as[(SpatialKey, Tile)].rdd
     val newLayer = rdd
-      .map { case (key, tile) ⇒
-        (ProjectedExtent(md.mapTransform(key), md.crs), tile)
+      .map {
+        case (key, tile) ⇒
+          (ProjectedExtent(md.mapTransform(key), md.crs), tile)
       }
       .tileToLayout(newLayerMetadata, Tiler.Options(resampler))
 
@@ -126,4 +131,3 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
     ProjectedRaster(croppedTile, md.extent, md.crs)
   }
 }
-

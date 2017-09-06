@@ -24,7 +24,7 @@ import scala.reflect.ClassTag
 
 /**
  *
- * @author sfitch 
+ * @author sfitch
  * @since 4/18/17
  */
 trait KryoBackedUDT[T >: Null] { self: UserDefinedType[T] ⇒
@@ -33,9 +33,7 @@ trait KryoBackedUDT[T >: Null] { self: UserDefinedType[T] ⇒
 
   override val simpleString = typeName
 
-  override def sqlType: DataType = StructType(Array(
-    StructField(typeName + "_kryo", BinaryType)
-  ))
+  override def sqlType: DataType = StructType(Array(StructField(typeName + "_kryo", BinaryType)))
 
   override def userClass: Class[T] = targetClassTag.runtimeClass.asInstanceOf[Class[T]]
 

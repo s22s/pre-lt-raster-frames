@@ -29,7 +29,7 @@ import scala.reflect.classTag
 /**
  * Custom encoder for GT [[CellType]]. It's necessary since [[CellType]] is a type alias of
  * a type intersection.
- * @author sfitch 
+ * @author sfitch
  * @since 7/21/17
  */
 object CRSEncoder {
@@ -42,26 +42,26 @@ object CRSEncoder {
 
     val intermediateType = ObjectType(classOf[String])
     val serializer: Expression =
-      StaticInvoke(classOf[UTF8String], StringType, "fromString",
+      StaticInvoke(
+        classOf[UTF8String],
+        StringType,
+        "fromString",
         Invoke(inputObject, "toProj4String", intermediateType, Nil) :: Nil
       )
 
     val inputRow = GetColumnByOrdinal(0, schema)
     val deserializer: Expression =
-      StaticInvoke(CRSEncoder.getClass, ctType, "fromString",
+      StaticInvoke(
+        CRSEncoder.getClass,
+        ctType,
+        "fromString",
         Invoke(inputRow, "toString", intermediateType, Nil) :: Nil
       )
 
-    ExpressionEncoder[CRS](
-      schema,
-      flat = false,
-      Seq(serializer),
-      deserializer,
-      classTag[CRS]
-    )
+    ExpressionEncoder[CRS](schema, flat = false, Seq(serializer), deserializer, classTag[CRS])
   }
 
   // Not sure why this delegate is necessary, but doGenCode fails without it.
-  def fromString(str: String): CRS =  CRS.fromString(str)
+  def fromString(str: String): CRS = CRS.fromString(str)
 
 }

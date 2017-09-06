@@ -9,9 +9,11 @@ addSbtPlugin("me.lessis" % "bintray-sbt" % "0.3.0")
 
 addSbtPlugin("de.heikoseeberger" % "sbt-header" % "1.8.0")
 
+addSbtPlugin("com.lucidchart" % "sbt-scalafmt" % "1.10")
+
 addSbtPlugin("org.tpolecat" % "tut-plugin" % "0.5.2")
 
-//addSbtPlugin("com.lightbend.paradox" % "sbt-paradox" % "0.2.13")
+addSbtPlugin("com.thoughtworks.sbt-api-mappings" % "sbt-api-mappings" % "1.1.0")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-site" % "1.3.0")
 

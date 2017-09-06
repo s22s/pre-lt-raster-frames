@@ -22,7 +22,7 @@ import org.apache.spark.sql.types.UDTRegistration
 /**
  * UDT for GT vector polygon
  *
- * @author sfitch 
+ * @author sfitch
  * @since 5/11/17
  */
 private[gt] class PointUDT extends AbstractGeometryUDT[Point]("st_point")
@@ -54,4 +54,3 @@ private[gt] class MultiPolygonUDT extends AbstractGeometryUDT[MultiPolygon]("st_
 case object MultiPolygonUDT extends MultiPolygonUDT {
   UDTRegistration.register(classOf[MultiPolygon].getName, classOf[MultiPolygonUDT].getName)
 }
-
