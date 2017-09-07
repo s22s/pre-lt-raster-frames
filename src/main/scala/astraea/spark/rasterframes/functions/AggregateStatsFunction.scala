@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.spark.sql.gt.functions
+package astraea.spark.rasterframes.functions
 
 import geotrellis.raster.histogram.Histogram
 import org.apache.spark.sql.types.DataType

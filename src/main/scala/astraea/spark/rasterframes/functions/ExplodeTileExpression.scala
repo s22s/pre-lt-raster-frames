@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package org.apache.spark.sql.gt.functions
+package astraea.spark.rasterframes.functions
 
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.expressions.codegen.CodegenFallback
 import org.apache.spark.sql.catalyst.expressions.{Expression, Generator}
 import org.apache.spark.sql.gt.types.TileUDT
 import org.apache.spark.sql.types.{DoubleType, IntegerType, StructField, StructType}
-import org.apache.spark.util.Utils
 
 /**
  * Catalyst expression for converting a tile column into a pixel column, with each tile pixel occupying a separate row.
@@ -29,7 +28,7 @@ import org.apache.spark.util.Utils
  * @author sfitch
  * @since 4/12/17
  */
-private[spark] case class ExplodeTileExpression(sampleFraction: Double = 1.0, override val children: Seq[Expression])
+private[rasterframes] case class ExplodeTileExpression(sampleFraction: Double = 1.0, override val children: Seq[Expression])
     extends Expression
     with Generator
     with CodegenFallback {
@@ -47,7 +46,7 @@ private[spark] case class ExplodeTileExpression(sampleFraction: Double = 1.0, ov
 
   private def keep(): Boolean = {
     if (sampleFraction >= 1.0) true
-    else Utils.random.nextDouble() <= sampleFraction
+    else scala.util.Random.nextDouble() <= sampleFraction
   }
 
   override def eval(input: InternalRow): TraversableOnce[InternalRow] = {

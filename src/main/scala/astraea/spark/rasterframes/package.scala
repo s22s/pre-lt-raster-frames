@@ -22,7 +22,7 @@ import geotrellis.util.GetComponent
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql._
 import org.apache.spark.sql.gt.Implicits
-import org.apache.spark.sql.gt.functions.ColumnFunctions
+import astraea.spark.rasterframes.functions.ColumnFunctions
 import spray.json.JsonFormat
 
 import scala.reflect.runtime.universe._
@@ -81,6 +81,7 @@ package object rasterframes extends Implicits with ColumnFunctions {
   def rfInit(sqlContext: SQLContext): Unit = {
     // TODO: Can this be automatically done via some SPI-like construct in Spark?
     gt.gtRegister(sqlContext)
+    functions.Registrator.register(sqlContext)
   }
 
   implicit class WithProjectedRasterMethods(val self: ProjectedRaster[Tile]) extends ProjectedRasterMethods
@@ -103,4 +104,6 @@ package object rasterframes extends Implicits with ColumnFunctions {
   }
 
   private[astraea] implicit class WithMetadataMethods[R: JsonFormat](val self: R) extends MetadataMethods[R]
+
+
 }

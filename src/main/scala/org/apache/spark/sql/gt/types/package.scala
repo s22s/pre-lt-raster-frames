@@ -16,6 +16,8 @@
 
 package org.apache.spark.sql.gt
 
+import geotrellis.raster.{BitCellType, ByteCellType, ByteConstantNoDataCellType, DoubleCellType, DoubleConstantNoDataCellType, FloatCellType, FloatConstantNoDataCellType, IntCellType, IntConstantNoDataCellType, ShortCellType, ShortConstantNoDataCellType, UByteCellType, UByteConstantNoDataCellType, UShortCellType, UShortConstantNoDataCellType}
+
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
 
@@ -32,4 +34,23 @@ package object types {
   private[gt] def typeToClassTag[T: TypeTag]: ClassTag[T] = {
     ClassTag[T](typeTag[T].mirror.runtimeClass(typeTag[T].tpe))
   }
+
+  val cellTypes: () ⇒ Seq[String] = () ⇒
+    Seq(
+      BitCellType,
+      ByteCellType,
+      ByteConstantNoDataCellType,
+      UByteCellType,
+      UByteConstantNoDataCellType,
+      ShortCellType,
+      ShortConstantNoDataCellType,
+      UShortCellType,
+      UShortConstantNoDataCellType,
+      IntCellType,
+      IntConstantNoDataCellType,
+      FloatCellType,
+      FloatConstantNoDataCellType,
+      DoubleCellType,
+      DoubleConstantNoDataCellType
+    ).map(_.toString).distinct
 }

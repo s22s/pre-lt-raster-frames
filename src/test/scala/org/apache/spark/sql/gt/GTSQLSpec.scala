@@ -30,7 +30,7 @@ import geotrellis.raster.{ByteCellType, CellType, IntConstantNoDataCellType, Mul
 import geotrellis.spark.{SpaceTimeKey, TemporalProjectedExtent, TileLayerMetadata}
 import geotrellis.vector.{Extent, ProjectedExtent}
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.gt.functions._
+import astraea.spark.rasterframes.functions._
 import org.apache.spark.sql._
 
 /**
@@ -250,8 +250,9 @@ class GTSQLSpec extends TestEnvironment with TestData with LazyLogging {
     }
 
     it("should list supported cell types") {
+      import types.cellTypes
       val ct = sql("select explode(st_cellTypes())").as[String].collect
-      forEvery(UDFs.cellTypes()) { c ⇒
+      forEvery(cellTypes()) { c ⇒
         assert(ct.contains(c))
       }
     }

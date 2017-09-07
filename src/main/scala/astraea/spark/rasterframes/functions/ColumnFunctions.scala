@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.spark.sql.gt.functions
+package astraea.spark.rasterframes.functions
 
 import geotrellis.raster.Tile
 import geotrellis.raster.histogram.Histogram
@@ -55,7 +55,7 @@ trait ColumnFunctions {
     // Hack to grab the first two non-cell columns
     val metaNames = exploder.elementSchema.fieldNames.take(2)
     val colNames = cols.map(_.columnName)
-    Column(exploder).as(metaNames ++ colNames)
+    new Column(exploder).as(metaNames ++ colNames)
   }
 
   /** Query the number of (cols, rows) in a tile. */
@@ -184,20 +184,20 @@ trait ColumnFunctions {
   // -- Private APIs below --
   // --------------------------------------------------------------------------------------------
   /** Tags output column with a nicer name. */
-  private[gt] def withAlias(name: String, inputs: Column*)(output: Column) = {
+  private[rasterframes] def withAlias(name: String, inputs: Column*)(output: Column) = {
     val paramNames = inputs.map(_.columnName).mkString(",")
     output.as(s"$name($paramNames)")
   }
 
-  private[gt] def opName(op: LocalTileBinaryOp) =
+  private[rasterframes] def opName(op: LocalTileBinaryOp) =
     op.getClass.getSimpleName.replace("$", "").toLowerCase
 
-  /** Lookup the registered Catalyst UDT for the given Scala type. */
-  private[gt] def udtOf[T >: Null: TypeTag]: UserDefinedType[T] =
-    UDTRegistration.getUDTFor(typeTag[T].tpe.toString).map(_.newInstance().asInstanceOf[UserDefinedType[T]])
-      .getOrElse(throw new IllegalArgumentException(typeTag[T].tpe + " doesn't have a corresponding UDT"))
+//  /** Lookup the registered Catalyst UDT for the given Scala type. */
+//  private[rasterframes] def udtOf[T >: Null: TypeTag]: UserDefinedType[T] =
+//    UDTRegistration.getUDTFor(typeTag[T].tpe.toString).map(_.newInstance().asInstanceOf[UserDefinedType[T]])
+//      .getOrElse(throw new IllegalArgumentException(typeTag[T].tpe + " doesn't have a corresponding UDT"))
 
   /** Creates a Catalyst expression for flattening the fields in a struct into columns. */
-  private[gt] def projectStructExpression(dataType: StructType, input: Expression) =
+  private[rasterframes] def projectStructExpression(dataType: StructType, input: Expression) =
     MultiAlias(Inline(CreateArray(Seq(input))), dataType.fields.map(_.name))
 }
