@@ -16,6 +16,11 @@
 
 package org.apache.spark.sql.gt
 
+import geotrellis.raster._
+import org.apache.spark.sql.catalyst.analysis.MultiAlias
+import org.apache.spark.sql.catalyst.expressions.{CreateArray, Expression, Inline}
+import org.apache.spark.sql.types.{StructType, UDTRegistration, UserDefinedType}
+
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
 
@@ -32,4 +37,33 @@ package object types {
   private[gt] def typeToClassTag[T: TypeTag]: ClassTag[T] = {
     ClassTag[T](typeTag[T].mirror.runtimeClass(typeTag[T].tpe))
   }
+
+  /** Lookup the registered Catalyst UDT for the given Scala type. */
+  def udtOf[T >: Null: TypeTag]: UserDefinedType[T] =
+    UDTRegistration.getUDTFor(typeTag[T].tpe.toString).map(_.newInstance().asInstanceOf[UserDefinedType[T]])
+      .getOrElse(throw new IllegalArgumentException(typeTag[T].tpe + " doesn't have a corresponding UDT"))
+
+
+  /** Creates a Catalyst expression for flattening the fields in a struct into columns. */
+  def projectStructExpression(dataType: StructType, input: Expression) =
+    MultiAlias(Inline(CreateArray(Seq(input))), dataType.fields.map(_.name))
+
+  val cellTypes: () ⇒ Seq[String] = () ⇒
+    Seq(
+      BitCellType,
+      ByteCellType,
+      ByteConstantNoDataCellType,
+      UByteCellType,
+      UByteConstantNoDataCellType,
+      ShortCellType,
+      ShortConstantNoDataCellType,
+      UShortCellType,
+      UShortConstantNoDataCellType,
+      IntCellType,
+      IntConstantNoDataCellType,
+      FloatCellType,
+      FloatConstantNoDataCellType,
+      DoubleCellType,
+      DoubleConstantNoDataCellType
+    ).map(_.toString).distinct
 }

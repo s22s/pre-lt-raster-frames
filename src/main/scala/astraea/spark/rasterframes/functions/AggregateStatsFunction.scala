@@ -14,29 +14,21 @@
  * limitations under the License.
  */
 
-package org.apache.spark.sql.gt.types
+package astraea.spark.rasterframes.functions
 
 import geotrellis.raster.histogram.Histogram
-import org.apache.spark.sql.types._
+import org.apache.spark.sql.types.DataType
+import org.apache.spark.sql.{Row, gt}
+import org.apache.spark.sql.gt.Implicits._
 
 /**
- * Wraps up GT Histogram type.
- *
+ * Statistics aggregation function for a full column of tiles.
  * @author sfitch
- * @since 4/18/17
+ * @since 5/18/17
  */
-class HistogramUDT extends UserDefinedType[Histogram[Double]] with KryoBackedUDT[Histogram[Double]] {
+class AggregateStatsFunction extends AggregateHistogramFunction {
+  override def dataType: DataType = histogramStatsEncoder.schema
 
-  override val typeName = "st_histogram"
-
-  override val targetClassTag = scala.reflect.classTag[Histogram[Double]]
-
-  private[sql] override def acceptsType(dataType: DataType) = dataType match {
-    case o: HistogramUDT ⇒ o.typeName == this.typeName
-    case _ ⇒ super.acceptsType(dataType)
-  }
-}
-
-object HistogramUDT extends HistogramUDT {
-  UDTRegistration.register(classOf[Histogram[Double]].getName, classOf[HistogramUDT].getName)
+  override def evaluate(buffer: Row): Any =
+    buffer.getAs[Histogram[Double]](0).statistics().orNull
 }

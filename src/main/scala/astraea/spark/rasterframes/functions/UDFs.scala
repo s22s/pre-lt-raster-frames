@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.spark.sql.gt.functions
+package astraea.spark.rasterframes.functions
 
 import geotrellis.raster._
 import geotrellis.raster.histogram.Histogram
@@ -36,78 +36,73 @@ object UDFs {
   private def safeEval[P1, P2, R](f: (P1, P2) ⇒ R): (P1, P2) ⇒ R =
     (p1, p2) ⇒ if (p1 == null || p2 == null) null.asInstanceOf[R] else f(p1, p2)
 
-  /** Reports the dimensions of a tile. */
-  private[gt] val tileDimensions: (CellGrid) ⇒ (Int, Int) = safeEval(_.dimensions)
-
   /** Computes the column aggregate histogram */
-  private[gt] val aggHistogram = new AggregateHistogramFunction()
+  private[rasterframes] val aggHistogram = new AggregateHistogramFunction()
 
   /** Computes the column aggregate statistics */
-  private[gt] val aggStats = new AggregateStatsFunction()
+  private[rasterframes] val aggStats = new AggregateStatsFunction()
+
+  /** Reports the dimensions of a tile. */
+  private[rasterframes] val tileDimensions: (CellGrid) ⇒ (Int, Int) = safeEval(_.dimensions)
 
   /** Single floating point tile histogram. */
-  private[gt] val tileHistogramDouble = safeEval[Tile, Histogram[Double]](_.histogramDouble())
+  private[rasterframes] val tileHistogramDouble = safeEval[Tile, Histogram[Double]](_.histogramDouble())
 
   /** Single floating point tile statistics. Convenience for `tileHistogram.statisticsDouble`. */
-  private[gt] val tileStatsDouble = safeEval[Tile, Statistics[Double]](_.statisticsDouble.orNull)
+  private[rasterframes] val tileStatsDouble = safeEval[Tile, Statistics[Double]](_.statisticsDouble.orNull)
 
   /** Single floating point tile mean. Convenience for `tileHistogram.statisticsDouble.mean`. */
-  private[gt] val tileMeanDouble = safeEval[Tile, Double](_.statisticsDouble.map(_.mean).getOrElse(Double.NaN))
+  private[rasterframes] val tileMeanDouble = safeEval[Tile, Double](_.statisticsDouble.map(_.mean).getOrElse(Double.NaN))
 
   /** Single tile histogram. */
-  private[gt] val tileHistogram = safeEval[Tile, Histogram[Int]](_.histogram)
+  private[rasterframes] val tileHistogram = safeEval[Tile, Histogram[Int]](_.histogram)
 
   /** Single tile statistics. Convenience for `tileHistogram.statistics`. */
-  private[gt] val tileStats = safeEval[Tile, Statistics[Int]](_.statistics.orNull)
+  private[rasterframes] val tileStats = safeEval[Tile, Statistics[Int]](_.statistics.orNull)
 
   /** Single tile mean. Convenience for `tileHistogram.statistics.mean`. */
-  private[gt] val tileMean = safeEval[Tile, Double](_.statistics.map(_.mean).getOrElse(Double.NaN))
+  private[rasterframes] val tileMean = safeEval[Tile, Double](_.statistics.map(_.mean).getOrElse(Double.NaN))
 
   /** Compute summary cell-wise statistics across tiles. */
-  private[gt] val localAggStats = new StatsLocalTileAggregateFunction()
+  private[rasterframes] val localAggStats = new StatsLocalTileAggregateFunction()
 
   /** Compute the cell-wise max across tiles. */
-  private[gt] val localAggMax = new LocalTileOpAggregateFunction(Max)
+  private[rasterframes] val localAggMax = new LocalTileOpAggregateFunction(Max)
 
   /** Compute the cell-wise min across tiles. */
-  private[gt] val localAggMin = new LocalTileOpAggregateFunction(Min)
+  private[rasterframes] val localAggMin = new LocalTileOpAggregateFunction(Min)
 
   /** Compute the cell-wise main across tiles. */
-  private[gt] val localAggMean = new LocalMeanAggregateFunction()
+  private[rasterframes] val localAggMean = new LocalMeanAggregateFunction()
 
   /** Compute the cell-wise count of non-NA across tiles. */
-  private[gt] val localAggCount = new LocalCountAggregateFunction()
+  private[rasterframes] val localAggCount = new LocalCountAggregateFunction()
 
   /** Cell-wise addition between tiles. */
-  private[gt] val localAdd: (Tile, Tile) ⇒ Tile = safeEval((left, right) ⇒ Add(left, right))
+  private[rasterframes] val localAdd: (Tile, Tile) ⇒ Tile = safeEval((left, right) ⇒ Add(left, right))
 
   /** Cell-wise subtraction between tiles. */
-  private[gt] val localSubtract: (Tile, Tile) ⇒ Tile = safeEval((left, right) ⇒ Subtract(left, right))
+  private[rasterframes] val localSubtract: (Tile, Tile) ⇒ Tile = safeEval((left, right) ⇒ Subtract(left, right))
 
   /** Render tile as ASCII string. */
-  private[gt] val renderAscii: (Tile) ⇒ String = safeEval(_.asciiDraw)
+  private[rasterframes] val renderAscii: (Tile) ⇒ String = safeEval(_.asciiDraw)
 
-  private[gt] val cellTypes: () ⇒ Seq[String] = () ⇒
-    Seq(
-      BitCellType,
-      ByteCellType,
-      ByteConstantNoDataCellType,
-      UByteCellType,
-      UByteConstantNoDataCellType,
-      ShortCellType,
-      ShortConstantNoDataCellType,
-      UShortCellType,
-      UShortConstantNoDataCellType,
-      IntCellType,
-      IntConstantNoDataCellType,
-      FloatCellType,
-      FloatConstantNoDataCellType,
-      DoubleCellType,
-      DoubleConstantNoDataCellType
-    ).map(_.toString).distinct
+  /** Count tile cells that have a data value. */
+  private[rasterframes] val dataCells: (Tile) ⇒ Long = (t: Tile) ⇒ {
+    var count: Long = 0
+    t.foreach(z ⇒ if(isData(z)) count = count + 1)
+    count
+  }
+
+  /** Count tile cells that have a no-data value. */
+  private[rasterframes] val nodataCells: (Tile) ⇒ Long = (t: Tile) ⇒ {
+    var count: Long = 0
+    t.foreach(z ⇒ if(isNoData(z)) count = count + 1)
+    count
+  }
 
   /** Constructor for constant tiles */
-  private[gt] val makeConstantTile: (Number, Int, Int, String) ⇒ Tile = (value, cols, rows, cellTypeName) ⇒ {
+  private[rasterframes] val makeConstantTile: (Number, Int, Int, String) ⇒ Tile = (value, cols, rows, cellTypeName) ⇒ {
     val cellType = CellType.fromName(cellTypeName)
     cellType match {
       case BitCellType ⇒ BitConstantTile(if (value.intValue() == 0) false else true, cols, rows)

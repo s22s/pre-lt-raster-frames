@@ -13,22 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.apache.spark.sql.gt.functions
-
-import geotrellis.raster.histogram.Histogram
-import org.apache.spark.sql.types.DataType
-import org.apache.spark.sql.{Row, gt}
-import org.apache.spark.sql.gt.Implicits._
+package astraea.spark.rasterframes
 
 /**
- * Statistics aggregation function for a full column of tiles.
- * @author sfitch
- * @since 5/18/17
+ * Module utils.
+ *
+ * @author sfitch 
+ * @since 9/7/17
  */
-class AggregateStatsFunction extends AggregateHistogramFunction {
-  override def dataType: DataType = histogramStatsEncoder.schema
-
-  override def evaluate(buffer: Row): Any =
-    buffer.getAs[Histogram[Double]](0).statistics().orNull
+package object functions {
+  @inline
+  private[rasterframes] def safeBinaryOp[T <: AnyRef, R >: T](op: (T, T) ⇒ R): ((T, T) ⇒ R) =
+    (o1: T, o2: T) ⇒ {
+      if (o1 == null) o2
+      else if (o2 == null) o1
+      else op(o1, o2)
+    }
 }

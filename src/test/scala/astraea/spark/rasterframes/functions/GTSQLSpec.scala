@@ -16,7 +16,7 @@
  * the License.
  */
 
-package org.apache.spark.sql.gt
+package astraea.spark.rasterframes.functions
 
 import java.nio.file.{Files, Paths}
 
@@ -29,9 +29,9 @@ import geotrellis.raster.summary.Statistics
 import geotrellis.raster.{ByteCellType, CellType, IntConstantNoDataCellType, MultibandTile, Tile, TileFeature}
 import geotrellis.spark.{SpaceTimeKey, TemporalProjectedExtent, TileLayerMetadata}
 import geotrellis.vector.{Extent, ProjectedExtent}
-import org.apache.spark.sql.functions._
-import org.apache.spark.sql.gt.functions._
 import org.apache.spark.sql._
+import org.apache.spark.sql.functions._
+import org.apache.spark.sql.gt._
 
 /**
  * Test rig for Spark UDTs and friends for GT.
@@ -61,7 +61,7 @@ class GTSQLSpec extends TestEnvironment with TestData with LazyLogging {
 
   sqlContext.udf.register("st_makeTiles", makeTiles)
 
-  describe("GeoTrellis UDTs") {
+  describe("Dataframe Ops on GeoTrellis types") {
     it("should resolve column names") {
       // This tests an internal utility.
       assert(col("fred").columnName === "fred")
@@ -250,8 +250,9 @@ class GTSQLSpec extends TestEnvironment with TestData with LazyLogging {
     }
 
     it("should list supported cell types") {
+      import gt.types.cellTypes
       val ct = sql("select explode(st_cellTypes())").as[String].collect
-      forEvery(UDFs.cellTypes()) { c ⇒
+      forEvery(cellTypes()) { c ⇒
         assert(ct.contains(c))
       }
     }
@@ -383,7 +384,20 @@ class GTSQLSpec extends TestEnvironment with TestData with LazyLogging {
 
       val maxTile = ds.select(localAggMax($"tiles")).first()
       assert(maxTile.toArray() === tile.toArray())
+    }
 
+    it("should count cells by no-data state") {
+      val tsize = 5
+      val count = 20
+      val nds = 2
+      val tiles = Seq.fill[Tile](count)(randomTile(tsize, tsize, "uint8ud255"))
+        .map(injectND(nds)).toDF("tiles")
+
+      tiles.select(tileStats($"tiles")).show(100)
+      val counts = tiles.select(nodataCells($"tiles")).collect()
+      forEvery(counts)(c ⇒ assert(c === nds))
+      val counts2 = tiles.select(dataCells($"tiles")).collect()
+      forEvery(counts2)(c ⇒ assert(c === tsize * tsize - nds))
     }
   }
 }
@@ -392,15 +406,19 @@ object GTSQLSpec {
   val rnd = new scala.util.Random(79)
 
   def injectND(num: Int)(t: Tile): Tile = {
-    val locs = (0 until num).map(_ ⇒
-      (rnd.nextInt(t.cols), rnd.nextInt(t.rows))
-    )
+    val indexes = List.tabulate(t.size)(identity)
+    val targeted = rnd.shuffle(indexes).take(num)
+    def filter(c: Int, r: Int) = targeted.contains(r * t.cols + c)
 
     if(t.cellType.isFloatingPoint) {
-      t.mapDouble((c, r, v) ⇒ {if(locs.contains((c,r))) raster.doubleNODATA else v})
+      t.mapDouble((c, r, v) ⇒ {
+        if(filter(c,r)) raster.doubleNODATA else v
+      })
     }
     else {
-      t.map((c, r, v) ⇒ {if(locs.contains((c,r))) raster.NODATA else v})
+      t.map((c, r, v) ⇒ {
+        if(filter(c, r)) raster.NODATA else v
+      })
     }
   }
 

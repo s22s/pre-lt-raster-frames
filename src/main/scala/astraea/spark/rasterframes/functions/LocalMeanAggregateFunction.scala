@@ -1,4 +1,4 @@
-package org.apache.spark.sql.gt.functions
+package astraea.spark.rasterframes.functions
 
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.gt.types.TileUDT

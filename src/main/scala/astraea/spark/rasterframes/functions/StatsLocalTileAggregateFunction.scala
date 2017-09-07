@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package org.apache.spark.sql.gt.functions
+package astraea.spark.rasterframes.functions
 
 import geotrellis.raster
 import geotrellis.raster.mapalgebra.local._
 import geotrellis.raster.{IntArrayTile, IntConstantNoDataCellType, Tile, isNoData}
 import org.apache.spark.sql.{Row, gt}
 import org.apache.spark.sql.expressions.{MutableAggregationBuffer, UserDefinedAggregateFunction}
-import org.apache.spark.sql.gt.safeBinaryOp
 import org.apache.spark.sql.gt.types.TileUDT
 import org.apache.spark.sql.types._
 

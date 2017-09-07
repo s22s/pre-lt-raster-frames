@@ -1,7 +1,5 @@
 package astraea.spark.rasterframes
 
-import org.apache.spark.sql.Column
-import org.apache.spark.sql.catalyst.expressions.AttributeReference
 import org.apache.spark.sql.types.MetadataBuilder
 
 /**

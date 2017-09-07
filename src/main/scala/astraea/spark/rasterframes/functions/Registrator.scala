@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package org.apache.spark.sql.gt.functions
+package astraea.spark.rasterframes.functions
 
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.sql.catalyst.analysis.FunctionRegistry
+import org.apache.spark.sql.gt.types
 
 /**
  * Object responsible for registering functions with Catalyst
@@ -25,7 +26,7 @@ import org.apache.spark.sql.catalyst.analysis.FunctionRegistry
  * @author sfitch
  * @since 4/12/17
  */
-private[gt] object Registrator {
+private[rasterframes] object Registrator {
   def register(sqlContext: SQLContext): Unit = {
     sqlContext.udf.register("st_makeConstantTile", UDFs.makeConstantTile)
     sqlContext.udf.register("st_tileDimensions", UDFs.tileDimensions)
@@ -44,7 +45,7 @@ private[gt] object Registrator {
     sqlContext.udf.register("st_localAggCount", UDFs.localAggCount)
     sqlContext.udf.register("st_localAdd", UDFs.localAdd)
     sqlContext.udf.register("st_localSubtract", UDFs.localSubtract)
-    sqlContext.udf.register("st_cellTypes", UDFs.cellTypes)
+    sqlContext.udf.register("st_cellTypes", types.cellTypes)
     sqlContext.udf.register("st_renderAscii", UDFs.renderAscii)
   }
   // Expression-oriented functions have a different registration scheme
