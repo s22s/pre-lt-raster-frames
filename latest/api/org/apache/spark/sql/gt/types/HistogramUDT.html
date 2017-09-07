@@ -1,9 +1,9 @@
 <!DOCTYPE html >
 <html>
         <head>
-          <title>MultibandTileUDT - org.apache.spark.sql.gt.types.MultibandTileUDT</title>
-          <meta name="description" content="MultibandTileUDT - org.apache.spark.sql.gt.types.MultibandTileUDT" />
-          <meta name="keywords" content="MultibandTileUDT org.apache.spark.sql.gt.types.MultibandTileUDT" />
+          <title>HistogramUDT - org.apache.spark.sql.gt.types.HistogramUDT</title>
+          <meta name="description" content="HistogramUDT - org.apache.spark.sql.gt.types.HistogramUDT" />
+          <meta name="keywords" content="HistogramUDT org.apache.spark.sql.gt.types.HistogramUDT" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
       <link href="../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
@@ -16,7 +16,7 @@
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../../../index.html';
-            var hash = 'org.apache.spark.sql.gt.types.MultibandTileUDT$';
+            var hash = 'org.apache.spark.sql.gt.types.HistogramUDT';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -26,16 +26,16 @@
    	  </script>
     
         </head>
-        <body class="value">
+        <body class="type">
       <div id="definition">
-        <a href="MultibandTileUDT.html" title="See companion class"><img alt="Object/Class" src="../../../../../../lib/object_to_class_big.png" /></a>
+        <a href="HistogramUDT$.html" title="See companion object"><img alt="Class/Object" src="../../../../../../lib/class_to_object_big.png" /></a>
         <p id="owner"><a href="../../../../../package.html" class="extype" name="org">org</a>.<a href="../../../../package.html" class="extype" name="org.apache">apache</a>.<a href="../../../package.html" class="extype" name="org.apache.spark">spark</a>.<a href="../../package.html" class="extype" name="org.apache.spark.sql">sql</a>.<a href="../package.html" class="extype" name="org.apache.spark.sql.gt">gt</a>.<a href="package.html" class="extype" name="org.apache.spark.sql.gt.types">types</a></p>
-        <h1><a href="MultibandTileUDT.html" title="See companion class">MultibandTileUDT</a></h1><h3><span class="morelinks"><div>
+        <h1><a href="HistogramUDT$.html" title="See companion object">HistogramUDT</a></h1><h3><span class="morelinks"><div>
             Related Docs:
-            <a href="MultibandTileUDT.html" title="See companion class">class MultibandTileUDT</a>
+            <a href="HistogramUDT$.html" title="See companion object">object HistogramUDT</a>
             | <a href="package.html" class="extype" name="org.apache.spark.sql.gt.types">package types</a>
           </div></span></h3><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -44,17 +44,21 @@
       <h4 id="signature" class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">object</span>
+        <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <span class="name">MultibandTileUDT</span><span class="result"> extends <a href="MultibandTileUDT.html" class="extype" name="org.apache.spark.sql.gt.types.MultibandTileUDT">MultibandTileUDT</a> with <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <span class="name">HistogramUDT</span><span class="result"> extends <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.types.UserDefinedType" class="extype" target="_top">UserDefinedType</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.histogram.Histogram" class="extype" target="_top">Histogram</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a>]] with <a href="KryoBackedUDT.html" class="extype" name="org.apache.spark.sql.gt.types.KryoBackedUDT">KryoBackedUDT</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.histogram.Histogram" class="extype" target="_top">Histogram</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a>]]</span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Wraps up GT Histogram type.
+</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>4/18/17</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Product" class="extype" target="_top">Product</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Equals" class="extype" target="_top">Equals</a>, <a href="MultibandTileUDT.html" class="extype" name="org.apache.spark.sql.gt.types.MultibandTileUDT">MultibandTileUDT</a>, <span class="extype" name="org.apache.spark.sql.gt.types.AbstractTileUDT">AbstractTileUDT</span>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.MultibandTile" class="extype" target="_top">MultibandTile</a>], <a href="KryoBackedUDT.html" class="extype" name="org.apache.spark.sql.gt.types.KryoBackedUDT">KryoBackedUDT</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.MultibandTile" class="extype" target="_top">MultibandTile</a>], <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.types.UserDefinedType" class="extype" target="_top">UserDefinedType</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.MultibandTile" class="extype" target="_top">MultibandTile</a>], <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.io.Serializable" class="extype" target="_top">Serializable</a>, <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.types.DataType" class="extype" target="_top">DataType</a>, <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.types.AbstractDataType" class="extype" target="_top">AbstractDataType</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></div>
-        </div></div>
+          <div class="superTypes hiddenContent"><a href="KryoBackedUDT.html" class="extype" name="org.apache.spark.sql.gt.types.KryoBackedUDT">KryoBackedUDT</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.histogram.Histogram" class="extype" target="_top">Histogram</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a>]], <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.types.UserDefinedType" class="extype" target="_top">UserDefinedType</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.histogram.Histogram" class="extype" target="_top">Histogram</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a>]], <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.io.Serializable" class="extype" target="_top">Serializable</a>, <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.types.DataType" class="extype" target="_top">DataType</a>, <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.types.AbstractDataType" class="extype" target="_top">AbstractDataType</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></div>
+        </div><div class="toggleContainer block">
+            <span class="toggle">Known Subclasses</span>
+            <div class="subClasses hiddenContent"><a href="HistogramUDT$.html" class="extype" name="org.apache.spark.sql.gt.types.HistogramUDT">HistogramUDT</a></div>
+          </div></div>
         
 
       <div id="mbrsel">
@@ -71,7 +75,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="org.apache.spark.sql.gt.types.MultibandTileUDT"><span>MultibandTileUDT</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="org.apache.spark.sql.gt.types.MultibandTileUDT"><span>MultibandTileUDT</span></li><li class="in" name="org.apache.spark.sql.gt.types.AbstractTileUDT"><span>AbstractTileUDT</span></li><li class="in" name="org.apache.spark.sql.gt.types.KryoBackedUDT"><span>KryoBackedUDT</span></li><li class="in" name="org.apache.spark.sql.types.UserDefinedType"><span>UserDefinedType</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="org.apache.spark.sql.types.DataType"><span>DataType</span></li><li class="in" name="org.apache.spark.sql.types.AbstractDataType"><span>AbstractDataType</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="org.apache.spark.sql.gt.types.HistogramUDT"><span>HistogramUDT</span></li><li class="in" name="org.apache.spark.sql.gt.types.KryoBackedUDT"><span>KryoBackedUDT</span></li><li class="in" name="org.apache.spark.sql.types.UserDefinedType"><span>UserDefinedType</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="org.apache.spark.sql.types.DataType"><span>DataType</span></li><li class="in" name="org.apache.spark.sql.types.AbstractDataType"><span>AbstractDataType</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -88,7 +92,27 @@
 
       <div id="template">
         <div id="allMembers">
-        
+        <div id="constructors" class="members">
+              <h3>Instance Constructors</h3>
+              <ol><li name="org.apache.spark.sql.gt.types.HistogramUDT#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="&lt;init&gt;():org.apache.spark.sql.gt.types.HistogramUDT"></a>
+      <a id="&lt;init&gt;:HistogramUDT"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">new</span>
+      </span>
+      <span class="symbol">
+        <span class="name">HistogramUDT</span><span class="params">()</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@&lt;init&gt;():org.apache.spark.sql.gt.types.HistogramUDT" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li></ol>
+            </div>
 
         
 
@@ -108,7 +132,7 @@
         <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@!=(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@!=(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -125,7 +149,7 @@
         <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@##():Int" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@##():Int" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -142,7 +166,7 @@
         <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@==(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@==(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -159,7 +183,7 @@
         <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@asInstanceOf[T0]:T0" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@asInstanceOf[T0]:T0" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -176,7 +200,7 @@
         <span class="name">catalogString</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@catalogString:String" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@catalogString:String" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -193,7 +217,7 @@
         <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@clone():Object" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@clone():Object" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -216,24 +240,24 @@
         <span class="name">defaultSize</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@defaultSize:Int" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@defaultSize:Int" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UserDefinedType → DataType</dd></dl></div>
     </li><li name="org.apache.spark.sql.gt.types.KryoBackedUDT#deserialize" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="deserialize(datum:Any):T"></a>
-      <a id="deserialize(Any):MultibandTile"></a>
+      <a id="deserialize(Any):Histogram[Double]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">deserialize</span><span class="params">(<span name="datum">datum: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.MultibandTile" class="extype" target="_top">MultibandTile</a></span>
+        <span class="name">deserialize</span><span class="params">(<span name="datum">datum: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.histogram.Histogram" class="extype" target="_top">Histogram</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@deserialize(datum:Any):T" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@deserialize(datum:Any):T" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -250,7 +274,7 @@
         <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -267,7 +291,7 @@
         <span class="name">equals</span><span class="params">(<span name="other">other: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@equals(other:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@equals(other:Any):Boolean" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -284,7 +308,7 @@
         <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@finalize():Unit" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@finalize():Unit" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -307,7 +331,7 @@
         <span class="name">getClass</span><span class="params">()</span><span class="result">: <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.lang.Class" class="extype" target="_top">Class</a>[_]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@getClass():Class[_]" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@getClass():Class[_]" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -324,7 +348,7 @@
         <span class="name">hashCode</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@hashCode():Int" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@hashCode():Int" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -341,7 +365,7 @@
         <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -358,7 +382,7 @@
         <span class="name">json</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@json:String" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@json:String" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -375,7 +399,7 @@
         <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -392,7 +416,7 @@
         <span class="name">notify</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@notify():Unit" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@notify():Unit" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -409,7 +433,7 @@
         <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@notifyAll():Unit" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@notifyAll():Unit" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -426,7 +450,7 @@
         <span class="name">prettyJson</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@prettyJson:String" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@prettyJson:String" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -443,24 +467,24 @@
         <span class="name">pyUDT</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@pyUDT:String" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@pyUDT:String" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UserDefinedType</dd></dl></div>
     </li><li name="org.apache.spark.sql.gt.types.KryoBackedUDT#serialize" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="serialize(obj:T):Any"></a>
-      <a id="serialize(MultibandTile):Any"></a>
+      <a id="serialize(Histogram[Double]):Any"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">serialize</span><span class="params">(<span name="obj">obj: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.MultibandTile" class="extype" target="_top">MultibandTile</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>
+        <span class="name">serialize</span><span class="params">(<span name="obj">obj: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.histogram.Histogram" class="extype" target="_top">Histogram</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a>]</span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@serialize(obj:T):Any" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@serialize(obj:T):Any" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -477,7 +501,7 @@
         <span class="name">serializedPyClass</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@serializedPyClass:String" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@serializedPyClass:String" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -494,7 +518,7 @@
         <span class="name">simpleString</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@simpleString:String" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@simpleString:String" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -511,7 +535,7 @@
         <span class="name">sql</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@sql:String" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@sql:String" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -528,7 +552,7 @@
         <span class="name">sqlType</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.types.DataType" class="extype" target="_top">DataType</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@sqlType:org.apache.spark.sql.types.DataType" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@sqlType:org.apache.spark.sql.types.DataType" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -545,58 +569,75 @@
         <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.types.AbstractTileUDT#targetClassTag" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="targetClassTag:scala.reflect.ClassTag[T]"></a>
-      <a id="targetClassTag:ClassTag[MultibandTile]"></a>
+    </li><li name="org.apache.spark.sql.gt.types.HistogramUDT#targetClassTag" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="targetClassTag:scala.reflect.ClassTag[geotrellis.raster.histogram.Histogram[Double]]"></a>
+      <a id="targetClassTag:ClassTag[Histogram[Double]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">targetClassTag</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.reflect.ClassTag" class="extype" target="_top">ClassTag</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.MultibandTile" class="extype" target="_top">MultibandTile</a>]</span>
+        <span class="name">targetClassTag</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.reflect.ClassTag" class="extype" target="_top">ClassTag</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.histogram.Histogram" class="extype" target="_top">Histogram</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a>]]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@targetClassTag:scala.reflect.ClassTag[T]" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@targetClassTag:scala.reflect.ClassTag[geotrellis.raster.histogram.Histogram[Double]]" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AbstractTileUDT → <a href="KryoBackedUDT.html" class="extype" name="org.apache.spark.sql.gt.types.KryoBackedUDT">KryoBackedUDT</a></dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.types.AbstractTileUDT#typeName" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="typeName:String"></a>
-      <a id="typeName:String"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">typeName</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@typeName:String" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AbstractTileUDT → DataType</dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.types.KryoBackedUDT#userClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="userClass:Class[T]"></a>
-      <a id="userClass:Class[MultibandTile]"></a>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="org.apache.spark.sql.gt.types.HistogramUDT">HistogramUDT</a> → <a href="KryoBackedUDT.html" class="extype" name="org.apache.spark.sql.gt.types.KryoBackedUDT">KryoBackedUDT</a></dd></dl></div>
+    </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="toString():String"></a>
+      <a id="toString():String"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">userClass</span><span class="result">: <span class="extype" name="scala.Predef.Class">Class</span>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.MultibandTile" class="extype" target="_top">MultibandTile</a>]</span>
+        <span class="name">toString</span><span class="params">()</span><span class="result">: <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.lang.String" class="extype" target="_top">String</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@userClass:Class[T]" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@toString():String" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="org.apache.spark.sql.gt.types.HistogramUDT#typeName" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="typeName:String"></a>
+      <a id="typeName:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">typeName</span><span class="result">: <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.lang.String" class="extype" target="_top">String</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@typeName:String" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="org.apache.spark.sql.gt.types.HistogramUDT">HistogramUDT</a> → DataType</dd></dl></div>
+    </li><li name="org.apache.spark.sql.gt.types.KryoBackedUDT#userClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="userClass:Class[T]"></a>
+      <a id="userClass:Class[Histogram[Double]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">userClass</span><span class="result">: <span class="extype" name="scala.Predef.Class">Class</span>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.histogram.Histogram" class="extype" target="_top">Histogram</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@userClass:Class[T]" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -613,7 +654,7 @@
         <span class="name">wait</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@wait():Unit" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@wait():Unit" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -636,7 +677,7 @@
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Long" class="extype" target="_top">Long</a></span>, <span name="arg1">arg1: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -659,7 +700,7 @@
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Long" class="extype" target="_top">Long</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.MultibandTileUDT$@wait(x$1:Long):Unit" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.HistogramUDT@wait(x$1:Long):Unit" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -679,18 +720,10 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="scala.Product">
-              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Product" class="extype" target="_top">Product</a></h3>
-            </div><div class="parent" name="scala.Equals">
-              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Equals" class="extype" target="_top">Equals</a></h3>
-            </div><div class="parent" name="org.apache.spark.sql.gt.types.MultibandTileUDT">
-              <h3>Inherited from <a href="MultibandTileUDT.html" class="extype" name="org.apache.spark.sql.gt.types.MultibandTileUDT">MultibandTileUDT</a></h3>
-            </div><div class="parent" name="org.apache.spark.sql.gt.types.AbstractTileUDT">
-              <h3>Inherited from <span class="extype" name="org.apache.spark.sql.gt.types.AbstractTileUDT">AbstractTileUDT</span>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.MultibandTile" class="extype" target="_top">MultibandTile</a>]</h3>
-            </div><div class="parent" name="org.apache.spark.sql.gt.types.KryoBackedUDT">
-              <h3>Inherited from <a href="KryoBackedUDT.html" class="extype" name="org.apache.spark.sql.gt.types.KryoBackedUDT">KryoBackedUDT</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.MultibandTile" class="extype" target="_top">MultibandTile</a>]</h3>
+        <div class="parent" name="org.apache.spark.sql.gt.types.KryoBackedUDT">
+              <h3>Inherited from <a href="KryoBackedUDT.html" class="extype" name="org.apache.spark.sql.gt.types.KryoBackedUDT">KryoBackedUDT</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.histogram.Histogram" class="extype" target="_top">Histogram</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a>]]</h3>
             </div><div class="parent" name="org.apache.spark.sql.types.UserDefinedType">
-              <h3>Inherited from <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.types.UserDefinedType" class="extype" target="_top">UserDefinedType</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.MultibandTile" class="extype" target="_top">MultibandTile</a>]</h3>
+              <h3>Inherited from <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.types.UserDefinedType" class="extype" target="_top">UserDefinedType</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.histogram.Histogram" class="extype" target="_top">Histogram</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a>]]</h3>
             </div><div class="parent" name="scala.Serializable">
               <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></h3>
             </div><div class="parent" name="java.io.Serializable">

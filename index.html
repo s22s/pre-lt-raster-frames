@@ -27,7 +27,7 @@
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.4.2
+0.4.3
 </div>
 </div>
 <div class="nav-toc">
@@ -67,7 +67,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.4.2
+0.4.3
 </div>
 </div>
 <div class="nav-toc">
@@ -95,14 +95,19 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <div class="page-content row">
 <div class="small-12 large-9 column" id="docs">
 <h1><a href="#rasterframes" name="rasterframes" class="anchor"><span class="anchor-link"></span></a>RasterFrames</h1>
-<p><em>RasterFrames</em> brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer operations of <a href="https://geotrellis.io/">GeoTrellis</a>. The source code can be found at <a href="https://github.com/s22s/raster-frames">https://github.com/s22s/raster-frames</a>.</p><div class="callout note "><div class="callout-title">Note</div>
+<p><em>RasterFrames</em> brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer operations of <a href="https://geotrellis.io/">GeoTrellis</a>. The source code can be found on GitHub at  <a href="">s22s/raster-frames</a><a href="https://github.com/s22s/raster-frames.">https://github.com/s22s/raster-frames.</a>)</p><div class="callout note "><div class="callout-title">Note</div>
 <p>RasterFrames is a new project under active development. Feedback and contributions are welcomed as we look to improve it.</p></div>
+<p>The underlying purpose of RasterFrames is to allow data scientists and software developers the ability to process and analyze geospatial-temporal raster data with the same flexibility and ease as any other Spark data type. At its core is a Spark user-defined type (UDF) called <code>TileUDT</code>, which encodes a GeoTrellis <code>Tile</code> in a form the Spark Catalyst engine can process. On top of that we extend the definition of a Dataframe to encompass some additional invariants that allow for geospatial operations within and between RasterFrames to occur while still maintaining necessary geo-referencing constructs.</p>
+<p>To learn more, please see the <a href="getting-started.md">Getting Started</a> section of this manual.</p>
 <h2><a href="#related-links" name="related-links" class="anchor"><span class="anchor-link"></span></a>Related Links</h2>
 <ul>
+  <li><a href="https://gitter.im/s22s/raster-frames">Gitter Channel</a></li>
   <li><a href="latest/api/index.html">API Documentation</a></li>
   <li><a href="https://github.com/s22s/raster-frames">GitHub Repository</a></li>
   <li><a href="https://docs.geotrellis.io/en/latest/">GeoTrellis Documentation</a></li>
+  <li><a href="http://www.astraea.earth/">Astraea, Inc.</a> (the company behind RasterFrames)</li>
 </ul>
+<p>@@ toc { depth = 2 }</p>
 <div class="nav-next">
 <p><strong>Next:</strong> <a href="getting-started.html">Getting Started</a></p>
 </div>

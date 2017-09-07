@@ -1,9 +1,9 @@
 <!DOCTYPE html >
 <html>
         <head>
-          <title>LocalMeanAggregateFunction - org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction</title>
-          <meta name="description" content="LocalMeanAggregateFunction - org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction" />
-          <meta name="keywords" content="LocalMeanAggregateFunction org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction" />
+          <title>TileUDT - org.apache.spark.sql.gt.types.TileUDT</title>
+          <meta name="description" content="TileUDT - org.apache.spark.sql.gt.types.TileUDT" />
+          <meta name="keywords" content="TileUDT org.apache.spark.sql.gt.types.TileUDT" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
       <link href="../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
@@ -16,7 +16,7 @@
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../../../index.html';
-            var hash = 'org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction';
+            var hash = 'org.apache.spark.sql.gt.types.TileUDT';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -28,12 +28,14 @@
         </head>
         <body class="type">
       <div id="definition">
-        <img alt="Class" src="../../../../../../lib/class_big.png" />
-        <p id="owner"><a href="../../../../../package.html" class="extype" name="org">org</a>.<a href="../../../../package.html" class="extype" name="org.apache">apache</a>.<a href="../../../package.html" class="extype" name="org.apache.spark">spark</a>.<a href="../../package.html" class="extype" name="org.apache.spark.sql">sql</a>.<a href="../package.html" class="extype" name="org.apache.spark.sql.gt">gt</a>.<a href="package.html" class="extype" name="org.apache.spark.sql.gt.functions">functions</a></p>
-        <h1>LocalMeanAggregateFunction</h1><h3><span class="morelinks"><div>Related Doc:
-            <a href="package.html" class="extype" name="org.apache.spark.sql.gt.functions">package functions</a>
+        <a href="TileUDT$.html" title="See companion object"><img alt="Class/Object" src="../../../../../../lib/class_to_object_big.png" /></a>
+        <p id="owner"><a href="../../../../../package.html" class="extype" name="org">org</a>.<a href="../../../../package.html" class="extype" name="org.apache">apache</a>.<a href="../../../package.html" class="extype" name="org.apache.spark">spark</a>.<a href="../../package.html" class="extype" name="org.apache.spark.sql">sql</a>.<a href="../package.html" class="extype" name="org.apache.spark.sql.gt">gt</a>.<a href="package.html" class="extype" name="org.apache.spark.sql.gt.types">types</a></p>
+        <h1><a href="TileUDT$.html" title="See companion object">TileUDT</a></h1><h3><span class="morelinks"><div>
+            Related Docs:
+            <a href="TileUDT$.html" title="See companion object">object TileUDT</a>
+            | <a href="package.html" class="extype" name="org.apache.spark.sql.gt.types">package types</a>
           </div></span></h3><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -45,17 +47,17 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <span class="name">LocalMeanAggregateFunction</span><span class="result"> extends <a href="StatsLocalTileAggregateFunction.html" class="extype" name="org.apache.spark.sql.gt.functions.StatsLocalTileAggregateFunction">StatsLocalTileAggregateFunction</a></span>
+        <span class="name">TileUDT</span><span class="result"> extends <span class="extype" name="org.apache.spark.sql.gt.types.AbstractTileUDT">AbstractTileUDT</span>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.Tile" class="extype" target="_top">Tile</a>]</span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Aggregation function that only returns the average. Depends on
-<a href="StatsLocalTileAggregateFunction.html" class="extype" name="org.apache.spark.sql.gt.functions.StatsLocalTileAggregateFunction">StatsLocalTileAggregateFunction</a> for computation and just
-selects the mean result tile.
-</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>8/11/17</p></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>UDT for singleband tiles.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>5/11/17</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="StatsLocalTileAggregateFunction.html" class="extype" name="org.apache.spark.sql.gt.functions.StatsLocalTileAggregateFunction">StatsLocalTileAggregateFunction</a>, <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.expressions.UserDefinedAggregateFunction" class="extype" target="_top">UserDefinedAggregateFunction</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.io.Serializable" class="extype" target="_top">Serializable</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></div>
-        </div></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="org.apache.spark.sql.gt.types.AbstractTileUDT">AbstractTileUDT</span>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.Tile" class="extype" target="_top">Tile</a>], <a href="KryoBackedUDT.html" class="extype" name="org.apache.spark.sql.gt.types.KryoBackedUDT">KryoBackedUDT</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.Tile" class="extype" target="_top">Tile</a>], <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.types.UserDefinedType" class="extype" target="_top">UserDefinedType</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.Tile" class="extype" target="_top">Tile</a>], <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.io.Serializable" class="extype" target="_top">Serializable</a>, <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.types.DataType" class="extype" target="_top">DataType</a>, <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.types.AbstractDataType" class="extype" target="_top">AbstractDataType</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></div>
+        </div><div class="toggleContainer block">
+            <span class="toggle">Known Subclasses</span>
+            <div class="subClasses hiddenContent"><a href="TileUDT$.html" class="extype" name="org.apache.spark.sql.gt.types.TileUDT">TileUDT</a></div>
+          </div></div>
         
 
       <div id="mbrsel">
@@ -72,7 +74,7 @@ selects the mean result tile.
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction"><span>LocalMeanAggregateFunction</span></li><li class="in" name="org.apache.spark.sql.gt.functions.StatsLocalTileAggregateFunction"><span>StatsLocalTileAggregateFunction</span></li><li class="in" name="org.apache.spark.sql.expressions.UserDefinedAggregateFunction"><span>UserDefinedAggregateFunction</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="org.apache.spark.sql.gt.types.TileUDT"><span>TileUDT</span></li><li class="in" name="org.apache.spark.sql.gt.types.AbstractTileUDT"><span>AbstractTileUDT</span></li><li class="in" name="org.apache.spark.sql.gt.types.KryoBackedUDT"><span>KryoBackedUDT</span></li><li class="in" name="org.apache.spark.sql.types.UserDefinedType"><span>UserDefinedType</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="org.apache.spark.sql.types.DataType"><span>DataType</span></li><li class="in" name="org.apache.spark.sql.types.AbstractDataType"><span>AbstractDataType</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -91,19 +93,19 @@ selects the mean result tile.
         <div id="allMembers">
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
-              <ol><li name="org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;():org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction"></a>
-      <a id="&lt;init&gt;:LocalMeanAggregateFunction"></a>
+              <ol><li name="org.apache.spark.sql.gt.types.TileUDT#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="&lt;init&gt;():org.apache.spark.sql.gt.types.TileUDT"></a>
+      <a id="&lt;init&gt;:TileUDT"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">LocalMeanAggregateFunction</span><span class="params">()</span>
+        <span class="name">TileUDT</span><span class="params">()</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@&lt;init&gt;():org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@&lt;init&gt;():org.apache.spark.sql.gt.types.TileUDT" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -129,7 +131,7 @@ selects the mean result tile.
         <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@!=(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@!=(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -146,7 +148,7 @@ selects the mean result tile.
         <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@##():Int" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@##():Int" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -163,31 +165,11 @@ selects the mean result tile.
         <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@==(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@==(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="org.apache.spark.sql.expressions.UserDefinedAggregateFunction#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply(exprs:org.apache.spark.sql.Column*):org.apache.spark.sql.Column"></a>
-      <a id="apply(Column*):Column"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">apply</span><span class="params">(<span name="exprs">exprs: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a>*</span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@apply(exprs:org.apache.spark.sql.Column*):org.apache.spark.sql.Column" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UserDefinedAggregateFunction</dd><dt>Annotations</dt><dd>
-                <span class="name">@varargs</span><span class="args">()</span>
-              
-        </dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -200,28 +182,28 @@ selects the mean result tile.
         <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@asInstanceOf[T0]:T0" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@asInstanceOf[T0]:T0" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.functions.StatsLocalTileAggregateFunction#bufferSchema" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="bufferSchema:org.apache.spark.sql.types.StructType"></a>
-      <a id="bufferSchema:StructType"></a>
+    </li><li name="org.apache.spark.sql.types.UserDefinedType#catalogString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="catalogString:String"></a>
+      <a id="catalogString:String"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">bufferSchema</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.types.StructType" class="extype" target="_top">StructType</a></span>
+        <span class="name">catalogString</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@bufferSchema:org.apache.spark.sql.types.StructType" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@catalogString:String" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="StatsLocalTileAggregateFunction.html" class="extype" name="org.apache.spark.sql.gt.functions.StatsLocalTileAggregateFunction">StatsLocalTileAggregateFunction</a> → UserDefinedAggregateFunction</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UserDefinedType → DataType</dd></dl></div>
     </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a>
       <a id="clone():AnyRef"></a>
@@ -234,7 +216,7 @@ selects the mean result tile.
         <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@clone():Object" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@clone():Object" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -245,60 +227,40 @@ selects the mean result tile.
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction#dataType" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="dataType:org.apache.spark.sql.types.DataType"></a>
-      <a id="dataType:DataType"></a>
+    </li><li name="org.apache.spark.sql.types.UserDefinedType#defaultSize" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="defaultSize:Int"></a>
+      <a id="defaultSize:Int"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">dataType</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.types.DataType" class="extype" target="_top">DataType</a></span>
+        <span class="name">defaultSize</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@dataType:org.apache.spark.sql.types.DataType" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@defaultSize:Int" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction">LocalMeanAggregateFunction</a> → <a href="StatsLocalTileAggregateFunction.html" class="extype" name="org.apache.spark.sql.gt.functions.StatsLocalTileAggregateFunction">StatsLocalTileAggregateFunction</a> → UserDefinedAggregateFunction</dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.functions.StatsLocalTileAggregateFunction#deterministic" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="deterministic:Boolean"></a>
-      <a id="deterministic:Boolean"></a>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UserDefinedType → DataType</dd></dl></div>
+    </li><li name="org.apache.spark.sql.gt.types.KryoBackedUDT#deserialize" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="deserialize(datum:Any):T"></a>
+      <a id="deserialize(Any):Tile"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">deterministic</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">deserialize</span><span class="params">(<span name="datum">datum: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.Tile" class="extype" target="_top">Tile</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@deterministic:Boolean" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@deserialize(datum:Any):T" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="StatsLocalTileAggregateFunction.html" class="extype" name="org.apache.spark.sql.gt.functions.StatsLocalTileAggregateFunction">StatsLocalTileAggregateFunction</a> → UserDefinedAggregateFunction</dd></dl></div>
-    </li><li name="org.apache.spark.sql.expressions.UserDefinedAggregateFunction#distinct" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="distinct(exprs:org.apache.spark.sql.Column*):org.apache.spark.sql.Column"></a>
-      <a id="distinct(Column*):Column"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">distinct</span><span class="params">(<span name="exprs">exprs: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a>*</span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@distinct(exprs:org.apache.spark.sql.Column*):org.apache.spark.sql.Column" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UserDefinedAggregateFunction</dd><dt>Annotations</dt><dd>
-                <span class="name">@varargs</span><span class="args">()</span>
-              
-        </dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="KryoBackedUDT.html" class="extype" name="org.apache.spark.sql.gt.types.KryoBackedUDT">KryoBackedUDT</a></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -311,13 +273,13 @@ selects the mean result tile.
         <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.AnyRef#equals" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="equals(x$1:Any):Boolean"></a>
+    </li><li name="org.apache.spark.sql.types.UserDefinedType#equals" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="equals(other:Any):Boolean"></a>
       <a id="equals(Any):Boolean"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -325,31 +287,14 @@ selects the mean result tile.
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
+        <span class="name">equals</span><span class="params">(<span name="other">other: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@equals(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@equals(other:Any):Boolean" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction#evaluate" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="evaluate(buffer:org.apache.spark.sql.Row):Any"></a>
-      <a id="evaluate(Row):Any"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">evaluate</span><span class="params">(<span name="buffer">buffer: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Row" class="extype" target="_top">Row</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@evaluate(buffer:org.apache.spark.sql.Row):Any" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction">LocalMeanAggregateFunction</a> → <a href="StatsLocalTileAggregateFunction.html" class="extype" name="org.apache.spark.sql.gt.functions.StatsLocalTileAggregateFunction">StatsLocalTileAggregateFunction</a> → UserDefinedAggregateFunction</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UserDefinedType → AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <a id="finalize():Unit"></a>
@@ -362,7 +307,7 @@ selects the mean result tile.
         <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@finalize():Unit" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@finalize():Unit" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -385,12 +330,12 @@ selects the mean result tile.
         <span class="name">getClass</span><span class="params">()</span><span class="result">: <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.lang.Class" class="extype" target="_top">Class</a>[_]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@getClass():Class[_]" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@getClass():Class[_]" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="scala.AnyRef#hashCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="org.apache.spark.sql.types.UserDefinedType#hashCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="hashCode():Int"></a>
       <a id="hashCode():Int"></a>
       <h4 class="signature">
@@ -402,45 +347,11 @@ selects the mean result tile.
         <span class="name">hashCode</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@hashCode():Int" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@hashCode():Int" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.functions.StatsLocalTileAggregateFunction#initialize" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="initialize(buffer:org.apache.spark.sql.expressions.MutableAggregationBuffer):Unit"></a>
-      <a id="initialize(MutableAggregationBuffer):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">initialize</span><span class="params">(<span name="buffer">buffer: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.expressions.MutableAggregationBuffer" class="extype" target="_top">MutableAggregationBuffer</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@initialize(buffer:org.apache.spark.sql.expressions.MutableAggregationBuffer):Unit" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="StatsLocalTileAggregateFunction.html" class="extype" name="org.apache.spark.sql.gt.functions.StatsLocalTileAggregateFunction">StatsLocalTileAggregateFunction</a> → UserDefinedAggregateFunction</dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.functions.StatsLocalTileAggregateFunction#inputSchema" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="inputSchema:org.apache.spark.sql.types.StructType"></a>
-      <a id="inputSchema:StructType"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">inputSchema</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.types.StructType" class="extype" target="_top">StructType</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@inputSchema:org.apache.spark.sql.types.StructType" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="StatsLocalTileAggregateFunction.html" class="extype" name="org.apache.spark.sql.gt.functions.StatsLocalTileAggregateFunction">StatsLocalTileAggregateFunction</a> → UserDefinedAggregateFunction</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UserDefinedType → AnyRef → Any</dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <a id="isInstanceOf[T0]:Boolean"></a>
@@ -453,28 +364,28 @@ selects the mean result tile.
         <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.functions.StatsLocalTileAggregateFunction#merge" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="merge(buffer1:org.apache.spark.sql.expressions.MutableAggregationBuffer,buffer2:org.apache.spark.sql.Row):Unit"></a>
-      <a id="merge(MutableAggregationBuffer,Row):Unit"></a>
+    </li><li name="org.apache.spark.sql.types.DataType#json" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="json:String"></a>
+      <a id="json:String"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">merge</span><span class="params">(<span name="buffer1">buffer1: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.expressions.MutableAggregationBuffer" class="extype" target="_top">MutableAggregationBuffer</a></span>, <span name="buffer2">buffer2: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Row" class="extype" target="_top">Row</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">json</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@merge(buffer1:org.apache.spark.sql.expressions.MutableAggregationBuffer,buffer2:org.apache.spark.sql.Row):Unit" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@json:String" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="StatsLocalTileAggregateFunction.html" class="extype" name="org.apache.spark.sql.gt.functions.StatsLocalTileAggregateFunction">StatsLocalTileAggregateFunction</a> → UserDefinedAggregateFunction</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>DataType</dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -487,7 +398,7 @@ selects the mean result tile.
         <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -504,7 +415,7 @@ selects the mean result tile.
         <span class="name">notify</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@notify():Unit" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@notify():Unit" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -521,28 +432,130 @@ selects the mean result tile.
         <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@notifyAll():Unit" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@notifyAll():Unit" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.functions.StatsLocalTileAggregateFunction#reafiableUDT" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="reafiableUDT:org.apache.spark.sql.gt.types.TileUDT"></a>
-      <a id="reafiableUDT:TileUDT"></a>
+    </li><li name="org.apache.spark.sql.types.DataType#prettyJson" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="prettyJson:String"></a>
+      <a id="prettyJson:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">prettyJson</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@prettyJson:String" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>DataType</dd></dl></div>
+    </li><li name="org.apache.spark.sql.types.UserDefinedType#pyUDT" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="pyUDT:String"></a>
+      <a id="pyUDT:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">pyUDT</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@pyUDT:String" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UserDefinedType</dd></dl></div>
+    </li><li name="org.apache.spark.sql.gt.types.KryoBackedUDT#serialize" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="serialize(obj:T):Any"></a>
+      <a id="serialize(Tile):Any"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">serialize</span><span class="params">(<span name="obj">obj: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.Tile" class="extype" target="_top">Tile</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@serialize(obj:T):Any" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="KryoBackedUDT.html" class="extype" name="org.apache.spark.sql.gt.types.KryoBackedUDT">KryoBackedUDT</a></dd></dl></div>
+    </li><li name="org.apache.spark.sql.types.UserDefinedType#serializedPyClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="serializedPyClass:String"></a>
+      <a id="serializedPyClass:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">serializedPyClass</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@serializedPyClass:String" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UserDefinedType</dd></dl></div>
+    </li><li name="org.apache.spark.sql.gt.types.KryoBackedUDT#simpleString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="simpleString:String"></a>
+      <a id="simpleString:String"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">reafiableUDT</span><span class="result">: <span class="extype" name="org.apache.spark.sql.gt.types.TileUDT">TileUDT</span></span>
+        <span class="name">simpleString</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@reafiableUDT:org.apache.spark.sql.gt.types.TileUDT" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@simpleString:String" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="StatsLocalTileAggregateFunction.html" class="extype" name="org.apache.spark.sql.gt.functions.StatsLocalTileAggregateFunction">StatsLocalTileAggregateFunction</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="KryoBackedUDT.html" class="extype" name="org.apache.spark.sql.gt.types.KryoBackedUDT">KryoBackedUDT</a></dd></dl></div>
+    </li><li name="org.apache.spark.sql.types.UserDefinedType#sql" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="sql:String"></a>
+      <a id="sql:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">sql</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@sql:String" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UserDefinedType → DataType</dd></dl></div>
+    </li><li name="org.apache.spark.sql.gt.types.KryoBackedUDT#sqlType" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="sqlType:org.apache.spark.sql.types.DataType"></a>
+      <a id="sqlType:DataType"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">sqlType</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.types.DataType" class="extype" target="_top">DataType</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@sqlType:org.apache.spark.sql.types.DataType" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="KryoBackedUDT.html" class="extype" name="org.apache.spark.sql.gt.types.KryoBackedUDT">KryoBackedUDT</a></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -555,11 +568,28 @@ selects the mean result tile.
         <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="org.apache.spark.sql.gt.types.AbstractTileUDT#targetClassTag" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="targetClassTag:scala.reflect.ClassTag[T]"></a>
+      <a id="targetClassTag:ClassTag[Tile]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">targetClassTag</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.reflect.ClassTag" class="extype" target="_top">ClassTag</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.Tile" class="extype" target="_top">Tile</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@targetClassTag:scala.reflect.ClassTag[T]" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AbstractTileUDT → <a href="KryoBackedUDT.html" class="extype" name="org.apache.spark.sql.gt.types.KryoBackedUDT">KryoBackedUDT</a></dd></dl></div>
     </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
       <a id="toString():String"></a>
@@ -572,28 +602,45 @@ selects the mean result tile.
         <span class="name">toString</span><span class="params">()</span><span class="result">: <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.lang.String" class="extype" target="_top">String</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@toString():String" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@toString():String" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.functions.StatsLocalTileAggregateFunction#update" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="update(buffer:org.apache.spark.sql.expressions.MutableAggregationBuffer,input:org.apache.spark.sql.Row):Unit"></a>
-      <a id="update(MutableAggregationBuffer,Row):Unit"></a>
+    </li><li name="org.apache.spark.sql.gt.types.AbstractTileUDT#typeName" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="typeName:String"></a>
+      <a id="typeName:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">typeName</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@typeName:String" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AbstractTileUDT → DataType</dd></dl></div>
+    </li><li name="org.apache.spark.sql.gt.types.KryoBackedUDT#userClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="userClass:Class[T]"></a>
+      <a id="userClass:Class[Tile]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">update</span><span class="params">(<span name="buffer">buffer: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.expressions.MutableAggregationBuffer" class="extype" target="_top">MutableAggregationBuffer</a></span>, <span name="input">input: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Row" class="extype" target="_top">Row</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
+        <span class="name">userClass</span><span class="result">: <span class="extype" name="scala.Predef.Class">Class</span>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.Tile" class="extype" target="_top">Tile</a>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@update(buffer:org.apache.spark.sql.expressions.MutableAggregationBuffer,input:org.apache.spark.sql.Row):Unit" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@userClass:Class[T]" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="StatsLocalTileAggregateFunction.html" class="extype" name="org.apache.spark.sql.gt.functions.StatsLocalTileAggregateFunction">StatsLocalTileAggregateFunction</a> → UserDefinedAggregateFunction</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="KryoBackedUDT.html" class="extype" name="org.apache.spark.sql.gt.types.KryoBackedUDT">KryoBackedUDT</a></dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>
@@ -606,7 +653,7 @@ selects the mean result tile.
         <span class="name">wait</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@wait():Unit" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@wait():Unit" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -629,7 +676,7 @@ selects the mean result tile.
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Long" class="extype" target="_top">Long</a></span>, <span name="arg1">arg1: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -652,7 +699,7 @@ selects the mean result tile.
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Long" class="extype" target="_top">Long</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.LocalMeanAggregateFunction@wait(x$1:Long):Unit" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.TileUDT@wait(x$1:Long):Unit" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -672,14 +719,20 @@ selects the mean result tile.
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="org.apache.spark.sql.gt.functions.StatsLocalTileAggregateFunction">
-              <h3>Inherited from <a href="StatsLocalTileAggregateFunction.html" class="extype" name="org.apache.spark.sql.gt.functions.StatsLocalTileAggregateFunction">StatsLocalTileAggregateFunction</a></h3>
-            </div><div class="parent" name="org.apache.spark.sql.expressions.UserDefinedAggregateFunction">
-              <h3>Inherited from <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.expressions.UserDefinedAggregateFunction" class="extype" target="_top">UserDefinedAggregateFunction</a></h3>
+        <div class="parent" name="org.apache.spark.sql.gt.types.AbstractTileUDT">
+              <h3>Inherited from <span class="extype" name="org.apache.spark.sql.gt.types.AbstractTileUDT">AbstractTileUDT</span>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.Tile" class="extype" target="_top">Tile</a>]</h3>
+            </div><div class="parent" name="org.apache.spark.sql.gt.types.KryoBackedUDT">
+              <h3>Inherited from <a href="KryoBackedUDT.html" class="extype" name="org.apache.spark.sql.gt.types.KryoBackedUDT">KryoBackedUDT</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.Tile" class="extype" target="_top">Tile</a>]</h3>
+            </div><div class="parent" name="org.apache.spark.sql.types.UserDefinedType">
+              <h3>Inherited from <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.types.UserDefinedType" class="extype" target="_top">UserDefinedType</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.Tile" class="extype" target="_top">Tile</a>]</h3>
             </div><div class="parent" name="scala.Serializable">
               <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></h3>
             </div><div class="parent" name="java.io.Serializable">
               <h3>Inherited from <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.io.Serializable" class="extype" target="_top">Serializable</a></h3>
+            </div><div class="parent" name="org.apache.spark.sql.types.DataType">
+              <h3>Inherited from <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.types.DataType" class="extype" target="_top">DataType</a></h3>
+            </div><div class="parent" name="org.apache.spark.sql.types.AbstractDataType">
+              <h3>Inherited from <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.types.AbstractDataType" class="extype" target="_top">AbstractDataType</a></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">

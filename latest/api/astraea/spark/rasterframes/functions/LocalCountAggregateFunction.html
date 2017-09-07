@@ -1,22 +1,22 @@
 <!DOCTYPE html >
 <html>
         <head>
-          <title>AggregateStatsFunction - org.apache.spark.sql.gt.functions.AggregateStatsFunction</title>
-          <meta name="description" content="AggregateStatsFunction - org.apache.spark.sql.gt.functions.AggregateStatsFunction" />
-          <meta name="keywords" content="AggregateStatsFunction org.apache.spark.sql.gt.functions.AggregateStatsFunction" />
+          <title>LocalCountAggregateFunction - astraea.spark.rasterframes.functions.LocalCountAggregateFunction</title>
+          <meta name="description" content="LocalCountAggregateFunction - astraea.spark.rasterframes.functions.LocalCountAggregateFunction" />
+          <meta name="keywords" content="LocalCountAggregateFunction astraea.spark.rasterframes.functions.LocalCountAggregateFunction" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
-      <link href="../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
-      <link href="../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
-      <script type="text/javascript" src="../../../../../../lib/jquery.js" id="jquery-js"></script>
-      <script type="text/javascript" src="../../../../../../lib/jquery-ui.js"></script>
-      <script type="text/javascript" src="../../../../../../lib/template.js"></script>
-      <script type="text/javascript" src="../../../../../../lib/tools.tooltip.js"></script>
+      <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../lib/tools.tooltip.js"></script>
       
       <script type="text/javascript">
          if(top === self) {
-            var url = '../../../../../../index.html';
-            var hash = 'org.apache.spark.sql.gt.functions.AggregateStatsFunction';
+            var url = '../../../../index.html';
+            var hash = 'astraea.spark.rasterframes.functions.LocalCountAggregateFunction';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -28,13 +28,13 @@
         </head>
         <body class="type">
       <div id="definition">
-        <img alt="Class" src="../../../../../../lib/class_big.png" />
-        <p id="owner"><a href="../../../../../package.html" class="extype" name="org">org</a>.<a href="../../../../package.html" class="extype" name="org.apache">apache</a>.<a href="../../../package.html" class="extype" name="org.apache.spark">spark</a>.<a href="../../package.html" class="extype" name="org.apache.spark.sql">sql</a>.<a href="../package.html" class="extype" name="org.apache.spark.sql.gt">gt</a>.<a href="package.html" class="extype" name="org.apache.spark.sql.gt.functions">functions</a></p>
-        <h1>AggregateStatsFunction</h1><h3><span class="morelinks"><div>Related Doc:
-            <a href="package.html" class="extype" name="org.apache.spark.sql.gt.functions">package functions</a>
+        <img alt="Class" src="../../../../lib/class_big.png" />
+        <p id="owner"><a href="../../../package.html" class="extype" name="astraea">astraea</a>.<a href="../../package.html" class="extype" name="astraea.spark">spark</a>.<a href="../package.html" class="extype" name="astraea.spark.rasterframes">rasterframes</a>.<a href="package.html" class="extype" name="astraea.spark.rasterframes.functions">functions</a></p>
+        <h1>LocalCountAggregateFunction</h1><h3><span class="morelinks"><div>Related Doc:
+            <a href="package.html" class="extype" name="astraea.spark.rasterframes.functions">package functions</a>
           </div></span></h3><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       </div>
@@ -45,13 +45,14 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <span class="name">AggregateStatsFunction</span><span class="result"> extends <a href="AggregateHistogramFunction.html" class="extype" name="org.apache.spark.sql.gt.functions.AggregateHistogramFunction">AggregateHistogramFunction</a></span>
+        <span class="name">LocalCountAggregateFunction</span><span class="result"> extends <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.expressions.UserDefinedAggregateFunction" class="extype" target="_top">UserDefinedAggregateFunction</a></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Statistics aggregation function for a full column of tiles.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>5/18/17</p></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Catalyst aggregate function that counts non-<code>NoData</code> values in a cell-wise fashion.
+</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>8/11/17</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="AggregateHistogramFunction.html" class="extype" name="org.apache.spark.sql.gt.functions.AggregateHistogramFunction">AggregateHistogramFunction</a>, <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.expressions.UserDefinedAggregateFunction" class="extype" target="_top">UserDefinedAggregateFunction</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.io.Serializable" class="extype" target="_top">Serializable</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></div>
+          <div class="superTypes hiddenContent"><a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.expressions.UserDefinedAggregateFunction" class="extype" target="_top">UserDefinedAggregateFunction</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.io.Serializable" class="extype" target="_top">Serializable</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
         
 
@@ -69,7 +70,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="org.apache.spark.sql.gt.functions.AggregateStatsFunction"><span>AggregateStatsFunction</span></li><li class="in" name="org.apache.spark.sql.gt.functions.AggregateHistogramFunction"><span>AggregateHistogramFunction</span></li><li class="in" name="org.apache.spark.sql.expressions.UserDefinedAggregateFunction"><span>UserDefinedAggregateFunction</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="astraea.spark.rasterframes.functions.LocalCountAggregateFunction"><span>LocalCountAggregateFunction</span></li><li class="in" name="org.apache.spark.sql.expressions.UserDefinedAggregateFunction"><span>UserDefinedAggregateFunction</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -88,20 +89,20 @@
         <div id="allMembers">
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
-              <ol><li name="org.apache.spark.sql.gt.functions.AggregateStatsFunction#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;():org.apache.spark.sql.gt.functions.AggregateStatsFunction"></a>
-      <a id="&lt;init&gt;:AggregateStatsFunction"></a>
+              <ol><li name="astraea.spark.rasterframes.functions.LocalCountAggregateFunction#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="&lt;init&gt;():astraea.spark.rasterframes.functions.LocalCountAggregateFunction"></a>
+      <a id="&lt;init&gt;:LocalCountAggregateFunction"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">AggregateStatsFunction</span><span class="params">()</span>
+        <span class="name">LocalCountAggregateFunction</span><span class="params">()</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction@&lt;init&gt;():org.apache.spark.sql.gt.functions.AggregateStatsFunction" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@&lt;init&gt;():astraea.spark.rasterframes.functions.LocalCountAggregateFunction" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       
@@ -126,8 +127,8 @@
         <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction@!=(x$1:Any):Boolean" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@!=(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -143,8 +144,8 @@
         <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction@##():Int" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@##():Int" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -160,8 +161,8 @@
         <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction@==(x$1:Any):Boolean" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@==(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -177,8 +178,8 @@
         <span class="name">apply</span><span class="params">(<span name="exprs">exprs: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a>*</span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction@apply(exprs:org.apache.spark.sql.Column*):org.apache.spark.sql.Column" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@apply(exprs:org.apache.spark.sql.Column*):org.apache.spark.sql.Column" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UserDefinedAggregateFunction</dd><dt>Annotations</dt><dd>
@@ -197,12 +198,12 @@
         <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction@asInstanceOf[T0]:T0" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@asInstanceOf[T0]:T0" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.functions.AggregateHistogramFunction#bufferSchema" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="astraea.spark.rasterframes.functions.LocalCountAggregateFunction#bufferSchema" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="bufferSchema:org.apache.spark.sql.types.StructType"></a>
       <a id="bufferSchema:StructType"></a>
       <h4 class="signature">
@@ -214,11 +215,11 @@
         <span class="name">bufferSchema</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.types.StructType" class="extype" target="_top">StructType</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction@bufferSchema:org.apache.spark.sql.types.StructType" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@bufferSchema:org.apache.spark.sql.types.StructType" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="AggregateHistogramFunction.html" class="extype" name="org.apache.spark.sql.gt.functions.AggregateHistogramFunction">AggregateHistogramFunction</a> → UserDefinedAggregateFunction</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="astraea.spark.rasterframes.functions.LocalCountAggregateFunction">LocalCountAggregateFunction</a> → UserDefinedAggregateFunction</dd></dl></div>
     </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a>
       <a id="clone():AnyRef"></a>
@@ -231,18 +232,18 @@
         <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction@clone():Object" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@clone():Object" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
       <span class="defval" name="classOf[java.lang.CloneNotSupportedException]">...</span>
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.functions.AggregateStatsFunction#dataType" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="astraea.spark.rasterframes.functions.LocalCountAggregateFunction#dataType" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="dataType:org.apache.spark.sql.types.DataType"></a>
       <a id="dataType:DataType"></a>
       <h4 class="signature">
@@ -254,12 +255,12 @@
         <span class="name">dataType</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.types.DataType" class="extype" target="_top">DataType</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction@dataType:org.apache.spark.sql.types.DataType" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@dataType:org.apache.spark.sql.types.DataType" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="org.apache.spark.sql.gt.functions.AggregateStatsFunction">AggregateStatsFunction</a> → <a href="AggregateHistogramFunction.html" class="extype" name="org.apache.spark.sql.gt.functions.AggregateHistogramFunction">AggregateHistogramFunction</a> → UserDefinedAggregateFunction</dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.functions.AggregateHistogramFunction#deterministic" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="astraea.spark.rasterframes.functions.LocalCountAggregateFunction">LocalCountAggregateFunction</a> → UserDefinedAggregateFunction</dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.functions.LocalCountAggregateFunction#deterministic" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="deterministic:Boolean"></a>
       <a id="deterministic:Boolean"></a>
       <h4 class="signature">
@@ -271,11 +272,11 @@
         <span class="name">deterministic</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction@deterministic:Boolean" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@deterministic:Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="AggregateHistogramFunction.html" class="extype" name="org.apache.spark.sql.gt.functions.AggregateHistogramFunction">AggregateHistogramFunction</a> → UserDefinedAggregateFunction</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="astraea.spark.rasterframes.functions.LocalCountAggregateFunction">LocalCountAggregateFunction</a> → UserDefinedAggregateFunction</dd></dl></div>
     </li><li name="org.apache.spark.sql.expressions.UserDefinedAggregateFunction#distinct" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="distinct(exprs:org.apache.spark.sql.Column*):org.apache.spark.sql.Column"></a>
       <a id="distinct(Column*):Column"></a>
@@ -288,8 +289,8 @@
         <span class="name">distinct</span><span class="params">(<span name="exprs">exprs: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a>*</span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction@distinct(exprs:org.apache.spark.sql.Column*):org.apache.spark.sql.Column" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@distinct(exprs:org.apache.spark.sql.Column*):org.apache.spark.sql.Column" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UserDefinedAggregateFunction</dd><dt>Annotations</dt><dd>
@@ -308,8 +309,8 @@
         <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -325,28 +326,28 @@
         <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction@equals(x$1:Any):Boolean" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@equals(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.functions.AggregateStatsFunction#evaluate" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="evaluate(buffer:org.apache.spark.sql.Row):Any"></a>
-      <a id="evaluate(Row):Any"></a>
+    </li><li name="astraea.spark.rasterframes.functions.LocalCountAggregateFunction#evaluate" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="evaluate(buffer:org.apache.spark.sql.Row):geotrellis.raster.Tile"></a>
+      <a id="evaluate(Row):Tile"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">evaluate</span><span class="params">(<span name="buffer">buffer: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Row" class="extype" target="_top">Row</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>
+        <span class="name">evaluate</span><span class="params">(<span name="buffer">buffer: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Row" class="extype" target="_top">Row</a></span>)</span><span class="result">: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.Tile" class="extype" target="_top">Tile</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction@evaluate(buffer:org.apache.spark.sql.Row):Any" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@evaluate(buffer:org.apache.spark.sql.Row):geotrellis.raster.Tile" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="org.apache.spark.sql.gt.functions.AggregateStatsFunction">AggregateStatsFunction</a> → <a href="AggregateHistogramFunction.html" class="extype" name="org.apache.spark.sql.gt.functions.AggregateHistogramFunction">AggregateHistogramFunction</a> → UserDefinedAggregateFunction</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="astraea.spark.rasterframes.functions.LocalCountAggregateFunction">LocalCountAggregateFunction</a> → UserDefinedAggregateFunction</dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <a id="finalize():Unit"></a>
@@ -359,11 +360,11 @@
         <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction@finalize():Unit" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@finalize():Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
       <span class="symbol">classOf[java.lang.Throwable]</span>
@@ -382,8 +383,8 @@
         <span class="name">getClass</span><span class="params">()</span><span class="result">: <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.lang.Class" class="extype" target="_top">Class</a>[_]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction@getClass():Class[_]" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@getClass():Class[_]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -399,12 +400,12 @@
         <span class="name">hashCode</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction@hashCode():Int" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@hashCode():Int" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.functions.AggregateHistogramFunction#initialize" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="astraea.spark.rasterframes.functions.LocalCountAggregateFunction#initialize" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="initialize(buffer:org.apache.spark.sql.expressions.MutableAggregationBuffer):Unit"></a>
       <a id="initialize(MutableAggregationBuffer):Unit"></a>
       <h4 class="signature">
@@ -416,12 +417,12 @@
         <span class="name">initialize</span><span class="params">(<span name="buffer">buffer: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.expressions.MutableAggregationBuffer" class="extype" target="_top">MutableAggregationBuffer</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction@initialize(buffer:org.apache.spark.sql.expressions.MutableAggregationBuffer):Unit" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@initialize(buffer:org.apache.spark.sql.expressions.MutableAggregationBuffer):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="AggregateHistogramFunction.html" class="extype" name="org.apache.spark.sql.gt.functions.AggregateHistogramFunction">AggregateHistogramFunction</a> → UserDefinedAggregateFunction</dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.functions.AggregateHistogramFunction#inputSchema" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="astraea.spark.rasterframes.functions.LocalCountAggregateFunction">LocalCountAggregateFunction</a> → UserDefinedAggregateFunction</dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.functions.LocalCountAggregateFunction#inputSchema" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="inputSchema:org.apache.spark.sql.types.StructType"></a>
       <a id="inputSchema:StructType"></a>
       <h4 class="signature">
@@ -433,11 +434,11 @@
         <span class="name">inputSchema</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.types.StructType" class="extype" target="_top">StructType</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction@inputSchema:org.apache.spark.sql.types.StructType" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@inputSchema:org.apache.spark.sql.types.StructType" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="AggregateHistogramFunction.html" class="extype" name="org.apache.spark.sql.gt.functions.AggregateHistogramFunction">AggregateHistogramFunction</a> → UserDefinedAggregateFunction</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="astraea.spark.rasterframes.functions.LocalCountAggregateFunction">LocalCountAggregateFunction</a> → UserDefinedAggregateFunction</dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <a id="isInstanceOf[T0]:Boolean"></a>
@@ -450,12 +451,12 @@
         <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.functions.AggregateHistogramFunction#merge" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="astraea.spark.rasterframes.functions.LocalCountAggregateFunction#merge" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="merge(buffer1:org.apache.spark.sql.expressions.MutableAggregationBuffer,buffer2:org.apache.spark.sql.Row):Unit"></a>
       <a id="merge(MutableAggregationBuffer,Row):Unit"></a>
       <h4 class="signature">
@@ -467,11 +468,11 @@
         <span class="name">merge</span><span class="params">(<span name="buffer1">buffer1: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.expressions.MutableAggregationBuffer" class="extype" target="_top">MutableAggregationBuffer</a></span>, <span name="buffer2">buffer2: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Row" class="extype" target="_top">Row</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction@merge(buffer1:org.apache.spark.sql.expressions.MutableAggregationBuffer,buffer2:org.apache.spark.sql.Row):Unit" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@merge(buffer1:org.apache.spark.sql.expressions.MutableAggregationBuffer,buffer2:org.apache.spark.sql.Row):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="AggregateHistogramFunction.html" class="extype" name="org.apache.spark.sql.gt.functions.AggregateHistogramFunction">AggregateHistogramFunction</a> → UserDefinedAggregateFunction</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="astraea.spark.rasterframes.functions.LocalCountAggregateFunction">LocalCountAggregateFunction</a> → UserDefinedAggregateFunction</dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -484,8 +485,8 @@
         <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -501,8 +502,8 @@
         <span class="name">notify</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction@notify():Unit" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@notify():Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -518,8 +519,8 @@
         <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction@notifyAll():Unit" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@notifyAll():Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -535,8 +536,8 @@
         <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -552,12 +553,12 @@
         <span class="name">toString</span><span class="params">()</span><span class="result">: <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.lang.String" class="extype" target="_top">String</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction@toString():String" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@toString():String" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.functions.AggregateHistogramFunction#update" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="astraea.spark.rasterframes.functions.LocalCountAggregateFunction#update" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="update(buffer:org.apache.spark.sql.expressions.MutableAggregationBuffer,input:org.apache.spark.sql.Row):Unit"></a>
       <a id="update(MutableAggregationBuffer,Row):Unit"></a>
       <h4 class="signature">
@@ -569,11 +570,11 @@
         <span class="name">update</span><span class="params">(<span name="buffer">buffer: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.expressions.MutableAggregationBuffer" class="extype" target="_top">MutableAggregationBuffer</a></span>, <span name="input">input: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Row" class="extype" target="_top">Row</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction@update(buffer:org.apache.spark.sql.expressions.MutableAggregationBuffer,input:org.apache.spark.sql.Row):Unit" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@update(buffer:org.apache.spark.sql.expressions.MutableAggregationBuffer,input:org.apache.spark.sql.Row):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="AggregateHistogramFunction.html" class="extype" name="org.apache.spark.sql.gt.functions.AggregateHistogramFunction">AggregateHistogramFunction</a> → UserDefinedAggregateFunction</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="astraea.spark.rasterframes.functions.LocalCountAggregateFunction">LocalCountAggregateFunction</a> → UserDefinedAggregateFunction</dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>
@@ -586,8 +587,8 @@
         <span class="name">wait</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction@wait():Unit" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@wait():Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -609,8 +610,8 @@
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Long" class="extype" target="_top">Long</a></span>, <span name="arg1">arg1: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -632,8 +633,8 @@
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Long" class="extype" target="_top">Long</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.functions.AggregateStatsFunction@wait(x$1:Long):Unit" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@wait(x$1:Long):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -652,9 +653,7 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="org.apache.spark.sql.gt.functions.AggregateHistogramFunction">
-              <h3>Inherited from <a href="AggregateHistogramFunction.html" class="extype" name="org.apache.spark.sql.gt.functions.AggregateHistogramFunction">AggregateHistogramFunction</a></h3>
-            </div><div class="parent" name="org.apache.spark.sql.expressions.UserDefinedAggregateFunction">
+        <div class="parent" name="org.apache.spark.sql.expressions.UserDefinedAggregateFunction">
               <h3>Inherited from <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.expressions.UserDefinedAggregateFunction" class="extype" target="_top">UserDefinedAggregateFunction</a></h3>
             </div><div class="parent" name="scala.Serializable">
               <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></h3>
