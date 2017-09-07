@@ -102,17 +102,23 @@ trait TestData {
 }
 
 object TestData extends TestData {
+  val rnd = new scala.util.Random(42)
 
   /** Construct a tile of given size and cell type populated with random values. */
   def randomTile(cols: Int, rows: Int, cellTypeName: String): Tile = {
     val cellType = CellType.fromName(cellTypeName)
-
     val tile = ArrayTile.alloc(cellType, cols, rows)
     if(cellType.isFloatingPoint) {
-      tile.mapDouble(_ ⇒ Random.nextGaussian())
+      tile.mapDouble(_ ⇒ rnd.nextGaussian())
     }
     else {
-      tile.map(_ ⇒ (Random.nextGaussian() * 256).toInt)
+      tile.map(_ ⇒ {
+        var c = NODATA
+        do {
+          c = rnd.nextInt(255)
+        } while(isNoData(c))
+        c
+      })
     }
   }
 

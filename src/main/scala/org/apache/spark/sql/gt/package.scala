@@ -43,8 +43,7 @@ package object gt {
     }
   }
 
-
-  private[gt] implicit class WithDecoder[T](enc: ExpressionEncoder[T]) {
+  implicit class WithDecoder[T](enc: ExpressionEncoder[T]) {
     def decode(row: InternalRow): T =
       enc.resolveAndBind(enc.schema.toAttributes).fromRow(row)
     def decode(row: InternalRow, ordinal: Int): T =

@@ -23,9 +23,7 @@ import geotrellis.raster.mapalgebra.{local ⇒ alg}
 import geotrellis.raster.summary.Statistics
 import org.apache.spark.annotation.Experimental
 import org.apache.spark.sql._
-import org.apache.spark.sql.catalyst.analysis.MultiAlias
-import org.apache.spark.sql.catalyst.expressions.{CreateArray, Expression, Inline}
-import org.apache.spark.sql.functions.{lit, udf ⇒ SparkUDF}
+import org.apache.spark.sql.functions._
 import org.apache.spark.sql.gt.Implicits._
 import org.apache.spark.sql.gt._
 import org.apache.spark.sql.types._
@@ -42,6 +40,7 @@ trait ColumnFunctions {
   private implicit val stringEnc: Encoder[String] = Encoders.STRING
   private implicit val doubleEnc: Encoder[Double] = Encoders.scalaDouble
   private implicit val statsEnc: Encoder[Statistics[Int]] = Encoders.product[Statistics[Int]]
+  private implicit val longEnc: Encoder[Long] = Encoders.scalaLong
 
   // format: off
   /** Create a row for each cell in tile. */
@@ -61,7 +60,7 @@ trait ColumnFunctions {
   /** Query the number of (cols, rows) in a tile. */
   @Experimental
   def tileDimensions(col: Column): Column = withAlias("tileDimensions", col)(
-    SparkUDF[(Int, Int), Tile](UDFs.tileDimensions).apply(col)
+    udf[(Int, Int), Tile](UDFs.tileDimensions).apply(col)
   ).cast(StructType(Seq(StructField("cols", IntegerType), StructField("rows", IntegerType))))
 
   /**  Compute the full column aggregate floating point histogram. */
@@ -82,43 +81,55 @@ trait ColumnFunctions {
   @Experimental
   def tileHistogramDouble(col: Column): TypedColumn[Any, Histogram[Double]] =
   withAlias("tileHistogramDouble", col)(
-    SparkUDF[Histogram[Double], Tile](UDFs.tileHistogramDouble).apply(col)
+    udf[Histogram[Double], Tile](UDFs.tileHistogramDouble).apply(col)
   ).as[Histogram[Double]]
 
   /** Compute statistics of tile values. */
   @Experimental
   def tileStatsDouble(col: Column): TypedColumn[Any, Statistics[Double]] =
   withAlias("tileStatsDouble", col)(
-    SparkUDF[Statistics[Double], Tile](UDFs.tileStatsDouble).apply(col)
+    udf[Statistics[Double], Tile](UDFs.tileStatsDouble).apply(col)
   ).as[Statistics[Double]]
 
   /** Compute the tile-wise mean */
   @Experimental
   def tileMeanDouble(col: Column): TypedColumn[Any, Double] =
   withAlias("tileMeanDouble", col)(
-    SparkUDF[Double, Tile](UDFs.tileMeanDouble).apply(col)
+    udf[Double, Tile](UDFs.tileMeanDouble).apply(col)
   ).as[Double]
 
   /** Compute the tile-wise mean */
   @Experimental
   def tileMean(col: Column): TypedColumn[Any, Double] =
   withAlias("tileMean", col)(
-    SparkUDF[Double, Tile](UDFs.tileMean).apply(col)
+    udf[Double, Tile](UDFs.tileMean).apply(col)
   ).as[Double]
 
   /** Compute tileHistogram of tile values. */
   @Experimental
   def tileHistogram(col: Column): TypedColumn[Any, Histogram[Int]] =
   withAlias("tileHistogram", col)(
-    SparkUDF[Histogram[Int], Tile](UDFs.tileHistogram).apply(col)
+    udf[Histogram[Int], Tile](UDFs.tileHistogram).apply(col)
   ).as[Histogram[Int]]
 
   /** Compute statistics of tile values. */
   @Experimental
   def tileStats(col: Column): TypedColumn[Any, Statistics[Int]] =
   withAlias("tileStats", col)(
-    SparkUDF[Statistics[Int], Tile](UDFs.tileStats).apply(col)
+    udf[Statistics[Int], Tile](UDFs.tileStats).apply(col)
   ).as[Statistics[Int]]
+
+  /** Counts the number of non-NoData cells per tile. */
+  def dataCells(tile: Column): TypedColumn[Any, Long] =
+    withAlias("dataCells", tile)(
+      udf(UDFs.dataCells).apply(tile)
+    ).as[Long]
+
+  /** Counts the number of NoData cells per tile. */
+  def nodataCells(tile: Column): TypedColumn[Any, Long] =
+    withAlias("nodataCells", tile)(
+      udf(UDFs.nodataCells).apply(tile)
+    ).as[Long]
 
   /** Compute cell-local aggregate descriptive statistics for a column of tiles. */
   @Experimental
@@ -170,14 +181,14 @@ trait ColumnFunctions {
   def localAlgebra(op: LocalTileBinaryOp, left: Column, right: Column):
   TypedColumn[Any, Tile] =
     withAlias(opName(op), left, right)(
-      SparkUDF[Tile, Tile, Tile](op.apply).apply(left, right)
+      udf[Tile, Tile, Tile](op.apply).apply(left, right)
     ).as[Tile]
 
   /** Render tile as ASCII string for debugging purposes. */
   @Experimental
   def renderAscii(col: Column): TypedColumn[Any, String] =
   withAlias("renderAscii", col)(
-    SparkUDF[String, Tile](UDFs.renderAscii).apply(col)
+    udf[String, Tile](UDFs.renderAscii).apply(col)
   ).as[String]
 
   // --------------------------------------------------------------------------------------------
@@ -191,13 +202,4 @@ trait ColumnFunctions {
 
   private[rasterframes] def opName(op: LocalTileBinaryOp) =
     op.getClass.getSimpleName.replace("$", "").toLowerCase
-
-//  /** Lookup the registered Catalyst UDT for the given Scala type. */
-//  private[rasterframes] def udtOf[T >: Null: TypeTag]: UserDefinedType[T] =
-//    UDTRegistration.getUDTFor(typeTag[T].tpe.toString).map(_.newInstance().asInstanceOf[UserDefinedType[T]])
-//      .getOrElse(throw new IllegalArgumentException(typeTag[T].tpe + " doesn't have a corresponding UDT"))
-
-  /** Creates a Catalyst expression for flattening the fields in a struct into columns. */
-  private[rasterframes] def projectStructExpression(dataType: StructType, input: Expression) =
-    MultiAlias(Inline(CreateArray(Seq(input))), dataType.fields.map(_.name))
 }

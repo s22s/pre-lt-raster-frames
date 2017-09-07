@@ -15,6 +15,8 @@ Here's a preliminary list of RasterFrame UDFs available. For the most up to date
 * `tileMean(tileColumn)` - Compute the tile-wise mean 
 * `tileHistogram(tileColumn)` - Compute tileHistogram of tile values. 
 * `tileStats(tileColumn)` - Compute statistics of tile values.
+* `nodataCells(tileColumn)` - Counts the number of `NoData` cells per tile.
+* `dataCells(tileColumn)` - Counts the number of non-`NoData` cells per tile.
 * `localAggStats(tileColumn)` - Compute cell-local aggregate descriptive statistics for a column of tiles.
 * `localAggMax(tileColumn)` - Compute the cellwise/local max operation between tiles in a column. 
 * `localAggMin(tileColumn)` - Compute the cellwise/local min operation between tiles in a column.
