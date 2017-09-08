@@ -68,7 +68,8 @@ object ProjectPlugin extends AutoPlugin {
     fork in Test := true,
     javaOptions in Test := Seq("-Xmx2G"),
     parallelExecution in Test := false,
-    fork in tut := true
+    fork in tut := true,
+    javaOptions in tut := Seq("-Xmx2G")
 //    javaOptions in tut := Seq(
 //      "-Dlog4j.configuration=file:src/test/resources/log4j.properties"
 //    )
@@ -104,15 +105,16 @@ object ProjectPlugin extends AutoPlugin {
 
     def docSettings: Seq[Def.Setting[_]] = Seq(
       git.remoteRepo := "git@github.com:s22s/raster-frames.git",
-      apiURL := Some(url("http://rasterfrarmes.io/latest")),
+      apiURL := Some(url("http://rasterframes.io/latest/api")),
       autoAPIMappings := true,
       paradoxProperties in Paradox ++= Map(
-        "github.base_url" -> s"https://github.com/s22s/raster-frames",
+        "github.base_url" -> "https://github.com/s22s/raster-frames",
+        "scaladoc.org.apache.spark.sql.gt" -> "http://rasterframes.io/latest",
         "scaladoc.geotrellis.base_url" -> "https://geotrellis.github.io/scaladocs/latest"
       ),
       sourceDirectory in Paradox := tutTargetDirectory.value,
       sourceDirectory in Paradox in paradoxTheme := sourceDirectory.value / "main" / "paradox" / "_template",
-      makeSite := makeSite.dependsOn(tut).value,
+      makeSite := makeSite.dependsOn(tutQuick).value,
       ghpagesNoJekyll := true
     )
   }
