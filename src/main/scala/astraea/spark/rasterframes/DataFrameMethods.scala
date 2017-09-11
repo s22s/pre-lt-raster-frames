@@ -38,7 +38,7 @@ trait DataFrameMethods extends MethodExtensions[DataFrame] {
     attr.name == column.columnName || attr.semanticEquals(column.expr)
 
   /** Map over the Attribute representation of Columns, modifying the one matching `column` with `op`. */
-  private[astraea] def mapColumnAttribute(column: Column, op: (Attribute) ⇒  Attribute): DataFrame = {
+  private[astraea] def mapColumnAttribute(column: Column, op: Attribute ⇒  Attribute): DataFrame = {
     val analyzed = self.queryExecution.analyzed.output
     val selects = selector(column)
     val attrs = analyzed.map { attr ⇒
@@ -47,29 +47,27 @@ trait DataFrameMethods extends MethodExtensions[DataFrame] {
     self.select(attrs.map(a ⇒ new Column(a)): _*)
   }
 
+  private[astraea] def addColumnMetadata(column: Column, op: MetadataBuilder ⇒ MetadataBuilder): DataFrame = {
+    mapColumnAttribute(column, attr ⇒ {
+      val md = new MetadataBuilder().withMetadata(attr.metadata)
+      attr.withMetadata(op(md).build)
+    })
+  }
+
   private[astraea] def fetchMetadataValue[D](column: Column, reader: (Attribute) ⇒ D): Option[D] = {
     val analyzed = self.queryExecution.analyzed.output
     analyzed.find(selector(column)).map(reader)
   }
 
   /** Set column role tag for subsequent interpretation. */
-  private[astraea] def setColumnRole(column: Column, roleName: String): DataFrame = {
-    mapColumnAttribute(column, attr ⇒ {
-      val md = new MetadataBuilder().withMetadata(attr.metadata).putString(SPATIAL_ROLE_KEY, roleName).build()
-      attr.withMetadata(md)
-    })
-  }
+  private[astraea] def setColumnRole(column: Column, roleName: String): DataFrame =
+    addColumnMetadata(column, _.putString(SPATIAL_ROLE_KEY, roleName))
 
-  private[astraea] def setSpatialColumnRole[K: SpatialComponent: JsonFormat](column: Column, md: TileLayerMetadata[K]) = {
-    mapColumnAttribute(self(SPATIAL_KEY_COLUMN), attr ⇒ {
-      // We combine adding tile layer metadata with setting the role in one step.
-      val newmd = new MetadataBuilder().withMetadata(attr.metadata)
-        .putMetadata(CONTEXT_METADATA_KEY, md.asColumnMetadata)
+  private[astraea] def setSpatialColumnRole[K: SpatialComponent: JsonFormat](column: Column, md: TileLayerMetadata[K]) =
+    addColumnMetadata(self(SPATIAL_KEY_COLUMN),
+      _.putMetadata(CONTEXT_METADATA_KEY, md.asColumnMetadata)
         .putString(SPATIAL_ROLE_KEY, classOf[SpatialKey].getSimpleName)
-        .build()
-      attr.withMetadata(newmd)
-    })
-  }
+    )
 
   /** Get the role tag the column plays in the RasterFrame, if any. */
   private[astraea] def getColumnRole(column: Column): Option[String] =

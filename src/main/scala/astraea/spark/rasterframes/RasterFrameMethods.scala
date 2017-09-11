@@ -148,7 +148,7 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
 
     val clipped = clipLayerExtent
 
-    val md = clipped.tileLayerMetadata.fold(identity, identity)
+    val md = clipped.tileLayerMetadata.widen
     val trans = md.mapTransform
     val keyCol = clipped.spatialKeyColumn
     val newLayout = LayoutDefinition(md.extent, TileLayout(1, 1, rasterCols, rasterRows))
