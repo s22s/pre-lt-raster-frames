@@ -1,6 +1,6 @@
 # Reference
 
-API Scaladoc can be found @ref:[here](latest/api/index.html).
+API Scaladoc can be found [here](latest/api/index.html).
 
 Here's a preliminary list of RasterFrame UDFs available. For the most up to date list, look at the source code for 
 @scaladoc[`ColumnFunctions`][ColumnFunctions]. These UDFs are also registered with the SQL engine under the same name 

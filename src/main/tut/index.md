@@ -2,7 +2,7 @@
 
 _RasterFrames_ brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer 
 operations of [GeoTrellis](https://geotrellis.io/). The source code can be found on GitHub at
- [s22s/raster-frames]()https://github.com/s22s/raster-frames.)
+ [s22s/raster-frames](https://github.com/s22s/raster-frames).
 
 @@@ note
 RasterFrames is a new project under active development. Feedback and contributions are welcomed as we look to improve it.
@@ -17,6 +17,17 @@ necessary geo-referencing constructs.
 
 To learn more, please see the [Getting Started](getting-started.md) section of this manual.
 
+
+@@@ div { .md-left}
+
+## Detailed Contents
+
+@@ toc { depth=2 }
+
+@@@
+
+@@@ div { .md-right }
+
 ## Related Links
 
 * [Gitter Channel](https://gitter.im/s22s/raster-frames)
@@ -25,8 +36,13 @@ To learn more, please see the [Getting Started](getting-started.md) section of t
 * [GeoTrellis Documentation](https://docs.geotrellis.io/en/latest/)
 * [Astraea, Inc.](http://www.astraea.earth/) (the company behind RasterFrames)
 
+@@@
 
-@@ toc { depth = 2 }
+@@@ div { .md-clear }
+
+&nbsp;
+
+@@@
 
 @@@ index
 * [Getting Started](getting-started.md)

@@ -115,7 +115,10 @@ object ProjectPlugin extends AutoPlugin {
       sourceDirectory in Paradox := tutTargetDirectory.value,
       sourceDirectory in Paradox in paradoxTheme := sourceDirectory.value / "main" / "paradox" / "_template",
       makeSite := makeSite.dependsOn(tutQuick).value,
-      ghpagesNoJekyll := true
+      ghpagesNoJekyll := true,
+      scalacOptions in (Compile, doc) ++= Seq(
+        "-no-link-warnings"
+      )
     )
   }
 }
