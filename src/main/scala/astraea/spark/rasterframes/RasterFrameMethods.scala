@@ -27,7 +27,7 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Column, TypedColumn}
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.gt.types.TileUDT
-import org.apache.spark.sql.types.Metadata
+import org.apache.spark.sql.types.{Metadata, StructField}
 import spray.json._
 
 /**
@@ -52,32 +52,56 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
     val spark = self.sparkSession
     import spark.implicits._
     val key = findSpatialKeyField
-    require(key.nonEmpty, "All RasterFrames must have a column tagged with context")
-    self(key.get.name).as[SpatialKey]
+    key.map(_.name).map(self(_).as[SpatialKey])
+      .getOrElse(throw new IllegalArgumentException("All RasterFrames must have a column tagged with context"))
   }
 
-  /** The spatial key is the first on found with context metadata attached to it. */
-  private[rasterframes] def findSpatialKeyField =
-    self.schema.fields.find(_.metadata.contains(CONTEXT_METADATA_KEY))
+  /** Get the temporal column, if any. */
+  def temporalKeyColumn: Option[TypedColumn[Any, TemporalKey]] = {
+    val spark = self.sparkSession
+    import spark.implicits._
+    val key = findTemporalKeyField
+    key.map(_.name).map(self(_).as[TemporalKey])
+  }
+
+  private[rasterframes] def findRoleField(role: String): Option[StructField] =
+    self.schema.fields.find(f ⇒
+      f.metadata.contains(SPATIAL_ROLE_KEY) &&
+        f.metadata.getString(SPATIAL_ROLE_KEY) == role
+    )
+
+  /** The spatial key is the first one found with context metadata attached to it. */
+  private[rasterframes] def findSpatialKeyField: Option[StructField] =
+    findRoleField(classOf[SpatialKey].getSimpleName)
+
+  /** The temporal key is the first one found with the temporal tag. */
+  private[rasterframes] def findTemporalKeyField: Option[StructField] =
+    findRoleField(classOf[TemporalKey].getSimpleName)
 
   /**
    * Reassemble the [[TileLayerMetadata]] record from DataFrame metadata.
    * TODO: Change to Either[TileLayerMetadata[SpatialKey], TileLayerMetadata[SpaceTimeKey]]
    */
-  def tileLayerMetadata: TileLayerMetadata[SpatialKey] =
-    self.schema
+  def tileLayerMetadata: Either[TileLayerMetadata[SpatialKey], TileLayerMetadata[SpaceTimeKey]] = {
+    val spatialMD = self.schema
       .find(_.name == SPATIAL_KEY_COLUMN)
       .map(_.metadata)
-      .map(extract[TileLayerMetadata[SpatialKey]](CONTEXT_METADATA_KEY))
       .getOrElse(throw new IllegalArgumentException(s"RasterFrame operation requsted on non-RasterFrame: $self"))
+
+      if(findTemporalKeyField.nonEmpty)
+        Right(extract[TileLayerMetadata[SpaceTimeKey]](CONTEXT_METADATA_KEY)(spatialMD))
+      else
+        Left(extract[TileLayerMetadata[SpatialKey]](CONTEXT_METADATA_KEY)(spatialMD))
+  }
 
   /**
    * Performs a full RDD scans of the key column for the data extent, and updates the [[TileLayerMetadata]] data extent to match.
    */
   def clipLayerExtent: RasterFrame = {
     val metadata = tileLayerMetadata
-
-    val trans = metadata.layout.mapTransform
+    val extent = metadata.fold(_.extent, _.extent)
+    val layout = metadata.fold(_.layout, _.layout)
+    val trans = layout.mapTransform
     val keyBounds = self
       .select(spatialKeyColumn)
       .map(k ⇒ KeyBounds(k, k))
@@ -85,19 +109,32 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
 
     val gridExtent = trans(keyBounds.toGridBounds())
 
-    val newExtent = gridExtent.intersection(metadata.extent).getOrElse(gridExtent)
+    val newExtent = gridExtent.intersection(extent).getOrElse(gridExtent)
 
-    val updatedMetadata = metadata.copy(extent = newExtent, bounds = keyBounds)
+    val df = metadata.fold(
+      tlm ⇒ self.setSpatialColumnRole(spatialKeyColumn, tlm.copy(extent = newExtent, bounds = keyBounds)),
+      tlm ⇒ self.setSpatialColumnRole(spatialKeyColumn, tlm.copy(extent = newExtent, bounds = keyBounds))
+    )
 
-    self.addColumnMetadata(spatialKeyColumn, CONTEXT_METADATA_KEY, updatedMetadata.asColumnMetadata).certify
+    df.certify
   }
 
   /**
    * Convert from RasterFrame to a GeoTrellis [[TileLayerMetadata]]
    * @param tileCol column with tiles to be the
    */
-  def toTileLayerRDD(tileCol: TileColumn): TileLayerRDD[SpatialKey] =
-    ContextRDD(self.select(spatialKeyColumn, tileCol).rdd, tileLayerMetadata)
+  def toTileLayerRDD(tileCol: TileColumn): Either[TileLayerRDD[SpatialKey], TileLayerRDD[SpaceTimeKey]] =
+    tileLayerMetadata.fold(
+      tlm ⇒ Left(ContextRDD(self.select(spatialKeyColumn, tileCol).rdd, tlm)),
+      tlm ⇒ {
+        val rdd = self.select(spatialKeyColumn, temporalKeyColumn.get, tileCol)
+          .rdd
+          .map { case (sk, tk, v) ⇒ (SpaceTimeKey(sk, tk), v) }
+        Right(ContextRDD(rdd, tlm))
+      }
+    )
+
+  //  ContextRDD(self.select(spatialKeyColumn, tileCol).rdd, tileLayerMetadata)
 
   /** Extract metadata value. */
   private def extract[M: JsonFormat](metadataKey: String)(md: Metadata) =
@@ -111,7 +148,8 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
 
     val clipped = clipLayerExtent
 
-    val md = clipped.tileLayerMetadata
+    val md = clipped.tileLayerMetadata.fold(identity, identity)
+    val trans = md.mapTransform
     val keyCol = clipped.spatialKeyColumn
     val newLayout = LayoutDefinition(md.extent, TileLayout(1, 1, rasterCols, rasterRows))
     val newLayerMetadata = md.copy(layout = newLayout, bounds = Bounds(SpatialKey(0, 0), SpatialKey(0, 0)))
@@ -120,7 +158,7 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
     val newLayer = rdd
       .map {
         case (key, tile) ⇒
-          (ProjectedExtent(md.mapTransform(key), md.crs), tile)
+          (ProjectedExtent(trans(key), md.crs), tile)
       }
       .tileToLayout(newLayerMetadata, Tiler.Options(resampler))
 

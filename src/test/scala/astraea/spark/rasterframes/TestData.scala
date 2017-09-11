@@ -126,10 +126,19 @@ object TestData extends TestData {
   val makeTiles: (Int) ⇒ Array[Tile] = (count) ⇒
     Array.fill(count)(randomTile(4, 4, "int8raw"))
 
-  def randomTileLayerRDD(
+  def randomSpatialTileLayerRDD(
     rasterCols: Int, rasterRows: Int,
     layoutCols: Int, layoutRows: Int)(implicit sc: SparkContext): TileLayerRDD[SpatialKey] = {
     val tile = randomTile(rasterCols, rasterRows, "uint8")
     TileLayerRDDBuilders.createTileLayerRDD(tile, layoutCols, layoutRows, LatLng)._2
   }
+
+  def randomSpatioTemporalTileLayerRDD(
+    rasterCols: Int, rasterRows: Int,
+    layoutCols: Int, layoutRows: Int)(implicit sc: SparkContext): TileLayerRDD[SpaceTimeKey] = {
+    val tile = randomTile(rasterCols, rasterRows, "uint8")
+    val tileLayout = TileLayout(layoutCols, layoutRows, rasterCols/layoutCols, rasterRows/layoutRows)
+    TileLayerRDDBuilders.createSpaceTimeTileLayerRDD(Seq((tile, ZonedDateTime.now())), tileLayout, tile.cellType)
+  }
+
 }
