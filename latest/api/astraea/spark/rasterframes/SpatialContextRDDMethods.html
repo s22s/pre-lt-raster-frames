@@ -1,9 +1,9 @@
 <!DOCTYPE html >
 <html>
         <head>
-          <title>RasterFrameMethods - astraea.spark.rasterframes.RasterFrameMethods</title>
-          <meta name="description" content="RasterFrameMethods - astraea.spark.rasterframes.RasterFrameMethods" />
-          <meta name="keywords" content="RasterFrameMethods astraea.spark.rasterframes.RasterFrameMethods" />
+          <title>SpatialContextRDDMethods - astraea.spark.rasterframes.SpatialContextRDDMethods</title>
+          <meta name="description" content="SpatialContextRDDMethods - astraea.spark.rasterframes.SpatialContextRDDMethods" />
+          <meta name="keywords" content="SpatialContextRDDMethods astraea.spark.rasterframes.SpatialContextRDDMethods" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
       <link href="../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
@@ -16,7 +16,7 @@
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../index.html';
-            var hash = 'astraea.spark.rasterframes.RasterFrameMethods';
+            var hash = 'astraea.spark.rasterframes.SpatialContextRDDMethods';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -28,12 +28,12 @@
         </head>
         <body class="type">
       <div id="definition">
-        <img alt="Trait" src="../../../lib/trait_big.png" />
+        <img alt="Class" src="../../../lib/class_big.png" />
         <p id="owner"><a href="../../package.html" class="extype" name="astraea">astraea</a>.<a href="../package.html" class="extype" name="astraea.spark">spark</a>.<a href="package.html" class="extype" name="astraea.spark.rasterframes">rasterframes</a></p>
-        <h1>RasterFrameMethods</h1><h3><span class="morelinks"><div>Related Doc:
+        <h1>SpatialContextRDDMethods</h1><h3><span class="morelinks"><div>Related Doc:
             <a href="package.html" class="extype" name="astraea.spark.rasterframes">package rasterframes</a>
           </div></span></h3><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.SpatialContextRDDMethods" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -41,20 +41,20 @@
 
       <h4 id="signature" class="signature">
       <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">trait</span>
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <span class="name">RasterFrameMethods</span><span class="result"> extends <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-util_2.11/1.1.1/geotrellis-util_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.util.MethodExtensions" class="extype" target="_top">MethodExtensions</a>[<a href="package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a>]</span>
+        <span class="name">SpatialContextRDDMethods</span><span class="tparams">[<span name="K">K</span>]</span><span class="result"> extends <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-util_2.11/1.1.1/geotrellis-util_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.util.MethodExtensions" class="extype" target="_top">MethodExtensions</a>[<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.rdd.RDD" class="extype" target="_top">RDD</a>[(<span class="extype" name="astraea.spark.rasterframes.SpatialContextRDDMethods.K">K</span>, <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.Tile" class="extype" target="_top">Tile</a>)] with <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.Metadata" class="extype" target="_top">Metadata</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.TileLayerMetadata" class="extype" target="_top">TileLayerMetadata</a>[<span class="extype" name="astraea.spark.rasterframes.SpatialContextRDDMethods.K">K</span>]]]</span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Extension methods on <a href="package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a> type.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>7/18/17</p></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Extension method on <code>ContextRDD</code>-shaped <span class="extype" name="Tile">Tile</span> RDDs with appropriate context bounds to create a RasterFrame.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>7/18/17</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-util_2.11/1.1.1/geotrellis-util_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.util.MethodExtensions" class="extype" target="_top">MethodExtensions</a>[<a href="package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a>], <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.io.Serializable" class="extype" target="_top">Serializable</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></div>
+          <div class="superTypes hiddenContent"><a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-util_2.11/1.1.1/geotrellis-util_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.util.MethodExtensions" class="extype" target="_top">MethodExtensions</a>[<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.rdd.RDD" class="extype" target="_top">RDD</a>[(<span class="extype" name="astraea.spark.rasterframes.SpatialContextRDDMethods.K">K</span>, <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.Tile" class="extype" target="_top">Tile</a>)] with <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.Metadata" class="extype" target="_top">Metadata</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.TileLayerMetadata" class="extype" target="_top">TileLayerMetadata</a>[<span class="extype" name="astraea.spark.rasterframes.SpatialContextRDDMethods.K">K</span>]]], <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.io.Serializable" class="extype" target="_top">Serializable</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div><div class="toggleContainer block">
             <span class="toggle">Known Subclasses</span>
-            <div class="subClasses hiddenContent"><a href="package$$WithRasterFrameMethods.html" class="extype" name="astraea.spark.rasterframes.WithRasterFrameMethods">WithRasterFrameMethods</a></div>
+            <div class="subClasses hiddenContent"><a href="package$$WithSpatialContextRDDMethods.html" class="extype" name="astraea.spark.rasterframes.WithSpatialContextRDDMethods">WithSpatialContextRDDMethods</a></div>
           </div></div>
         
 
@@ -72,7 +72,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="astraea.spark.rasterframes.RasterFrameMethods"><span>RasterFrameMethods</span></li><li class="in" name="geotrellis.util.MethodExtensions"><span>MethodExtensions</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="astraea.spark.rasterframes.SpatialContextRDDMethods"><span>SpatialContextRDDMethods</span></li><li class="in" name="geotrellis.util.MethodExtensions"><span>MethodExtensions</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -89,23 +89,21 @@
 
       <div id="template">
         <div id="allMembers">
-        
-
-        <div id="types" class="types members">
-              <h3>Type Members</h3>
-              <ol><li name="astraea.spark.rasterframes.RasterFrameMethods.TileColumn" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="TileColumn=org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.Tile]"></a>
-      <a id="TileColumn:TileColumn"></a>
+        <div id="constructors" class="members">
+              <h3>Instance Constructors</h3>
+              <ol><li name="astraea.spark.rasterframes.SpatialContextRDDMethods#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="&lt;init&gt;()(implicitevidence$1:geotrellis.spark.SpatialComponent[K],implicitevidence$2:spray.json.JsonFormat[K],implicitevidence$3:reflect.runtime.universe.TypeTag[K],implicitspark:org.apache.spark.sql.SparkSession):astraea.spark.rasterframes.SpatialContextRDDMethods[K]"></a>
+      <a id="&lt;init&gt;:SpatialContextRDDMethods[K]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">type</span>
+        <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">TileColumn</span><span class="result"> = <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.TypedColumn" class="extype" target="_top">TypedColumn</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a>, <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.Tile" class="extype" target="_top">Tile</a>]</span>
+        <span class="name">SpatialContextRDDMethods</span><span class="params">()</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="../../../geotrellis/spark/package.html#SpatialComponent[K]=geotrellis.util.Component[K,geotrellis.spark.SpatialKey]" class="extmbr" name="geotrellis.spark.SpatialComponent">SpatialComponent</a>[<span class="extype" name="astraea.spark.rasterframes.SpatialContextRDDMethods.K">K</span>]</span>, <span name="arg1">arg1: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/io/spray/spray-json_2.11/1.3.3/spray-json_2.11-1.3.3-javadoc.jar/!/index.html#spray.json.JsonFormat" class="extype" target="_top">JsonFormat</a>[<span class="extype" name="astraea.spark.rasterframes.SpatialContextRDDMethods.K">K</span>]</span>, <span name="arg2">arg2: <span class="extype" name="scala.reflect.api.TypeTags.TypeTag">scala.reflect.api.JavaUniverse.TypeTag</span>[<span class="extype" name="astraea.spark.rasterframes.SpatialContextRDDMethods.K">K</span>]</span>, <span name="spark">spark: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.SparkSession" class="extype" target="_top">SparkSession</a></span>)</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods@TileColumn=org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.Tile]" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.SpatialContextRDDMethods@&lt;init&gt;()(implicitevidence$1:geotrellis.spark.SpatialComponent[K],implicitevidence$2:spray.json.JsonFormat[K],implicitevidence$3:reflect.runtime.universe.TypeTag[K],implicitspark:org.apache.spark.sql.SparkSession):astraea.spark.rasterframes.SpatialContextRDDMethods[K]" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -113,21 +111,23 @@
     </li></ol>
             </div>
 
+        
+
         <div id="values" class="values members">
               <h3>Abstract Value Members</h3>
               <ol><li name="geotrellis.util.MethodExtensions#self" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="self:T"></a>
-      <a id="self:RasterFrame"></a>
+      <a id="self:RDD[(K,Tile)]withMetadata[TileLayerMetadata[K]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">self</span><span class="result">: <a href="package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a></span>
+        <span class="name">self</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.rdd.RDD" class="extype" target="_top">RDD</a>[(<span class="extype" name="astraea.spark.rasterframes.SpatialContextRDDMethods.K">K</span>, <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.Tile" class="extype" target="_top">Tile</a>)] with <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.Metadata" class="extype" target="_top">Metadata</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.TileLayerMetadata" class="extype" target="_top">TileLayerMetadata</a>[<span class="extype" name="astraea.spark.rasterframes.SpatialContextRDDMethods.K">K</span>]]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods@self:T" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.SpatialContextRDDMethods@self:T" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -149,7 +149,7 @@
         <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods@!=(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.SpatialContextRDDMethods@!=(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -166,7 +166,7 @@
         <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods@##():Int" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.SpatialContextRDDMethods@##():Int" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -183,7 +183,7 @@
         <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods@==(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.SpatialContextRDDMethods@==(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -200,28 +200,11 @@
         <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods@asInstanceOf[T0]:T0" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.SpatialContextRDDMethods@asInstanceOf[T0]:T0" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.RasterFrameMethods#clipLayerExtent" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="clipLayerExtent:astraea.spark.rasterframes.RasterFrame"></a>
-      <a id="clipLayerExtent:RasterFrame"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">clipLayerExtent</span><span class="result">: <a href="package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods@clipLayerExtent:astraea.spark.rasterframes.RasterFrame" title="Permalink" target="_top">
-        <img src="../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Performs a full RDD scans of the key column for the data extent, and updates the <span class="extype" name="TileLayerMetadata">TileLayerMetadata</span> data extent to match.</p>
     </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a>
       <a id="clone():AnyRef"></a>
@@ -234,7 +217,7 @@
         <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods@clone():Object" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.SpatialContextRDDMethods@clone():Object" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -257,7 +240,7 @@
         <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.SpatialContextRDDMethods@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -274,7 +257,7 @@
         <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods@equals(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.SpatialContextRDDMethods@equals(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -291,7 +274,7 @@
         <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods@finalize():Unit" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.SpatialContextRDDMethods@finalize():Unit" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -314,7 +297,7 @@
         <span class="name">getClass</span><span class="params">()</span><span class="result">: <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.lang.Class" class="extype" target="_top">Class</a>[_]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods@getClass():Class[_]" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.SpatialContextRDDMethods@getClass():Class[_]" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -331,7 +314,7 @@
         <span class="name">hashCode</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods@hashCode():Int" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.SpatialContextRDDMethods@hashCode():Int" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -348,7 +331,7 @@
         <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.SpatialContextRDDMethods@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -365,7 +348,7 @@
         <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.SpatialContextRDDMethods@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -382,7 +365,7 @@
         <span class="name">notify</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods@notify():Unit" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.SpatialContextRDDMethods@notify():Unit" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -399,28 +382,11 @@
         <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods@notifyAll():Unit" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.SpatialContextRDDMethods@notifyAll():Unit" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.RasterFrameMethods#spatialKeyColumn" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="spatialKeyColumn:org.apache.spark.sql.TypedColumn[Any,geotrellis.spark.SpatialKey]"></a>
-      <a id="spatialKeyColumn:TypedColumn[Any,SpatialKey]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">spatialKeyColumn</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.TypedColumn" class="extype" target="_top">TypedColumn</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a>, <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.SpatialKey" class="extype" target="_top">SpatialKey</a>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods@spatialKeyColumn:org.apache.spark.sql.TypedColumn[Any,geotrellis.spark.SpatialKey]" title="Permalink" target="_top">
-        <img src="../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Get the spatial column.</p>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -433,81 +399,28 @@
         <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.SpatialContextRDDMethods@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.RasterFrameMethods#temporalKeyColumn" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="temporalKeyColumn:Option[org.apache.spark.sql.TypedColumn[Any,geotrellis.spark.TemporalKey]]"></a>
-      <a id="temporalKeyColumn:Option[TypedColumn[Any,TemporalKey]]"></a>
+    </li><li name="astraea.spark.rasterframes.SpatialContextRDDMethods#toRF" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="toRF:astraea.spark.rasterframes.RasterFrame"></a>
+      <a id="toRF:RasterFrame"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">temporalKeyColumn</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.TypedColumn" class="extype" target="_top">TypedColumn</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a>, <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.TemporalKey" class="extype" target="_top">TemporalKey</a>]]</span>
+        <span class="name">toRF</span><span class="result">: <a href="package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods@temporalKeyColumn:Option[org.apache.spark.sql.TypedColumn[Any,geotrellis.spark.TemporalKey]]" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.SpatialContextRDDMethods@toRF:astraea.spark.rasterframes.RasterFrame" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Get the temporal column, if any.</p>
-    </li><li name="astraea.spark.rasterframes.RasterFrameMethods#tileColumns" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="tileColumns:Seq[RasterFrameMethods.this.TileColumn]"></a>
-      <a id="tileColumns:Seq[TileColumn]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">tileColumns</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<a href="#TileColumn=org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.Tile]" class="extmbr" name="astraea.spark.rasterframes.RasterFrameMethods.TileColumn">TileColumn</a>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods@tileColumns:Seq[RasterFrameMethods.this.TileColumn]" title="Permalink" target="_top">
-        <img src="../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Get the names of the columns that are of type <code>Tile</code></p>
-    </li><li name="astraea.spark.rasterframes.RasterFrameMethods#tileLayerMetadata" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="tileLayerMetadata:Either[geotrellis.spark.TileLayerMetadata[geotrellis.spark.SpatialKey],geotrellis.spark.TileLayerMetadata[geotrellis.spark.SpaceTimeKey]]"></a>
-      <a id="tileLayerMetadata:Either[TileLayerMetadata[SpatialKey],TileLayerMetadata[SpaceTimeKey]]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">tileLayerMetadata</span><span class="result">: <span class="extype" name="scala.Either">Either</span>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.TileLayerMetadata" class="extype" target="_top">TileLayerMetadata</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.SpatialKey" class="extype" target="_top">SpatialKey</a>], <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.TileLayerMetadata" class="extype" target="_top">TileLayerMetadata</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.SpaceTimeKey" class="extype" target="_top">SpaceTimeKey</a>]]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods@tileLayerMetadata:Either[geotrellis.spark.TileLayerMetadata[geotrellis.spark.SpatialKey],geotrellis.spark.TileLayerMetadata[geotrellis.spark.SpaceTimeKey]]" title="Permalink" target="_top">
-        <img src="../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Reassemble the <span class="extype" name="TileLayerMetadata">TileLayerMetadata</span> record from DataFrame metadata.</p><div class="fullcomment"><div class="comment cmt"><p>Reassemble the <span class="extype" name="TileLayerMetadata">TileLayerMetadata</span> record from DataFrame metadata.
-TODO: Change to Either[TileLayerMetadata[SpatialKey], TileLayerMetadata[SpaceTimeKey]]
-</p></div></div>
-    </li><li name="astraea.spark.rasterframes.RasterFrameMethods#toRaster" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="toRaster(tileCol:org.apache.spark.sql.Column,rasterCols:Int,rasterRows:Int,resampler:geotrellis.raster.resample.ResampleMethod):geotrellis.raster.ProjectedRaster[geotrellis.raster.Tile]"></a>
-      <a id="toRaster(Column,Int,Int,ResampleMethod):ProjectedRaster[Tile]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">toRaster</span><span class="params">(<span name="tileCol">tileCol: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>, <span name="rasterCols">rasterCols: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="rasterRows">rasterRows: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="resampler">resampler: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.resample.ResampleMethod" class="extype" target="_top">ResampleMethod</a> = <span class="symbol"><span class="name"><a href="../../../geotrellis/package.html">Bilinear</a></span></span></span>)</span><span class="result">: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.ProjectedRaster" class="extype" target="_top">ProjectedRaster</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.Tile" class="extype" target="_top">Tile</a>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods@toRaster(tileCol:org.apache.spark.sql.Column,rasterCols:Int,rasterRows:Int,resampler:geotrellis.raster.resample.ResampleMethod):geotrellis.raster.ProjectedRaster[geotrellis.raster.Tile]" title="Permalink" target="_top">
-        <img src="../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Convert the tiles in the RasterFrame into a single raster.</p>
+      
     </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
       <a id="toString():String"></a>
@@ -520,28 +433,11 @@ TODO: Change to Either[TileLayerMetadata[SpatialKey], TileLayerMetadata[SpaceTim
         <span class="name">toString</span><span class="params">()</span><span class="result">: <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.lang.String" class="extype" target="_top">String</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods@toString():String" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.SpatialContextRDDMethods@toString():String" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.RasterFrameMethods#toTileLayerRDD" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="toTileLayerRDD(tileCol:RasterFrameMethods.this.TileColumn):Either[geotrellis.spark.TileLayerRDD[geotrellis.spark.SpatialKey],geotrellis.spark.TileLayerRDD[geotrellis.spark.SpaceTimeKey]]"></a>
-      <a id="toTileLayerRDD(TileColumn):Either[TileLayerRDD[SpatialKey],TileLayerRDD[SpaceTimeKey]]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">toTileLayerRDD</span><span class="params">(<span name="tileCol">tileCol: <a href="#TileColumn=org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.Tile]" class="extmbr" name="astraea.spark.rasterframes.RasterFrameMethods.TileColumn">TileColumn</a></span>)</span><span class="result">: <span class="extype" name="scala.Either">Either</span>[<a href="../../../geotrellis/spark/package.html#TileLayerRDD[K]=org.apache.spark.rdd.RDD[(K,geotrellis.raster.Tile)]withgeotrellis.spark.Metadata[geotrellis.spark.TileLayerMetadata[K]]" class="extmbr" name="geotrellis.spark.TileLayerRDD">TileLayerRDD</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.SpatialKey" class="extype" target="_top">SpatialKey</a>], <a href="../../../geotrellis/spark/package.html#TileLayerRDD[K]=org.apache.spark.rdd.RDD[(K,geotrellis.raster.Tile)]withgeotrellis.spark.Metadata[geotrellis.spark.TileLayerMetadata[K]]" class="extmbr" name="geotrellis.spark.TileLayerRDD">TileLayerRDD</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.SpaceTimeKey" class="extype" target="_top">SpaceTimeKey</a>]]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods@toTileLayerRDD(tileCol:RasterFrameMethods.this.TileColumn):Either[geotrellis.spark.TileLayerRDD[geotrellis.spark.SpatialKey],geotrellis.spark.TileLayerRDD[geotrellis.spark.SpaceTimeKey]]" title="Permalink" target="_top">
-        <img src="../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Convert from RasterFrame to a GeoTrellis <span class="extype" name="TileLayerMetadata">TileLayerMetadata</span></p><div class="fullcomment"><div class="comment cmt"><p>Convert from RasterFrame to a GeoTrellis <span class="extype" name="TileLayerMetadata">TileLayerMetadata</span></p></div><dl class="paramcmts block"><dt class="param">tileCol</dt><dd class="cmt"><p>column with tiles to be the</p></dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>
@@ -554,7 +450,7 @@ TODO: Change to Either[TileLayerMetadata[SpatialKey], TileLayerMetadata[SpaceTim
         <span class="name">wait</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods@wait():Unit" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.SpatialContextRDDMethods@wait():Unit" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -577,7 +473,7 @@ TODO: Change to Either[TileLayerMetadata[SpatialKey], TileLayerMetadata[SpaceTim
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Long" class="extype" target="_top">Long</a></span>, <span name="arg1">arg1: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.SpatialContextRDDMethods@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -600,7 +496,7 @@ TODO: Change to Either[TileLayerMetadata[SpatialKey], TileLayerMetadata[SpaceTim
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Long" class="extype" target="_top">Long</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods@wait(x$1:Long):Unit" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.SpatialContextRDDMethods@wait(x$1:Long):Unit" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -621,7 +517,7 @@ TODO: Change to Either[TileLayerMetadata[SpatialKey], TileLayerMetadata[SpaceTim
 
         <div id="inheritedMembers">
         <div class="parent" name="geotrellis.util.MethodExtensions">
-              <h3>Inherited from <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-util_2.11/1.1.1/geotrellis-util_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.util.MethodExtensions" class="extype" target="_top">MethodExtensions</a>[<a href="package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a>]</h3>
+              <h3>Inherited from <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-util_2.11/1.1.1/geotrellis-util_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.util.MethodExtensions" class="extype" target="_top">MethodExtensions</a>[<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.rdd.RDD" class="extype" target="_top">RDD</a>[(<span class="extype" name="astraea.spark.rasterframes.SpatialContextRDDMethods.K">K</span>, <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.Tile" class="extype" target="_top">Tile</a>)] with <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.Metadata" class="extype" target="_top">Metadata</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.TileLayerMetadata" class="extype" target="_top">TileLayerMetadata</a>[<span class="extype" name="astraea.spark.rasterframes.SpatialContextRDDMethods.K">K</span>]]]</h3>
             </div><div class="parent" name="scala.Serializable">
               <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></h3>
             </div><div class="parent" name="java.io.Serializable">

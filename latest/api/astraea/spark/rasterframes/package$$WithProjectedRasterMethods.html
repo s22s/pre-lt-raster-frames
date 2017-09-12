@@ -399,6 +399,26 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="astraea.spark.rasterframes.ProjectedRasterMethods#toRF" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="toRF(tileCols:Int,tileRows:Int,timestamp:java.time.ZonedDateTime)(implicitspark:org.apache.spark.sql.SparkSession):astraea.spark.rasterframes.RasterFrame"></a>
+      <a id="toRF(Int,Int,ZonedDateTime)(SparkSession):RasterFrame"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">toRF</span><span class="params">(<span name="tileCols">tileCols: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="tileRows">tileRows: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="timestamp">timestamp: <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.time.ZonedDateTime" class="extype" target="_top">ZonedDateTime</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="spark">spark: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.SparkSession" class="extype" target="_top">SparkSession</a></span>)</span><span class="result">: <a href="package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#astraea.spark.rasterframes.package$$WithProjectedRasterMethods@toRF(tileCols:Int,tileRows:Int,timestamp:java.time.ZonedDateTime)(implicitspark:org.apache.spark.sql.SparkSession):astraea.spark.rasterframes.RasterFrame" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Convert the <span class="extype" name="ProjectedRaster">ProjectedRaster</span> into a <a href="package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a> using the
+given dimensions as the target per-row tile size and singular timestamp as the temporal component.</p><div class="fullcomment"><div class="comment cmt"><p>Convert the <span class="extype" name="ProjectedRaster">ProjectedRaster</span> into a <a href="package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a> using the
+given dimensions as the target per-row tile size and singular timestamp as the temporal component.
+</p></div><dl class="paramcmts block"><dt class="param">tileCols</dt><dd class="cmt"><p>Max number of horizontal cells per tile</p></dd><dt class="param">tileRows</dt><dd class="cmt"><p>Max number of vertical cells per tile.</p></dd><dt class="param">timestamp</dt><dd class="cmt"><p>Temporal key value to assign to tiles.</p></dd><dt class="param">spark</dt><dd class="cmt"><p><span class="extype" name="SparkSession">SparkSession</span> in which to create <a href="package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a></p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="ProjectedRasterMethods.html" class="extype" name="astraea.spark.rasterframes.ProjectedRasterMethods">ProjectedRasterMethods</a></dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.ProjectedRasterMethods#toRF" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toRF(tileCols:Int,tileRows:Int)(implicitspark:org.apache.spark.sql.SparkSession):astraea.spark.rasterframes.RasterFrame"></a>
       <a id="toRF(Int,Int)(SparkSession):RasterFrame"></a>
       <h4 class="signature">
@@ -414,8 +434,8 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Convert the wrapped <span class="extype" name="ProjectedRaster">ProjectedRaster</span> into a <a href="package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a> using the
-given dimensions as the target per-row tile size.</p><div class="fullcomment"><div class="comment cmt"><p>Convert the wrapped <span class="extype" name="ProjectedRaster">ProjectedRaster</span> into a <a href="package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a> using the
+      <p class="shortcomment cmt">Convert the <span class="extype" name="ProjectedRaster">ProjectedRaster</span> into a <a href="package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a> using the
+given dimensions as the target per-row tile size.</p><div class="fullcomment"><div class="comment cmt"><p>Convert the <span class="extype" name="ProjectedRaster">ProjectedRaster</span> into a <a href="package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a> using the
 given dimensions as the target per-row tile size.
 </p></div><dl class="paramcmts block"><dt class="param">tileCols</dt><dd class="cmt"><p>Max number of horizontal cells per tile</p></dd><dt class="param">tileRows</dt><dd class="cmt"><p>Max number of vertical cells per tile.</p></dd><dt class="param">spark</dt><dd class="cmt"><p><span class="extype" name="SparkSession">SparkSession</span> in which to create <a href="package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a></p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="ProjectedRasterMethods.html" class="extype" name="astraea.spark.rasterframes.ProjectedRasterMethods">ProjectedRasterMethods</a></dd></dl></div>
     </li><li name="astraea.spark.rasterframes.ProjectedRasterMethods#toRF" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
@@ -455,6 +475,46 @@ single row.
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.ProjectedRasterMethods#toTileLayerRDD" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="toTileLayerRDD(tileCols:Int,tileRows:Int,timestamp:java.time.ZonedDateTime)(implicitspark:org.apache.spark.sql.SparkSession):geotrellis.spark.TileLayerRDD[geotrellis.spark.SpaceTimeKey]"></a>
+      <a id="toTileLayerRDD(Int,Int,ZonedDateTime)(SparkSession):TileLayerRDD[SpaceTimeKey]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">toTileLayerRDD</span><span class="params">(<span name="tileCols">tileCols: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="tileRows">tileRows: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="timestamp">timestamp: <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.time.ZonedDateTime" class="extype" target="_top">ZonedDateTime</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="spark">spark: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.SparkSession" class="extype" target="_top">SparkSession</a></span>)</span><span class="result">: <a href="../../../geotrellis/spark/package.html#TileLayerRDD[K]=org.apache.spark.rdd.RDD[(K,geotrellis.raster.Tile)]withgeotrellis.spark.Metadata[geotrellis.spark.TileLayerMetadata[K]]" class="extmbr" name="geotrellis.spark.TileLayerRDD">TileLayerRDD</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.SpaceTimeKey" class="extype" target="_top">SpaceTimeKey</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#astraea.spark.rasterframes.package$$WithProjectedRasterMethods@toTileLayerRDD(tileCols:Int,tileRows:Int,timestamp:java.time.ZonedDateTime)(implicitspark:org.apache.spark.sql.SparkSession):geotrellis.spark.TileLayerRDD[geotrellis.spark.SpaceTimeKey]" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Convert the <span class="extype" name="ProjectedRaster">ProjectedRaster</span> into a <span class="extype" name="TileLayerRDD[SpaceTimeKey">TileLayerRDD[SpaceTimeKey</span> using the
+given dimensions as the target per-row tile size and singular timestamp as the temporal component.</p><div class="fullcomment"><div class="comment cmt"><p>Convert the <span class="extype" name="ProjectedRaster">ProjectedRaster</span> into a <span class="extype" name="TileLayerRDD[SpaceTimeKey">TileLayerRDD[SpaceTimeKey</span> using the
+given dimensions as the target per-row tile size and singular timestamp as the temporal component.
+</p></div><dl class="paramcmts block"><dt class="param">tileCols</dt><dd class="cmt"><p>Max number of horizontal cells per tile</p></dd><dt class="param">tileRows</dt><dd class="cmt"><p>Max number of vertical cells per tile.</p></dd><dt class="param">timestamp</dt><dd class="cmt"><p>Temporal key value to assign to tiles.</p></dd><dt class="param">spark</dt><dd class="cmt"><p><span class="extype" name="SparkSession">SparkSession</span> in which to create RDD</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="ProjectedRasterMethods.html" class="extype" name="astraea.spark.rasterframes.ProjectedRasterMethods">ProjectedRasterMethods</a></dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.ProjectedRasterMethods#toTileLayerRDD" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="toTileLayerRDD(tileCols:Int,tileRows:Int)(implicitspark:org.apache.spark.sql.SparkSession):geotrellis.spark.TileLayerRDD[geotrellis.spark.SpatialKey]"></a>
+      <a id="toTileLayerRDD(Int,Int)(SparkSession):TileLayerRDD[SpatialKey]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">toTileLayerRDD</span><span class="params">(<span name="tileCols">tileCols: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="tileRows">tileRows: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="spark">spark: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.SparkSession" class="extype" target="_top">SparkSession</a></span>)</span><span class="result">: <a href="../../../geotrellis/spark/package.html#TileLayerRDD[K]=org.apache.spark.rdd.RDD[(K,geotrellis.raster.Tile)]withgeotrellis.spark.Metadata[geotrellis.spark.TileLayerMetadata[K]]" class="extmbr" name="geotrellis.spark.TileLayerRDD">TileLayerRDD</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.SpatialKey" class="extype" target="_top">SpatialKey</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#astraea.spark.rasterframes.package$$WithProjectedRasterMethods@toTileLayerRDD(tileCols:Int,tileRows:Int)(implicitspark:org.apache.spark.sql.SparkSession):geotrellis.spark.TileLayerRDD[geotrellis.spark.SpatialKey]" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Convert the <span class="extype" name="ProjectedRaster">ProjectedRaster</span> into a <span class="extype" name="TileLayerRDD[SpatialKey">TileLayerRDD[SpatialKey</span> using the
+given dimensions as the target per-row tile size.</p><div class="fullcomment"><div class="comment cmt"><p>Convert the <span class="extype" name="ProjectedRaster">ProjectedRaster</span> into a <span class="extype" name="TileLayerRDD[SpatialKey">TileLayerRDD[SpatialKey</span> using the
+given dimensions as the target per-row tile size.
+</p></div><dl class="paramcmts block"><dt class="param">tileCols</dt><dd class="cmt"><p>Max number of horizontal cells per tile</p></dd><dt class="param">tileRows</dt><dd class="cmt"><p>Max number of vertical cells per tile.</p></dd><dt class="param">spark</dt><dd class="cmt"><p><span class="extype" name="SparkSession">SparkSession</span> in which to create RDD</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="ProjectedRasterMethods.html" class="extype" name="astraea.spark.rasterframes.ProjectedRasterMethods">ProjectedRasterMethods</a></dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>

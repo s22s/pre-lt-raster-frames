@@ -453,6 +453,23 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.RasterFrameMethods#temporalKeyColumn" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="temporalKeyColumn:Option[org.apache.spark.sql.TypedColumn[Any,geotrellis.spark.TemporalKey]]"></a>
+      <a id="temporalKeyColumn:Option[TypedColumn[Any,TemporalKey]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">temporalKeyColumn</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.TypedColumn" class="extype" target="_top">TypedColumn</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a>, <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.TemporalKey" class="extype" target="_top">TemporalKey</a>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#astraea.spark.rasterframes.package$$WithRasterFrameMethods@temporalKeyColumn:Option[org.apache.spark.sql.TypedColumn[Any,geotrellis.spark.TemporalKey]]" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Get the temporal column, if any.</p><div class="fullcomment"><div class="comment cmt"><p>Get the temporal column, if any.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RasterFrameMethods.html" class="extype" name="astraea.spark.rasterframes.RasterFrameMethods">RasterFrameMethods</a></dd></dl></div>
     </li><li name="astraea.spark.rasterframes.RasterFrameMethods#tileColumns" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="tileColumns:Seq[RasterFrameMethods.this.TileColumn]"></a>
       <a id="tileColumns:Seq[TileColumn]"></a>
@@ -471,18 +488,18 @@
     </span>
       <p class="shortcomment cmt">Get the names of the columns that are of type <code>Tile</code></p><div class="fullcomment"><div class="comment cmt"><p>Get the names of the columns that are of type <code>Tile</code></p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RasterFrameMethods.html" class="extype" name="astraea.spark.rasterframes.RasterFrameMethods">RasterFrameMethods</a></dd></dl></div>
     </li><li name="astraea.spark.rasterframes.RasterFrameMethods#tileLayerMetadata" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="tileLayerMetadata:geotrellis.spark.TileLayerMetadata[geotrellis.spark.SpatialKey]"></a>
-      <a id="tileLayerMetadata:TileLayerMetadata[SpatialKey]"></a>
+      <a id="tileLayerMetadata:Either[geotrellis.spark.TileLayerMetadata[geotrellis.spark.SpatialKey],geotrellis.spark.TileLayerMetadata[geotrellis.spark.SpaceTimeKey]]"></a>
+      <a id="tileLayerMetadata:Either[TileLayerMetadata[SpatialKey],TileLayerMetadata[SpaceTimeKey]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">tileLayerMetadata</span><span class="result">: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.TileLayerMetadata" class="extype" target="_top">TileLayerMetadata</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.SpatialKey" class="extype" target="_top">SpatialKey</a>]</span>
+        <span class="name">tileLayerMetadata</span><span class="result">: <span class="extype" name="scala.Either">Either</span>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.TileLayerMetadata" class="extype" target="_top">TileLayerMetadata</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.SpatialKey" class="extype" target="_top">SpatialKey</a>], <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.TileLayerMetadata" class="extype" target="_top">TileLayerMetadata</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.SpaceTimeKey" class="extype" target="_top">SpaceTimeKey</a>]]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.package$$WithRasterFrameMethods@tileLayerMetadata:geotrellis.spark.TileLayerMetadata[geotrellis.spark.SpatialKey]" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.package$$WithRasterFrameMethods@tileLayerMetadata:Either[geotrellis.spark.TileLayerMetadata[geotrellis.spark.SpatialKey],geotrellis.spark.TileLayerMetadata[geotrellis.spark.SpaceTimeKey]]" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -524,18 +541,18 @@ TODO: Change to Either[TileLayerMetadata[SpatialKey], TileLayerMetadata[SpaceTim
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="astraea.spark.rasterframes.RasterFrameMethods#toTileLayerRDD" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="toTileLayerRDD(tileCol:RasterFrameMethods.this.TileColumn):geotrellis.spark.TileLayerRDD[geotrellis.spark.SpatialKey]"></a>
-      <a id="toTileLayerRDD(TileColumn):TileLayerRDD[SpatialKey]"></a>
+      <a id="toTileLayerRDD(tileCol:RasterFrameMethods.this.TileColumn):Either[geotrellis.spark.TileLayerRDD[geotrellis.spark.SpatialKey],geotrellis.spark.TileLayerRDD[geotrellis.spark.SpaceTimeKey]]"></a>
+      <a id="toTileLayerRDD(TileColumn):Either[TileLayerRDD[SpatialKey],TileLayerRDD[SpaceTimeKey]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">toTileLayerRDD</span><span class="params">(<span name="tileCol">tileCol: <a href="#TileColumn=org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.Tile]" class="extmbr" name="astraea.spark.rasterframes.WithRasterFrameMethods.TileColumn">TileColumn</a></span>)</span><span class="result">: <a href="../../../geotrellis/spark/package.html#TileLayerRDD[K]=org.apache.spark.rdd.RDD[(K,geotrellis.raster.Tile)]withgeotrellis.spark.Metadata[geotrellis.spark.TileLayerMetadata[K]]" class="extmbr" name="geotrellis.spark.TileLayerRDD">TileLayerRDD</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.SpatialKey" class="extype" target="_top">SpatialKey</a>]</span>
+        <span class="name">toTileLayerRDD</span><span class="params">(<span name="tileCol">tileCol: <a href="#TileColumn=org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.Tile]" class="extmbr" name="astraea.spark.rasterframes.WithRasterFrameMethods.TileColumn">TileColumn</a></span>)</span><span class="result">: <span class="extype" name="scala.Either">Either</span>[<a href="../../../geotrellis/spark/package.html#TileLayerRDD[K]=org.apache.spark.rdd.RDD[(K,geotrellis.raster.Tile)]withgeotrellis.spark.Metadata[geotrellis.spark.TileLayerMetadata[K]]" class="extmbr" name="geotrellis.spark.TileLayerRDD">TileLayerRDD</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.SpatialKey" class="extype" target="_top">SpatialKey</a>], <a href="../../../geotrellis/spark/package.html#TileLayerRDD[K]=org.apache.spark.rdd.RDD[(K,geotrellis.raster.Tile)]withgeotrellis.spark.Metadata[geotrellis.spark.TileLayerMetadata[K]]" class="extmbr" name="geotrellis.spark.TileLayerRDD">TileLayerRDD</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.SpaceTimeKey" class="extype" target="_top">SpaceTimeKey</a>]]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.package$$WithRasterFrameMethods@toTileLayerRDD(tileCol:RasterFrameMethods.this.TileColumn):geotrellis.spark.TileLayerRDD[geotrellis.spark.SpatialKey]" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.package$$WithRasterFrameMethods@toTileLayerRDD(tileCol:RasterFrameMethods.this.TileColumn):Either[geotrellis.spark.TileLayerRDD[geotrellis.spark.SpatialKey],geotrellis.spark.TileLayerRDD[geotrellis.spark.SpaceTimeKey]]" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
