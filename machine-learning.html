@@ -2,7 +2,7 @@
 <html class="no-js" lang="en">
 
 <head>
-<title>Getting Started · RasterFrames</title>
+<title>Machine Learning · RasterFrames</title>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="description" content='RasterFrames brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer operations of GeoTrellis'/>
@@ -37,10 +37,10 @@
 </div>
 <div class="nav-toc">
 <ul>
-  <li><a href="getting-started.html" class="active page">Getting Started</a></li>
+  <li><a href="getting-started.html" class="page">Getting Started</a></li>
   <li><a href="creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
   <li><a href="tile-statistics.html" class="page">Tile Statistics</a></li>
-  <li><a href="machine-learning.html" class="page">Machine Learning</a></li>
+  <li><a href="machine-learning.html" class="active page">Machine Learning</a></li>
   <li><a href="geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
   <li><a href="reference.html" class="page">Reference</a></li>
 </ul>
@@ -77,10 +77,10 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 </div>
 <div class="nav-toc">
 <ul>
-  <li><a href="getting-started.html" class="active page">Getting Started</a></li>
+  <li><a href="getting-started.html" class="page">Getting Started</a></li>
   <li><a href="creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
   <li><a href="tile-statistics.html" class="page">Tile Statistics</a></li>
-  <li><a href="machine-learning.html" class="page">Machine Learning</a></li>
+  <li><a href="machine-learning.html" class="active page">Machine Learning</a></li>
   <li><a href="geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
   <li><a href="reference.html" class="page">Reference</a></li>
 </ul>
@@ -97,7 +97,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <div class="nav-breadcrumbs">
 <ul>
   <li><a href="index.html">RasterFrames</a></li>
-  <li>Getting Started</li>
+  <li>Machine Learning</li>
 </ul>
 </div>
 </div>
@@ -105,46 +105,64 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 
 <div class="page-content row">
 <div class="small-12 large-9 column" id="docs">
-<h1><a href="#getting-started" name="getting-started" class="anchor"><span class="anchor-link"></span></a>Getting Started</h1><div class="callout note "><div class="callout-title">Note</div>
-<p>Most of the examples are shown using the Spark DataFrames API. However, many could also be rewritten to use the Spark SQL API instead. We hope to add more examples in that form in the future.</p></div>
-<h2><a href="#sbt-configuration" name="sbt-configuration" class="anchor"><span class="anchor-link"></span></a>sbt configuration</h2>
-<p><em>RasterFrames</em> is published via Bintray&rsquo;s JCenter server, which is one of the default sbt resolvers. To use, just add the following library dependency:</p>
-<pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;io.astraea&quot; %% &quot;raster-frames&quot; % &quot;{version}&quot;
+<h1><a href="#machine-learning" name="machine-learning" class="anchor"><span class="anchor-link"></span></a>Machine Learning</h1>
+<p>Most SparkML algorithms require each observation to be on an independent row. Here&rsquo;s an example of using RasterFrames <code>explodeTiles</code> UDFs to do that.</p>
+<pre class="prettyprint"><code class="language-scala">import org.apache.spark.ml._
+import org.apache.spark.ml.feature._
+val exploded = rf.select(rf.spatialKeyColumn, explodeTiles($&quot;tile&quot;)).withColumnRenamed(&quot;tile&quot;, &quot;pixel&quot;)
+exploded.printSchema
+val discretizer = new QuantileDiscretizer().
+  setInputCol(&quot;pixel&quot;).
+  setOutputCol(&quot;binned&quot;).
+  setHandleInvalid(&quot;skip&quot;).
+  setNumBuckets(5)
+val binned = discretizer.fit(exploded).transform(exploded)
 </code></pre>
-<h2><a href="#initialization" name="initialization" class="anchor"><span class="anchor-link"></span></a>Initialization</h2>
-<p>First, some standard <code>import</code>s:</p>
-<pre class="prettyprint"><code class="language-scala">import astraea.spark.rasterframes._
-import geotrellis.raster._
-import geotrellis.raster.render._
-import geotrellis.raster.io.geotiff.SinglebandGeoTiff
-import org.apache.spark.sql._
-import org.apache.spark.sql.functions._
-</code></pre>
-<p>Next, initialize the <code>SparkSession</code>, and then register RasterFrames with Spark:</p>
-<pre class="prettyprint"><code class="language-scala">implicit val spark = SparkSession.builder().master(&quot;local&quot;).appName(&quot;RasterFrames&quot;).getOrCreate()
+<pre class="prettyprint"><code class="language-scala">scala&gt; binned.show(false)
++-----------+------+---+-------+------+
+|spatial_key|column|row|pixel  |binned|
++-----------+------+---+-------+------+
+|[0,0]      |0     |0  |14294.0|4.0   |
+|[0,0]      |1     |0  |14277.0|4.0   |
+|[0,0]      |2     |0  |13939.0|4.0   |
+|[0,0]      |3     |0  |13604.0|4.0   |
+|[0,0]      |4     |0  |14182.0|4.0   |
+|[0,0]      |5     |0  |14851.0|4.0   |
+|[0,0]      |6     |0  |15584.0|4.0   |
+|[0,0]      |7     |0  |13905.0|4.0   |
+|[0,0]      |8     |0  |10834.0|3.0   |
+|[0,0]      |9     |0  |10284.0|2.0   |
+|[0,0]      |10    |0  |8973.0 |1.0   |
+|[0,0]      |11    |0  |8314.0 |0.0   |
+|[0,0]      |12    |0  |8051.0 |0.0   |
+|[0,0]      |13    |0  |8242.0 |0.0   |
+|[0,0]      |14    |0  |8448.0 |1.0   |
+|[0,0]      |15    |0  |8002.0 |0.0   |
+|[0,0]      |16    |0  |8302.0 |0.0   |
+|[0,0]      |17    |0  |8419.0 |1.0   |
+|[0,0]      |18    |0  |8044.0 |0.0   |
+|[0,0]      |19    |0  |8362.0 |0.0   |
++-----------+------+---+-------+------+
+only showing top 20 rows
 
-rfInit(spark.sqlContext)
-import spark.implicits._
+
+scala&gt; binned.groupBy(&quot;binned&quot;).count().show(false)
++------+-----+
+|binned|count|
++------+-----+
+|0.0   |77442|
+|1.0   |77246|
+|4.0   |77473|
+|3.0   |77019|
+|2.0   |77820|
++------+-----+
+
 </code></pre>
 <div class="nav-next">
-<p><strong>Next:</strong> <a href="creating-rasterframes.html">Creating RasterFrames</a></p>
+<p><strong>Next:</strong> <a href="geotrellis-ops.html">GeoTrellis Operations</a></p>
 </div>
 </div>
 <div class="large-3 show-for-large column" data-sticky-container>
-<nav class="sidebar sticky" data-sticky data-anchor="docs" data-sticky-on="large">
-<div class="page-nav">
-<div class="nav-title">On this page:</div>
-<div class="nav-toc">
-<ul>
-  <li><a href="getting-started.html#getting-started" class="header">Getting Started</a>
-  <ul>
-    <li><a href="getting-started.html#sbt-configuration" class="header">sbt configuration</a></li>
-    <li><a href="getting-started.html#initialization" class="header">Initialization</a></li>
-  </ul></li>
-</ul>
-</div>
-</div>
-</nav>
 </div>
 </div>
 

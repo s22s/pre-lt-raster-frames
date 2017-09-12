@@ -2,7 +2,7 @@
 <html class="no-js" lang="en">
 
 <head>
-<title>Getting Started · RasterFrames</title>
+<title>GeoTrellis Operations · RasterFrames</title>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="description" content='RasterFrames brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer operations of GeoTrellis'/>
@@ -37,11 +37,11 @@
 </div>
 <div class="nav-toc">
 <ul>
-  <li><a href="getting-started.html" class="active page">Getting Started</a></li>
+  <li><a href="getting-started.html" class="page">Getting Started</a></li>
   <li><a href="creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
   <li><a href="tile-statistics.html" class="page">Tile Statistics</a></li>
   <li><a href="machine-learning.html" class="page">Machine Learning</a></li>
-  <li><a href="geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
+  <li><a href="geotrellis-ops.html" class="active page">GeoTrellis Operations</a></li>
   <li><a href="reference.html" class="page">Reference</a></li>
 </ul>
 </div>
@@ -77,11 +77,11 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 </div>
 <div class="nav-toc">
 <ul>
-  <li><a href="getting-started.html" class="active page">Getting Started</a></li>
+  <li><a href="getting-started.html" class="page">Getting Started</a></li>
   <li><a href="creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
   <li><a href="tile-statistics.html" class="page">Tile Statistics</a></li>
   <li><a href="machine-learning.html" class="page">Machine Learning</a></li>
-  <li><a href="geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
+  <li><a href="geotrellis-ops.html" class="active page">GeoTrellis Operations</a></li>
   <li><a href="reference.html" class="page">Reference</a></li>
 </ul>
 </div>
@@ -97,7 +97,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <div class="nav-breadcrumbs">
 <ul>
   <li><a href="index.html">RasterFrames</a></li>
-  <li>Getting Started</li>
+  <li>GeoTrellis Operations</li>
 </ul>
 </div>
 </div>
@@ -105,46 +105,81 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 
 <div class="page-content row">
 <div class="small-12 large-9 column" id="docs">
-<h1><a href="#getting-started" name="getting-started" class="anchor"><span class="anchor-link"></span></a>Getting Started</h1><div class="callout note "><div class="callout-title">Note</div>
-<p>Most of the examples are shown using the Spark DataFrames API. However, many could also be rewritten to use the Spark SQL API instead. We hope to add more examples in that form in the future.</p></div>
-<h2><a href="#sbt-configuration" name="sbt-configuration" class="anchor"><span class="anchor-link"></span></a>sbt configuration</h2>
-<p><em>RasterFrames</em> is published via Bintray&rsquo;s JCenter server, which is one of the default sbt resolvers. To use, just add the following library dependency:</p>
-<pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;io.astraea&quot; %% &quot;raster-frames&quot; % &quot;{version}&quot;
-</code></pre>
-<h2><a href="#initialization" name="initialization" class="anchor"><span class="anchor-link"></span></a>Initialization</h2>
-<p>First, some standard <code>import</code>s:</p>
-<pre class="prettyprint"><code class="language-scala">import astraea.spark.rasterframes._
-import geotrellis.raster._
-import geotrellis.raster.render._
-import geotrellis.raster.io.geotiff.SinglebandGeoTiff
-import org.apache.spark.sql._
-import org.apache.spark.sql.functions._
-</code></pre>
-<p>Next, initialize the <code>SparkSession</code>, and then register RasterFrames with Spark:</p>
-<pre class="prettyprint"><code class="language-scala">implicit val spark = SparkSession.builder().master(&quot;local&quot;).appName(&quot;RasterFrames&quot;).getOrCreate()
+<h1><a href="#geotrellis-operations" name="geotrellis-operations" class="anchor"><span class="anchor-link"></span></a>GeoTrellis Operations</h1>
+<p>GeoTrellis provides a <a href="https://docs.geotrellis.io/en/latest/guide/core-concepts.html#map-algebra">rich set of Map Algebra operations</a> and other tile processing features that can be used with RasterFrames via Spark&rsquo;s UDF support.</p>
+<p>Here&rsquo;s an example creating a UDFs to invoke the <code>equalize</code> transformation on each tile in a RasterFrame, and then compute the resulting per-tile mean of it.</p>
+<pre class="prettyprint"><code class="language-scala">scala&gt; import geotrellis.raster.equalization._
+import geotrellis.raster.equalization._
 
-rfInit(spark.sqlContext)
-import spark.implicits._
+scala&gt; val equalizer = udf((t: Tile) =&gt; t.equalize())
+equalizer: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(&lt;function1&gt;,org.apache.spark.sql.gt.types.TileUDT@4f5ababb,Some(List(org.apache.spark.sql.gt.types.TileUDT@4f5ababb)))
+
+scala&gt; val equalized = rf.select(equalizer($&quot;tile&quot;) as &quot;equalized&quot;)
+equalized: org.apache.spark.sql.DataFrame = [equalized: st_tile]
+
+scala&gt; equalized.select(tileMean($&quot;equalized&quot;) as &quot;equalizedMean&quot;).show(5, false)
++------------------+
+|equalizedMean     |
++------------------+
+|32776.88976377951 |
+|32775.50851492398 |
+|30774.931392296898|
+|32777.86241836048 |
+|32775.866507965664|
++------------------+
+only showing top 5 rows
+
+</code></pre>
+<p>Here&rsquo;s an example downsampling a tile and rendering each tile as a matrix of numerical values.</p>
+<pre class="prettyprint"><code class="language-scala">scala&gt; val downsample = udf((t: Tile) =&gt; t.resample(4, 4))
+downsample: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(&lt;function1&gt;,org.apache.spark.sql.gt.types.TileUDT@4f5ababb,Some(List(org.apache.spark.sql.gt.types.TileUDT@4f5ababb)))
+
+scala&gt; val downsampled = rf.select(renderAscii(downsample($&quot;tile&quot;)) as &quot;minime&quot;)
+downsampled: org.apache.spark.sql.DataFrame = [minime: string]
+
+scala&gt; downsampled.show(5, false)
++-----------------------------------------------------------------------------------------------------+
+|minime                                                                                               |
++-----------------------------------------------------------------------------------------------------+
+|  8837  8316 10855 10780
+  8125 10082  9930  8290
+  7624 10739 12019 11287
+ 11738  8125 11830 11260
+
+|
+| 11278  8090  9976 10251
+  9152  9952  8598  7867
+ 11155 10279  9599  7892
+ 16544 12812  9280 12004
+
+|
+|    ND    ND    ND    ND
+    ND    ND    ND    ND
+    ND    ND    ND    ND
+    ND    ND    ND    ND
+
+|
+|  8116  7766 10988 11587
+  8844  8386  8538  7900
+  8219  8007  8739  8615
+ 10438 13469  8790 13562
+
+|
+|  8149  7967 16175 11629
+  8453  8974 10055 10609
+ 12485 12847 11454  9899
+  7913 10969 11147  9728
+
+|
++-----------------------------------------------------------------------------------------------------+
+only showing top 5 rows
+
 </code></pre>
 <div class="nav-next">
-<p><strong>Next:</strong> <a href="creating-rasterframes.html">Creating RasterFrames</a></p>
+<p><strong>Next:</strong> <a href="reference.html">Reference</a></p>
 </div>
 </div>
 <div class="large-3 show-for-large column" data-sticky-container>
-<nav class="sidebar sticky" data-sticky data-anchor="docs" data-sticky-on="large">
-<div class="page-nav">
-<div class="nav-title">On this page:</div>
-<div class="nav-toc">
-<ul>
-  <li><a href="getting-started.html#getting-started" class="header">Getting Started</a>
-  <ul>
-    <li><a href="getting-started.html#sbt-configuration" class="header">sbt configuration</a></li>
-    <li><a href="getting-started.html#initialization" class="header">Initialization</a></li>
-  </ul></li>
-</ul>
-</div>
-</div>
-</nav>
 </div>
 </div>
 
