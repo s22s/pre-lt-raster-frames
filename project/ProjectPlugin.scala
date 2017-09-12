@@ -44,20 +44,16 @@ object ProjectPlugin extends AutoPlugin {
     headers := CommentStyleMapping.createFrom(Apache2_0, "2017", "Astraea, Inc."),
     scalaVersion := "2.11.11",
     scalacOptions ++= Seq("-feature", "-deprecation"),
-
+    cancelable in Global := true,
     resolvers ++= Seq(
       "locationtech-releases" at "https://repo.locationtech.org/content/groups/releases"
     ),
     libraryDependencies ++= Seq(
       spark("core") % Provided,
       spark("mllib") % Provided,
-      spark("mllib") % Tut,
       spark("sql") % Provided,
-      spark("sql") % Tut,
       geotrellis("spark") % Provided,
-      geotrellis("spark") % Tut,
       geotrellis("raster") % Provided,
-      geotrellis("raster") % Tut,
       geotrellis("spark-testkit") % Test excludeAll(
         ExclusionRule(organization = "org.scalastic"),
         ExclusionRule(organization = "org.scalatest")
@@ -67,12 +63,7 @@ object ProjectPlugin extends AutoPlugin {
     publishArtifact in Test := false,
     fork in Test := true,
     javaOptions in Test := Seq("-Xmx2G"),
-    parallelExecution in Test := false,
-    fork in tut := true,
-    javaOptions in tut := Seq("-Xmx2G")
-//    javaOptions in tut := Seq(
-//      "-Dlog4j.configuration=file:src/test/resources/log4j.properties"
-//    )
+    parallelExecution in Test := false
   )
 
   object autoImport {
@@ -118,6 +109,14 @@ object ProjectPlugin extends AutoPlugin {
       ghpagesNoJekyll := true,
       scalacOptions in (Compile, doc) ++= Seq(
         "-no-link-warnings"
+      ),
+      fork in tut := true,
+      javaOptions in tut := Seq("-Xmx2G"),
+      libraryDependencies ++= Seq(
+        spark("mllib") % Tut,
+        spark("sql") % Tut,
+        geotrellis("spark") % Tut,
+        geotrellis("raster") % Tut
       )
     )
   }

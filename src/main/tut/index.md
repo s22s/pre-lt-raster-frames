@@ -47,6 +47,7 @@ To learn more, please see the [Getting Started](getting-started.md) section of t
 @@@ index
 * [Getting Started](getting-started.md)
 * [Creating RasterFrames](creating-rasterframes.md)
+* [Writing to Parquet](writing-parquet.md)
 * [Tile Statistics](tile-statistics.md)
 * [Machine Learning](machine-learning.md)
 * [GeoTrellis Operations](geotrellis-ops.md)
