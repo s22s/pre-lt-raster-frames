@@ -2,6 +2,8 @@
 
 package astraea.spark.rasterframes
 
+import java.time.ZonedDateTime
+
 import com.typesafe.scalalogging.LazyLogging
 import geotrellis.proj4.LatLng
 import geotrellis.raster.render.{ColorMap, ColorRamp}
@@ -10,8 +12,8 @@ import geotrellis.spark._
 import geotrellis.spark.io._
 import geotrellis.spark.tiling._
 import geotrellis.vector.{Extent, ProjectedExtent}
-import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions._
+import org.apache.spark.sql.gt.NamedColumn
 
 /**
  * RasterFrame test rig.
@@ -24,14 +26,14 @@ class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
   import spark.implicits._
 
   describe("RasterFrame") {
-    it("should implicitly convert from layer type") {
+    it("should implicitly convert from spatial layer type") {
 
-      val tileLayerRDD = TestData.randomTileLayerRDD(20, 20, 2, 2)
+      val tileLayerRDD = TestData.randomSpatialTileLayerRDD(20, 20, 2, 2)
 
       val rf = tileLayerRDD.toRF
 
       assert(rf.tileColumns.nonEmpty)
-      assert(rf.spatialKeyColumn.toString() == "spatial_key")
+      assert(rf.spatialKeyColumn.columnName == "spatial_key")
 
       assert(rf.schema.head.metadata.contains(CONTEXT_METADATA_KEY))
       assert(rf.schema.head.metadata.json.contains("tileLayout"))
@@ -45,6 +47,20 @@ class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
       )
 
       assert(rf.count() === 4)
+    }
+
+    it("should implicitly convert from spatiotemporal layer type") {
+
+      val tileLayerRDD = TestData.randomSpatioTemporalTileLayerRDD(20, 20, 2, 2)
+
+      val rf = WithSpatioTemporalContextRDDMethods(tileLayerRDD).toRF
+
+      //rf.printSchema()
+      //rf.show()
+
+      assert(rf.tileColumns.nonEmpty)
+      assert(rf.spatialKeyColumn.columnName === "spatial_key")
+      assert(rf.temporalKeyColumn.map(_.columnName) === Some("temporal_key"))
     }
 
     it("should implicitly convert layer of TileFeature") {
@@ -77,11 +93,20 @@ class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
       assert(praster.toRF(128, 128).count() === (layoutCols * layoutRows))
     }
 
-    it("should provide TileLayerMetadata") {
+    it("should provide TileLayerMetadata[SpatialKey]") {
       val rf = sampleGeoTiff.projectedRaster.toRF(256, 256)
-      val tlm = rf.tileLayerMetadata
-      assert(tlm.bounds.get._1 === SpatialKey(0, 0))
-      assert(tlm.bounds.get._2 === SpatialKey(3, 1))
+      val tlm = rf.tileLayerMetadata.widen
+      val bounds = tlm.bounds.get
+      assert(bounds === KeyBounds(SpatialKey(0, 0), SpatialKey(3, 1)))
+    }
+
+    it("should provide TileLayerMetadata[SpaceTimeKey]") {
+      val now = ZonedDateTime.now()
+      val rf = sampleGeoTiff.projectedRaster.toRF(256, 256, now)
+      val tlm = rf.tileLayerMetadata.widen
+      val bounds = tlm.bounds.get
+      assert(bounds._1 === SpaceTimeKey(0, 0, now))
+      assert(bounds._2 === SpaceTimeKey(3, 1, now))
     }
 
     it("should clip TileLayerMetadata extent") {
@@ -96,7 +121,7 @@ class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
       assert(orig.contains(worldish))
       assert(orig.contains(areaish))
 
-      val clipped = rf.clipLayerExtent.tileLayerMetadata.extent
+      val clipped = rf.clipLayerExtent.tileLayerMetadata.widen.extent
       assert(!clipped.contains(worldish))
       assert(clipped.contains(areaish))
     }
@@ -114,16 +139,16 @@ class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
     }
 
     it("shouldn't clip already clipped extents") {
-      val rf = TestData.randomTileLayerRDD(1024, 1024, 8, 8).toRF
+      val rf = TestData.randomSpatialTileLayerRDD(1024, 1024, 8, 8).toRF
 
-      val expected = rf.tileLayerMetadata.extent
-      val computed = rf.clipLayerExtent.tileLayerMetadata.extent
+      val expected = rf.tileLayerMetadata.widen.extent
+      val computed = rf.clipLayerExtent.tileLayerMetadata.widen.extent
       basicallySame(expected, computed)
 
       val pr = sampleGeoTiff.projectedRaster
       val rf2 = pr.toRF(256, 256)
-      val expected2 = rf2.tileLayerMetadata.extent
-      val computed2 = rf2.clipLayerExtent.tileLayerMetadata.extent
+      val expected2 = rf2.tileLayerMetadata.widen.extent
+      val computed2 = rf2.clipLayerExtent.tileLayerMetadata.widen.extent
       basicallySame(expected2, computed2)
     }
 

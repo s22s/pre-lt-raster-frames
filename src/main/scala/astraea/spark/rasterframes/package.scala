@@ -17,7 +17,7 @@
 package astraea.spark
 
 import geotrellis.raster.{ProjectedRaster, Tile, TileFeature}
-import geotrellis.spark.{Bounds, ContextRDD, Metadata, SpatialComponent, TileLayerMetadata}
+import geotrellis.spark.{Bounds, ContextRDD, Metadata, SpaceTimeKey, SpatialComponent, TemporalComponent, TileLayerMetadata}
 import geotrellis.util.GetComponent
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql._
@@ -26,8 +26,10 @@ import astraea.spark.rasterframes.functions.ColumnFunctions
 import spray.json.JsonFormat
 
 import scala.reflect.runtime.universe._
-import shapeless.tag
+import shapeless.{Lub, tag}
 import shapeless.tag.@@
+
+import scala.reflect.ClassTag
 
 /**
  *  Module providing support for RasterFrames.
@@ -37,9 +39,6 @@ import shapeless.tag.@@
  * @since 7/18/17
  */
 package object rasterframes extends Implicits with ColumnFunctions {
-
-  /** Key under which ContextRDD metadata is stored. */
-  val CONTEXT_METADATA_KEY = "context"
 
   /** Default RasterFrame spatial column name. */
   val SPATIAL_KEY_COLUMN = "spatial_key"
@@ -53,6 +52,12 @@ package object rasterframes extends Implicits with ColumnFunctions {
   /** Default RasterFrame [[TileFeature.data]] column name. */
   val TILE_FEATURE_DATA_COLUMN = "tile_data"
 
+  /** Key under which ContextRDD metadata is stored. */
+  private[rasterframes] val CONTEXT_METADATA_KEY = "_context"
+
+  /** Key under which RasterFrame role a column plays. */
+  private[rasterframes] val SPATIAL_ROLE_KEY ="_stRole"
+
   /**
    * A RasterFrame is just a DataFrame with certain invariants, enforced via the methods that create and transform them:
    *   1. One column is a [[geotrellis.spark.SpatialKey]] or [[geotrellis.spark.SpaceTimeKey]]
@@ -65,7 +70,8 @@ package object rasterframes extends Implicits with ColumnFunctions {
   trait RasterFrameTag
 
   /** Internal method for slapping the RasterFreame seal of approval on a DataFrame. */
-  private[rasterframes] def certifyRasterframe(df: DataFrame): RasterFrame = tag[RasterFrameTag][DataFrame](df)
+  private[rasterframes] def certifyRasterframe(df: DataFrame): RasterFrame =
+    tag[RasterFrameTag][DataFrame](df)
 
   /**
    * Type lambda alias for components that have bounds with parameterized key.
@@ -84,26 +90,45 @@ package object rasterframes extends Implicits with ColumnFunctions {
     functions.Registrator.register(sqlContext)
   }
 
-  implicit class WithProjectedRasterMethods(val self: ProjectedRaster[Tile]) extends ProjectedRasterMethods
+  // ----------- Extension Method Injections ------------
+
+  implicit class WithProjectedRasterMethods(val self: ProjectedRaster[Tile])
+      extends ProjectedRasterMethods
+
   implicit class WithDataFrameMethods(val self: DataFrame) extends DataFrameMethods
+
   implicit class WithRasterFrameMethods(val self: RasterFrame) extends RasterFrameMethods
-  implicit class WithContextRDDMethods[K: SpatialComponent: JsonFormat: TypeTag](
+
+  implicit class WithSpatialContextRDDMethods[K: SpatialComponent: JsonFormat: TypeTag](
     val self: RDD[(K, Tile)] with Metadata[TileLayerMetadata[K]]
   )(implicit spark: SparkSession)
-      extends ContextRDDMethods[K]
+      extends SpatialContextRDDMethods[K]
 
-  implicit class WithTFContextRDDMethods[K: SpatialComponent: JsonFormat: TypeTag, D: TypeTag](
+  implicit class WithSpatioTemporalContextRDDMethods(
+    val self: RDD[(SpaceTimeKey, Tile)] with Metadata[TileLayerMetadata[SpaceTimeKey]]
+  )(implicit spark: SparkSession)
+    extends SpatioTemporalContextRDDMethods
+
+  implicit class WithTFContextRDDMethods[K: SpatialComponent: JsonFormat: ClassTag: TypeTag, D: TypeTag](
     val self: RDD[(K, TileFeature[Tile, D])] with Metadata[TileLayerMetadata[K]]
   )(implicit spark: SparkSession)
       extends TFContextRDDMethods[K, D]
 
-  type TileFeatureLayerRDD[K, D] = RDD[(K, TileFeature[Tile, D])] with Metadata[TileLayerMetadata[K]]
+  private[astraea] implicit class WithMetadataMethods[R: JsonFormat](val self: R)
+    extends MetadataMethods[R]
+
+  type TileFeatureLayerRDD[K, D] =
+    RDD[(K, TileFeature[Tile, D])] with Metadata[TileLayerMetadata[K]]
+
   object TileFeatureLayerRDD {
-    def apply[K, D](rdd: RDD[(K, TileFeature[Tile, D])], metadata: TileLayerMetadata[K]): TileFeatureLayerRDD[K, D] =
+    def apply[K, D](rdd: RDD[(K, TileFeature[Tile, D])],
+                    metadata: TileLayerMetadata[K]): TileFeatureLayerRDD[K, D] =
       new ContextRDD(rdd, metadata)
   }
 
-  private[astraea] implicit class WithMetadataMethods[R: JsonFormat](val self: R) extends MetadataMethods[R]
-
-
+  private[rasterframes] implicit class WithWiden[A, B](thing: Either[A, B]) {
+    /** Returns the value as a LUB of the Left & Right items. */
+    def widen[Out](implicit ev: Lub[A, B, Out]): Out =
+      thing.fold(identity, identity).asInstanceOf[Out]
+  }
 }

@@ -14,6 +14,11 @@
   <link rel="stylesheet" type="text/css" href="$page.base$lib/foundation/dist/foundation.min.css"/>
   <link rel="stylesheet" type="text/css" href="$page.base$css/page.css"/>
   <link rel="shortcut icon" href="$page.base$images/astraea.ico" />
+  <style>
+    .md-left { float: left; }
+    .md-right { float: right; }
+    .md-clear { clear: both; }
+  </style>
 </head>
 
 <body>

@@ -16,14 +16,16 @@
 
 package astraea.spark.rasterframes
 
+import geotrellis.spark.io._
+import geotrellis.spark.{SpatialComponent, SpatialKey, TileLayerMetadata}
 import geotrellis.util.MethodExtensions
-import org.apache.spark.sql.catalyst.expressions.{Attribute, AttributeReference}
-import org.apache.spark.sql.{Column, DataFrame}
-import org.apache.spark.sql.types.{Metadata, MetadataBuilder, StructType}
+import org.apache.spark.sql.catalyst.expressions.Attribute
 import org.apache.spark.sql.gt._
+import org.apache.spark.sql.types.MetadataBuilder
+import org.apache.spark.sql.{Column, DataFrame}
+import spray.json.JsonFormat
 
 import scala.util.Try
-
 /**
  * Extension methods over [[DataFrame]].
  *
@@ -35,27 +37,41 @@ trait DataFrameMethods extends MethodExtensions[DataFrame] {
   private def selector(column: Column) = (attr: Attribute) ⇒
     attr.name == column.columnName || attr.semanticEquals(column.expr)
 
-  /** Add the metadata for the column with the given name. */
-  def addColumnMetadata(column: Column, metadataKey: String, metadata: Metadata): DataFrame = {
-
+  /** Map over the Attribute representation of Columns, modifying the one matching `column` with `op`. */
+  private[astraea] def mapColumnAttribute(column: Column, op: Attribute ⇒  Attribute): DataFrame = {
     val analyzed = self.queryExecution.analyzed.output
     val selects = selector(column)
     val attrs = analyzed.map { attr ⇒
-      if(selects(attr)) {
-        val md = new MetadataBuilder().withMetadata(attr.metadata).putMetadata(metadataKey, metadata).build()
-        attr.withMetadata(md)
-      }
-      else attr
+      if(selects(attr)) op(attr) else attr
     }
-
     self.select(attrs.map(a ⇒ new Column(a)): _*)
   }
 
-  /** Get the metadata attached to the given column with the given key */
-  def getColumnMetadata(column: Column, metadataKey: String): Option[Metadata] = {
-    val analyzed = self.queryExecution.analyzed.output
-    analyzed.find(selector(column)).map(_.metadata.getMetadata(metadataKey))
+  private[astraea] def addColumnMetadata(column: Column, op: MetadataBuilder ⇒ MetadataBuilder): DataFrame = {
+    mapColumnAttribute(column, attr ⇒ {
+      val md = new MetadataBuilder().withMetadata(attr.metadata)
+      attr.withMetadata(op(md).build)
+    })
   }
+
+  private[astraea] def fetchMetadataValue[D](column: Column, reader: (Attribute) ⇒ D): Option[D] = {
+    val analyzed = self.queryExecution.analyzed.output
+    analyzed.find(selector(column)).map(reader)
+  }
+
+  /** Set column role tag for subsequent interpretation. */
+  private[astraea] def setColumnRole(column: Column, roleName: String): DataFrame =
+    addColumnMetadata(column, _.putString(SPATIAL_ROLE_KEY, roleName))
+
+  private[astraea] def setSpatialColumnRole[K: SpatialComponent: JsonFormat](column: Column, md: TileLayerMetadata[K]) =
+    addColumnMetadata(self(SPATIAL_KEY_COLUMN),
+      _.putMetadata(CONTEXT_METADATA_KEY, md.asColumnMetadata)
+        .putString(SPATIAL_ROLE_KEY, classOf[SpatialKey].getSimpleName)
+    )
+
+  /** Get the role tag the column plays in the RasterFrame, if any. */
+  private[astraea] def getColumnRole(column: Column): Option[String] =
+    fetchMetadataValue(column, _.metadata.getString(SPATIAL_ROLE_KEY))
 
   /** Converts this DataFrame to a RasterFrame after ensuring it has:
    *

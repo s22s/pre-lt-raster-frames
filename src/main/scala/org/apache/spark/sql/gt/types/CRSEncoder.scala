@@ -27,8 +27,8 @@ import org.apache.spark.unsafe.types.UTF8String
 import scala.reflect.classTag
 
 /**
- * Custom encoder for GT [[CellType]]. It's necessary since [[CellType]] is a type alias of
- * a type intersection.
+ * Custom encoder for GT `CRS`.
+ *
  * @author sfitch
  * @since 7/21/17
  */
