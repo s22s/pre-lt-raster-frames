@@ -2,7 +2,7 @@
 <html class="no-js" lang="en">
 
 <head>
-<title>RasterFrames</title>
+<title>Writing to Parquet · RasterFrames</title>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="description" content='RasterFrames brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer operations of GeoTrellis'/>
@@ -28,7 +28,7 @@
 <div class="off-canvas position-left" id="off-canvas-menu" data-off-canvas>
 <nav class="off-canvas-nav">
 <div class="nav-home">
-<a href="index.html" class="active">
+<a href="index.html" >
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
@@ -39,7 +39,7 @@
 <ul>
   <li><a href="getting-started.html" class="page">Getting Started</a></li>
   <li><a href="creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
-  <li><a href="writing-parquet.html" class="page">Writing to Parquet</a></li>
+  <li><a href="writing-parquet.html" class="active page">Writing to Parquet</a></li>
   <li><a href="tile-statistics.html" class="page">Tile Statistics</a></li>
   <li><a href="machine-learning.html" class="page">Machine Learning</a></li>
   <li><a href="geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
@@ -58,7 +58,7 @@
 H3.6C3.048,13,3,13.447,3,14c0,0.553,0.048,1,0.6,1H16.4c0.552,0,0.6-0.447,0.6-1C17,13.447,16.952,13,16.4,13z M3.6,7H16.4
 C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.048,7,3.6,7z"/></svg>
 </a>
-<div class="title"><a href="index.html" class="active">RasterFrames</a></div>
+<div class="title"><a href="index.html">RasterFrames</a></div>
 
 <a href="http://www.astraea.earth" class="logo show-for-medium"><img style="height: 40px;" src="images/astraea.png"/></a>
 </div>
@@ -69,7 +69,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <div class="medium-3 large-2 show-for-medium column">
 <nav class="site-nav">
 <div class="nav-home">
-<a href="index.html" class="active">
+<a href="index.html" >
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
@@ -80,7 +80,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <ul>
   <li><a href="getting-started.html" class="page">Getting Started</a></li>
   <li><a href="creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
-  <li><a href="writing-parquet.html" class="page">Writing to Parquet</a></li>
+  <li><a href="writing-parquet.html" class="active page">Writing to Parquet</a></li>
   <li><a href="tile-statistics.html" class="page">Tile Statistics</a></li>
   <li><a href="machine-learning.html" class="page">Machine Learning</a></li>
   <li><a href="geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
@@ -96,51 +96,89 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 
 <div class="page-header row">
 <div class="medium-12 show-for-medium column">
+<div class="nav-breadcrumbs">
+<ul>
+  <li><a href="index.html">RasterFrames</a></li>
+  <li>Writing to Parquet</li>
+</ul>
+</div>
 </div>
 </div>
 
 <div class="page-content row">
 <div class="small-12 large-9 column" id="docs">
-<h1><a href="#rasterframes" name="rasterframes" class="anchor"><span class="anchor-link"></span></a>RasterFrames</h1>
-<p><em>RasterFrames</em> brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer operations of <a href="https://geotrellis.io/">GeoTrellis</a>. The source code can be found on GitHub at  <a href="https://github.com/s22s/raster-frames">s22s/raster-frames</a>.</p><div class="callout note "><div class="callout-title">Note</div>
-<p>RasterFrames is a new project under active development. Feedback and contributions are welcomed as we look to improve it.</p></div>
-<p>The underlying purpose of RasterFrames is to allow data scientists and software developers the ability to process and analyze geospatial-temporal raster data with the same flexibility and ease as any other Spark data type. At its core is a Spark user-defined type (UDF) called <code>TileUDT</code>, which encodes a GeoTrellis <code>Tile</code> in a form the Spark Catalyst engine can process. On top of that we extend the definition of a Dataframe to encompass some additional invariants that allow for geospatial operations within and between RasterFrames to occur while still maintaining necessary geo-referencing constructs.</p>
-<p>To learn more, please see the <a href="getting-started.md">Getting Started</a> section of this manual.</p><div class="md-left">
-<h2><a href="#detailed-contents" name="detailed-contents" class="anchor"><span class="anchor-link"></span></a>Detailed Contents</h2>
-<div class="toc ">
-<ul>
-  <li><a href="getting-started.html" class="page">Getting Started</a>
-  <ul>
-    <li><a href="getting-started.html#sbt-configuration" class="header">sbt configuration</a></li>
-    <li><a href="getting-started.html#initialization" class="header">Initialization</a></li>
-  </ul></li>
-  <li><a href="creating-rasterframes.html" class="page">Creating RasterFrames</a>
-  <ul>
-    <li><a href="creating-rasterframes.html#from-projectedextent" class="header">From <code>ProjectedExtent</code></a></li>
-    <li><a href="creating-rasterframes.html#from-tilelayerrdd" class="header">From <code>TileLayerRDD</code></a></li>
-    <li><a href="creating-rasterframes.html#reassembling-rasters" class="header">Reassembling Rasters</a></li>
-  </ul></li>
-  <li><a href="writing-parquet.html" class="page">Writing to Parquet</a></li>
-  <li><a href="tile-statistics.html" class="page">Tile Statistics</a>
-  <ul>
-    <li><a href="tile-statistics.html#raster-analysis" class="header">Raster Analysis</a></li>
-  </ul></li>
-  <li><a href="machine-learning.html" class="page">Machine Learning</a></li>
-  <li><a href="geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
-  <li><a href="reference.html" class="page">Reference</a></li>
-</ul>
-</div></div><div class="md-right">
-<h2><a href="#related-links" name="related-links" class="anchor"><span class="anchor-link"></span></a>Related Links</h2>
-<ul>
-  <li><a href="https://gitter.im/s22s/raster-frames">Gitter Channel</a></li>
-  <li><a href="latest/api/index.html">API Documentation</a></li>
-  <li><a href="https://github.com/s22s/raster-frames">GitHub Repository</a></li>
-  <li><a href="https://docs.geotrellis.io/en/latest/">GeoTrellis Documentation</a></li>
-  <li><a href="http://www.astraea.earth/">Astraea, Inc.</a> (the company behind RasterFrames)</li>
-</ul></div><div class="md-clear">
-<p>&nbsp;</p></div>
+<h1><a href="#writing-to-parquet" name="writing-to-parquet" class="anchor"><span class="anchor-link"></span></a>Writing to Parquet</h1>
+<p>It is often useful to write Spark results in a form that is easily reloaded for subsequent analysis. RasterFrames work just like any other DataFrame in this scenario as long as <a href="http://rasterframes.io/latest/api/astraea/spark/rasterframes/package.html#rfInit(SQLContext):Unit"><code>rfInit</code></a> is called to register the imagery types.</p>
+<p>Let&rsquo;s assume we have a RasterFrame we&rsquo;ve done some fancy processing on: </p>
+<pre class="prettyprint"><code class="language-scala">import geotrellis.raster.equalization._
+val equalizer = udf((t: Tile) =&gt; t.equalize())
+val equalized = rf.withColumn(&quot;equalized&quot;, equalizer($&quot;tile&quot;))
+</code></pre>
+<pre class="prettyprint"><code class="language-scala">scala&gt; equalized.printSchema
+root
+ |-- spatial_key: struct (nullable = true)
+ |    |-- col: integer (nullable = true)
+ |    |-- row: integer (nullable = true)
+ |-- tile: st_tile (nullable = true)
+ |-- equalized: st_tile (nullable = true)
+
+
+scala&gt; equalized.select(aggStats($&quot;tile&quot;)).show(false)
++---------+------------------+-----------------+------------------+------------------+-----------------+-------+
+|dataCells|mean              |median           |mode              |stddev            |zmin             |zmax   |
++---------+------------------+-----------------+------------------+------------------+-----------------+-------+
+|386941   |10160.503048268341|9900.027479106197|10389.873462922193|1817.3730199562644|7397.635610766046|39158.0|
++---------+------------------+-----------------+------------------+------------------+-----------------+-------+
+
+
+scala&gt; equalized.select(aggStats($&quot;equalized&quot;)).show(false)
++---------+-----------------+------------------+-----------------+------------------+------------------+------------------+
+|dataCells|mean             |median            |mode             |stddev            |zmin              |zmax              |
++---------+-----------------+------------------+-----------------+------------------+------------------+------------------+
+|458660   |32764.27312170235|32085.365476614832|32432.25781811407|17389.600195327213|447.83697853381943|65019.045860529026|
++---------+-----------------+------------------+-----------------+------------------+------------------+------------------+
+
+</code></pre>
+<p>We write it out just like any other DataFrame, including the ability to specify partitioning:</p>
+<pre class="prettyprint"><code class="language-scala">val filePath = &quot;/tmp/equalized.parquet&quot;
+equalized.select(&quot;*&quot;, &quot;spatial_key.*&quot;).write.partitionBy(&quot;col&quot;, &quot;row&quot;).mode(SaveMode.Overwrite).parquet(filePath)
+</code></pre>
+<p>Let&rsquo;s confirm partitioning happened as expected:</p>
+<pre class="prettyprint"><code class="language-scala">import java.io.File
+new File(filePath).list
+</code></pre>
+<p>Now we can load the data back in and check it out:</p>
+<pre class="prettyprint"><code class="language-scala">val rf2 = spark.read.parquet(filePath)
+</code></pre>
+<pre class="prettyprint"><code class="language-scala">scala&gt; rf2.printSchema
+root
+ |-- spatial_key: struct (nullable = true)
+ |    |-- col: integer (nullable = true)
+ |    |-- row: integer (nullable = true)
+ |-- tile: st_tile (nullable = true)
+ |-- equalized: st_tile (nullable = true)
+ |-- col: integer (nullable = true)
+ |-- row: integer (nullable = true)
+
+
+scala&gt; equalized.select(aggStats($&quot;tile&quot;)).show(false)
++---------+------------------+-----------------+------------------+------------------+-----------------+-------+
+|dataCells|mean              |median           |mode              |stddev            |zmin             |zmax   |
++---------+------------------+-----------------+------------------+------------------+-----------------+-------+
+|386941   |10160.503048268341|9900.027479106197|10389.873462922193|1817.3730199562644|7397.635610766046|39158.0|
++---------+------------------+-----------------+------------------+------------------+-----------------+-------+
+
+
+scala&gt; equalized.select(aggStats($&quot;equalized&quot;)).show(false)
++---------+-----------------+------------------+-----------------+------------------+------------------+------------------+
+|dataCells|mean             |median            |mode             |stddev            |zmin              |zmax              |
++---------+-----------------+------------------+-----------------+------------------+------------------+------------------+
+|458660   |32764.27312170235|32085.365476614832|32432.25781811407|17389.600195327213|447.83697853381943|65019.045860529026|
++---------+-----------------+------------------+-----------------+------------------+------------------+------------------+
+
+</code></pre>
 <div class="nav-next">
-<p><strong>Next:</strong> <a href="getting-started.html">Getting Started</a></p>
+<p><strong>Next:</strong> <a href="tile-statistics.html">Tile Statistics</a></p>
 </div>
 </div>
 <div class="large-3 show-for-large column" data-sticky-container>
