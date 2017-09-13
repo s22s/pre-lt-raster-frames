@@ -111,56 +111,117 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <p>Now that we have a <code>RasterFrame</code>, we have access to a number of extension methods and columnar functions for performing analysis on tiles.</p>
 <h2><a href="#inspection" name="inspection" class="anchor"><span class="anchor-link"></span></a>Inspection</h2>
 <p><code>RasterFrame</code> has a number of methods providing access to metadata about the contents of the RasterFrame. </p>
-<pre class="prettyprint"><code class="language-scala">scala&gt; // Get the names of the columns that are `Tile` columns
-     | rf.tileColumns.map(_.toString)
-res3: Seq[String] = ArraySeq(tile)
+<h3><a href="#tile-column-names" name="tile-column-names" class="anchor"><span class="anchor-link"></span></a>Tile Column Names</h3>
+<pre class="prettyprint"><code class="language-scala">rf.tileColumns.map(_.toString)
+// res2: Seq[String] = ArraySeq(tile)
+</code></pre>
+<h3><a href="#spatial-key-column-name" name="spatial-key-column-name" class="anchor"><span class="anchor-link"></span></a>Spatial Key Column Name</h3>
+<pre class="prettyprint"><code class="language-scala">rf.spatialKeyColumn.toString
+// res3: String = spatial_key
+</code></pre>
+<h3><a href="#temporal-key-column" name="temporal-key-column" class="anchor"><span class="anchor-link"></span></a>Temporal Key Column</h3>
+<p>Returns an <code>Option[Column]</code> since not all RasterFrames have an explicit temporal dimension.</p>
+<pre class="prettyprint"><code class="language-scala">rf.temporalKeyColumn.map(_.toString)
+// res4: Option[String] = None
+</code></pre>
+<h3><a href="#tile-layer-metadata" name="tile-layer-metadata" class="anchor"><span class="anchor-link"></span></a>Tile Layer Metadata</h3>
+<p>The Tile Layer Metadata defines how the spatial/spatiotemporal domain is discretized into tiles, and what the key bounds are.</p>
+<pre class="prettyprint"><code class="language-scala">scala&gt; import spray.json._
+import spray.json._
 
-scala&gt; // Get the column tagged as containing the `SpatialKey`
-     | rf.spatialKeyColumn.toString
-res5: String = spatial_key
+scala&gt; // The `fold` is required because an `Either` is retured, depending on the key type. 
+     | rf.tileLayerMetadata.fold(_.toJson, _.toJson).prettyPrint
+res6: String =
+{
+  &quot;extent&quot;: {
+    &quot;xmin&quot;: 431902.5,
+    &quot;ymin&quot;: 4313647.5,
+    &quot;xmax&quot;: 443512.5,
+    &quot;ymax&quot;: 4321147.5
+  },
+  &quot;layoutDefinition&quot;: {
+    &quot;extent&quot;: {
+      &quot;xmin&quot;: 431902.5,
+      &quot;ymin&quot;: 4313467.5,
+      &quot;xmax&quot;: 445342.5,
+      &quot;ymax&quot;: 4321147.5
+    },
+    &quot;tileLayout&quot;: {
+      &quot;layoutCols&quot;: 7,
+      &quot;layoutRows&quot;: 4,
+      &quot;tileCols&quot;: 128,
+      &quot;tileRows&quot;: 128
+    }
+  },
+  &quot;bounds&quot;: {
+    &quot;minKey&quot;: {
+      &quot;col&quot;: 0,
+      &quot;row&quot;: 0
+    },
+    &quot;maxKey&quot;: {
+      &quot;col&quot;: 6,
+      &quot;row&quot;: 3
+    }
+  },
+  &quot;cellType&quot;: &quot;uint16&quot;,
+  &quot;crs&quot;: &quot;+proj=utm +zone=16 +datum=WGS84 +units=m +no_defs &quot;
+}
 </code></pre>
 <h2><a href="#tile-statistics" name="tile-statistics" class="anchor"><span class="anchor-link"></span></a>Tile Statistics</h2>
-<pre class="prettyprint"><code class="language-scala">scala&gt; rf.select(tileDimensions($&quot;tile&quot;)).show(5)
-+--------------------+
-|tileDimensions(tile)|
-+--------------------+
-|           [128,128]|
-|           [128,128]|
-|           [128,128]|
-|           [128,128]|
-|           [128,128]|
-+--------------------+
-only showing top 5 rows
+<h3><a href="#tile-dimensions" name="tile-dimensions" class="anchor"><span class="anchor-link"></span></a>Tile Dimensions</h3>
+<p>Get the nominal tile dimensions. Depending on the tiling there may be some tiles with different sizes on the edges.</p>
+<pre class="prettyprint"><code class="language-scala">scala&gt; rf.select(rf.spatialKeyColumn, tileDimensions($&quot;tile&quot;)).show(3)
++-----------+--------------------+
+|spatial_key|tileDimensions(tile)|
++-----------+--------------------+
+|      [0,0]|           [128,128]|
+|      [1,1]|           [128,128]|
+|      [6,1]|           [128,128]|
++-----------+--------------------+
+only showing top 3 rows
 
+</code></pre>
+<h3><a href="#descriptive-statistics" name="descriptive-statistics" class="anchor"><span class="anchor-link"></span></a>Descriptive Statistics</h3>
+<p>Count the numer of <code>NoData</code> and non-<code>NoData</code> cells in each tile.</p>
+<pre class="prettyprint"><code class="language-scala">scala&gt; rf.select(rf.spatialKeyColumn, nodataCells($&quot;tile&quot;), dataCells($&quot;tile&quot;)).show(3)
++-----------+-----------------+---------------+
+|spatial_key|nodataCells(tile)|dataCells(tile)|
++-----------+-----------------+---------------+
+|      [0,0]|                0|          16384|
+|      [1,1]|                0|          16384|
+|      [6,1]|            15616|            768|
++-----------+-----------------+---------------+
+only showing top 3 rows
 
-scala&gt; rf.select(tileMean($&quot;tile&quot;)).show(5)
-+------------------+
-|    tileMean(tile)|
-+------------------+
-| 10338.11999511721|
-|10194.718322753917|
-|10729.164062499996|
-| 9544.470825195294|
-|10782.311645507827|
-+------------------+
-only showing top 5 rows
+</code></pre>
+<p>Compute the mean value in each tile. Use <code>tileMean</code> for integral cell types, and <code>tileMeanDouble</code> for floating point cell types.</p>
+<pre class="prettyprint"><code class="language-scala">scala&gt; rf.select(rf.spatialKeyColumn, tileMean($&quot;tile&quot;)).show(3)
++-----------+------------------+
+|spatial_key|    tileMean(tile)|
++-----------+------------------+
+|      [0,0]| 10338.11999511721|
+|      [1,1]|10194.718322753917|
+|      [6,1]|10729.164062499996|
++-----------+------------------+
+only showing top 3 rows
 
+</code></pre>
+<p>Compute a suite of summary statistics for each tile. Use <code>tileStats</code> for integral cells types, and <code>tileStatsDouble</code> for floating point cell types.</p>
+<pre class="prettyprint"><code class="language-scala">scala&gt; rf.withColumn(&quot;stats&quot;, tileStats($&quot;tile&quot;)).select(rf.spatialKeyColumn, $&quot;stats.*&quot;).show(3)
++-----------+---------+------------------+------+----+------------------+----+-----+
+|spatial_key|dataCells|              mean|median|mode|            stddev|zmin| zmax|
++-----------+---------+------------------+------+----+------------------+----+-----+
+|      [0,0]|    16384| 10338.11999511721| 10685|7737|1840.2361521578157|7291|23077|
+|      [1,1]|    16384|10194.718322753917|  9919|9782|2005.9484818489861|7412|28869|
+|      [6,1]|      768|10729.164062499996| 11094|9663|   861.51768587969|7952|12282|
++-----------+---------+------------------+------+----+------------------+----+-----+
+only showing top 3 rows
 
-scala&gt; rf.select(tileStats($&quot;tile&quot;)).show(5)
-+---------+------------------+------+-----+------------------+----+-----+
-|dataCells|              mean|median| mode|            stddev|zmin| zmax|
-+---------+------------------+------+-----+------------------+----+-----+
-|    16384| 10338.11999511721| 10685| 7737|1840.2361521578157|7291|23077|
-|    16384|10194.718322753917|  9919| 9782|2005.9484818489861|7412|28869|
-|      768|10729.164062499996| 11094| 9663|   861.51768587969|7952|12282|
-|    16384| 9544.470825195294|  8850| 7781|  2050.22247610873|7470|29722|
-|    16384|10782.311645507827| 10990|11026|1473.6688528093296|7485|23590|
-+---------+------------------+------+-----+------------------+----+-----+
-only showing top 5 rows
-
-
-scala&gt; // Extract quantile breaks from histogram computation
-     | rf.select(tileHistogram($&quot;tile&quot;)).map(_.quantileBreaks(5)).show(5, false)
+</code></pre>
+<h3><a href="#histogram" name="histogram" class="anchor"><span class="anchor-link"></span></a>Histogram</h3>
+<p>The <code>tileHistogram</code> function computes a histogram over the data in each tile. See the <a href="https://geotrellis.github.io/scaladocs/latest/geotrellis/raster/histogram/Histogram.html">GeoTrellis <code>Histogram</code></a> documentation for details on what&rsquo;s available in the resulting data structure. Use this version for integral cell types, and <code>tileHistorgramDouble</code> for floating point cells types. </p>
+<p>In this example we compute quantile breaks.</p>
+<pre class="prettyprint"><code class="language-scala">scala&gt; rf.select(tileHistogram($&quot;tile&quot;)).map(_.quantileBreaks(5)).show(5, false)
 +----------------------------------+
 |value                             |
 +----------------------------------+
@@ -181,15 +242,15 @@ only showing top 5 rows
 |   386941|10160.503048268341|9900.027479106197|10389.873462922193|1817.3730199562644|7397.635610766046|39158.0|
 +---------+------------------+-----------------+------------------+------------------+-----------------+-------+
 
-
-scala&gt; // Extract bin counts from bins
-     | rf.select(aggHistogram($&quot;tile&quot;)).
+</code></pre>
+<p>A more involved example: extract bin counts from a computed <code>Histogram</code>.</p>
+<pre class="prettyprint"><code class="language-scala">scala&gt; rf.select(aggHistogram($&quot;tile&quot;)).
      |   map(h =&gt; for(v &lt;- h.values) yield(v, h.itemCount(v))).
      |   select(explode($&quot;value&quot;) as &quot;counts&quot;).
      |   select(&quot;counts._1&quot;, &quot;counts._2&quot;).
      |   toDF(&quot;value&quot;, &quot;count&quot;).
      |   orderBy(desc(&quot;count&quot;)).
-     |   show(5)
+     |   show(10)
 +------------------+-----+
 |             value|count|
 +------------------+-----+
@@ -198,8 +259,13 @@ scala&gt; // Extract bin counts from bins
 |10769.854489164087|   92|
 | 8078.005156192453|   87|
 | 9267.153062053289|   83|
+| 8427.868076653425|   81|
+|  9652.87494375522|   73|
+| 8832.895375616883|   71|
+|10389.873462922193|   71|
+| 11403.77183640595|   67|
 +------------------+-----+
-only showing top 5 rows
+only showing top 10 rows
 
 </code></pre>
 <div class="nav-next">
