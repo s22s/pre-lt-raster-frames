@@ -1,4 +1,4 @@
-# Tile Statistics
+# Raster Analysis
 
 ```tut:invisible
 import astraea.spark.rasterframes._
@@ -16,11 +16,10 @@ val scene = SinglebandGeoTiff("src/test/resources/L8-B8-Robinson-IL.tiff")
 val rf = scene.projectedRaster.toRF(128, 128)
 ```
 
-## Raster Analysis
 
 Now that we have a `RasterFrame`, we have access to a number of extension methods and columnar functions for performing analysis on tiles.
 
-### Inspection
+## Inspection
 
 `RasterFrame` has a number of methods providing access to metadata about the contents of the RasterFrame. 
 
@@ -31,7 +30,7 @@ rf.tileColumns.map(_.toString)
 rf.spatialKeyColumn.toString
 ```
 
-### Tile Statistics 
+## Tile Statistics 
 
 ```tut
 rf.select(tileDimensions($"tile")).show(5)
@@ -41,7 +40,7 @@ rf.select(tileStats($"tile")).show(5)
 rf.select(tileHistogram($"tile")).map(_.quantileBreaks(5)).show(5, false)
 ```
 
-### Aggregate Statistics
+## Aggregate Statistics
 
 ```tut
 rf.select(aggStats($"tile")).show()
