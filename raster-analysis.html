@@ -2,7 +2,7 @@
 <html class="no-js" lang="en">
 
 <head>
-<title>RasterFrames</title>
+<title>Raster Analysis · RasterFrames</title>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="description" content='RasterFrames brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer operations of GeoTrellis'/>
@@ -28,7 +28,7 @@
 <div class="off-canvas position-left" id="off-canvas-menu" data-off-canvas>
 <nav class="off-canvas-nav">
 <div class="nav-home">
-<a href="index.html" class="active">
+<a href="index.html" >
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
@@ -40,7 +40,7 @@
   <li><a href="getting-started.html" class="page">Getting Started</a></li>
   <li><a href="creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
   <li><a href="writing-parquet.html" class="page">Writing to Parquet</a></li>
-  <li><a href="raster-analysis.html" class="page">Raster Analysis</a></li>
+  <li><a href="raster-analysis.html" class="active page">Raster Analysis</a></li>
   <li><a href="machine-learning.html" class="page">Machine Learning</a></li>
   <li><a href="geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
   <li><a href="reference.html" class="page">Reference</a></li>
@@ -58,7 +58,7 @@
 H3.6C3.048,13,3,13.447,3,14c0,0.553,0.048,1,0.6,1H16.4c0.552,0,0.6-0.447,0.6-1C17,13.447,16.952,13,16.4,13z M3.6,7H16.4
 C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.048,7,3.6,7z"/></svg>
 </a>
-<div class="title"><a href="index.html" class="active">RasterFrames</a></div>
+<div class="title"><a href="index.html">RasterFrames</a></div>
 
 <a href="http://www.astraea.earth" class="logo show-for-medium"><img style="height: 40px;" src="images/astraea.png"/></a>
 </div>
@@ -69,7 +69,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <div class="medium-3 large-2 show-for-medium column">
 <nav class="site-nav">
 <div class="nav-home">
-<a href="index.html" class="active">
+<a href="index.html" >
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
@@ -81,7 +81,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   <li><a href="getting-started.html" class="page">Getting Started</a></li>
   <li><a href="creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
   <li><a href="writing-parquet.html" class="page">Writing to Parquet</a></li>
-  <li><a href="raster-analysis.html" class="page">Raster Analysis</a></li>
+  <li><a href="raster-analysis.html" class="active page">Raster Analysis</a></li>
   <li><a href="machine-learning.html" class="page">Machine Learning</a></li>
   <li><a href="geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
   <li><a href="reference.html" class="page">Reference</a></li>
@@ -96,56 +96,132 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 
 <div class="page-header row">
 <div class="medium-12 show-for-medium column">
+<div class="nav-breadcrumbs">
+<ul>
+  <li><a href="index.html">RasterFrames</a></li>
+  <li>Raster Analysis</li>
+</ul>
+</div>
 </div>
 </div>
 
 <div class="page-content row">
 <div class="small-12 large-9 column" id="docs">
-<h1><a href="#rasterframes" name="rasterframes" class="anchor"><span class="anchor-link"></span></a>RasterFrames</h1>
-<p><em>RasterFrames</em> brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer operations of <a href="https://geotrellis.io/">GeoTrellis</a>. The source code can be found on GitHub at  <a href="https://github.com/s22s/raster-frames">s22s/raster-frames</a>.</p><div class="callout note "><div class="callout-title">Note</div>
-<p>RasterFrames is a new project under active development. Feedback and contributions are welcomed as we look to improve it.</p></div>
-<p>The underlying purpose of RasterFrames is to allow data scientists and software developers the ability to process and analyze geospatial-temporal raster data with the same flexibility and ease as any other Spark data type. At its core is a Spark user-defined type (UDF) called <code>TileUDT</code>, which encodes a GeoTrellis <code>Tile</code> in a form the Spark Catalyst engine can process. On top of that we extend the definition of a Dataframe to encompass some additional invariants that allow for geospatial operations within and between RasterFrames to occur while still maintaining necessary geo-referencing constructs.</p>
-<p>To learn more, please see the <a href="getting-started.md">Getting Started</a> section of this manual.</p><div class="md-left">
-<h2><a href="#detailed-contents" name="detailed-contents" class="anchor"><span class="anchor-link"></span></a>Detailed Contents</h2>
-<div class="toc ">
+<h1><a href="#raster-analysis" name="raster-analysis" class="anchor"><span class="anchor-link"></span></a>Raster Analysis</h1>
+<p>Now that we have a <code>RasterFrame</code>, we have access to a number of extension methods and columnar functions for performing analysis on tiles.</p>
+<h2><a href="#inspection" name="inspection" class="anchor"><span class="anchor-link"></span></a>Inspection</h2>
+<p><code>RasterFrame</code> has a number of methods providing access to metadata about the contents of the RasterFrame. </p>
+<pre class="prettyprint"><code class="language-scala">scala&gt; // Get the names of the columns that are `Tile` columns
+     | rf.tileColumns.map(_.toString)
+res3: Seq[String] = ArraySeq(tile)
+
+scala&gt; // Get the column tagged as containing the `SpatialKey`
+     | rf.spatialKeyColumn.toString
+res5: String = spatial_key
+</code></pre>
+<h2><a href="#tile-statistics" name="tile-statistics" class="anchor"><span class="anchor-link"></span></a>Tile Statistics</h2>
+<pre class="prettyprint"><code class="language-scala">scala&gt; rf.select(tileDimensions($&quot;tile&quot;)).show(5)
++--------------------+
+|tileDimensions(tile)|
++--------------------+
+|           [128,128]|
+|           [128,128]|
+|           [128,128]|
+|           [128,128]|
+|           [128,128]|
++--------------------+
+only showing top 5 rows
+
+
+scala&gt; rf.select(tileMean($&quot;tile&quot;)).show(5)
++------------------+
+|    tileMean(tile)|
++------------------+
+| 10338.11999511721|
+|10194.718322753917|
+|10729.164062499996|
+| 9544.470825195294|
+|10782.311645507827|
++------------------+
+only showing top 5 rows
+
+
+scala&gt; rf.select(tileStats($&quot;tile&quot;)).show(5)
++---------+------------------+------+-----+------------------+----+-----+
+|dataCells|              mean|median| mode|            stddev|zmin| zmax|
++---------+------------------+------+-----+------------------+----+-----+
+|    16384| 10338.11999511721| 10685| 7737|1840.2361521578157|7291|23077|
+|    16384|10194.718322753917|  9919| 9782|2005.9484818489861|7412|28869|
+|      768|10729.164062499996| 11094| 9663|   861.51768587969|7952|12282|
+|    16384| 9544.470825195294|  8850| 7781|  2050.22247610873|7470|29722|
+|    16384|10782.311645507827| 10990|11026|1473.6688528093296|7485|23590|
++---------+------------------+------+-----+------------------+----+-----+
+only showing top 5 rows
+
+
+scala&gt; // Extract quantile breaks from histogram computation
+     | rf.select(tileHistogram($&quot;tile&quot;)).map(_.quantileBreaks(5)).show(5, false)
++----------------------------------+
+|value                             |
++----------------------------------+
+|[8155, 9931, 11126, 12042, 23077] |
+|[8670, 9524, 10303, 11212, 28869] |
+|[9708, 10744, 11235, 11455, 12282]|
+|[7987, 8503, 9260, 10875, 29722]  |
+|[9661, 10629, 11293, 11997, 23590]|
++----------------------------------+
+only showing top 5 rows
+
+</code></pre>
+<h2><a href="#aggregate-statistics" name="aggregate-statistics" class="anchor"><span class="anchor-link"></span></a>Aggregate Statistics</h2>
+<pre class="prettyprint"><code class="language-scala">scala&gt; rf.select(aggStats($&quot;tile&quot;)).show()
++---------+------------------+-----------------+------------------+------------------+-----------------+-------+
+|dataCells|              mean|           median|              mode|            stddev|             zmin|   zmax|
++---------+------------------+-----------------+------------------+------------------+-----------------+-------+
+|   386941|10160.503048268341|9900.027479106197|10389.873462922193|1817.3730199562644|7397.635610766046|39158.0|
++---------+------------------+-----------------+------------------+------------------+-----------------+-------+
+
+
+scala&gt; // Extract bin counts from bins
+     | rf.select(aggHistogram($&quot;tile&quot;)).
+     |   map(h =&gt; for(v &lt;- h.values) yield(v, h.itemCount(v))).
+     |   select(explode($&quot;value&quot;) as &quot;counts&quot;).
+     |   select(&quot;counts._1&quot;, &quot;counts._2&quot;).
+     |   toDF(&quot;value&quot;, &quot;count&quot;).
+     |   orderBy(desc(&quot;count&quot;)).
+     |   show(5)
++------------------+-----+
+|             value|count|
++------------------+-----+
+| 9997.062125524271|   96|
+| 7397.635610766046|   94|
+|10769.854489164087|   92|
+| 8078.005156192453|   87|
+| 9267.153062053289|   83|
++------------------+-----+
+only showing top 5 rows
+
+</code></pre>
+<div class="nav-next">
+<p><strong>Next:</strong> <a href="machine-learning.html">Machine Learning</a></p>
+</div>
+</div>
+<div class="large-3 show-for-large column" data-sticky-container>
+<nav class="sidebar sticky" data-sticky data-anchor="docs" data-sticky-on="large">
+<div class="page-nav">
+<div class="nav-title">On this page:</div>
+<div class="nav-toc">
 <ul>
-  <li><a href="getting-started.html" class="page">Getting Started</a>
-  <ul>
-    <li><a href="getting-started.html#sbt-configuration" class="header">sbt configuration</a></li>
-    <li><a href="getting-started.html#initialization" class="header">Initialization</a></li>
-  </ul></li>
-  <li><a href="creating-rasterframes.html" class="page">Creating RasterFrames</a>
-  <ul>
-    <li><a href="creating-rasterframes.html#from-projectedextent" class="header">From <code>ProjectedExtent</code></a></li>
-    <li><a href="creating-rasterframes.html#from-tilelayerrdd" class="header">From <code>TileLayerRDD</code></a></li>
-    <li><a href="creating-rasterframes.html#reassembling-rasters" class="header">Reassembling Rasters</a></li>
-  </ul></li>
-  <li><a href="writing-parquet.html" class="page">Writing to Parquet</a></li>
-  <li><a href="raster-analysis.html" class="page">Raster Analysis</a>
+  <li><a href="raster-analysis.html#raster-analysis" class="header">Raster Analysis</a>
   <ul>
     <li><a href="raster-analysis.html#inspection" class="header">Inspection</a></li>
     <li><a href="raster-analysis.html#tile-statistics" class="header">Tile Statistics</a></li>
     <li><a href="raster-analysis.html#aggregate-statistics" class="header">Aggregate Statistics</a></li>
   </ul></li>
-  <li><a href="machine-learning.html" class="page">Machine Learning</a></li>
-  <li><a href="geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
-  <li><a href="reference.html" class="page">Reference</a></li>
 </ul>
-</div></div><div class="md-right">
-<h2><a href="#related-links" name="related-links" class="anchor"><span class="anchor-link"></span></a>Related Links</h2>
-<ul>
-  <li><a href="https://gitter.im/s22s/raster-frames">Gitter Channel</a></li>
-  <li><a href="latest/api/index.html">API Documentation</a></li>
-  <li><a href="https://github.com/s22s/raster-frames">GitHub Repository</a></li>
-  <li><a href="https://docs.geotrellis.io/en/latest/">GeoTrellis Documentation</a></li>
-  <li><a href="http://www.astraea.earth/">Astraea, Inc.</a> (the company behind RasterFrames)</li>
-</ul></div><div class="md-clear">
-<p>&nbsp;</p></div>
-<div class="nav-next">
-<p><strong>Next:</strong> <a href="getting-started.html">Getting Started</a></p>
 </div>
 </div>
-<div class="large-3 show-for-large column" data-sticky-container>
+</nav>
 </div>
 </div>
 
