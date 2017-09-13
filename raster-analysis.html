@@ -182,6 +182,7 @@ only showing top 3 rows
 
 </code></pre>
 <h3><a href="#descriptive-statistics" name="descriptive-statistics" class="anchor"><span class="anchor-link"></span></a>Descriptive Statistics</h3>
+<h4><a href="#nodata-counts" name="nodata-counts" class="anchor"><span class="anchor-link"></span></a>NoData Counts</h4>
 <p>Count the numer of <code>NoData</code> and non-<code>NoData</code> cells in each tile.</p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; rf.select(rf.spatialKeyColumn, nodataCells($&quot;tile&quot;), dataCells($&quot;tile&quot;)).show(3)
 +-----------+-----------------+---------------+
@@ -194,6 +195,7 @@ only showing top 3 rows
 only showing top 3 rows
 
 </code></pre>
+<h4><a href="#tile-mean" name="tile-mean" class="anchor"><span class="anchor-link"></span></a>Tile Mean</h4>
 <p>Compute the mean value in each tile. Use <code>tileMean</code> for integral cell types, and <code>tileMeanDouble</code> for floating point cell types.</p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; rf.select(rf.spatialKeyColumn, tileMean($&quot;tile&quot;)).show(3)
 +-----------+------------------+
@@ -206,6 +208,7 @@ only showing top 3 rows
 only showing top 3 rows
 
 </code></pre>
+<h4><a href="#tile-summary-statistics" name="tile-summary-statistics" class="anchor"><span class="anchor-link"></span></a>Tile Summary Statistics</h4>
 <p>Compute a suite of summary statistics for each tile. Use <code>tileStats</code> for integral cells types, and <code>tileStatsDouble</code> for floating point cell types.</p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; rf.withColumn(&quot;stats&quot;, tileStats($&quot;tile&quot;)).select(rf.spatialKeyColumn, $&quot;stats.*&quot;).show(3)
 +-----------+---------+------------------+------+----+------------------+----+-----+
