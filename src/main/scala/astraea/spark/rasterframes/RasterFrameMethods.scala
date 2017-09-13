@@ -80,7 +80,6 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
 
   /**
    * Reassemble the [[TileLayerMetadata]] record from DataFrame metadata.
-   * TODO: Change to Either[TileLayerMetadata[SpatialKey], TileLayerMetadata[SpaceTimeKey]]
    */
   def tileLayerMetadata: Either[TileLayerMetadata[SpatialKey], TileLayerMetadata[SpaceTimeKey]] = {
     val spatialMD = self.schema

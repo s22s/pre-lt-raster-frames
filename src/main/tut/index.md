@@ -22,7 +22,7 @@ To learn more, please see the [Getting Started](getting-started.md) section of t
 
 ## Detailed Contents
 
-@@ toc { depth=2 }
+@@ toc { depth=3 }
 
 @@@
 
@@ -48,7 +48,7 @@ To learn more, please see the [Getting Started](getting-started.md) section of t
 * [Getting Started](getting-started.md)
 * [Creating RasterFrames](creating-rasterframes.md)
 * [Writing to Parquet](writing-parquet.md)
-* [Tile Statistics](tile-statistics.md)
+* [Raster Analysis](raster-analysis.md)
 * [Machine Learning](machine-learning.md)
 * [GeoTrellis Operations](geotrellis-ops.md)
 * [UDF Reference](reference.md)
