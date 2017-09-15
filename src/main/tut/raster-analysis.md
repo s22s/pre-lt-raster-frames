@@ -109,6 +109,9 @@ rf.select(tileHistogram($"tile")).map(_.quantileBreaks(5)).show(5, false)
 
 ## Aggregate Statistics
 
+The `aggStats` function computes the same summary statistics as `tileStats`, but aggregates them over the whole 
+RasterFrame.
+
 ```tut
 rf.select(aggStats($"tile")).show()
 ```

@@ -33,7 +33,7 @@ RasterFrames is a new project under active development. Feedback and contributio
 
 ## Related Links
 
-* [Gitter Channel](https://gitter.im/s22s/raster-frames)
+* [Gitter Channel](https://gitter.im/s22s/raster-frames)&nbsp;&nbsp;[![Join the chat at https://gitter.im/s22s/raster-frames](https://badges.gitter.im/s22s/raster-frames.svg)](https://gitter.im/s22s/raster-frames?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 * [API Documentation](latest/api/index.html)
 * [GitHub Repository](https://github.com/s22s/raster-frames)
 * [GeoTrellis Documentation](https://docs.geotrellis.io/en/latest/)
@@ -50,7 +50,7 @@ RasterFrames is a new project under active development. Feedback and contributio
 @@@ index
 * [Getting Started](getting-started.md)
 * [Creating RasterFrames](creating-rasterframes.md)
-* [Writing to Parquet](writing-parquet.md)
+* [Exporting Rasterframes](exporting-rasterframes.md)
 * [Raster Analysis](raster-analysis.md)
 * [Machine Learning](machine-learning.md)
 * [GeoTrellis Operations](geotrellis-ops.md)

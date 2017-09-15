@@ -34,18 +34,6 @@ val tiledLayer: TileLayerRDD[SpatialKey] = ???
 val rf = tiledLayer.toRF
 ```
 
-## Reassembling Rasters
-
-For the purposes of debugging, the RasterFrame tiles can be reassembled back into a raster for viewing. However, keep in mind that this will download all the data to the driver, and reassemble it in-memory. So it's not appropriate for very large coverages.
-
-```tut:silent
-val image = rf.toRaster($"tile", 774, 500)
-val colors = ColorMap.fromQuantileBreaks(image.tile.histogram, ColorRamps.BlueToOrange)
-image.tile.color(colors).renderPng().write("target/scala-2.11/tut/rf-raster.png")
-```
-
-![](rf-raster.png)
-
 Now that we have a `RasterFrame` to work with, let's explore in the next section what we can do with it.
 
 ```tut:invisible

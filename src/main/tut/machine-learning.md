@@ -1,5 +1,12 @@
 # Machine Learning
 
+@@@ note
+
+This example only scratches the surface of the type of machine learning one can perform with RasterFrames. More
+examples are forthcoming. 
+
+@@@
+
 ```tut:invisible
 import astraea.spark.rasterframes._
 import geotrellis.raster._
