@@ -203,6 +203,26 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.functions.ColumnFunctions#cellType" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="cellType(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,String]"></a>
+      <a id="cellType(Column):TypedColumn[Any,String]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">cellType</span><span class="params">(<span name="col">col: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.TypedColumn" class="extype" target="_top">TypedColumn</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a>, <span class="extype" name="scala.Predef.String">String</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.ColumnFunctions@cellType(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,String]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Get the tile's cell type</p><div class="fullcomment"><div class="comment cmt"><p>Get the tile's cell type</p></div><dl class="attributes block"> <dt>Annotations</dt><dd>
+                <span class="name">@Experimental</span><span class="args">()</span>
+              
+        </dd></dl></div>
     </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a>
       <a id="clone():AnyRef"></a>
@@ -226,7 +246,7 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.functions.ColumnFunctions#dataCells" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="astraea.spark.rasterframes.functions.ColumnFunctions#dataCells" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="dataCells(tile:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,Long]"></a>
       <a id="dataCells(Column):TypedColumn[Any,Long]"></a>
       <h4 class="signature">
@@ -242,7 +262,10 @@
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Counts the number of non-NoData cells per tile.</p>
+      <p class="shortcomment cmt">Counts the number of non-NoData cells per tile.</p><div class="fullcomment"><div class="comment cmt"><p>Counts the number of non-NoData cells per tile.</p></div><dl class="attributes block"> <dt>Annotations</dt><dd>
+                <span class="name">@Experimental</span><span class="args">()</span>
+              
+        </dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -568,7 +591,7 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.functions.ColumnFunctions#nodataCells" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="astraea.spark.rasterframes.functions.ColumnFunctions#nodataCells" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="nodataCells(tile:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,Long]"></a>
       <a id="nodataCells(Column):TypedColumn[Any,Long]"></a>
       <h4 class="signature">
@@ -584,7 +607,10 @@
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Counts the number of NoData cells per tile.</p>
+      <p class="shortcomment cmt">Counts the number of NoData cells per tile.</p><div class="fullcomment"><div class="comment cmt"><p>Counts the number of NoData cells per tile.</p></div><dl class="attributes block"> <dt>Annotations</dt><dd>
+                <span class="name">@Experimental</span><span class="args">()</span>
+              
+        </dd></dl></div>
     </li><li name="scala.AnyRef#notify" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notify():Unit"></a>
       <a id="notify():Unit"></a>
@@ -793,6 +819,46 @@
       </a>
     </span>
       <p class="shortcomment cmt">Compute statistics of tile values.</p><div class="fullcomment"><div class="comment cmt"><p>Compute statistics of tile values.</p></div><dl class="attributes block"> <dt>Annotations</dt><dd>
+                <span class="name">@Experimental</span><span class="args">()</span>
+              
+        </dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.functions.ColumnFunctions#tileToArray" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="tileToArray(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,Array[Int]]"></a>
+      <a id="tileToArray(Column):TypedColumn[Any,Array[Int]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">tileToArray</span><span class="params">(<span name="col">col: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.TypedColumn" class="extype" target="_top">TypedColumn</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Array" class="extype" target="_top">Array</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.ColumnFunctions@tileToArray(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,Array[Int]]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Flattens tile into an integer array.</p><div class="fullcomment"><div class="comment cmt"><p>Flattens tile into an integer array.</p></div><dl class="attributes block"> <dt>Annotations</dt><dd>
+                <span class="name">@Experimental</span><span class="args">()</span>
+              
+        </dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.functions.ColumnFunctions#tileToArrayDouble" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="tileToArrayDouble(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,Array[Double]]"></a>
+      <a id="tileToArrayDouble(Column):TypedColumn[Any,Array[Double]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">tileToArrayDouble</span><span class="params">(<span name="col">col: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.TypedColumn" class="extype" target="_top">TypedColumn</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Array" class="extype" target="_top">Array</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.ColumnFunctions@tileToArrayDouble(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,Array[Double]]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Flattens tile into a double array.</p><div class="fullcomment"><div class="comment cmt"><p>Flattens tile into a double array.</p></div><dl class="attributes block"> <dt>Annotations</dt><dd>
                 <span class="name">@Experimental</span><span class="args">()</span>
               
         </dd></dl></div>
