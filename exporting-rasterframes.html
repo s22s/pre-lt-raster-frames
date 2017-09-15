@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+<head>
+<title>Exporting RasterFrames · RasterFrames</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content='RasterFrames brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer operations of GeoTrellis'/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:100normal,100italic,300normal,300italic,400normal,400italic,500normal,500italic,700normal,700italic,900normal,900italicc" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="lib/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="js/page.js"></script>
+<script type="text/javascript" src="js/groups.js"></script>
+<link rel="stylesheet" type="text/css" href="lib/normalize.css/normalize.css"/>
+<link rel="stylesheet" type="text/css" href="lib/foundation/dist/foundation.min.css"/>
+<link rel="stylesheet" type="text/css" href="css/page.css"/>
+<link rel="shortcut icon" href="images/astraea.ico" />
+<style>
+.md-left { float: left; }
+.md-right { float: right; }
+.md-clear { clear: both; }
+</style>
+</head>
+
+<body>
+<div class="off-canvas-wrapper">
+<div class="off-canvas-wrapper-inner" data-off-canvas-wrapper>
+
+<div class="off-canvas position-left" id="off-canvas-menu" data-off-canvas>
+<nav class="off-canvas-nav">
+<div class="nav-home">
+<a href="index.html" >
+<span class="home-icon">⌂</span>RasterFrames
+</a>
+<div class="version-number">
+0.4.5*
+</div>
+</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="getting-started.html" class="page">Getting Started</a></li>
+  <li><a href="creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
+  <li><a href="exporting-rasterframes.html" class="active page">Exporting RasterFrames</a></li>
+  <li><a href="raster-analysis.html" class="page">Raster Analysis</a></li>
+  <li><a href="machine-learning.html" class="page">Machine Learning</a></li>
+  <li><a href="geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
+  <li><a href="reference.html" class="page">Reference</a></li>
+</ul>
+</div>
+
+</nav>
+</div>
+
+<div class="off-canvas-content" data-off-canvas-content>
+
+<header class="site-header expanded row">
+<div class="small-12 column">
+<a href="#" class="off-canvas-toggle hide-for-medium" data-toggle="off-canvas-menu"><svg class="svg-icon svg-icon-menu" version="1.1" id="Menu" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" enable-background="new 0 0 20 20" xml:space="preserve"> <path class="svg-icon-menu-path" fill="#53CDEC" d="M16.4,9H3.6C3.048,9,3,9.447,3,10c0,0.553,0.048,1,0.6,1H16.4c0.552,0,0.6-0.447,0.6-1C17,9.447,16.952,9,16.4,9z M16.4,13
+H3.6C3.048,13,3,13.447,3,14c0,0.553,0.048,1,0.6,1H16.4c0.552,0,0.6-0.447,0.6-1C17,13.447,16.952,13,16.4,13z M3.6,7H16.4
+C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.048,7,3.6,7z"/></svg>
+</a>
+<div class="title"><a href="index.html">RasterFrames</a></div>
+
+<a href="http://www.astraea.earth" class="logo show-for-medium"><img style="height: 40px;" src="images/astraea.png"/></a>
+</div>
+</header>
+
+<div class="expanded row">
+
+<div class="medium-3 large-2 show-for-medium column">
+<nav class="site-nav">
+<div class="nav-home">
+<a href="index.html" >
+<span class="home-icon">⌂</span>RasterFrames
+</a>
+<div class="version-number">
+0.4.5*
+</div>
+</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="getting-started.html" class="page">Getting Started</a></li>
+  <li><a href="creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
+  <li><a href="exporting-rasterframes.html" class="active page">Exporting RasterFrames</a></li>
+  <li><a href="raster-analysis.html" class="page">Raster Analysis</a></li>
+  <li><a href="machine-learning.html" class="page">Machine Learning</a></li>
+  <li><a href="geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
+  <li><a href="reference.html" class="page">Reference</a></li>
+</ul>
+</div>
+
+</nav>
+</div>
+
+<div class="small-12 medium-9 large-10 column">
+<section class="site-content">
+
+<div class="page-header row">
+<div class="medium-12 show-for-medium column">
+<div class="nav-breadcrumbs">
+<ul>
+  <li><a href="index.html">RasterFrames</a></li>
+  <li>Exporting RasterFrames</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div class="page-content row">
+<div class="small-12 large-9 column" id="docs">
+<h1><a href="#exporting-rasterframes" name="exporting-rasterframes" class="anchor"><span class="anchor-link"></span></a>Exporting RasterFrames</h1>
+<p>While the goal of RasterFrames is to make it as easy as possible to do your geospatial analysis with a single construct, it is helpful to be able to transform it into other representations for various use cases.</p>
+<h2><a href="#writing-to-parquet" name="writing-to-parquet" class="anchor"><span class="anchor-link"></span></a>Writing to Parquet</h2>
+<p>It is often useful to write Spark results in a form that is easily reloaded for subsequent analysis. The <a href="https://parquet.apache.org/">Parquet</a>columnar storage format, native to Spark, is ideal for this. RasterFrames work just like any other DataFrame in this scenario as long as <a href="http://rasterframes.io/latest/api/astraea/spark/rasterframes/package.html#rfInit(SQLContext):Unit"><code>rfInit</code></a> is called to register the imagery types.</p>
+<p>Let&rsquo;s assume we have a RasterFrame we&rsquo;ve done some fancy processing on: </p>
+<pre class="prettyprint"><code class="language-scala">import geotrellis.raster.equalization._
+val equalizer = udf((t: Tile) =&gt; t.equalize())
+val equalized = rf.withColumn(&quot;equalized&quot;, equalizer($&quot;tile&quot;))
+</code></pre>
+<pre class="prettyprint"><code class="language-scala">scala&gt; equalized.printSchema
+root
+ |-- spatial_key: struct (nullable = true)
+ |    |-- col: integer (nullable = true)
+ |    |-- row: integer (nullable = true)
+ |-- tile: st_tile (nullable = true)
+ |-- equalized: st_tile (nullable = true)
+
+
+scala&gt; equalized.select(aggStats($&quot;tile&quot;)).show(false)
++---------+------------------+-----------------+-----------------+------------------+------------------+-------+
+|dataCells|mean              |median           |mode             |stddev            |zmin              |zmax   |
++---------+------------------+-----------------+-----------------+------------------+------------------+-------+
+|386941   |10160.503048268341|9873.156065074512|7905.780878889613|1816.8022725254104|7351.1446153846155|39158.0|
++---------+------------------+-----------------+-----------------+------------------+------------------+-------+
+
+
+scala&gt; equalized.select(aggStats($&quot;equalized&quot;)).show(false)
++---------+-----------------+------------------+------------------+------------------+-----------------+------------------+
+|dataCells|mean             |median            |mode              |stddev            |zmin             |zmax              |
++---------+-----------------+------------------+------------------+------------------+-----------------+------------------+
+|458660   |32764.27312170235|32108.424555018057|32403.880728168628|17389.278107855902|333.3304157549235|65296.486725663715|
++---------+-----------------+------------------+------------------+------------------+-----------------+------------------+
+
+</code></pre>
+<p>We write it out just like any other DataFrame, including the ability to specify partitioning:</p>
+<pre class="prettyprint"><code class="language-scala">val filePath = &quot;/tmp/equalized.parquet&quot;
+equalized.select(&quot;*&quot;, &quot;spatial_key.*&quot;).write.partitionBy(&quot;col&quot;, &quot;row&quot;).mode(SaveMode.Overwrite).parquet(filePath)
+</code></pre>
+<p>Let&rsquo;s confirm partitioning happened as expected:</p>
+<pre class="prettyprint"><code class="language-scala">scala&gt; import java.io.File
+import java.io.File
+
+scala&gt; new File(filePath).list
+res6: Array[String] = Array(._SUCCESS.crc, _SUCCESS, col=0, col=1, col=2, col=3, col=4, col=5, col=6)
+</code></pre>
+<p>Now we can load the data back in and check it out:</p>
+<pre class="prettyprint"><code class="language-scala">val rf2 = spark.read.parquet(filePath)
+</code></pre>
+<pre class="prettyprint"><code class="language-scala">scala&gt; rf2.printSchema
+root
+ |-- spatial_key: struct (nullable = true)
+ |    |-- col: integer (nullable = true)
+ |    |-- row: integer (nullable = true)
+ |-- tile: st_tile (nullable = true)
+ |-- equalized: st_tile (nullable = true)
+ |-- col: integer (nullable = true)
+ |-- row: integer (nullable = true)
+
+
+scala&gt; equalized.select(aggStats($&quot;tile&quot;)).show(false)
++---------+------------------+-----------------+-----------------+------------------+------------------+-------+
+|dataCells|mean              |median           |mode             |stddev            |zmin              |zmax   |
++---------+------------------+-----------------+-----------------+------------------+------------------+-------+
+|386941   |10160.503048268341|9873.156065074512|7905.780878889613|1816.8022725254104|7351.1446153846155|39158.0|
++---------+------------------+-----------------+-----------------+------------------+------------------+-------+
+
+
+scala&gt; equalized.select(aggStats($&quot;equalized&quot;)).show(false)
++---------+-----------------+------------------+------------------+------------------+-----------------+------------------+
+|dataCells|mean             |median            |mode              |stddev            |zmin             |zmax              |
++---------+-----------------+------------------+------------------+------------------+-----------------+------------------+
+|458660   |32764.27312170235|32108.424555018057|32403.880728168628|17389.278107855902|333.3304157549235|65296.486725663715|
++---------+-----------------+------------------+------------------+------------------+-----------------+------------------+
+
+</code></pre>
+<h2><a href="#converting-to-rdd-and-tilelayerrdd" name="converting-to-rdd-and-tilelayerrdd" class="anchor"><span class="anchor-link"></span></a>Converting to <code>RDD</code> and <code>TileLayerRDD</code></h2>
+<p>Since a <code>RasterFrame</code> is just a <code>DataFrame</code> with extra metadata, the method <a href="http://rasterframes.io/latest/api/org/apache/spark/sql/Dataset.html#frdd:org.apache.spark.rdd.RDD[T]"><code>DataFrame.rdd</code></a> is available for simple conversion back to <code>RDD</code> space. The type returned by <code>.rdd</code> is dependent upon how you select it.</p>
+<pre class="prettyprint"><code class="language-scala">scala&gt; import scala.reflect.runtime.universe._
+import scala.reflect.runtime.universe._
+
+scala&gt; def showType[T: TypeTag](t: T) = println(implicitly[TypeTag[T]].tpe.toString)
+showType: [T](t: T)(implicit evidence$1: reflect.runtime.universe.TypeTag[T])Unit
+
+scala&gt; showType(rf.rdd)
+org.apache.spark.rdd.RDD[org.apache.spark.sql.Row]
+
+scala&gt; showType(rf.select(rf.spatialKeyColumn, $&quot;tile&quot;.as[Tile]).rdd) 
+org.apache.spark.rdd.RDD[(geotrellis.spark.SpatialKey, geotrellis.raster.Tile)]
+
+scala&gt; showType(rf.select(rf.spatialKeyColumn, $&quot;tile&quot;).as[(SpatialKey, Tile)].rdd) 
+org.apache.spark.rdd.RDD[(geotrellis.spark.SpatialKey, geotrellis.raster.Tile)]
+</code></pre>
+<p>If your goal convert a single tile column with its spatial key back to a <code>TileLayerRDD[K]</code>, then there&rsquo;s an additional extension method on <code>RasterFrame</code> called <a href="astraea.spark.rasterframes.RasterFrameMethods#toTileLayerRDD%28tileCol:RasterFrameMethods.this.TileColumn%29:Either[geotrellis.spark.TileLayerRDD[geotrellis.spark.SpatialKey],geotrellis.spark.TileLayerRDD[geotrellis.spark.SpaceTimeKey]]"><code>toTileLayerRDD</code></a>, which preserves the tile layer metadata, enhancing interoperation with GeoTrellis RDD extension methods.</p>
+<pre class="prettyprint"><code class="language-scala">scala&gt; showType(rf.toTileLayerRDD($&quot;tile&quot;.as[Tile]))
+scala.util.Either[org.apache.spark.rdd.RDD[(geotrellis.spark.SpatialKey, geotrellis.raster.Tile)] with geotrellis.spark.Metadata[geotrellis.spark.TileLayerMetadata[geotrellis.spark.SpatialKey]],org.apache.spark.rdd.RDD[(geotrellis.spark.SpaceTimeKey, geotrellis.raster.Tile)] with geotrellis.spark.Metadata[geotrellis.spark.TileLayerMetadata[geotrellis.spark.SpaceTimeKey]]]
+</code></pre>
+<h2><a href="#exporting-a-raster" name="exporting-a-raster" class="anchor"><span class="anchor-link"></span></a>Exporting a Raster</h2>
+<p>For the purposes of debugging, the RasterFrame tiles can be reassembled back into a raster for viewing. However, keep in mind that this will download all the data to the driver, and reassemble it in-memory. So it&rsquo;s not appropriate for very large coverages.</p>
+<pre class="prettyprint"><code class="language-scala">val image = rf.toRaster($&quot;tile&quot;, 774, 500)
+val colors = ColorMap.fromQuantileBreaks(image.tile.histogram, ColorRamps.BlueToOrange)
+image.tile.color(colors).renderPng().write(&quot;target/scala-2.11/tut/rf-raster.png&quot;)
+</code></pre>
+<p><img src="rf-raster.png" /></p>
+<div class="nav-next">
+<p><strong>Next:</strong> <a href="raster-analysis.html">Raster Analysis</a></p>
+</div>
+</div>
+<div class="large-3 show-for-large column" data-sticky-container>
+<nav class="sidebar sticky" data-sticky data-anchor="docs" data-sticky-on="large">
+<div class="page-nav">
+<div class="nav-title">On this page:</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="exporting-rasterframes.html#exporting-rasterframes" class="header">Exporting RasterFrames</a>
+  <ul>
+    <li><a href="exporting-rasterframes.html#writing-to-parquet" class="header">Writing to Parquet</a></li>
+    <li><a href="exporting-rasterframes.html#converting-to-rdd-and-tilelayerrdd" class="header">Converting to <code>RDD</code> and <code>TileLayerRDD</code></a></li>
+    <li><a href="exporting-rasterframes.html#exporting-a-raster" class="header">Exporting a Raster</a></li>
+  </ul></li>
+</ul>
+</div>
+</div>
+</nav>
+</div>
+</div>
+
+</section>
+</div>
+
+</div>
+
+<footer class="site-footer">
+
+<section class="site-footer-nav">
+<div class="expanded row">
+<div class="small-12 large-offset-2 large-10 column">
+<div class="row site-footer-content">
+
+<div class="small-12 medium-4 large-3 text-center column">
+<div class="nav-links">
+<ul>
+<!-- <li><a href="https://www.example.com/products/">Products</a> -->
+</ul>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</section>
+
+<section class="site-footer-base">
+<div class="expanded row">
+<div class="small-12 large-offset-2 large-10 column">
+<div class="row site-footer-content">
+<div class="small-12 text-center large-9 column">
+<!--
+<div class="copyright">
+<span class="text">&copy; 2017</span>
+<a href="http://www.astraea.earth/" class="logo"><img src="images/astraea.png"/></a>
+</div>
+-->
+</div>
+</div>
+</div>
+</div>
+</section>
+</footer>
+</div>
+</div>
+</div>
+</body>
+
+<script type="text/javascript" src="lib/foundation/dist/foundation.min.js"></script>
+<script type="text/javascript">jQuery(document).foundation();</script>
+<script type="text/javascript" src="js/magellan.js"></script>
+
+<style type="text/css">@import "lib/prettify/prettify.css";</style>
+<script type="text/javascript" src="lib/prettify/prettify.js"></script>
+<script type="text/javascript" src="lib/prettify/lang-scala.js"></script>
+<script type="text/javascript">jQuery(function(){window.prettyPrint && prettyPrint()});</script>
+
+</html>

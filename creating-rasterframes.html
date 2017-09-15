@@ -39,7 +39,7 @@
 <ul>
   <li><a href="getting-started.html" class="page">Getting Started</a></li>
   <li><a href="creating-rasterframes.html" class="active page">Creating RasterFrames</a></li>
-  <li><a href="writing-parquet.html" class="page">Writing to Parquet</a></li>
+  <li><a href="exporting-rasterframes.html" class="page">Exporting RasterFrames</a></li>
   <li><a href="raster-analysis.html" class="page">Raster Analysis</a></li>
   <li><a href="machine-learning.html" class="page">Machine Learning</a></li>
   <li><a href="geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
@@ -80,7 +80,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <ul>
   <li><a href="getting-started.html" class="page">Getting Started</a></li>
   <li><a href="creating-rasterframes.html" class="active page">Creating RasterFrames</a></li>
-  <li><a href="writing-parquet.html" class="page">Writing to Parquet</a></li>
+  <li><a href="exporting-rasterframes.html" class="page">Exporting RasterFrames</a></li>
   <li><a href="raster-analysis.html" class="page">Raster Analysis</a></li>
   <li><a href="machine-learning.html" class="page">Machine Learning</a></li>
   <li><a href="geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
@@ -111,7 +111,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <h2><a href="#from-projectedextent" name="from-projectedextent" class="anchor"><span class="anchor-link"></span></a>From <code>ProjectedExtent</code></h2>
 <p>The simplest mechanism for getting a RasterFrame is to use the <code>toRF(tileCols, tileRows)</code> extension method on <code>ProjectedRaster</code>. </p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; val scene = SinglebandGeoTiff(&quot;src/test/resources/L8-B8-Robinson-IL.tiff&quot;)
-scene: geotrellis.raster.io.geotiff.SinglebandGeoTiff = SinglebandGeoTiff(geotrellis.raster.UShortConstantNoDataArrayTile@2e6d19ba,Extent(431902.5, 4313647.5, 443512.5, 4321147.5),geotrellis.proj4.CRS$$anon$3@87f96f9f,Tags(Map(AREA_OR_POINT -&gt; POINT),List(Map())),GeoTiffOptions(geotrellis.raster.io.geotiff.Striped@3f14b6eb,geotrellis.raster.io.geotiff.compression.DeflateCompression$@5b819c3a,1,None))
+scene: geotrellis.raster.io.geotiff.SinglebandGeoTiff = SinglebandGeoTiff(geotrellis.raster.UShortConstantNoDataArrayTile@15ffb813,Extent(431902.5, 4313647.5, 443512.5, 4321147.5),geotrellis.proj4.CRS$$anon$3@87f96f9f,Tags(Map(AREA_OR_POINT -&gt; POINT),List(Map())),GeoTiffOptions(geotrellis.raster.io.geotiff.Striped@319fc5e,geotrellis.raster.io.geotiff.compression.DeflateCompression$@280e8e0b,1,None))
 
 scala&gt; val rf = scene.projectedRaster.toRF(128, 128)
 rf: astraea.spark.rasterframes.RasterFrame = [spatial_key: struct&lt;col: int, row: int&gt;, tile: st_tile]
@@ -120,11 +120,11 @@ scala&gt; rf.show(5, false)
 +-----------+--------------------------------------------------------+
 |spatial_key|tile                                                    |
 +-----------+--------------------------------------------------------+
-|[0,0]      |geotrellis.raster.UShortConstantNoDataArrayTile@2d821d4a|
-|[1,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@445e113e|
-|[6,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@446bd8d5|
-|[3,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@78d3ea5c|
-|[4,2]      |geotrellis.raster.UShortConstantNoDataArrayTile@4506c041|
+|[0,0]      |geotrellis.raster.UShortConstantNoDataArrayTile@36b140c |
+|[1,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@58d2a48e|
+|[6,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@44a9097f|
+|[3,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@610fd112|
+|[4,2]      |geotrellis.raster.UShortConstantNoDataArrayTile@3a1f624b|
 +-----------+--------------------------------------------------------+
 only showing top 5 rows
 
@@ -135,16 +135,9 @@ only showing top 5 rows
 val tiledLayer: TileLayerRDD[SpatialKey] = ???
 val rf = tiledLayer.toRF
 </code></pre>
-<h2><a href="#reassembling-rasters" name="reassembling-rasters" class="anchor"><span class="anchor-link"></span></a>Reassembling Rasters</h2>
-<p>For the purposes of debugging, the RasterFrame tiles can be reassembled back into a raster for viewing. However, keep in mind that this will download all the data to the driver, and reassemble it in-memory. So it&rsquo;s not appropriate for very large coverages.</p>
-<pre class="prettyprint"><code class="language-scala">val image = rf.toRaster($&quot;tile&quot;, 774, 500)
-val colors = ColorMap.fromQuantileBreaks(image.tile.histogram, ColorRamps.BlueToOrange)
-image.tile.color(colors).renderPng().write(&quot;target/scala-2.11/tut/rf-raster.png&quot;)
-</code></pre>
-<p><img src="rf-raster.png" /></p>
 <p>Now that we have a <code>RasterFrame</code> to work with, let&rsquo;s explore in the next section what we can do with it.</p>
 <div class="nav-next">
-<p><strong>Next:</strong> <a href="writing-parquet.html">Writing to Parquet</a></p>
+<p><strong>Next:</strong> <a href="exporting-rasterframes.html">Exporting RasterFrames</a></p>
 </div>
 </div>
 <div class="large-3 show-for-large column" data-sticky-container>
@@ -157,7 +150,6 @@ image.tile.color(colors).renderPng().write(&quot;target/scala-2.11/tut/rf-raster
   <ul>
     <li><a href="creating-rasterframes.html#from-projectedextent" class="header">From <code>ProjectedExtent</code></a></li>
     <li><a href="creating-rasterframes.html#from-tilelayerrdd" class="header">From <code>TileLayerRDD</code></a></li>
-    <li><a href="creating-rasterframes.html#reassembling-rasters" class="header">Reassembling Rasters</a></li>
   </ul></li>
 </ul>
 </div>
