@@ -16,19 +16,19 @@
 
 package astraea.spark.rasterframes.functions
 
-import geotrellis.raster.Tile
+import geotrellis.raster.{CellType, Tile}
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.LocalTileBinaryOp
 import geotrellis.raster.mapalgebra.{local ⇒ alg}
 import geotrellis.raster.summary.Statistics
 import org.apache.spark.annotation.Experimental
 import org.apache.spark.sql._
+import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.gt.Implicits._
 import org.apache.spark.sql.gt._
 import org.apache.spark.sql.types._
 
-import scala.reflect.runtime.universe._
 
 /**
  * UDFs for working with tiles in Spark DataFrames.
@@ -41,6 +41,8 @@ trait ColumnFunctions {
   private implicit val doubleEnc: Encoder[Double] = Encoders.scalaDouble
   private implicit val statsEnc: Encoder[Statistics[Int]] = Encoders.product[Statistics[Int]]
   private implicit val longEnc: Encoder[Long] = Encoders.scalaLong
+  private implicit val intArray: Encoder[Array[Int]] = ExpressionEncoder()
+  private implicit val doubleArray: Encoder[Array[Double]] = ExpressionEncoder()
 
   // format: off
   /** Create a row for each cell in tile. */
@@ -62,6 +64,24 @@ trait ColumnFunctions {
   def tileDimensions(col: Column): Column = withAlias("tileDimensions", col)(
     udf[(Int, Int), Tile](UDFs.tileDimensions).apply(col)
   ).cast(StructType(Seq(StructField("cols", IntegerType), StructField("rows", IntegerType))))
+
+  /** Flattens tile into an integer array. */
+  @Experimental
+  def tileToArray(col: Column): TypedColumn[Any, Array[Int]] = withAlias("tileToArray", col)(
+    udf[Array[Int], Tile](UDFs.tileToArray).apply(col)
+  ).as[Array[Int]]
+
+  /** Flattens tile into a double array. */
+  @Experimental
+  def tileToArrayDouble(col: Column): TypedColumn[Any, Array[Double]] = withAlias("tileToArrayDouble", col)(
+    udf[Array[Double], Tile](UDFs.tileToArrayDouble).apply(col)
+  ).as[Array[Double]]
+
+  /** Get the tile's cell type*/
+  @Experimental
+  def cellType(col: Column): TypedColumn[Any, String] = withAlias("cellType", col)(
+    udf[String, Tile](UDFs.cellType).apply(col)
+  ).as[String]
 
   /**  Compute the full column aggregate floating point histogram. */
   @Experimental
@@ -120,12 +140,14 @@ trait ColumnFunctions {
   ).as[Statistics[Int]]
 
   /** Counts the number of non-NoData cells per tile. */
+  @Experimental
   def dataCells(tile: Column): TypedColumn[Any, Long] =
     withAlias("dataCells", tile)(
       udf(UDFs.dataCells).apply(tile)
     ).as[Long]
 
   /** Counts the number of NoData cells per tile. */
+  @Experimental
   def nodataCells(tile: Column): TypedColumn[Any, Long] =
     withAlias("nodataCells", tile)(
       udf(UDFs.nodataCells).apply(tile)

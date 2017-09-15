@@ -36,6 +36,12 @@ object UDFs {
   private def safeEval[P1, P2, R](f: (P1, P2) ⇒ R): (P1, P2) ⇒ R =
     (p1, p2) ⇒ if (p1 == null || p2 == null) null.asInstanceOf[R] else f(p1, p2)
 
+  /** Flattens tile into an integer array. */
+  private[rasterframes] val tileToArray = safeEval[Tile, Array[Int]](_.toArray())
+
+  /** Flattens tile into a double array. */
+  private[rasterframes] val tileToArrayDouble = safeEval[Tile, Array[Double]](_.toArrayDouble())
+
   /** Computes the column aggregate histogram */
   private[rasterframes] val aggHistogram = new AggregateHistogramFunction()
 
@@ -43,7 +49,10 @@ object UDFs {
   private[rasterframes] val aggStats = new AggregateStatsFunction()
 
   /** Reports the dimensions of a tile. */
-  private[rasterframes] val tileDimensions: (CellGrid) ⇒ (Int, Int) = safeEval(_.dimensions)
+  private[rasterframes] val tileDimensions = safeEval[CellGrid, (Int, Int)](_.dimensions)
+
+  /** Get the tile's cell type*/
+  private[rasterframes] val cellType = safeEval[Tile, String](_.cellType.name)
 
   /** Single floating point tile histogram. */
   private[rasterframes] val tileHistogramDouble = safeEval[Tile, Histogram[Double]](_.histogramDouble())

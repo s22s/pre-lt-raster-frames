@@ -30,11 +30,16 @@ private[rasterframes] object Registrator {
   def register(sqlContext: SQLContext): Unit = {
     sqlContext.udf.register("st_makeConstantTile", UDFs.makeConstantTile)
     sqlContext.udf.register("st_tileDimensions", UDFs.tileDimensions)
+    sqlContext.udf.register("st_cellType", UDFs.cellType)
+    sqlContext.udf.register("st_tileToArray", UDFs.tileToArray)
+    sqlContext.udf.register("st_tileToArrayDouble", UDFs.tileToArrayDouble)
     sqlContext.udf.register("st_histogram", UDFs.aggHistogram)
     sqlContext.udf.register("st_stats", UDFs.aggStats)
     sqlContext.udf.register("st_tileMean", UDFs.tileMean)
     sqlContext.udf.register("st_tileHistogram", UDFs.tileHistogram)
     sqlContext.udf.register("st_tileStats", UDFs.tileStats)
+    sqlContext.udf.register("st_dataCells", UDFs.dataCells)
+    sqlContext.udf.register("st_nodataCells", UDFs.dataCells)
     sqlContext.udf.register("st_tileMeanDouble", UDFs.tileMeanDouble)
     sqlContext.udf.register("st_tileHistogramDouble", UDFs.tileHistogramDouble)
     sqlContext.udf.register("st_tileStatsDouble", UDFs.tileStatsDouble)
@@ -49,7 +54,7 @@ private[rasterframes] object Registrator {
     sqlContext.udf.register("st_renderAscii", UDFs.renderAscii)
   }
   // Expression-oriented functions have a different registration scheme
-  // Currently have to register with the `builtin` registry due to data hiding.
+  // Currently have to register with the `builtin` registry due to Spark data hiding.
   FunctionRegistry.builtin.registerFunction("st_explodeTiles", ExplodeTileExpression.apply(1.0, _))
 
 }
