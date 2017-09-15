@@ -4,7 +4,9 @@
 
 [ ![Download](https://api.bintray.com/packages/s22s/maven/raster-frames/images/download.svg) ](https://bintray.com/s22s/maven/raster-frames/_latestVersion) [![Build Status](https://travis-ci.org/s22s/raster-frames.svg?branch=develop)](https://travis-ci.org/s22s/raster-frames)
 
-_RasterFrames_ brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer operations of [GeoTrellis](https://geotrellis.io/).
+_RasterFrames_ brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer operations of [GeoTrellis](https://geotrellis.io/). See the [Users' Manual](http://rasterframes.io) for details.
+
+![](src/main/tut/RasterFramePipelineOverview.png)
 
 <div class="msg warn"> <p><strong> RasterFrames is a new project under active
   development</strong>. Feedback and contributions are welcomed as we look
