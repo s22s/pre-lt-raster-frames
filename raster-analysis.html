@@ -291,7 +291,7 @@ val ndvi = udf((red: Tile, nir: Tile) ⇒ {
 // We use `asRF` to indicate we know the structure still conforms to RasterFrame constraints
 val rf = redBand.spatialJoin(nirBand).withColumn(&quot;ndvi&quot;, ndvi($&quot;red_band&quot;, $&quot;nir_band&quot;)).asRF
 
-val pr = rf.toRaster($&quot;ndvi&quot;, 233, 214)
+val pr = rf.toRaster($&quot;ndvi&quot;, 466, 428)
 
 val brownToGreen = ColorRamp(
   RGBA(166,97,26,255),
@@ -304,7 +304,7 @@ val brownToGreen = ColorRamp(
 val colors = ColorMap.fromQuantileBreaks(pr.tile.histogramDouble(), brownToGreen)
 pr.tile.color(colors).renderPng().write(&quot;target/scala-2.11/tut/rf-ndvi.png&quot;)
 
-//For a georefrenced singlband greyscale image, could do: `GeoTiff(pr).write(&quot;ndvi.tiff&quot;)`
+//For a georefrenced singleband greyscale image, could do: `GeoTiff(pr).write(&quot;ndvi.tiff&quot;)`
 </code></pre>
 <p><img src="rf-ndvi.png" /></p>
 <div class="nav-next">
