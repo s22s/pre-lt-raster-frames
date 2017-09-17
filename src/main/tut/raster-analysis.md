@@ -128,6 +128,45 @@ rf.select(aggHistogram($"tile")).
   show(10)
 ```
 
+## Computing NDVI
+
+Here's an example of computing the 
+
+Normalized Differential Vegetation Index (NDVI) is a standardized vegetation index which allows us to generate an image highlighting differences in relative biomass. 
+
+> “An NDVI is often used worldwide to monitor drought, monitor and predict agricultural production, assist in predicting hazardous fire zones, and map desert encroachment. The NDVI is preferred for global vegetation monitoring because it helps to compensate for changing illumination conditions, surface slope, aspect, and other extraneous factors” (Lillesand. *Remote sensing and image interpretation*. 2004).
+
+```tut:silent
+def redBand = SinglebandGeoTiff("src/test/resources/L8-B4-Elkton-VA.tiff").projectedRaster.toRF("red_band")
+def nirBand = SinglebandGeoTiff("src/test/resources/L8-B5-Elkton-VA.tiff").projectedRaster.toRF("nir_band")
+
+// Define UDF for computing NDVI from red and NIR bands
+val ndvi = udf((red: Tile, nir: Tile) ⇒ {
+  val redd = red.convert(DoubleConstantNoDataCellType)
+  val nird = nir.convert(DoubleConstantNoDataCellType)
+  (nird - redd)/(nird + redd)
+})
+
+// We use `asRF` to indicate we know the structure still conforms to RasterFrame constraints
+val rf = redBand.spatialJoin(nirBand).withColumn("ndvi", ndvi($"red_band", $"nir_band")).asRF
+
+val pr = rf.toRaster($"ndvi", 466, 428)
+
+val brownToGreen = ColorRamp(
+  RGBA(166,97,26,255),
+  RGBA(223,194,125,255),
+  RGBA(245,245,245,255),
+  RGBA(128,205,193,255),
+  RGBA(1,133,113,255)
+).stops(128)
+
+val colors = ColorMap.fromQuantileBreaks(pr.tile.histogramDouble(), brownToGreen)
+pr.tile.color(colors).renderPng().write("target/scala-2.11/tut/rf-ndvi.png")
+
+//For a georefrenced singleband greyscale image, could do: `GeoTiff(pr).write("ndvi.tiff")`
+```
+
+![](rf-ndvi.png)
 
 ```tut:invisible
 spark.stop()

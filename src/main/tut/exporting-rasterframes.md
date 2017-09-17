@@ -32,7 +32,7 @@ Let's assume we have a RasterFrame we've done some fancy processing on:
 ```tut:silent
 import geotrellis.raster.equalization._
 val equalizer = udf((t: Tile) => t.equalize())
-val equalized = rf.withColumn("equalized", equalizer($"tile"))
+val equalized = rf.withColumn("equalized", equalizer($"tile")).asRF
 ```
 
 ```tut
@@ -99,14 +99,24 @@ For the purposes of debugging, the RasterFrame tiles can be reassembled back int
 keep in mind that this will download all the data to the driver, and reassemble it in-memory. So it's not appropriate 
 for very large coverages.
 
+Here's how one might render a raster frame to a false color PNG file:
+
 ```tut:silent
-val image = rf.toRaster($"tile", 774, 500)
+val image = equalized.toRaster($"equalized", 774, 500)
 val colors = ColorMap.fromQuantileBreaks(image.tile.histogram, ColorRamps.BlueToOrange)
 image.tile.color(colors).renderPng().write("target/scala-2.11/tut/rf-raster.png")
 ```
 
 ![](rf-raster.png)
 
+Here's how one might render the image to a georeferenced GeoTIFF file: 
+
+```tut:silent
+import geotrellis.raster.io.geotiff.GeoTiff
+GeoTiff(image).write("target/scala-2.11/tut/rf-raster.tiff")
+```
+
+[*Download GeoTIFF*](rf-raster.tiff)
 
 ```tut:invisible
 spark.stop()
