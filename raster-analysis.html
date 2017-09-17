@@ -32,7 +32,7 @@
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.4.5*
+0.4.5
 </div>
 </div>
 <div class="nav-toc">
@@ -73,7 +73,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.4.5*
+0.4.5
 </div>
 </div>
 <div class="nav-toc">
@@ -276,7 +276,7 @@ only showing top 10 rows
 <p>Here&rsquo;s an example of computing the </p>
 <p>Normalized Differential Vegetation Index (NDVI) is a standardized vegetation index which allows us to generate an image highlighting differences in relative biomass. </p>
 <blockquote>
-  <p>“An NDVI is often used worldwide to monitor drought, monitor and predict agricultural production, assist in predicting hazardous fire zones, and map desert encroachment. The NDVI is preferred for global vegetation monitoring because it helps to compensate for changing illumination conditions, surface slope, aspect, and other extraneous factors” (Lillesand 2004).</p>
+  <p>“An NDVI is often used worldwide to monitor drought, monitor and predict agricultural production, assist in predicting hazardous fire zones, and map desert encroachment. The NDVI is preferred for global vegetation monitoring because it helps to compensate for changing illumination conditions, surface slope, aspect, and other extraneous factors” (Lillesand. <em>Remote sensing and image interpretation</em>. 2004).</p>
 </blockquote>
 <pre class="prettyprint"><code class="language-scala">def redBand = SinglebandGeoTiff(&quot;src/test/resources/L8-B4-Elkton-VA.tiff&quot;).projectedRaster.toRF(&quot;red_band&quot;)
 def nirBand = SinglebandGeoTiff(&quot;src/test/resources/L8-B5-Elkton-VA.tiff&quot;).projectedRaster.toRF(&quot;nir_band&quot;)

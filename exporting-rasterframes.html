@@ -32,7 +32,7 @@
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.4.5*
+0.4.5
 </div>
 </div>
 <div class="nav-toc">
@@ -73,7 +73,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.4.5*
+0.4.5
 </div>
 </div>
 <div class="nav-toc">
@@ -205,18 +205,17 @@ scala.util.Either[org.apache.spark.rdd.RDD[(geotrellis.spark.SpatialKey, geotrel
 </code></pre>
 <h2><a href="#exporting-a-raster" name="exporting-a-raster" class="anchor"><span class="anchor-link"></span></a>Exporting a Raster</h2>
 <p>For the purposes of debugging, the RasterFrame tiles can be reassembled back into a raster for viewing. However, keep in mind that this will download all the data to the driver, and reassemble it in-memory. So it&rsquo;s not appropriate for very large coverages.</p>
-<p>Here&rsquo;s how one might render the image to a GeoTIFF file: </p>
-<pre class="prettyprint"><code class="language-scala">import geotrellis.raster.io.geotiff.GeoTiff
-
-val image = equalized.toRaster($&quot;equalized&quot;, 774, 500)
-GeoTiff(image).write(&quot;target/scala-2.11/tut/rf-raster.tiff&quot;)
-</code></pre>
-<p><img src="rf-raster.tiff" /></p>
-<p>Here&rsquo;s how one might render a raster frame to a false colore PNG file:</p>
-<pre class="prettyprint"><code class="language-scala">val colors = ColorMap.fromQuantileBreaks(image.tile.histogram, ColorRamps.BlueToOrange)
+<p>Here&rsquo;s how one might render a raster frame to a false color PNG file:</p>
+<pre class="prettyprint"><code class="language-scala">val image = equalized.toRaster($&quot;equalized&quot;, 774, 500)
+val colors = ColorMap.fromQuantileBreaks(image.tile.histogram, ColorRamps.BlueToOrange)
 image.tile.color(colors).renderPng().write(&quot;target/scala-2.11/tut/rf-raster.png&quot;)
 </code></pre>
 <p><img src="rf-raster.png" /></p>
+<p>Here&rsquo;s how one might render the image to a georeferenced GeoTIFF file: </p>
+<pre class="prettyprint"><code class="language-scala">import geotrellis.raster.io.geotiff.GeoTiff
+GeoTiff(image).write(&quot;target/scala-2.11/tut/rf-raster.tiff&quot;)
+</code></pre>
+<p><a href="rf-raster.tiff"><em>Download GeoTIFF</em></a></p>
 <div class="nav-next">
 <p><strong>Next:</strong> <a href="raster-analysis.html">Raster Analysis</a></p>
 </div>
