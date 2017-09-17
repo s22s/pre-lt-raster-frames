@@ -151,9 +151,17 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
     val trans = md.mapTransform
     val keyCol = clipped.spatialKeyColumn
     val newLayout = LayoutDefinition(md.extent, TileLayout(1, 1, rasterCols, rasterRows))
-    val newLayerMetadata = md.copy(layout = newLayout, bounds = Bounds(SpatialKey(0, 0), SpatialKey(0, 0)))
 
     val rdd: RDD[(SpatialKey, Tile)] = clipped.select(keyCol, tileCol).as[(SpatialKey, Tile)].rdd
+
+    val cellType = rdd.first()._2.cellType
+
+    val newLayerMetadata = md.copy(
+      layout = newLayout,
+      bounds = Bounds(SpatialKey(0, 0), SpatialKey(0, 0)),
+      cellType = cellType
+    )
+
     val newLayer = rdd
       .map {
         case (key, tile) ⇒
