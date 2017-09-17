@@ -272,6 +272,41 @@ only showing top 5 rows
 only showing top 10 rows
 
 </code></pre>
+<h2><a href="#computing-ndvi" name="computing-ndvi" class="anchor"><span class="anchor-link"></span></a>Computing NDVI</h2>
+<p>Here&rsquo;s an example of computing the </p>
+<p>Normalized Differential Vegetation Index (NDVI) is a standardized vegetation index which allows us to generate an image highlighting differences in relative biomass. </p>
+<blockquote>
+  <p>“An NDVI is often used worldwide to monitor drought, monitor and predict agricultural production, assist in predicting hazardous fire zones, and map desert encroachment. The NDVI is preferred for global vegetation monitoring because it helps to compensate for changing illumination conditions, surface slope, aspect, and other extraneous factors” (Lillesand 2004).</p>
+</blockquote>
+<pre class="prettyprint"><code class="language-scala">def redBand = SinglebandGeoTiff(&quot;src/test/resources/L8-B4-Elkton-VA.tiff&quot;).projectedRaster.toRF(&quot;red_band&quot;)
+def nirBand = SinglebandGeoTiff(&quot;src/test/resources/L8-B5-Elkton-VA.tiff&quot;).projectedRaster.toRF(&quot;nir_band&quot;)
+
+// Define UDF for computing NDVI from red and NIR bands
+val ndvi = udf((red: Tile, nir: Tile) ⇒ {
+  val redd = red.convert(DoubleConstantNoDataCellType)
+  val nird = nir.convert(DoubleConstantNoDataCellType)
+  (nird - redd)/(nird + redd)
+})
+
+// We use `asRF` to indicate we know the structure still conforms to RasterFrame constraints
+val rf = redBand.spatialJoin(nirBand).withColumn(&quot;ndvi&quot;, ndvi($&quot;red_band&quot;, $&quot;nir_band&quot;)).asRF
+
+val pr = rf.toRaster($&quot;ndvi&quot;, 233, 214)
+
+val brownToGreen = ColorRamp(
+  RGBA(166,97,26,255),
+  RGBA(223,194,125,255),
+  RGBA(245,245,245,255),
+  RGBA(128,205,193,255),
+  RGBA(1,133,113,255)
+).stops(128)
+
+val colors = ColorMap.fromQuantileBreaks(pr.tile.histogramDouble(), brownToGreen)
+pr.tile.color(colors).renderPng().write(&quot;target/scala-2.11/tut/rf-ndvi.png&quot;)
+
+//For a georefrenced singlband greyscale image, could do: `GeoTiff(pr).write(&quot;ndvi.tiff&quot;)`
+</code></pre>
+<p><img src="rf-ndvi.png" /></p>
 <div class="nav-next">
 <p><strong>Next:</strong> <a href="machine-learning.html">Machine Learning</a></p>
 </div>
@@ -287,6 +322,7 @@ only showing top 10 rows
     <li><a href="raster-analysis.html#inspection" class="header">Inspection</a></li>
     <li><a href="raster-analysis.html#tile-statistics" class="header">Tile Statistics</a></li>
     <li><a href="raster-analysis.html#aggregate-statistics" class="header">Aggregate Statistics</a></li>
+    <li><a href="raster-analysis.html#computing-ndvi" class="header">Computing NDVI</a></li>
   </ul></li>
 </ul>
 </div>

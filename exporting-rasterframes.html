@@ -114,7 +114,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <p>Let&rsquo;s assume we have a RasterFrame we&rsquo;ve done some fancy processing on: </p>
 <pre class="prettyprint"><code class="language-scala">import geotrellis.raster.equalization._
 val equalizer = udf((t: Tile) =&gt; t.equalize())
-val equalized = rf.withColumn(&quot;equalized&quot;, equalizer($&quot;tile&quot;))
+val equalized = rf.withColumn(&quot;equalized&quot;, equalizer($&quot;tile&quot;)).asRF
 </code></pre>
 <pre class="prettyprint"><code class="language-scala">scala&gt; equalized.printSchema
 root
@@ -205,8 +205,15 @@ scala.util.Either[org.apache.spark.rdd.RDD[(geotrellis.spark.SpatialKey, geotrel
 </code></pre>
 <h2><a href="#exporting-a-raster" name="exporting-a-raster" class="anchor"><span class="anchor-link"></span></a>Exporting a Raster</h2>
 <p>For the purposes of debugging, the RasterFrame tiles can be reassembled back into a raster for viewing. However, keep in mind that this will download all the data to the driver, and reassemble it in-memory. So it&rsquo;s not appropriate for very large coverages.</p>
-<pre class="prettyprint"><code class="language-scala">val image = rf.toRaster($&quot;tile&quot;, 774, 500)
-val colors = ColorMap.fromQuantileBreaks(image.tile.histogram, ColorRamps.BlueToOrange)
+<p>Here&rsquo;s how one might render the image to a GeoTIFF file: </p>
+<pre class="prettyprint"><code class="language-scala">import geotrellis.raster.io.geotiff.GeoTiff
+
+val image = equalized.toRaster($&quot;equalized&quot;, 774, 500)
+GeoTiff(image).write(&quot;target/scala-2.11/tut/rf-raster.tiff&quot;)
+</code></pre>
+<p><img src="rf-raster.tiff" /></p>
+<p>Here&rsquo;s how one might render a raster frame to a false colore PNG file:</p>
+<pre class="prettyprint"><code class="language-scala">val colors = ColorMap.fromQuantileBreaks(image.tile.histogram, ColorRamps.BlueToOrange)
 image.tile.color(colors).renderPng().write(&quot;target/scala-2.11/tut/rf-raster.png&quot;)
 </code></pre>
 <p><img src="rf-raster.png" /></p>
