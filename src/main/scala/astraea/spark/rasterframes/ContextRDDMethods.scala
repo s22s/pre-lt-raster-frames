@@ -34,15 +34,18 @@ import scala.reflect.runtime.universe._
 abstract class SpatialContextRDDMethods[K: SpatialComponent: JsonFormat: TypeTag](implicit spark: SparkSession)
     extends MethodExtensions[RDD[(K, Tile)] with Metadata[TileLayerMetadata[K]]] {
 
-  def toRF: RasterFrame = {
+
+  def toRF: RasterFrame = toRF(TILE_COLUMN)
+
+  def toRF(tileColumnName: String): RasterFrame = {
     import spark.implicits._
 
     val rdd = self: RDD[(K, Tile)]
     val df = rdd
-      .toDF(SPATIAL_KEY_COLUMN, TILE_COLUMN)
+      .toDF(SPATIAL_KEY_COLUMN, tileColumnName)
 
     df.setSpatialColumnRole(df(SPATIAL_KEY_COLUMN), self.metadata)
-      .setColumnRole(df(TILE_COLUMN), classOf[Tile].getSimpleName)
+      .setColumnRole(df(tileColumnName), classOf[Tile].getSimpleName)
       .certify
   }
 }
