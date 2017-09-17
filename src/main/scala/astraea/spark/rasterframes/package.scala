@@ -40,6 +40,16 @@ import scala.reflect.ClassTag
  */
 package object rasterframes extends Implicits with ColumnFunctions {
 
+  /**
+   * Initialization injection point. Must be called before any RasterFrame
+   * types are used.
+   */
+  def rfInit(sqlContext: SQLContext): Unit = {
+    // TODO: Can this be automatically done via some SPI-like construct in Spark?
+    gt.gtRegister(sqlContext)
+    functions.Registrator.register(sqlContext)
+  }
+
   /** Default RasterFrame spatial column name. */
   val SPATIAL_KEY_COLUMN = "spatial_key"
 
@@ -81,14 +91,6 @@ package object rasterframes extends Implicits with ColumnFunctions {
     type get[M] = GetComponent[M, Bounds[K]]
   }
 
-  /**
-   * Initialization injection point.
-   */
-  def rfInit(sqlContext: SQLContext): Unit = {
-    // TODO: Can this be automatically done via some SPI-like construct in Spark?
-    gt.gtRegister(sqlContext)
-    functions.Registrator.register(sqlContext)
-  }
 
   // ----------- Extension Method Injections ------------
 

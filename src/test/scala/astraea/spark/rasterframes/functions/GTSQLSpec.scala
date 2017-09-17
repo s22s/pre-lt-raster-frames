@@ -26,7 +26,7 @@ import geotrellis.raster
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.{Add, Max, Min, Subtract}
 import geotrellis.raster.summary.Statistics
-import geotrellis.raster.{ByteCellType, CellType, IntConstantNoDataCellType, MultibandTile, Tile, TileFeature}
+import geotrellis.raster.{ByteCellType, CellType, FloatCellType, FloatConstantTile, IntConstantNoDataCellType, MultibandTile, Tile, TileFeature}
 import geotrellis.spark.{SpaceTimeKey, TemporalProjectedExtent, TileLayerMetadata}
 import geotrellis.vector.{Extent, ProjectedExtent}
 import org.apache.spark.sql._
@@ -120,6 +120,27 @@ class GTSQLSpec extends TestEnvironment with TestData with LazyLogging {
       assert(exploded.columns.length === 4)
       assert(exploded.count() === 9)
       write(exploded)
+    }
+
+    it("should convert tile into array") {
+      val query = sql(
+        """select st_tileToArray(
+          |  st_makeConstantTile(1, 10, 10, 'int8raw')
+          |) as intArray
+          |""".stripMargin)
+      assert(query.as[Array[Int]].first.sum === 100)
+
+      val tile = FloatConstantTile(1.1f, 10, 10, FloatCellType)
+      val df = Seq[Tile](tile).toDF("tile")
+      val arrayDF = df.select(tileToArrayDouble($"tile"))
+      assert(arrayDF.first().sum === 110.0 +- 0.00001)
+    }
+
+    it("should extract cell types") {
+      val expected = allTileTypes.map(_.cellType).toSet
+      val df = allTileTypes.toDF("tile")
+      val types = df.select(cellType($"tile")).collect().map(CellType.fromName).toSet
+      assert(types === expected)
     }
 
     it("should explode tiles with random sampling") {

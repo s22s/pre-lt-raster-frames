@@ -21,8 +21,9 @@ import geotrellis.raster.{ProjectedRaster, Tile, TileLayout}
 import geotrellis.spark._
 import geotrellis.spark.io._
 import geotrellis.spark.tiling.{LayoutDefinition, Tiler}
-import geotrellis.util.MethodExtensions
+import geotrellis.util.{LazyLogging, MethodExtensions}
 import geotrellis.vector.ProjectedExtent
+import org.apache.spark.annotation.Experimental
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Column, TypedColumn}
 import org.apache.spark.sql.functions._
@@ -35,7 +36,7 @@ import spray.json._
  * @author sfitch
  * @since 7/18/17
  */
-trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
+trait RasterFrameMethods extends MethodExtensions[RasterFrame] with LazyLogging {
   type TileColumn = TypedColumn[Any, Tile]
 
   private val _df = self
@@ -80,7 +81,6 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
 
   /**
    * Reassemble the [[TileLayerMetadata]] record from DataFrame metadata.
-   * TODO: Change to Either[TileLayerMetadata[SpatialKey], TileLayerMetadata[SpaceTimeKey]]
    */
   def tileLayerMetadata: Either[TileLayerMetadata[SpatialKey], TileLayerMetadata[SpaceTimeKey]] = {
     val spatialMD = self.schema
@@ -92,6 +92,31 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
         Right(extract[TileLayerMetadata[SpaceTimeKey]](CONTEXT_METADATA_KEY)(spatialMD))
       else
         Left(extract[TileLayerMetadata[SpatialKey]](CONTEXT_METADATA_KEY)(spatialMD))
+  }
+
+  /**
+   * Perform a spatial join between two raster frames.
+   * WARNING: This is a work in progress, and only works if both raster frames have the same
+   * tile layer metadata. A more flexible spatial join is in the works.
+   */
+  @Experimental
+  def spatialJoin(right: RasterFrame): RasterFrame = {
+    val left = self
+
+    val leftMetadata = left.tileLayerMetadata.widen
+    val rightMetadata = right.tileLayerMetadata.widen
+
+    if(leftMetadata.layout != rightMetadata.layout) {
+      logger.warn("Multi-layer query assumes same tile layout. Differences detected:\n\t" +
+        leftMetadata + "\nvs.\n\t" + rightMetadata)
+    }
+
+    val leftKey = left.spatialKeyColumn
+    val rightKey = right.spatialKeyColumn
+
+    val joined = left.join(right, leftKey === rightKey, "outer").drop(rightKey)
+    joined.certify
+    //joined.storeColumnMetadata(leftKey, CONTEXT_METADATA_KEY, leftMetadata).certify
   }
 
   /**
@@ -152,9 +177,17 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
     val trans = md.mapTransform
     val keyCol = clipped.spatialKeyColumn
     val newLayout = LayoutDefinition(md.extent, TileLayout(1, 1, rasterCols, rasterRows))
-    val newLayerMetadata = md.copy(layout = newLayout, bounds = Bounds(SpatialKey(0, 0), SpatialKey(0, 0)))
 
     val rdd: RDD[(SpatialKey, Tile)] = clipped.select(keyCol, tileCol).as[(SpatialKey, Tile)].rdd
+
+    val cellType = rdd.first()._2.cellType
+
+    val newLayerMetadata = md.copy(
+      layout = newLayout,
+      bounds = Bounds(SpatialKey(0, 0), SpatialKey(0, 0)),
+      cellType = cellType
+    )
+
     val newLayer = rdd
       .map {
         case (key, tile) ⇒
@@ -168,4 +201,6 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] {
 
     ProjectedRaster(croppedTile, md.extent, md.crs)
   }
+
+
 }

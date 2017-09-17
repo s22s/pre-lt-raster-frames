@@ -23,9 +23,18 @@ trait ProjectedRasterMethods extends MethodExtensions[ProjectedRaster[Tile]] {
    *
    * @param spark [[SparkSession]] in which to create [[RasterFrame]]
    */
-  def toRF(implicit spark: SparkSession): RasterFrame = {
+  def toRF(implicit spark: SparkSession): RasterFrame = toRF(TILE_COLUMN)
+
+
+  /**
+   * Convert the wrapped [[ProjectedRaster]] into a [[RasterFrame]] with a
+   * single row.
+   *
+   * @param spark [[SparkSession]] in which to create [[RasterFrame]]
+   */
+  def toRF(tileColName: String)(implicit spark: SparkSession): RasterFrame = {
     val (cols, rows) = self.raster.dimensions
-    toRF(cols, rows)
+    toRF(cols, rows, tileColName)
   }
 
   /**
@@ -36,8 +45,8 @@ trait ProjectedRasterMethods extends MethodExtensions[ProjectedRaster[Tile]] {
    * @param tileRows Max number of vertical cells per tile.
    * @param spark [[SparkSession]] in which to create [[RasterFrame]]
    */
-  def toRF(tileCols: Int, tileRows: Int)(implicit spark: SparkSession): RasterFrame =
-    toTileLayerRDD(tileCols, tileRows).toRF
+  def toRF(tileCols: Int, tileRows: Int, tileColName: String = TILE_COLUMN)(implicit spark: SparkSession): RasterFrame =
+    toTileLayerRDD(tileCols, tileRows).toRF(tileColName)
 
   /**
    * Convert the [[ProjectedRaster]] into a [[RasterFrame]] using the
