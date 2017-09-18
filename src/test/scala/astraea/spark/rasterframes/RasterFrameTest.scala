@@ -21,7 +21,7 @@ import org.apache.spark.sql.gt.NamedColumn
  * @author sfitch 
  * @since 7/10/17
  */
-class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
+class RasterFrameTest extends TestEnvironment with TestData {
   import TestData.randomTile
   import spark.implicits._
 

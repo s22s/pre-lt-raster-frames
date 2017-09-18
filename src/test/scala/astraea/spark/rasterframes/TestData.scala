@@ -21,6 +21,7 @@ package astraea.spark.rasterframes
 import java.time.ZonedDateTime
 
 import geotrellis.proj4.LatLng
+import geotrellis.raster
 import geotrellis.raster._
 import geotrellis.raster.io.geotiff.{GeoTiff, SinglebandGeoTiff}
 import geotrellis.spark.testkit.TileLayerRDDBuilders
@@ -141,4 +142,20 @@ object TestData extends TestData {
     TileLayerRDDBuilders.createSpaceTimeTileLayerRDD(Seq((tile, ZonedDateTime.now())), tileLayout, tile.cellType)
   }
 
+  def injectND(num: Int)(t: Tile): Tile = {
+    val indexes = List.tabulate(t.size)(identity)
+    val targeted = rnd.shuffle(indexes).take(num)
+    def filter(c: Int, r: Int) = targeted.contains(r * t.cols + c)
+
+    if(t.cellType.isFloatingPoint) {
+      t.mapDouble((c, r, v) ⇒ {
+        if(filter(c,r)) raster.doubleNODATA else v
+      })
+    }
+    else {
+      t.map((c, r, v) ⇒ {
+        if(filter(c, r)) raster.NODATA else v
+      })
+    }
+  }
 }

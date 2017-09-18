@@ -17,14 +17,18 @@
  */
 package astraea.spark.rasterframes
 
+import java.nio.file.{Files, Paths}
+
 import geotrellis.spark.testkit.{TestEnvironment ⇒ GeoTrellisTestEnvironment}
+import geotrellis.util.LazyLogging
 import org.apache.spark.SparkContext
-import org.apache.spark.sql.{DataFrame, SQLContext}
+import org.apache.spark.sql.functions.col
+import org.apache.spark.sql.{DataFrame, Dataset, SQLContext, SaveMode}
 import org.scalactic.Tolerance
 import org.scalatest._
 
 trait TestEnvironment extends FunSpec with GeoTrellisTestEnvironment
-  with Matchers with Inspectors with Tolerance {
+  with Matchers with Inspectors with Tolerance with LazyLogging {
 
   override implicit def sc: SparkContext = _sc
   lazy val sqlContext = {
@@ -36,4 +40,14 @@ trait TestEnvironment extends FunSpec with GeoTrellisTestEnvironment
   implicit lazy val spark = sqlContext.sparkSession
 
   def isCI: Boolean = sys.env.get("CI").contains("true")
+
+  /** This is here so we can test writing UDF generated/modified GeoTrellis types to ensure they are Parquet compliant. */
+  def write(df: Dataset[_]): Unit = {
+    val sanitized = df.select(df.columns.map(c ⇒ col(c).as(c.replaceAll("[ ,;{}()\n\t=]", "_"))): _*)
+    val dest = Files.createTempFile(Paths.get(outputLocalPath), "GTSQL", ".parquet")
+    logger.debug(s"Writing '${sanitized.columns.mkString(", ")}' to '$dest'...")
+    sanitized.write.mode(SaveMode.Overwrite).parquet(dest.toString)
+    val rows = df.sparkSession.read.parquet(dest.toString).count()
+    logger.debug(s" it has $rows row(s)")
+  }
 }
