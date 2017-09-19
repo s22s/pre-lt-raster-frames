@@ -91,6 +91,15 @@ package object rasterframes extends Implicits with ColumnFunctions {
     type get[M] = GetComponent[M, Bounds[K]]
   }
 
+  trait HasCellType[T]
+  object HasCellType {
+    implicit val intHasCellType = new HasCellType[Int] {}
+    implicit val doubleHasCellType = new HasCellType[Double] {}
+    implicit val byteHasCellType = new HasCellType[Byte] {}
+    implicit val shortHasCellType = new HasCellType[Short] {}
+    implicit val floatHasCellType = new HasCellType[Float] {}
+  }
+
   // ----------- Extension Method Injections: Beware the Ugly ------------
 
   implicit class WithProjectedRasterMethods(val self: ProjectedRaster[Tile])

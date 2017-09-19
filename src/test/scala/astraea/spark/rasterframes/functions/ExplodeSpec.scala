@@ -87,12 +87,9 @@ class ExplodeSpec extends TestEnvironment with TestData {
 
       val back = arrayDF.withColumn("backToTile", arrayToTile($"tileArray", 10, 10))
 
-      back.printSchema()
-      back.show()
+      val result = back.select($"backToTile".as[Tile]).first
 
-      fail("add assertion")
-
-
+      assert(result.toArrayDouble() === tile.toArrayDouble())
     }
   }
 }

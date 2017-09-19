@@ -16,6 +16,7 @@
 
 package astraea.spark.rasterframes.functions
 
+import astraea.spark.rasterframes.HasCellType
 import geotrellis.raster.{CellType, Tile}
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.LocalTileBinaryOp
@@ -28,6 +29,7 @@ import org.apache.spark.sql.functions._
 import org.apache.spark.sql.gt.Implicits._
 import org.apache.spark.sql.gt._
 import org.apache.spark.sql.types._
+
 import scala.reflect.runtime.universe._
 
 /**
@@ -65,17 +67,11 @@ trait ColumnFunctions {
     udf[(Int, Int), Tile](UDFs.tileDimensions).apply(col)
   ).cast(StructType(Seq(StructField("cols", IntegerType), StructField("rows", IntegerType))))
 
-  /** Flattens tile into an integer array. */
+  /** Flattens tile into an array. A numeric type parameter is required*/
   @Experimental
-  def tileToArray[T: Numeric: TypeTag](col: Column): Column = withAlias("tileToArray", col)(
+  def tileToArray[T: HasCellType: TypeTag](col: Column): Column = withAlias("tileToArray", col)(
     udf[Array[T], Tile](UDFs.tileToArray).apply(col)
   )
-
-//  /** Flattens tile into a double array. */
-//  @Experimental
-//  def tileToArrayDouble(col: Column): TypedColumn[Any, Array[Double]] = withAlias("tileToArrayDouble", col)(
-//    udf[Array[Double], Tile](UDFs.tileToArrayDouble).apply(col)
-//  ).as[Array[Double]]
 
   @Experimental
   /** Convert array in `arrayCol` into a tile of dimenions `cols` and `rows`*/

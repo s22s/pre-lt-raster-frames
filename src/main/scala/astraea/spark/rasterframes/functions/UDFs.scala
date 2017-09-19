@@ -16,10 +16,12 @@
 
 package astraea.spark.rasterframes.functions
 
+import astraea.spark.rasterframes.HasCellType
 import geotrellis.raster._
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.{Add, Max, Min, Subtract}
 import geotrellis.raster.summary.Statistics
+
 import scala.reflect.runtime.universe._
 import scala.collection.mutable
 import scala.reflect.ClassTag
@@ -39,23 +41,24 @@ object UDFs {
     (p1, p2) ⇒ if (p1 == null || p2 == null) null.asInstanceOf[R] else f(p1, p2)
 
   /** Flattens tile into an integer array. */
-  private[rasterframes] def tileToArray[T: Numeric: TypeTag] = safeEval[Tile, Array[T]] { tile ⇒
-    val asArray = tile match {
-      case t: IntArrayTile ⇒ t.array
-      case t: DoubleArrayTile ⇒ t.array
-      case t: ByteArrayTile ⇒ t.array
-      case t: ShortArrayTile ⇒ t.array
-      case t: FloatArrayTile ⇒ t.array
-      case o: Tile ⇒ typeOf[T] match {
-        case t if t =:= typeOf[Int] ⇒ o.toArray()
-        case t if t =:= typeOf[Double] ⇒ o.toArrayDouble()
-        case t if t =:= typeOf[Byte] ⇒ o.toArray().map(_.toByte)
-        case t if t =:= typeOf[Short] ⇒ o.toArray().map(_.toShort)
-        case t if t =:= typeOf[Float] ⇒ o.toArrayDouble().map(_.toFloat)
+  private[rasterframes] def tileToArray[T: HasCellType: TypeTag] =
+    safeEval[Tile, Array[T]] { tile ⇒
+      val asArray = tile match {
+        case t: IntArrayTile ⇒ t.array
+        case t: DoubleArrayTile ⇒ t.array
+        case t: ByteArrayTile ⇒ t.array
+        case t: ShortArrayTile ⇒ t.array
+        case t: FloatArrayTile ⇒ t.array
+        case o: Tile ⇒ typeOf[T] match {
+          case t if t =:= typeOf[Int] ⇒ o.toArray()
+          case t if t =:= typeOf[Double] ⇒ o.toArrayDouble()
+          case t if t =:= typeOf[Byte] ⇒ o.toArray().map(_.toByte)
+          case t if t =:= typeOf[Short] ⇒ o.toArray().map(_.toShort)
+          case t if t =:= typeOf[Float] ⇒ o.toArrayDouble().map(_.toFloat)
+        }
       }
+      asArray.asInstanceOf[Array[T]]
     }
-    asArray.asInstanceOf[Array[T]]
-  }
 
   private[rasterframes] def arrayToTile(cols: Int, rows: Int) = {
     safeEval[AnyRef, Tile]{
