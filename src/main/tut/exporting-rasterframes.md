@@ -1,6 +1,5 @@
 # Exporting RasterFrames
 
-
 ```tut:invisible
 import astraea.spark.rasterframes._
 import geotrellis.spark._
@@ -33,17 +32,22 @@ type you would like used. The following types may be used: `Int`, `Double`, `Byt
 
 ```tut
 val withArrays = rf.withColumn("tileData", tileToArray[Short]($"tile")).drop("tile")
-withArrays.show(5, 50)
+withArrays.show(5, 40)
 ```
 
-You can convert the data back to an array, but you have to specify the target tile dimensions. Note that the
-create tile will not have a `NoData` value associated with it (a transformation you'll have to apply via 
-GeoTrellis functions).
+You can convert the data back to an array, but you have to specify the target tile dimensions. 
 
 ```tut
 val tileBack = withArrays.withColumn("tileAgain", arrayToTile($"tileData", 128, 128))
-tileBack.show(5, 50)
+tileBack.drop("tileData").show(5, 40)
 ``` 
+
+Note that the created tile will not have a `NoData` value associated with it. Here's how you can do that:
+
+```tut
+val tileBackAgain = withArrays.withColumn("tileAgain", withNoData(arrayToTile($"tileData", 128, 128), 3))
+tileBackAgain.drop("tileData").show(5, 50)
+```
 
 ## Writing to Parquet
 
@@ -78,7 +82,7 @@ Let's confirm partitioning happened as expected:
 
 ```tut
 import java.io.File
-new File(filePath).list
+new File(filePath).list.filter(f => !f.contains("_"))
 ```
 
 Now we can load the data back in and check it out:
@@ -151,4 +155,5 @@ spark.stop()
 [rfInit]: astraea.spark.rasterframes.package#rfInit%28SQLContext%29:Unit
 [rdd]: org.apache.spark.sql.Dataset#frdd:org.apache.spark.rdd.RDD[T]
 [toTileLayerRDD]: astraea.spark.rasterframes.RasterFrameMethods#toTileLayerRDD%28tileCol:RasterFrameMethods.this.TileColumn%29:Either[geotrellis.spark.TileLayerRDD[geotrellis.spark.SpatialKey],geotrellis.spark.TileLayerRDD[geotrellis.spark.SpaceTimeKey]]
-[tileToArray]: astraea.spark.rasterframes.functions.ColumnFunctions#tileToArray%28col:org.apache.spark.sql.Column%29:org.apache.spark.sql.TypedColumn[Any,Array[Int]]
+[tileToArray]: astraea.spark.rasterframes.functions.ColumnFunctions#tileToArray
+

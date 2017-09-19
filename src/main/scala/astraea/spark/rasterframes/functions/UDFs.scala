@@ -23,9 +23,6 @@ import geotrellis.raster.mapalgebra.local._
 import geotrellis.raster.summary.Statistics
 
 import scala.reflect.runtime.universe._
-import scala.collection.mutable
-import scala.reflect.ClassTag
-import scala.util.Random
 
 /**
  * Library of simple GT-related UDFs.
@@ -86,6 +83,9 @@ object UDFs {
 
   /** Get the tile's cell type*/
   private[rasterframes] val cellType = safeEval[Tile, String](_.cellType.name)
+
+  /** Set the tile's no-data value. */
+  private[rasterframes] def withNoData(nodata: Double) = safeEval[Tile, Tile](_.withNoData(Some(nodata)))
 
   /** Single floating point tile histogram. */
   private[rasterframes] val tileHistogramDouble = safeEval[Tile, Histogram[Double]](_.histogramDouble())

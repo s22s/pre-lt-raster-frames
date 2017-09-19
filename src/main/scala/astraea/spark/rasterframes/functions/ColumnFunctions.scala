@@ -17,10 +17,9 @@
 package astraea.spark.rasterframes.functions
 
 import astraea.spark.rasterframes.HasCellType
-import geotrellis.raster.{CellType, Tile}
+import geotrellis.raster.Tile
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.LocalTileBinaryOp
-import geotrellis.raster.mapalgebra.{local ⇒ alg}
 import geotrellis.raster.summary.Statistics
 import org.apache.spark.annotation.Experimental
 import org.apache.spark.sql._
@@ -84,6 +83,11 @@ trait ColumnFunctions {
   def cellType(col: Column): TypedColumn[Any, String] = withAlias("cellType", col)(
     udf[String, Tile](UDFs.cellType).apply(col)
   ).as[String]
+
+  /** Assign a `NoData` value to the tiles. */
+  def withNoData(col: Column, nodata: Double) = withAlias("withNoData", col)(
+    udf[Tile, Tile](UDFs.withNoData(nodata)).apply(col)
+  ).as[Tile]
 
   /**  Compute the full column aggregate floating point histogram. */
   @Experimental

@@ -90,6 +90,11 @@ class ExplodeSpec extends TestEnvironment with TestData {
       val result = back.select($"backToTile".as[Tile]).first
 
       assert(result.toArrayDouble() === tile.toArrayDouble())
+
+      val hasNoData = back.withColumn("withNoData", withNoData($"backToTile", 0))
+
+      val result2 = hasNoData.select($"withNoData".as[Tile]).first
+      assert(result2.cellType.asInstanceOf[UserDefinedNoData[_]].noDataValue === 0)
     }
   }
 }
