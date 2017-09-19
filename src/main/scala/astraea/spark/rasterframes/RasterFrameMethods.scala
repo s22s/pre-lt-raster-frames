@@ -116,7 +116,6 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with LazyLogging 
 
     val joined = left.join(right, leftKey === rightKey, "outer").drop(rightKey)
     joined.certify
-    //joined.storeColumnMetadata(leftKey, CONTEXT_METADATA_KEY, leftMetadata).certify
   }
 
   /**

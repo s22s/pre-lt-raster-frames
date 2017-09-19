@@ -1,15 +1,5 @@
 # Exporting RasterFrames
 
-While the goal of RasterFrames is to make it as easy as possible to do your geospatial analysis with a single 
-construct, it is helpful to be able to transform it into other representations for various use cases.
-
-## Writing to Parquet
-
-It is often useful to write Spark results in a form that is easily reloaded for subsequent analysis. 
-The [Parquet](https://parquet.apache.org/)columnar storage format, native to Spark, is ideal for this. RasterFrames
-work just like any other DataFrame in this scenario as long as @scaladoc[`rfInit`][rfInit] is called to register
-the imagery types.
-
 ```tut:invisible
 import astraea.spark.rasterframes._
 import geotrellis.spark._
@@ -19,13 +9,53 @@ import geotrellis.raster.io.geotiff.SinglebandGeoTiff
 import org.apache.spark.sql._
 import org.apache.spark.sql.functions._
 
-implicit val spark = SparkSession.builder().master("local[*]").appName("RasterFrames").getOrCreate()
+implicit val spark = SparkSession.builder().
+  master("local[*]").appName("RasterFrames").getOrCreate()
 spark.sparkContext.setLogLevel("ERROR")
 rfInit(spark.sqlContext)
 import spark.implicits._
 val scene = SinglebandGeoTiff("src/test/resources/L8-B8-Robinson-IL.tiff")
 val rf = scene.projectedRaster.toRF(128, 128).cache()
 ```
+
+While the goal of RasterFrames is to make it as easy as possible to do your geospatial analysis with a single 
+construct, it is helpful to be able to transform it into other representations for various use cases.
+
+## Converting to Array
+
+The cell values within a `Tile` are encoded internally as an array. There may be use cases 
+where the additional context provided by the `Tile` construct is no longer needed and one would
+prefer to work with the underlying array data.
+
+The @scaladoc[`tileToArray`][tileToArray] column function requires a type parameter to indicate the array element
+type you would like used. The following types may be used: `Int`, `Double`, `Byte`, `Short`, `Float`
+
+```tut
+val withArrays = rf.withColumn("tileData", tileToArray[Short]($"tile")).drop("tile")
+withArrays.show(5, 40)
+```
+
+You can convert the data back to an array, but you have to specify the target tile dimensions. 
+
+```tut
+val tileBack = withArrays.withColumn("tileAgain", arrayToTile($"tileData", 128, 128))
+tileBack.drop("tileData").show(5, 40)
+``` 
+
+Note that the created tile will not have a `NoData` value associated with it. Here's how you can do that:
+
+```tut
+val tileBackAgain = withArrays.withColumn("tileAgain", withNoData(arrayToTile($"tileData", 128, 128), 3))
+tileBackAgain.drop("tileData").show(5, 50)
+```
+
+## Writing to Parquet
+
+It is often useful to write Spark results in a form that is easily reloaded for subsequent analysis. 
+The [Parquet](https://parquet.apache.org/)columnar storage format, native to Spark, is ideal for this. RasterFrames
+work just like any other DataFrame in this scenario as long as @scaladoc[`rfInit`][rfInit] is called to register
+the imagery types.
+
 
 Let's assume we have a RasterFrame we've done some fancy processing on: 
 
@@ -52,7 +82,7 @@ Let's confirm partitioning happened as expected:
 
 ```tut
 import java.io.File
-new File(filePath).list
+new File(filePath).list.filter(f => !f.contains("_"))
 ```
 
 Now we can load the data back in and check it out:
@@ -125,3 +155,5 @@ spark.stop()
 [rfInit]: astraea.spark.rasterframes.package#rfInit%28SQLContext%29:Unit
 [rdd]: org.apache.spark.sql.Dataset#frdd:org.apache.spark.rdd.RDD[T]
 [toTileLayerRDD]: astraea.spark.rasterframes.RasterFrameMethods#toTileLayerRDD%28tileCol:RasterFrameMethods.this.TileColumn%29:Either[geotrellis.spark.TileLayerRDD[geotrellis.spark.SpatialKey],geotrellis.spark.TileLayerRDD[geotrellis.spark.SpaceTimeKey]]
+[tileToArray]: astraea.spark.rasterframes.functions.ColumnFunctions#tileToArray
+

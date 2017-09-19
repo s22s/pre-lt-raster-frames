@@ -16,10 +16,10 @@
 
 package astraea.spark.rasterframes.functions
 
-import geotrellis.raster.{CellType, Tile}
+import astraea.spark.rasterframes.HasCellType
+import geotrellis.raster.Tile
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.LocalTileBinaryOp
-import geotrellis.raster.mapalgebra.{local ⇒ alg}
 import geotrellis.raster.summary.Statistics
 import org.apache.spark.annotation.Experimental
 import org.apache.spark.sql._
@@ -29,6 +29,7 @@ import org.apache.spark.sql.gt.Implicits._
 import org.apache.spark.sql.gt._
 import org.apache.spark.sql.types._
 
+import scala.reflect.runtime.universe._
 
 /**
  * UDFs for working with tiles in Spark DataFrames.
@@ -65,23 +66,28 @@ trait ColumnFunctions {
     udf[(Int, Int), Tile](UDFs.tileDimensions).apply(col)
   ).cast(StructType(Seq(StructField("cols", IntegerType), StructField("rows", IntegerType))))
 
-  /** Flattens tile into an integer array. */
+  /** Flattens tile into an array. A numeric type parameter is required*/
   @Experimental
-  def tileToArray(col: Column): TypedColumn[Any, Array[Int]] = withAlias("tileToArray", col)(
-    udf[Array[Int], Tile](UDFs.tileToArray).apply(col)
-  ).as[Array[Int]]
+  def tileToArray[T: HasCellType: TypeTag](col: Column): Column = withAlias("tileToArray", col)(
+    udf[Array[T], Tile](UDFs.tileToArray).apply(col)
+  )
 
-  /** Flattens tile into a double array. */
   @Experimental
-  def tileToArrayDouble(col: Column): TypedColumn[Any, Array[Double]] = withAlias("tileToArrayDouble", col)(
-    udf[Array[Double], Tile](UDFs.tileToArrayDouble).apply(col)
-  ).as[Array[Double]]
+  /** Convert array in `arrayCol` into a tile of dimenions `cols` and `rows`*/
+  def arrayToTile(arrayCol: Column, cols: Int, rows: Int) = withAlias("arrayToTile", arrayCol)(
+    udf[Tile, AnyRef](UDFs.arrayToTile(cols, rows)).apply(arrayCol)
+  )
 
   /** Get the tile's cell type*/
   @Experimental
   def cellType(col: Column): TypedColumn[Any, String] = withAlias("cellType", col)(
     udf[String, Tile](UDFs.cellType).apply(col)
   ).as[String]
+
+  /** Assign a `NoData` value to the tiles. */
+  def withNoData(col: Column, nodata: Double) = withAlias("withNoData", col)(
+    udf[Tile, Tile](UDFs.withNoData(nodata)).apply(col)
+  ).as[Tile]
 
   /**  Compute the full column aggregate floating point histogram. */
   @Experimental
@@ -191,12 +197,30 @@ trait ColumnFunctions {
   /** Cellwise addition between two tiles. */
   @Experimental
   def localAdd(left: Column, right: Column): TypedColumn[Any, Tile] =
-  localAlgebra(alg.Add, left, right)
+  withAlias("localAdd", left, right)(
+    udf(UDFs.localAdd).apply(left, right)
+  ).as[Tile]
 
   /** Cellwise subtraction between two tiles. */
   @Experimental
   def localSubtract(left: Column, right: Column): TypedColumn[Any, Tile] =
-  localAlgebra(alg.Subtract, left, right)
+  withAlias("localSubtract", left, right)(
+    udf(UDFs.localSubtract).apply(left, right)
+  ).as[Tile]
+
+  /** Cellwise multiplication between two tiles. */
+  @Experimental
+  def localMultiply(left: Column, right: Column): TypedColumn[Any, Tile] =
+  withAlias("localMultiply", left, right)(
+    udf(UDFs.localMultiply).apply(left, right)
+  ).as[Tile]
+
+  /** Cellwise division between two tiles. */
+  @Experimental
+  def localDivide(left: Column, right: Column): TypedColumn[Any, Tile] =
+  withAlias("localDivide", left, right)(
+    udf(UDFs.localDivide).apply(left, right)
+  ).as[Tile]
 
   /** Perform an arbitrary GeoTrellis `LocalTileBinaryOp` between two tile columns. */
   @Experimental

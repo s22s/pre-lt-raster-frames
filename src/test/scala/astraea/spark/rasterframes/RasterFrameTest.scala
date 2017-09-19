@@ -21,7 +21,7 @@ import org.apache.spark.sql.gt.NamedColumn
  * @author sfitch 
  * @since 7/10/17
  */
-class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
+class RasterFrameTest extends TestEnvironment with TestData {
   import TestData.randomTile
   import spark.implicits._
 
@@ -77,9 +77,28 @@ class RasterFrameTest extends TestEnvironment with TestData with LazyLogging {
 
       val tileLayerRDD = TileFeatureLayerRDD(tileRDD, metadata)
 
-      val rf = WithTFContextRDDMethods(tileLayerRDD).toRF
+      val rf = tileLayerRDD.toRF
 
-      assert(rf === rf)
+      assert(rf.columns.toSet === Set(SPATIAL_KEY_COLUMN, TILE_COLUMN, TILE_FEATURE_DATA_COLUMN))
+    }
+
+    it("should implicitly convert spatiotemporal layer of TileFeature") {
+      val tile = TileFeature(randomTile(20, 20, "uint8"), (1, "b", 3.0))
+
+      val tileLayout = TileLayout(1, 1, 20, 20)
+
+      val layoutScheme = FloatingLayoutScheme(tileLayout.tileCols, tileLayout.tileRows)
+      val inputRdd = sc.parallelize(Seq((TemporalProjectedExtent(LatLng.worldExtent, LatLng, ZonedDateTime.now()), tile)))
+
+      val (_, metadata) = inputRdd.collectMetadata[SpaceTimeKey](LatLng, layoutScheme)
+
+      val tileRDD = inputRdd.map {case (k, v) ⇒ (SpaceTimeKey(metadata.mapTransform(k.extent.center), k.time), v)}
+
+      val tileLayerRDD = TileFeatureLayerRDD(tileRDD, metadata)
+
+      val rf = tileLayerRDD.toRF
+
+      assert(rf.columns.toSet === Set(SPATIAL_KEY_COLUMN, TEMPORAL_KEY_COLUMN, TILE_COLUMN, TILE_FEATURE_DATA_COLUMN))
     }
 
     it("should convert a GeoTiff to RasterFrame") {

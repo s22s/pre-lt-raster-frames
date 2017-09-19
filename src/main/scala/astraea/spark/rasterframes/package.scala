@@ -66,7 +66,7 @@ package object rasterframes extends Implicits with ColumnFunctions {
   private[rasterframes] val CONTEXT_METADATA_KEY = "_context"
 
   /** Key under which RasterFrame role a column plays. */
-  private[rasterframes] val SPATIAL_ROLE_KEY ="_stRole"
+  private[rasterframes] val SPATIAL_ROLE_KEY = "_stRole"
 
   /**
    * A RasterFrame is just a DataFrame with certain invariants, enforced via the methods that create and transform them:
@@ -91,8 +91,16 @@ package object rasterframes extends Implicits with ColumnFunctions {
     type get[M] = GetComponent[M, Bounds[K]]
   }
 
+  trait HasCellType[T]
+  object HasCellType {
+    implicit val intHasCellType = new HasCellType[Int] {}
+    implicit val doubleHasCellType = new HasCellType[Double] {}
+    implicit val byteHasCellType = new HasCellType[Byte] {}
+    implicit val shortHasCellType = new HasCellType[Short] {}
+    implicit val floatHasCellType = new HasCellType[Float] {}
+  }
 
-  // ----------- Extension Method Injections ------------
+  // ----------- Extension Method Injections: Beware the Ugly ------------
 
   implicit class WithProjectedRasterMethods(val self: ProjectedRaster[Tile])
       extends ProjectedRasterMethods
@@ -109,15 +117,21 @@ package object rasterframes extends Implicits with ColumnFunctions {
   implicit class WithSpatioTemporalContextRDDMethods(
     val self: RDD[(SpaceTimeKey, Tile)] with Metadata[TileLayerMetadata[SpaceTimeKey]]
   )(implicit spark: SparkSession)
-    extends SpatioTemporalContextRDDMethods
+      extends SpatioTemporalContextRDDMethods
 
-  implicit class WithTFContextRDDMethods[K: SpatialComponent: JsonFormat: ClassTag: TypeTag, D: TypeTag](
+  implicit class WithTFContextRDDMethods[K: SpatialComponent: JsonFormat: ClassTag: TypeTag,
+                                         D: TypeTag](
     val self: RDD[(K, TileFeature[Tile, D])] with Metadata[TileLayerMetadata[K]]
   )(implicit spark: SparkSession)
       extends TFContextRDDMethods[K, D]
 
+  implicit class WithTFSTContextRDDMethods[D: TypeTag](
+    val self: RDD[(SpaceTimeKey, TileFeature[Tile, D])] with Metadata[TileLayerMetadata[SpaceTimeKey]    ]
+  )(implicit spark: SparkSession)
+      extends TFSTContextRDDMethods[D]
+
   private[astraea] implicit class WithMetadataMethods[R: JsonFormat](val self: R)
-    extends MetadataMethods[R]
+      extends MetadataMethods[R]
 
   type TileFeatureLayerRDD[K, D] =
     RDD[(K, TileFeature[Tile, D])] with Metadata[TileLayerMetadata[K]]

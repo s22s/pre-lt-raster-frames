@@ -16,12 +16,13 @@
 
 package astraea.spark.rasterframes.functions
 
+import astraea.spark.rasterframes.HasCellType
 import geotrellis.raster._
 import geotrellis.raster.histogram.Histogram
-import geotrellis.raster.mapalgebra.local.{Add, Max, Min, Subtract}
+import geotrellis.raster.mapalgebra.local._
 import geotrellis.raster.summary.Statistics
 
-import scala.util.Random
+import scala.reflect.runtime.universe._
 
 /**
  * Library of simple GT-related UDFs.
@@ -36,11 +37,40 @@ object UDFs {
   private def safeEval[P1, P2, R](f: (P1, P2) ⇒ R): (P1, P2) ⇒ R =
     (p1, p2) ⇒ if (p1 == null || p2 == null) null.asInstanceOf[R] else f(p1, p2)
 
-  /** Flattens tile into an integer array. */
-  private[rasterframes] val tileToArray = safeEval[Tile, Array[Int]](_.toArray())
+  /** Flattens tile into an array. */
+  private[rasterframes] def tileToArray[T: HasCellType: TypeTag] =
+    safeEval[Tile, Array[T]] { tile ⇒
+      val asArray = tile match {
+        case t: IntArrayTile ⇒ t.array
+        case t: DoubleArrayTile ⇒ t.array
+        case t: ByteArrayTile ⇒ t.array
+        case t: ShortArrayTile ⇒ t.array
+        case t: FloatArrayTile ⇒ t.array
+        case o: Tile ⇒ typeOf[T] match {
+          case t if t =:= typeOf[Int] ⇒ o.toArray()
+          case t if t =:= typeOf[Double] ⇒ o.toArrayDouble()
+          case t if t =:= typeOf[Byte] ⇒ o.toArray().map(_.toByte)
+          case t if t =:= typeOf[Short] ⇒ o.toArray().map(_.toShort)
+          case t if t =:= typeOf[Float] ⇒ o.toArrayDouble().map(_.toFloat)
+        }
+      }
+      asArray.asInstanceOf[Array[T]]
+    }
 
-  /** Flattens tile into a double array. */
-  private[rasterframes] val tileToArrayDouble = safeEval[Tile, Array[Double]](_.toArrayDouble())
+  /** Converts an array into a tile. */
+  private[rasterframes] def arrayToTile(cols: Int, rows: Int) = {
+    safeEval[AnyRef, Tile]{
+      case s: Seq[_] ⇒ s.headOption match {
+        case Some(_: Int) ⇒ RawArrayTile(s.asInstanceOf[Seq[Int]].toArray[Int], cols, rows)
+        case Some(_: Double) ⇒ RawArrayTile(s.asInstanceOf[Seq[Double]].toArray[Double], cols, rows)
+        case Some(_: Byte) ⇒ RawArrayTile(s.asInstanceOf[Seq[Byte]].toArray[Byte], cols, rows)
+        case Some(_: Short) ⇒ RawArrayTile(s.asInstanceOf[Seq[Short]].toArray[Short], cols, rows)
+        case Some(_: Float) ⇒ RawArrayTile(s.asInstanceOf[Seq[Float]].toArray[Float], cols, rows)
+        case Some(o @ _) ⇒ throw new MatchError(o)
+        case None ⇒ null
+      }
+    }
+  }
 
   /** Computes the column aggregate histogram */
   private[rasterframes] val aggHistogram = new AggregateHistogramFunction()
@@ -53,6 +83,9 @@ object UDFs {
 
   /** Get the tile's cell type*/
   private[rasterframes] val cellType = safeEval[Tile, String](_.cellType.name)
+
+  /** Set the tile's no-data value. */
+  private[rasterframes] def withNoData(nodata: Double) = safeEval[Tile, Tile](_.withNoData(Some(nodata)))
 
   /** Single floating point tile histogram. */
   private[rasterframes] val tileHistogramDouble = safeEval[Tile, Histogram[Double]](_.histogramDouble())
@@ -88,10 +121,16 @@ object UDFs {
   private[rasterframes] val localAggCount = new LocalCountAggregateFunction()
 
   /** Cell-wise addition between tiles. */
-  private[rasterframes] val localAdd: (Tile, Tile) ⇒ Tile = safeEval((left, right) ⇒ Add(left, right))
+  private[rasterframes] val localAdd: (Tile, Tile) ⇒ Tile = safeEval(Add.apply)
 
   /** Cell-wise subtraction between tiles. */
-  private[rasterframes] val localSubtract: (Tile, Tile) ⇒ Tile = safeEval((left, right) ⇒ Subtract(left, right))
+  private[rasterframes] val localSubtract: (Tile, Tile) ⇒ Tile = safeEval(Subtract.apply)
+
+  /** Cell-wise multiplication between tiles. */
+  private[rasterframes] val localMultiply: (Tile, Tile) ⇒ Tile = safeEval(Multiply.apply)
+
+  /** Cell-wise division between tiles. */
+  private[rasterframes] val localDivide: (Tile, Tile) ⇒ Tile = safeEval(Divide.apply)
 
   /** Render tile as ASCII string. */
   private[rasterframes] val renderAscii: (Tile) ⇒ String = safeEval(_.asciiDraw)

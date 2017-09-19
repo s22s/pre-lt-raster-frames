@@ -29,4 +29,5 @@ package object functions {
       else if (o2 == null) o1
       else op(o1, o2)
     }
+
 }
