@@ -42,7 +42,7 @@ gtag('config', 'UA-106630615-1');
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.4.6*
+0.4.6
 </div>
 </div>
 <div class="nav-toc">
@@ -83,7 +83,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.4.6*
+0.4.6
 </div>
 </div>
 <div class="nav-toc">
@@ -121,37 +121,54 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <p>While the goal of RasterFrames is to make it as easy as possible to do your geospatial analysis with a single construct, it is helpful to be able to transform it into other representations for various use cases.</p>
 <h2><a href="#converting-to-array" name="converting-to-array" class="anchor"><span class="anchor-link"></span></a>Converting to Array</h2>
 <p>The cell values within a <code>Tile</code> are encoded internally as an array. There may be use cases where the additional context provided by the <code>Tile</code> construct is no longer needed and one would prefer to work with the underlying array data.</p>
-<p>The <a href="http://rasterframes.io/latest/api/astraea/spark/rasterframes/functions/ColumnFunctions.html#tileToArray(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,Array[Int]]"><code>tileToArray</code></a> column function requires a type parameter to indicate the array element type you would like used. The following types may be used: <code>Int</code>, <code>Double</code>, <code>Byte</code>, <code>Short</code>, <code>Float</code></p>
+<p>The <a href="http://rasterframes.io/latest/api/astraea/spark/rasterframes/functions/ColumnFunctions.html#tileToArray"><code>tileToArray</code></a> column function requires a type parameter to indicate the array element type you would like used. The following types may be used: <code>Int</code>, <code>Double</code>, <code>Byte</code>, <code>Short</code>, <code>Float</code></p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; val withArrays = rf.withColumn(&quot;tileData&quot;, tileToArray[Short]($&quot;tile&quot;)).drop(&quot;tile&quot;)
 withArrays: org.apache.spark.sql.DataFrame = [spatial_key: struct&lt;col: int, row: int&gt;, tileData: array&lt;smallint&gt;]
 
-scala&gt; withArrays.show(5, 50)
-+-----------+--------------------------------------------------+
-|spatial_key|                                          tileData|
-+-----------+--------------------------------------------------+
-|      [6,3]|[11576, 12488, 9070, 9614, 10561, 11209, 0, 0, ...|
-|      [4,0]|[10155, 9839, 9296, 9495, 9921, 9962, 9768, 991...|
-|      [0,0]|[14294, 14277, 13939, 13604, 14182, 14851, 1558...|
-|      [4,2]|[10844, 10802, 11270, 10893, 8469, 7780, 7647, ...|
-|      [0,2]|[8896, 9062, 9143, 9285, 9345, 9341, 9393, 9389...|
-+-----------+--------------------------------------------------+
+scala&gt; withArrays.show(5, 40)
++-----------+----------------------------------------+
+|spatial_key|                                tileData|
++-----------+----------------------------------------+
+|      [6,3]|[11576, 12488, 9070, 9614, 10561, 112...|
+|      [4,0]|[10155, 9839, 9296, 9495, 9921, 9962,...|
+|      [0,0]|[14294, 14277, 13939, 13604, 14182, 1...|
+|      [4,2]|[10844, 10802, 11270, 10893, 8469, 77...|
+|      [0,2]|[8896, 9062, 9143, 9285, 9345, 9341, ...|
++-----------+----------------------------------------+
 only showing top 5 rows
 
 </code></pre>
-<p>You can convert the data back to an array, but you have to specify the target tile dimensions. Note that the create tile will not have a <code>NoData</code> value associated with it (a transformation you&rsquo;ll have to apply via GeoTrellis functions).</p>
+<p>You can convert the data back to an array, but you have to specify the target tile dimensions. </p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; val tileBack = withArrays.withColumn(&quot;tileAgain&quot;, arrayToTile($&quot;tileData&quot;, 128, 128))
 tileBack: org.apache.spark.sql.DataFrame = [spatial_key: struct&lt;col: int, row: int&gt;, tileData: array&lt;smallint&gt; ... 1 more field]
 
-scala&gt; tileBack.show(5, 50)
-+-----------+--------------------------------------------------+--------------------------------------+
-|spatial_key|                                          tileData|                             tileAgain|
-+-----------+--------------------------------------------------+--------------------------------------+
-|      [6,3]|[11576, 12488, 9070, 9614, 10561, 11209, 0, 0, ...|ShortRawArrayTile([S@6d004096,128,128)|
-|      [4,0]|[10155, 9839, 9296, 9495, 9921, 9962, 9768, 991...|ShortRawArrayTile([S@3e242808,128,128)|
-|      [0,0]|[14294, 14277, 13939, 13604, 14182, 14851, 1558...|ShortRawArrayTile([S@2588a33b,128,128)|
-|      [4,2]|[10844, 10802, 11270, 10893, 8469, 7780, 7647, ...| ShortRawArrayTile([S@b12bbc7,128,128)|
-|      [0,2]|[8896, 9062, 9143, 9285, 9345, 9341, 9393, 9389...|ShortRawArrayTile([S@64f95ec3,128,128)|
-+-----------+--------------------------------------------------+--------------------------------------+
+scala&gt; tileBack.drop(&quot;tileData&quot;).show(5, 40)
++-----------+--------------------------------------+
+|spatial_key|                             tileAgain|
++-----------+--------------------------------------+
+|      [6,3]|ShortRawArrayTile([S@200b0721,128,128)|
+|      [4,0]|ShortRawArrayTile([S@1a96eb19,128,128)|
+|      [0,0]|ShortRawArrayTile([S@5891fa19,128,128)|
+|      [4,2]|ShortRawArrayTile([S@1bd7fb2b,128,128)|
+|      [0,2]|ShortRawArrayTile([S@631dc57f,128,128)|
++-----------+--------------------------------------+
+only showing top 5 rows
+
+</code></pre>
+<p>Note that the created tile will not have a <code>NoData</code> value associated with it. Here&rsquo;s how you can do that:</p>
+<pre class="prettyprint"><code class="language-scala">scala&gt; val tileBackAgain = withArrays.withColumn(&quot;tileAgain&quot;, withNoData(arrayToTile($&quot;tileData&quot;, 128, 128), 3))
+tileBackAgain: org.apache.spark.sql.DataFrame = [spatial_key: struct&lt;col: int, row: int&gt;, tileData: array&lt;smallint&gt; ... 1 more field]
+
+scala&gt; tileBackAgain.drop(&quot;tileData&quot;).show(5, 50)
++-----------+--------------------------------------------------+
+|spatial_key|                                         tileAgain|
++-----------+--------------------------------------------------+
+|      [6,3]|ShortUserDefinedNoDataArrayTile([S@194267f8,128...|
+|      [4,0]|ShortUserDefinedNoDataArrayTile([S@2ae18fbc,128...|
+|      [0,0]|ShortUserDefinedNoDataArrayTile([S@34356536,128...|
+|      [4,2]|ShortUserDefinedNoDataArrayTile([S@75015416,128...|
+|      [0,2]|ShortUserDefinedNoDataArrayTile([S@43ab071c,128...|
++-----------+--------------------------------------------------+
 only showing top 5 rows
 
 </code></pre>
@@ -195,8 +212,8 @@ equalized.select(&quot;*&quot;, &quot;spatial_key.*&quot;).write.partitionBy(&qu
 <pre class="prettyprint"><code class="language-scala">scala&gt; import java.io.File
 import java.io.File
 
-scala&gt; new File(filePath).list
-res8: Array[String] = Array(._SUCCESS.crc, _SUCCESS, col=0, col=1, col=2, col=3, col=4, col=5, col=6)
+scala&gt; new File(filePath).list.filter(f =&gt; !f.contains(&quot;_&quot;))
+res9: Array[String] = Array(col=0, col=1, col=2, col=3, col=4, col=5, col=6)
 </code></pre>
 <p>Now we can load the data back in and check it out:</p>
 <pre class="prettyprint"><code class="language-scala">val rf2 = spark.read.parquet(filePath)
