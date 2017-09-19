@@ -50,11 +50,12 @@ private[rasterframes] object Registrator {
     sqlContext.udf.register("st_localAggCount", UDFs.localAggCount)
     sqlContext.udf.register("st_localAdd", UDFs.localAdd)
     sqlContext.udf.register("st_localSubtract", UDFs.localSubtract)
+    sqlContext.udf.register("st_localMultiply", UDFs.localMultiply)
+    sqlContext.udf.register("st_localDivide", UDFs.localDivide)
     sqlContext.udf.register("st_cellTypes", types.cellTypes)
     sqlContext.udf.register("st_renderAscii", UDFs.renderAscii)
   }
   // Expression-oriented functions have a different registration scheme
   // Currently have to register with the `builtin` registry due to Spark data hiding.
   FunctionRegistry.builtin.registerFunction("st_explodeTiles", ExplodeTileExpression.apply(1.0, _))
-
 }

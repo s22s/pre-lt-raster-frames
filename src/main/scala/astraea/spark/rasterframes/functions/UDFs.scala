@@ -19,7 +19,7 @@ package astraea.spark.rasterframes.functions
 import astraea.spark.rasterframes.HasCellType
 import geotrellis.raster._
 import geotrellis.raster.histogram.Histogram
-import geotrellis.raster.mapalgebra.local.{Add, Max, Min, Subtract}
+import geotrellis.raster.mapalgebra.local._
 import geotrellis.raster.summary.Statistics
 
 import scala.reflect.runtime.universe._
@@ -40,7 +40,7 @@ object UDFs {
   private def safeEval[P1, P2, R](f: (P1, P2) ⇒ R): (P1, P2) ⇒ R =
     (p1, p2) ⇒ if (p1 == null || p2 == null) null.asInstanceOf[R] else f(p1, p2)
 
-  /** Flattens tile into an integer array. */
+  /** Flattens tile into an array. */
   private[rasterframes] def tileToArray[T: HasCellType: TypeTag] =
     safeEval[Tile, Array[T]] { tile ⇒
       val asArray = tile match {
@@ -60,6 +60,7 @@ object UDFs {
       asArray.asInstanceOf[Array[T]]
     }
 
+  /** Converts an array into a tile. */
   private[rasterframes] def arrayToTile(cols: Int, rows: Int) = {
     safeEval[AnyRef, Tile]{
       case s: Seq[_] ⇒ s.headOption match {
@@ -120,10 +121,16 @@ object UDFs {
   private[rasterframes] val localAggCount = new LocalCountAggregateFunction()
 
   /** Cell-wise addition between tiles. */
-  private[rasterframes] val localAdd: (Tile, Tile) ⇒ Tile = safeEval((left, right) ⇒ Add(left, right))
+  private[rasterframes] val localAdd: (Tile, Tile) ⇒ Tile = safeEval(Add.apply)
 
   /** Cell-wise subtraction between tiles. */
-  private[rasterframes] val localSubtract: (Tile, Tile) ⇒ Tile = safeEval((left, right) ⇒ Subtract(left, right))
+  private[rasterframes] val localSubtract: (Tile, Tile) ⇒ Tile = safeEval(Subtract.apply)
+
+  /** Cell-wise multiplication between tiles. */
+  private[rasterframes] val localMultiply: (Tile, Tile) ⇒ Tile = safeEval(Multiply.apply)
+
+  /** Cell-wise division between tiles. */
+  private[rasterframes] val localDivide: (Tile, Tile) ⇒ Tile = safeEval(Divide.apply)
 
   /** Render tile as ASCII string. */
   private[rasterframes] val renderAscii: (Tile) ⇒ String = safeEval(_.asciiDraw)

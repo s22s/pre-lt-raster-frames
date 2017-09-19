@@ -193,12 +193,30 @@ trait ColumnFunctions {
   /** Cellwise addition between two tiles. */
   @Experimental
   def localAdd(left: Column, right: Column): TypedColumn[Any, Tile] =
-  localAlgebra(alg.Add, left, right)
+  withAlias("localAdd", left, right)(
+    udf(UDFs.localAdd).apply(left, right)
+  ).as[Tile]
 
   /** Cellwise subtraction between two tiles. */
   @Experimental
   def localSubtract(left: Column, right: Column): TypedColumn[Any, Tile] =
-  localAlgebra(alg.Subtract, left, right)
+  withAlias("localSubtract", left, right)(
+    udf(UDFs.localSubtract).apply(left, right)
+  ).as[Tile]
+
+  /** Cellwise multiplication between two tiles. */
+  @Experimental
+  def localMultiply(left: Column, right: Column): TypedColumn[Any, Tile] =
+  withAlias("localMultiply", left, right)(
+    udf(UDFs.localMultiply).apply(left, right)
+  ).as[Tile]
+
+  /** Cellwise division between two tiles. */
+  @Experimental
+  def localDivide(left: Column, right: Column): TypedColumn[Any, Tile] =
+  withAlias("localDivide", left, right)(
+    udf(UDFs.localDivide).apply(left, right)
+  ).as[Tile]
 
   /** Perform an arbitrary GeoTrellis `LocalTileBinaryOp` between two tile columns. */
   @Experimental

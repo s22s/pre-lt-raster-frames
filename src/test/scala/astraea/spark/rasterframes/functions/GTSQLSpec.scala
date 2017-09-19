@@ -20,7 +20,7 @@ package astraea.spark.rasterframes.functions
 
 import astraea.spark.rasterframes._
 import geotrellis.raster
-import geotrellis.raster.mapalgebra.local.{Add, Subtract}
+import geotrellis.raster.mapalgebra.local.{Add, Divide, Multiply, Subtract}
 import geotrellis.raster._
 import org.apache.spark.sql._
 import org.apache.spark.sql.functions._
@@ -99,6 +99,23 @@ class GTSQLSpec extends TestEnvironment with TestData  {
         assert(sqlSub.as[Tile].first() === expected)
       }
 
+      withClue("multiply") {
+        val sub = ds.select(localMultiply($"left", $"right"))
+        val expected = Multiply(byteArrayTile, byteConstantTile)
+        assert(sub.as[Tile].first() === expected)
+
+        val sqlSub = sql("select st_localMultiply(left, right) from tmp")
+        assert(sqlSub.as[Tile].first() === expected)
+      }
+
+      withClue("divide") {
+        val sub = ds.select(localDivide($"left", $"right"))
+        val expected = Divide(byteArrayTile, byteConstantTile)
+        assert(sub.as[Tile].first() === expected)
+
+        val sqlSub = sql("select st_localDivide(left, right) from tmp")
+        assert(sqlSub.as[Tile].first() === expected)
+      }
     }
 
     it("aggregate functions should handle null tiles") {
