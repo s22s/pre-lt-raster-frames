@@ -17,7 +17,7 @@
 package astraea.spark
 
 import geotrellis.raster.{ProjectedRaster, Tile, TileFeature}
-import geotrellis.spark.{Bounds, ContextRDD, Metadata, SpaceTimeKey, SpatialComponent, TemporalComponent, TileLayerMetadata}
+import geotrellis.spark.{Bounds, ContextRDD, Metadata, SpaceTimeKey, SpatialComponent, TileLayerMetadata}
 import geotrellis.util.GetComponent
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql._

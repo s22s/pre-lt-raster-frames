@@ -53,7 +53,7 @@ class RasterFrameTest extends TestEnvironment with TestData {
 
       val tileLayerRDD = TestData.randomSpatioTemporalTileLayerRDD(20, 20, 2, 2)
 
-      val rf = WithSpatioTemporalContextRDDMethods(tileLayerRDD).toRF
+      val rf = tileLayerRDD.toRF
 
       //rf.printSchema()
       //rf.show()
@@ -224,6 +224,17 @@ class RasterFrameTest extends TestEnvironment with TestData {
         // spatial_key is lost
         equalized.asRF.toRaster($"equalized", 128, 128)
       }
+    }
+
+    it("should rasterize a spatiotemporal key") {
+      val rf = TestData.randomSpatioTemporalTileLayerRDD(20, 20, 2, 2).toRF
+
+      val md = rf.schema.fields(0).metadata
+
+      println(rf.extract[TileLayerMetadata[SpaceTimeKey]](CONTEXT_METADATA_KEY)(md))
+
+      rf.toRaster($"tile", 128, 128)
+
     }
   }
 }

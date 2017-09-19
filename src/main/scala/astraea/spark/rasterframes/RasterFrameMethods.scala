@@ -25,11 +25,12 @@ import geotrellis.util.{LazyLogging, MethodExtensions}
 import geotrellis.vector.ProjectedExtent
 import org.apache.spark.annotation.Experimental
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{Column, TypedColumn}
+import org.apache.spark.sql.{Column, DataFrame, Dataset, TypedColumn}
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.gt.types.TileUDT
 import org.apache.spark.sql.types.{Metadata, StructField}
 import spray.json._
+import scala.reflect.runtime.universe._
 
 /**
  * Extension methods on [[RasterFrame]] type.
@@ -53,7 +54,9 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with LazyLogging 
     val spark = self.sparkSession
     import spark.implicits._
     val key = findSpatialKeyField
-    key.map(_.name).map(self(_).as[SpatialKey])
+    key
+      .map(_.name)
+      .map(self(_).as[SpatialKey])
       .getOrElse(throw new IllegalArgumentException("All RasterFrames must have a column tagged with context"))
   }
 
@@ -66,9 +69,10 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with LazyLogging 
   }
 
   private[rasterframes] def findRoleField(role: String): Option[StructField] =
-    self.schema.fields.find(f ⇒
-      f.metadata.contains(SPATIAL_ROLE_KEY) &&
-        f.metadata.getString(SPATIAL_ROLE_KEY) == role
+    self.schema.fields.find(
+      f ⇒
+        f.metadata.contains(SPATIAL_ROLE_KEY) &&
+          f.metadata.getString(SPATIAL_ROLE_KEY) == role
     )
 
   /** The spatial key is the first one found with context metadata attached to it. */
@@ -88,10 +92,10 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with LazyLogging 
       .map(_.metadata)
       .getOrElse(throw new IllegalArgumentException(s"RasterFrame operation requsted on non-RasterFrame: $self"))
 
-      if(findTemporalKeyField.nonEmpty)
-        Right(extract[TileLayerMetadata[SpaceTimeKey]](CONTEXT_METADATA_KEY)(spatialMD))
-      else
-        Left(extract[TileLayerMetadata[SpatialKey]](CONTEXT_METADATA_KEY)(spatialMD))
+    if (findTemporalKeyField.nonEmpty)
+      Right(extract[TileLayerMetadata[SpaceTimeKey]](CONTEXT_METADATA_KEY)(spatialMD))
+    else
+      Left(extract[TileLayerMetadata[SpatialKey]](CONTEXT_METADATA_KEY)(spatialMD))
   }
 
   /**
@@ -106,9 +110,11 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with LazyLogging 
     val leftMetadata = left.tileLayerMetadata.widen
     val rightMetadata = right.tileLayerMetadata.widen
 
-    if(leftMetadata.layout != rightMetadata.layout) {
-      logger.warn("Multi-layer query assumes same tile layout. Differences detected:\n\t" +
-        leftMetadata + "\nvs.\n\t" + rightMetadata)
+    if (leftMetadata.layout != rightMetadata.layout) {
+      logger.warn(
+        "Multi-layer query assumes same tile layout. Differences detected:\n\t" +
+          leftMetadata + "\nvs.\n\t" + rightMetadata
+      )
     }
 
     val leftKey = left.spatialKeyColumn
@@ -126,18 +132,28 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with LazyLogging 
     val extent = metadata.fold(_.extent, _.extent)
     val layout = metadata.fold(_.layout, _.layout)
     val trans = layout.mapTransform
-    val keyBounds = self
-      .select(spatialKeyColumn)
-      .map(k ⇒ KeyBounds(k, k))
-      .reduce(_ combine _)
 
-    val gridExtent = trans(keyBounds.toGridBounds())
+    def updateBounds[T: SpatialComponent: Boundable: JsonFormat: TypeTag](tlm: TileLayerMetadata[T],
+                                                                          keys: Dataset[T]): DataFrame = {
+      val keyBounds = keys
+        .map(k ⇒ KeyBounds(k, k))
+        .reduce(_ combine _)
 
-    val newExtent = gridExtent.intersection(extent).getOrElse(gridExtent)
+      val gridExtent = trans(keyBounds.toGridBounds())
+      val newExtent = gridExtent.intersection(extent).getOrElse(gridExtent)
+      self.setSpatialColumnRole(spatialKeyColumn, tlm.copy(extent = newExtent, bounds = keyBounds))
+    }
 
     val df = metadata.fold(
-      tlm ⇒ self.setSpatialColumnRole(spatialKeyColumn, tlm.copy(extent = newExtent, bounds = keyBounds)),
-      tlm ⇒ self.setSpatialColumnRole(spatialKeyColumn, tlm.copy(extent = newExtent, bounds = keyBounds))
+      tlm ⇒ updateBounds(tlm, self.select(spatialKeyColumn)),
+      tlm ⇒ {
+        updateBounds(
+          tlm,
+          self
+            .select(spatialKeyColumn, temporalKeyColumn.get)
+            .map { case (s, t) ⇒ SpaceTimeKey(s, t) }
+        )
+      }
     )
 
     df.certify
@@ -151,17 +167,16 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with LazyLogging 
     tileLayerMetadata.fold(
       tlm ⇒ Left(ContextRDD(self.select(spatialKeyColumn, tileCol).rdd, tlm)),
       tlm ⇒ {
-        val rdd = self.select(spatialKeyColumn, temporalKeyColumn.get, tileCol)
+        val rdd = self
+          .select(spatialKeyColumn, temporalKeyColumn.get, tileCol)
           .rdd
           .map { case (sk, tk, v) ⇒ (SpaceTimeKey(sk, tk), v) }
         Right(ContextRDD(rdd, tlm))
       }
     )
 
-  //  ContextRDD(self.select(spatialKeyColumn, tileCol).rdd, tileLayerMetadata)
-
   /** Extract metadata value. */
-  private def extract[M: JsonFormat](metadataKey: String)(md: Metadata) =
+  private[rasterframes] def extract[M: JsonFormat](metadataKey: String)(md: Metadata) =
     md.getMetadata(metadataKey).json.parseJson.convertTo[M]
 
   /** Convert the tiles in the RasterFrame into a single raster. */
@@ -181,11 +196,8 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with LazyLogging 
 
     val cellType = rdd.first()._2.cellType
 
-    val newLayerMetadata = md.copy(
-      layout = newLayout,
-      bounds = Bounds(SpatialKey(0, 0), SpatialKey(0, 0)),
-      cellType = cellType
-    )
+    val newLayerMetadata =
+      md.copy(layout = newLayout, bounds = Bounds(SpatialKey(0, 0), SpatialKey(0, 0)), cellType = cellType)
 
     val newLayer = rdd
       .map {
@@ -200,6 +212,5 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with LazyLogging 
 
     ProjectedRaster(croppedTile, md.extent, md.crs)
   }
-
 
 }
