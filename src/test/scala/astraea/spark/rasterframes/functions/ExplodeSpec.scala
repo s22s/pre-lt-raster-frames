@@ -66,6 +66,10 @@ class ExplodeSpec extends TestEnvironment with TestData {
       assert(exploded.count() < 9)
     }
 
+    it("should reassemble exploded tile") {
+
+    }
+
     it("should convert tile into array") {
       val query = sql(
         """select st_tileToArrayInt(
@@ -97,4 +101,5 @@ class ExplodeSpec extends TestEnvironment with TestData {
       assert(result2.cellType.asInstanceOf[UserDefinedNoData[_]].noDataValue === 0)
     }
   }
+
 }

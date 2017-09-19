@@ -50,4 +50,7 @@ trait TestEnvironment extends FunSpec with GeoTrellisTestEnvironment
     val rows = df.sparkSession.read.parquet(dest.toString).count()
     logger.debug(s" it has $rows row(s)")
   }
+
+  // This is to avoid an IntelliJ error
+  protected def withFixture(test: Any) = ???
 }
