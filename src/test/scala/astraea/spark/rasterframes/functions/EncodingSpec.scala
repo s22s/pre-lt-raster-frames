@@ -21,9 +21,10 @@ package astraea.spark.rasterframes.functions
 
 import astraea.spark.rasterframes._
 import geotrellis.raster.{CellType, MultibandTile, Tile, TileFeature}
-import geotrellis.spark.{SpaceTimeKey, TemporalProjectedExtent, TileLayerMetadata}
+import geotrellis.spark.{SpaceTimeKey, SpatialKey, TemporalProjectedExtent, TileLayerMetadata}
 import geotrellis.vector.{Extent, ProjectedExtent}
-
+import org.apache.spark.sql.{Dataset, Encoders, Row}
+import org.apache.spark.sql.functions._
 /**
  * Test rig for encoding GT types into Catalyst types.
  *
@@ -84,19 +85,32 @@ class EncodingSpec extends TestEnvironment with TestData  {
     it("should code RDD[CellType]") {
       val ct = CellType.fromName("uint8")
       val ds = localSeqToDatasetHolder(Seq(ct)).toDS()
-      ds.printSchema()
-      ds.show(false)
+      //ds.printSchema()
+      //ds.show(false)
       write(ds)
       assert(ds.toDF.as[CellType].first() === ct)
     }
 
     it("should code RDD[TileLayerMetadata[SpaceTimeKey]]") {
       val ds = Seq(tlm).toDS()
-      ds.printSchema()
-      println("end of schema")
-      ds.show(false)
+      //ds.printSchema()
+      //ds.show(false)
       write(ds)
       assert(ds.toDF.as[TileLayerMetadata[SpaceTimeKey]].first() === tlm)
     }
+
+    it("should code RDD[SpatialKey]") {
+
+      val ds = Seq((sk, stk)).toDS
+
+      assert(ds.toDF.as[(SpatialKey, SpaceTimeKey)].first === (sk, stk))
+
+      //    This stinks: vvvvvvvv   Encoders don't seem to work with UDFs.
+      val key2col = udf((row: Row) ⇒ row.getInt(0))
+
+      val colNum = ds.select(key2col(ds(ds.columns.head))).as[Int].first()
+      assert(colNum === 37)
+    }
   }
 }
+

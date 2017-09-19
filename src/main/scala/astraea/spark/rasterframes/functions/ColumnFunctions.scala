@@ -28,7 +28,7 @@ import org.apache.spark.sql.functions._
 import org.apache.spark.sql.gt.Implicits._
 import org.apache.spark.sql.gt._
 import org.apache.spark.sql.types._
-
+import scala.reflect.runtime.universe._
 
 /**
  * UDFs for working with tiles in Spark DataFrames.
@@ -67,15 +67,21 @@ trait ColumnFunctions {
 
   /** Flattens tile into an integer array. */
   @Experimental
-  def tileToArray(col: Column): TypedColumn[Any, Array[Int]] = withAlias("tileToArray", col)(
-    udf[Array[Int], Tile](UDFs.tileToArray).apply(col)
-  ).as[Array[Int]]
+  def tileToArray[T: Numeric: TypeTag](col: Column): Column = withAlias("tileToArray", col)(
+    udf[Array[T], Tile](UDFs.tileToArray).apply(col)
+  )
 
-  /** Flattens tile into a double array. */
+//  /** Flattens tile into a double array. */
+//  @Experimental
+//  def tileToArrayDouble(col: Column): TypedColumn[Any, Array[Double]] = withAlias("tileToArrayDouble", col)(
+//    udf[Array[Double], Tile](UDFs.tileToArrayDouble).apply(col)
+//  ).as[Array[Double]]
+
   @Experimental
-  def tileToArrayDouble(col: Column): TypedColumn[Any, Array[Double]] = withAlias("tileToArrayDouble", col)(
-    udf[Array[Double], Tile](UDFs.tileToArrayDouble).apply(col)
-  ).as[Array[Double]]
+  /** Convert array in `arrayCol` into a tile of dimenions `cols` and `rows`*/
+  def arrayToTile(arrayCol: Column, cols: Int, rows: Int) = withAlias("arrayToTile", arrayCol)(
+    udf[Tile, AnyRef](UDFs.arrayToTile(cols, rows)).apply(arrayCol)
+  )
 
   /** Get the tile's cell type*/
   @Experimental

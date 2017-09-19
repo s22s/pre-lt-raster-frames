@@ -35,7 +35,7 @@ class GeometryEncodingSpec extends TestEnvironment with TestData {
 
       val left: RDD[Polygon] = sc.parallelize(Array(polyA, polyB, polyC))
       val polygon = left.toDS
-      polygon.show(false)
+      //polygon.show(false)
       assert(polygon.count() === 3)
 
       val line1 = Line(Point(0,0), Point(5,5))
@@ -43,12 +43,10 @@ class GeometryEncodingSpec extends TestEnvironment with TestData {
 
       val rightline: RDD[Feature[MultiLine, Category]] = sc.parallelize(Seq(Feature(MultiLine(line1, line2), Category(1, "some"))))
       val right = rightline.toDS
-      right.show(false)
+      //right.show(false)
       assert(right.count() === 1)
     }
   }
-
-
   describe("multipolygon encoding support") {
     it("should not throw a runtime error") {
       import sqlContext.implicits._
@@ -60,10 +58,10 @@ class GeometryEncodingSpec extends TestEnvironment with TestData {
 
       val left: RDD[MultiPolygon] = sc.parallelize(Array(MultiPolygon(Array(polyA, polyB)),MultiPolygon(Array(polyC, polyD, polyE))))
       val multipolygon = left.toDS
-      multipolygon.show(false)
+      //multipolygon.show(false)
       assert(multipolygon.count() === 2)
 
-      assert(multipolygon.head.polygons.size === 2)
+      assert(multipolygon.head.polygons.length === 2)
     }
   }
 

@@ -62,7 +62,6 @@ class GTSQLSpec extends TestEnvironment with TestData  {
       assert(query.count === 3)
     }
 
-
     it("should extract cell types") {
       val expected = allTileTypes.map(_.cellType).toSet
       val df = allTileTypes.toDF("tile")

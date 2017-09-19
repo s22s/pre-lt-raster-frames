@@ -21,6 +21,7 @@ package astraea.spark.rasterframes.functions
 
 import astraea.spark.rasterframes._
 import geotrellis.raster._
+import org.apache.spark.sql.ColumnName
 
 /**
  * Test rig for Tile operations associated with converting to/from
@@ -58,7 +59,6 @@ class ExplodeSpec extends TestEnvironment with TestData {
       write(exploded)
     }
 
-
     it("should explode tiles with random sampling") {
       val df = Seq[(Tile, Tile)]((byteArrayTile, byteArrayTile)).toDF("tile1", "tile2")
       val exploded = df.select(explodeTileSample(0.5, $"tile1", $"tile2"))
@@ -68,7 +68,7 @@ class ExplodeSpec extends TestEnvironment with TestData {
 
     it("should convert tile into array") {
       val query = sql(
-        """select st_tileToArray(
+        """select st_tileToArrayInt(
           |  st_makeConstantTile(1, 10, 10, 'int8raw')
           |) as intArray
           |""".stripMargin)
@@ -76,9 +76,23 @@ class ExplodeSpec extends TestEnvironment with TestData {
 
       val tile = FloatConstantTile(1.1f, 10, 10, FloatCellType)
       val df = Seq[Tile](tile).toDF("tile")
-      val arrayDF = df.select(tileToArrayDouble($"tile"))
-      assert(arrayDF.first().sum === 110.0 +- 0.00001)
+      val arrayDF = df.select(tileToArray[Float]($"tile").as[Array[Float]])
+      assert(arrayDF.first().sum === 110.0f +- 0.0001f)
     }
 
+    it("should convert an array into a tile") {
+      val tile = FloatConstantTile(1.1f, 10, 10, FloatCellType)
+      val df = Seq[Tile](tile).toDF("tile")
+      val arrayDF = df.withColumn("tileArray", tileToArray[Float]($"tile"))
+
+      val back = arrayDF.withColumn("backToTile", arrayToTile($"tileArray", 10, 10))
+
+      back.printSchema()
+      back.show()
+
+      fail("add assertion")
+
+
+    }
   }
 }

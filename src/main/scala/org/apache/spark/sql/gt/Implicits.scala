@@ -19,10 +19,10 @@ package org.apache.spark.sql.gt
 import geotrellis.proj4.CRS
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.summary.Statistics
-import geotrellis.raster.{CellType, MultibandTile, Tile, TileFeature}
+import geotrellis.raster.{CellType, MultibandTile, Tile}
 import geotrellis.spark.tiling.LayoutDefinition
-import geotrellis.spark.{KeyBounds, SpaceTimeKey, TemporalProjectedExtent, TileLayerMetadata}
-import geotrellis.vector.{Extent, ProjectedExtent}
+import geotrellis.spark.{KeyBounds, SpaceTimeKey, TileLayerMetadata}
+import geotrellis.vector.Extent
 import org.apache.spark.sql.Encoder
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 import org.apache.spark.sql.gt.types._

@@ -49,8 +49,8 @@ class TileStatsSpec extends TestEnvironment with TestData  {
 
       val df = Seq[(Tile, Tile)]((byteArrayTile, byteArrayTile)).toDF("tile1", "tile2")
       val dims = df.select(tileDimensions($"tile1") as "dims").select("dims.*")
-      dims.printSchema()
-      dims.show()
+      //dims.printSchema()
+      //dims.show()
       assert(dims.as[(Int, Int)].first() === (3, 3))
       assert(dims.schema.head.name === "cols")
     }
@@ -109,7 +109,7 @@ class TileStatsSpec extends TestEnvironment with TestData  {
       val hist = agg.collect()
       assert(hist.length === 1)
       val stats = agg.map(_.statistics().get).as("stats")
-      stats.select("stats.*").show(false)
+      //stats.select("stats.*").show(false)
       assert(stats.first().stddev === 1.0 +- 0.3) // <-- playing with statistical fire :)
 
       val hist2 = sql("select st_histogram(tiles) as hist from tmp").as[Histogram[Double]]
@@ -147,7 +147,7 @@ class TileStatsSpec extends TestEnvironment with TestData  {
       val agg = ds.select(localAggStats($"tiles") as "stats")
       val stats = agg.select("stats.*")
 
-      printStatsRows(stats)
+      //printStatsRows(stats)
 
       val min = agg.select($"stats.min".as[Tile]).map(_.toArrayDouble().min).first
       assert(min < -2.0)
@@ -174,7 +174,7 @@ class TileStatsSpec extends TestEnvironment with TestData  {
       val ds = Seq.fill(20)(tile).toDF("tiles")
 
       val stats = ds.select(localAggStats($"tiles") as "stats").select("stats.*")
-      printStatsRows(stats)
+      //printStatsRows(stats)
 
       // counted everything properly
       val countTile = ds.select(localAggCount($"tiles")).first()
@@ -197,7 +197,7 @@ class TileStatsSpec extends TestEnvironment with TestData  {
       val tiles = Seq.fill[Tile](count)(randomTile(tsize, tsize, "uint8ud255"))
         .map(injectND(nds)).toDF("tiles")
 
-      tiles.select(tileStats($"tiles")).show(100)
+      //tiles.select(tileStats($"tiles")).show(100)
       val counts = tiles.select(nodataCells($"tiles")).collect()
       forEvery(counts)(c ⇒ assert(c === nds))
       val counts2 = tiles.select(dataCells($"tiles")).collect()

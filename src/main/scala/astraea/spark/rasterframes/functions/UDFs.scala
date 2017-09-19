@@ -20,7 +20,9 @@ import geotrellis.raster._
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.{Add, Max, Min, Subtract}
 import geotrellis.raster.summary.Statistics
-
+import scala.reflect.runtime.universe._
+import scala.collection.mutable
+import scala.reflect.ClassTag
 import scala.util.Random
 
 /**
@@ -37,10 +39,37 @@ object UDFs {
     (p1, p2) ⇒ if (p1 == null || p2 == null) null.asInstanceOf[R] else f(p1, p2)
 
   /** Flattens tile into an integer array. */
-  private[rasterframes] val tileToArray = safeEval[Tile, Array[Int]](_.toArray())
+  private[rasterframes] def tileToArray[T: Numeric: TypeTag] = safeEval[Tile, Array[T]] { tile ⇒
+    val asArray = tile match {
+      case t: IntArrayTile ⇒ t.array
+      case t: DoubleArrayTile ⇒ t.array
+      case t: ByteArrayTile ⇒ t.array
+      case t: ShortArrayTile ⇒ t.array
+      case t: FloatArrayTile ⇒ t.array
+      case o: Tile ⇒ typeOf[T] match {
+        case t if t =:= typeOf[Int] ⇒ o.toArray()
+        case t if t =:= typeOf[Double] ⇒ o.toArrayDouble()
+        case t if t =:= typeOf[Byte] ⇒ o.toArray().map(_.toByte)
+        case t if t =:= typeOf[Short] ⇒ o.toArray().map(_.toShort)
+        case t if t =:= typeOf[Float] ⇒ o.toArrayDouble().map(_.toFloat)
+      }
+    }
+    asArray.asInstanceOf[Array[T]]
+  }
 
-  /** Flattens tile into a double array. */
-  private[rasterframes] val tileToArrayDouble = safeEval[Tile, Array[Double]](_.toArrayDouble())
+  private[rasterframes] def arrayToTile(cols: Int, rows: Int) = {
+    safeEval[AnyRef, Tile]{
+      case s: Seq[_] ⇒ s.headOption match {
+        case Some(_: Int) ⇒ RawArrayTile(s.asInstanceOf[Seq[Int]].toArray[Int], cols, rows)
+        case Some(_: Double) ⇒ RawArrayTile(s.asInstanceOf[Seq[Double]].toArray[Double], cols, rows)
+        case Some(_: Byte) ⇒ RawArrayTile(s.asInstanceOf[Seq[Byte]].toArray[Byte], cols, rows)
+        case Some(_: Short) ⇒ RawArrayTile(s.asInstanceOf[Seq[Short]].toArray[Short], cols, rows)
+        case Some(_: Float) ⇒ RawArrayTile(s.asInstanceOf[Seq[Float]].toArray[Float], cols, rows)
+        case Some(o @ _) ⇒ throw new MatchError(o)
+        case None ⇒ null
+      }
+    }
+  }
 
   /** Computes the column aggregate histogram */
   private[rasterframes] val aggHistogram = new AggregateHistogramFunction()
