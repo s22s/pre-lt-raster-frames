@@ -22,6 +22,8 @@ import org.apache.spark.sql.gt.NamedColumn
  * @since 7/10/17
  */
 class RasterFrameTest extends TestEnvironment with TestData {
+  // This is to avoid an IntelliJ error
+  protected def withFixture(test: Any) = ???
   import TestData.randomTile
   import spark.implicits._
 
@@ -234,7 +236,6 @@ class RasterFrameTest extends TestEnvironment with TestData {
       println(rf.extract[TileLayerMetadata[SpaceTimeKey]](CONTEXT_METADATA_KEY)(md))
 
       rf.toRaster($"tile", 128, 128)
-
     }
   }
 }

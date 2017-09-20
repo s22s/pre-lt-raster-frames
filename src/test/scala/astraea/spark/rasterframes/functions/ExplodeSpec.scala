@@ -67,7 +67,9 @@ class ExplodeSpec extends TestEnvironment with TestData {
     }
 
     it("should reassemble exploded tile") {
-
+      val df = Seq[Tile](byteArrayTile).toDF("tile").select(explodeTiles($"tile"))
+      df.printSchema()
+      df.agg(assembleTile($"column", $"row", $"tile"))
     }
 
     it("should convert tile into array") {
@@ -101,5 +103,4 @@ class ExplodeSpec extends TestEnvironment with TestData {
       assert(result2.cellType.asInstanceOf[UserDefinedNoData[_]].noDataValue === 0)
     }
   }
-
 }

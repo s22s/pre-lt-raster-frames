@@ -60,6 +60,10 @@ trait ColumnFunctions {
     new Column(exploder).as(metaNames ++ colNames)
   }
 
+  /** Create a Tile from  */
+  @Experimental
+  def assembleTile(columnIndex: Column,  rowIndex: Column, tile: Column) = ???
+
   /** Query the number of (cols, rows) in a Tile. */
   @Experimental
   def tileDimensions(col: Column): Column = withAlias("tileDimensions", col)(
