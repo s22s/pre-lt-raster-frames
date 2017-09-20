@@ -18,17 +18,19 @@
  */
 
 package examples
+
 import astraea.spark.rasterframes._
 import geotrellis.raster._
-import geotrellis.raster.render._
 import geotrellis.raster.io.geotiff.{GeoTiff, SinglebandGeoTiff}
+import geotrellis.raster.render._
 import org.apache.commons.io.IOUtils
 import org.apache.spark.sql._
 import org.apache.spark.sql.functions._
 
-object NDVI extends App {
+object Clustering extends App {
 
-  def readTiff(name: String) = SinglebandGeoTiff(IOUtils.toByteArray(getClass.getResourceAsStream(s"/$name")))
+  def readTiff(name: String): SinglebandGeoTiff =
+    SinglebandGeoTiff(IOUtils.toByteArray(getClass.getResourceAsStream(s"/$name")))
 
   implicit val spark = SparkSession.builder().master("local[*]").appName(getClass.getName).getOrCreate()
 
@@ -36,32 +38,16 @@ object NDVI extends App {
   import spark.implicits._
 
 
-  def redBand = readTiff("L8-B4-Elkton-VA.tiff").projectedRaster.toRF("red_band")
-  def nirBand = readTiff("L8-B5-Elkton-VA.tiff").projectedRaster.toRF("nir_band")
+  val filenamePattern = "L8-B%d-Elkton-VA.tiff"
+  val bandNumbers = 1 to 4
 
-  val ndvi = udf((red: Tile, nir: Tile) ⇒ {
-    val redd = red.convert(DoubleConstantNoDataCellType)
-    val nird = nir.convert(DoubleConstantNoDataCellType)
-    (nird - redd)/(nird + redd)
-  })
+  val joinedRF = bandNumbers
+    .map { b ⇒ (b, filenamePattern.format(b)) }
+    .map { case (b,f) ⇒ (b, readTiff(f)) }
+    .map { case (b, t) ⇒ t.projectedRaster.toRF(s"B$b") }
+    .reduce(_ spatialJoin _)
 
-  val rf = redBand.spatialJoin(nirBand).withColumn("ndvi", ndvi($"red_band", $"nir_band")).asRF
-
-  rf.printSchema()
-
-  val pr = rf.toRaster($"ndvi", 233, 214)
-  GeoTiff(pr).write("ndvi.tiff")
-
-  val brownToGreen = ColorRamp(
-    RGBA(166,97,26,255),
-    RGBA(223,194,125,255),
-    RGBA(245,245,245,255),
-    RGBA(128,205,193,255),
-    RGBA(1,133,113,255)
-  ).stops(128)
-
-  val colors = ColorMap.fromQuantileBreaks(pr.tile.histogramDouble(), brownToGreen)
-  pr.tile.color(colors).renderPng().write("target/scala-2.11/tut/rf-ndvi.png")
+  joinedRF.printSchema()
 
   spark.stop()
 }
