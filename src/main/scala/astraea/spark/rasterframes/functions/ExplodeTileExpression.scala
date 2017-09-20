@@ -16,6 +16,7 @@
 
 package astraea.spark.rasterframes.functions
 
+import astraea.spark.rasterframes
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.expressions.codegen.CodegenFallback
 import org.apache.spark.sql.catalyst.expressions.{Expression, Generator}
@@ -28,10 +29,9 @@ import org.apache.spark.sql.types.{DoubleType, IntegerType, StructField, StructT
  * @author sfitch
  * @since 4/12/17
  */
-private[rasterframes] case class ExplodeTileExpression(sampleFraction: Double = 1.0, override val children: Seq[Expression])
-    extends Expression
-    with Generator
-    with CodegenFallback {
+private[rasterframes] case class ExplodeTileExpression(sampleFraction: Double = 1.0,
+                                                       override val children: Seq[Expression])
+    extends Expression with Generator with CodegenFallback {
 
   override def elementSchema: StructType = {
     val names =
@@ -39,9 +39,10 @@ private[rasterframes] case class ExplodeTileExpression(sampleFraction: Double = 
       else children.indices.map(i ⇒ s"cell_$i")
 
     StructType(
-      Seq(StructField("column", IntegerType, false), StructField("row", IntegerType, false)) ++ names
-        .map(n ⇒ StructField(n, DoubleType, false))
-    )
+      Seq(
+        StructField(rasterframes.COLUMN_INDEX_COLUMN, IntegerType, false),
+        StructField(rasterframes.ROW_INDEX_COLUMN, IntegerType, false)) ++ names
+        .map(n ⇒ StructField(n, DoubleType, false)))
   }
 
   private def keep(): Boolean = {
@@ -51,9 +52,13 @@ private[rasterframes] case class ExplodeTileExpression(sampleFraction: Double = 
 
   override def eval(input: InternalRow): TraversableOnce[InternalRow] = {
     // Do we need to worry about deserializing all the tiles in a row like this?
-    val tiles = for (child ← children) yield TileUDT.deserialize(child.eval(input).asInstanceOf[InternalRow])
+    val tiles = for (child ← children)
+      yield TileUDT.deserialize(child.eval(input).asInstanceOf[InternalRow])
 
-    require(tiles.map(_.dimensions).distinct.size == 1, "Multi-column explode requires equally sized tiles")
+    require(
+      tiles.map(_.dimensions).distinct.size == 1,
+      "Multi-column explode requires equally sized tiles"
+    )
 
     val (cols, rows) = tiles.head.dimensions
 

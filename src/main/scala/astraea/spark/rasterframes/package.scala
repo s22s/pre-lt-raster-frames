@@ -62,6 +62,12 @@ package object rasterframes extends Implicits with ColumnFunctions {
   /** Default RasterFrame [[TileFeature.data]] column name. */
   val TILE_FEATURE_DATA_COLUMN = "tile_data"
 
+  /** Default teil column index column for the cells of exploded tiles. */
+  val COLUMN_INDEX_COLUMN = "column_index"
+
+  /** Default teil column index column for the cells of exploded tiles. */
+  val ROW_INDEX_COLUMN = "row_index"
+
   /** Key under which ContextRDD metadata is stored. */
   private[rasterframes] val CONTEXT_METADATA_KEY = "_context"
 
