@@ -422,25 +422,25 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="astraea.spark.rasterframes.RasterFrameMethods#spatialJoin" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="spatialJoin(right:astraea.spark.rasterframes.RasterFrame):astraea.spark.rasterframes.RasterFrame"></a>
-      <a id="spatialJoin(RasterFrame):RasterFrame"></a>
+      <a id="spatialJoin(right:astraea.spark.rasterframes.RasterFrame,joinType:String):astraea.spark.rasterframes.RasterFrame"></a>
+      <a id="spatialJoin(RasterFrame,String):RasterFrame"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">spatialJoin</span><span class="params">(<span name="right">right: <a href="package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a></span>)</span><span class="result">: <a href="package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a></span>
+        <span class="name">spatialJoin</span><span class="params">(<span name="right">right: <a href="package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a></span>, <span name="joinType">joinType: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;inner&quot;</span></span>)</span><span class="result">: <a href="package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods@spatialJoin(right:astraea.spark.rasterframes.RasterFrame):astraea.spark.rasterframes.RasterFrame" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.RasterFrameMethods@spatialJoin(right:astraea.spark.rasterframes.RasterFrame,joinType:String):astraea.spark.rasterframes.RasterFrame" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Perform a spatial join between two raster frames.</p><div class="fullcomment"><div class="comment cmt"><p>Perform a spatial join between two raster frames.
-WARNING: This is a work in progress, and only works if both raster frames have the same
-tile layer metadata. A more flexible spatial join is in the works.
-</p></div><dl class="attributes block"> <dt>Annotations</dt><dd>
+      <p class="shortcomment cmt">Perform a spatial join between two raster frames.</p><div class="fullcomment"><div class="comment cmt"><p>Perform a spatial join between two raster frames. Currently ignores a temporal column if there is one.
+The left TileLayerMetadata is propagated to the result.</p><p>**WARNING: This is a work in progress, and only works if both raster frames have the same
+tile layer metadata. A more flexible spatial join is in the works.**
+</p></div><dl class="paramcmts block"><dt class="param">right</dt><dd class="cmt"><p>Right side of the join.</p></dd><dt class="param">joinType</dt><dd class="cmt"><p>One of: <code>inner</code>, <code>outer</code>, <code>left_outer</code>, <code>right_outer</code>, <code>leftsemi</code>.</p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
                 <span class="name">@Experimental</span><span class="args">()</span>
               
         </dd></dl></div>
