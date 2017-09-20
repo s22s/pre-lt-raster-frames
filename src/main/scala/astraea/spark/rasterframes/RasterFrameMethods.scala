@@ -99,12 +99,17 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with LazyLogging 
   }
 
   /**
-   * Perform a spatial join between two raster frames.
-   * WARNING: This is a work in progress, and only works if both raster frames have the same
-   * tile layer metadata. A more flexible spatial join is in the works.
+   * Perform a spatial join between two raster frames. Currently ignores a temporal column if there is one.
+   * The left TileLayerMetadata is propagated to the result.
+   *
+   * **WARNING: This is a work in progress, and only works if both raster frames have the same
+   * tile layer metadata. A more flexible spatial join is in the works.**
+   *
+   * @param right Right side of the join.
+   * @param joinType One of: `inner`, `outer`, `left_outer`, `right_outer`, `leftsemi`.
    */
   @Experimental
-  def spatialJoin(right: RasterFrame): RasterFrame = {
+  def spatialJoin(right: RasterFrame, joinType: String = "inner"): RasterFrame = {
     val left = self
 
     val leftMetadata = left.tileLayerMetadata.widen
@@ -120,7 +125,7 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with LazyLogging 
     val leftKey = left.spatialKeyColumn
     val rightKey = right.spatialKeyColumn
 
-    val joined = left.join(right, leftKey === rightKey, "outer").drop(rightKey)
+    val joined = left.join(right, leftKey === rightKey, joinType).drop(rightKey)
     joined.certify
   }
 
