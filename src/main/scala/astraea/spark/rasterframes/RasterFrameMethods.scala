@@ -53,7 +53,6 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with LazyLogging 
 
   /** Get the spatial column. */
   def spatialKeyColumn: TypedColumn[Any, SpatialKey] = {
-    val spark = self.sparkSession
     val key = findSpatialKeyField
     key
       .map(_.name)
@@ -63,7 +62,6 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with LazyLogging 
 
   /** Get the temporal column, if any. */
   def temporalKeyColumn: Option[TypedColumn[Any, TemporalKey]] = {
-    val spark = self.sparkSession
     val key = findTemporalKeyField
     key.map(_.name).map(self(_).as[TemporalKey])
   }

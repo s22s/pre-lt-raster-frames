@@ -14,6 +14,7 @@ In this example we will do some simple cell clustering based on multiband imager
 
 ```tut:silent
 import astraea.spark.rasterframes._
+import astraea.spark.rasterframes.ml.TileExploder
 import geotrellis.raster.io.geotiff.SinglebandGeoTiff
 import org.apache.spark.ml.Pipeline
 import org.apache.spark.ml.clustering.{KMeans, KMeansModel}
@@ -34,11 +35,12 @@ The first step is to load multiple bands of imagery and construct a single Raste
 ```tut:silent
 val filenamePattern = "L8-B%d-Elkton-VA.tiff"
 val bandNumbers = 1 to 4
+val bandColNames = bandNumbers.map(b ⇒ s"band_$b").toArray
 
 // For each identified band, load the associated image file, convert to a RasterFrame, and join
 val joinedRF = bandNumbers.
   map { b ⇒ (b, filenamePattern.format(b)) }.
-  map { case (b,f) ⇒ (b, readTiff(f)) }.
+  map { case (b, f) ⇒ (b, readTiff(f)) }.
   map { case (b, t) ⇒ t.projectedRaster.toRF(s"band_$b") }.
   reduce(_ spatialJoin _)
 ```
@@ -49,47 +51,41 @@ We should see a single spatial_key column along with 4 columns of tiles.
 joinedRF.printSchema()
 ```
 
-SparkML requires that each observation be in its own row, and those observations 
-be packed into a single `Vector`. The first step is to "explode" the tiles into a 
-single row per cell/pixel.
+SparkML requires that each observation be in its own row, and those
+observations be packed into a single `Vector`. The first step is to
+"explode" the tiles into a single row per cell/pixel.
 
 ```tut:silent
-val exploded = joinedRF.select(
-  joinedRF.spatialKeyColumn, explodeTiles(joinedRF.tileColumns: _*)
-)
-```
+val exploder = new TileExploder().
+    setInputCols(bandColNames)
 
-As we see here, `explodeTiles` function adds `column_index` and `row_index` columns
-reporting where the cell originated from in the source tile.
-```tut
-exploded.show(8)
 ```
 
 To "vectorize" the the band columns, as required by SparkML, we use the SparkML 
 `VectorAssembler`. We then configure our algorithm, create the transformation pipeline,
-and train our model.
+and train our model. (Note: the selected value of *K* below is arbitrary.) 
 
 ```tut:silent
 val assembler = new VectorAssembler().
-  setInputCols(joinedRF.tileColumns.map(_.toString).toArray).
+  setInputCols(bandColNames).
   setOutputCol("features")
 
 // Configure our clustering algorithm
 val kmeans = new KMeans().setK(3)
 
 // Combine the two stages
-val pipeline = new Pipeline().setStages(Array(assembler, kmeans))
+val pipeline = new Pipeline().setStages(Array(exploder, assembler, kmeans))
 
 // Compute clusters
-val model = pipeline.fit(exploded)
+val model = pipeline.fit(joinedRF)
 ```
 
 At this point the model can be saved off for later use, or used immediately on the same
-data we used to compute the model.
+data we used to compute the model. First we run the data through the model to assign 
+cluster IDs to each cell.
 
 ```tut
-// Run the data through the model to assign cluster IDs to each
-val clustered = model.transform(exploded)
+val clustered = model.transform(joinedRF)
 clustered.show(8)
 ```
 
@@ -109,7 +105,7 @@ println("Within set sum of squared errors: " + metric)
 
 @@@ note
 
-**Coming soon**: how to create a new raster using the cluster ids as cell values.
+*Coming soon*: how to create a new raster using the cluster ids as cell values.
 
 @@@
 
