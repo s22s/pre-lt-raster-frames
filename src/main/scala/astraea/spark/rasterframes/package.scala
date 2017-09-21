@@ -132,7 +132,7 @@ package object rasterframes extends Implicits with ColumnFunctions {
       extends TFContextRDDMethods[K, D]
 
   implicit class WithTFSTContextRDDMethods[D: TypeTag](
-    val self: RDD[(SpaceTimeKey, TileFeature[Tile, D])] with Metadata[TileLayerMetadata[SpaceTimeKey]    ]
+    val self: RDD[(SpaceTimeKey, TileFeature[Tile, D])] with Metadata[TileLayerMetadata[SpaceTimeKey]]
   )(implicit spark: SparkSession)
       extends TFSTContextRDDMethods[D]
 
@@ -153,4 +153,9 @@ package object rasterframes extends Implicits with ColumnFunctions {
     def widen[Out](implicit ev: Lub[A, B, Out]): Out =
       thing.fold(identity, identity).asInstanceOf[Out]
   }
+
+  private[rasterframes] implicit class WithCombine[T](option: Option[T]) {
+    def combine[A, R >: A](a: A)(f: (T, A) ⇒ R): R = option.map(f(_, a)).getOrElse(a)
+  }
+
 }

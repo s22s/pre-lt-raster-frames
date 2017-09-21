@@ -1,11 +1,11 @@
-# RasterFrames
+# RasterFrames™
 
-_RasterFrames_ brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer 
+_RasterFrames™_ brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer 
 operations of [GeoTrellis](https://geotrellis.io/). 
 
 The source code can be found on GitHub at [s22s/raster-frames](https://github.com/s22s/raster-frames).
 
-The underlying purpose of RasterFrames is to allow data scientists and software developers to process
+The underlying purpose of RasterFrames™ is to allow data scientists and software developers to process
 and analyze geospatial-temporal raster data with the same flexibility and ease as any other Spark Catalyst data type. At its
 core is a user-defined type (UDF) called @scaladoc[`TileUDT`](org.apache.spark.sql.gt.types.TileUDT), 
 which encodes a GeoTrellis @scaladoc[`Tile`](geotrellis.raster.Tile) in a form the Spark Catalyst engine can process. 
@@ -18,7 +18,7 @@ operations within and between RasterFrames to occur, while still maintaining nec
 To learn more, please see the [Getting Started](getting-started.md) section of this manual.
 
 @@@ note
-RasterFrames is a new project under active development. Feedback and contributions are welcomed as we look to improve it.
+RasterFrames™ is a new project under active development. Feedback and contributions are welcomed as we look to improve it.
 @@@
 
 @@@ div { .md-left}

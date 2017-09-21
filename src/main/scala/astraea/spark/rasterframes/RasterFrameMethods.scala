@@ -30,6 +30,7 @@ import org.apache.spark.sql.functions._
 import org.apache.spark.sql.gt.types.TileUDT
 import org.apache.spark.sql.types.{Metadata, StructField}
 import spray.json._
+import org.apache.spark.sql.gt.NamedColumn
 import scala.reflect.runtime.universe._
 
 /**
@@ -98,6 +99,20 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with LazyLogging 
       Left(extract[TileLayerMetadata[SpatialKey]](CONTEXT_METADATA_KEY)(spatialMD))
   }
 
+  def addTemporalComponent(value: TemporalKey): RasterFrame = {
+    require(temporalKeyColumn.isEmpty, "RasterFrame already has a temporal component")
+    val tlm = tileLayerMetadata.left.get
+    val newTlm = tlm.map(k ⇒ SpaceTimeKey(k, value))
+
+    val litKey = udf(() ⇒ value)
+
+    val df = self.withColumn(TEMPORAL_KEY_COLUMN, litKey())
+
+    df.setSpatialColumnRole(df(SPATIAL_KEY_COLUMN), newTlm)
+      .setColumnRole(df(TEMPORAL_KEY_COLUMN), classOf[TemporalKey].getSimpleName)
+      .certify
+  }
+
   /**
    * Perform a spatial join between two raster frames. Currently ignores a temporal column if there is one.
    * The left TileLayerMetadata is propagated to the result.
@@ -122,11 +137,33 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with LazyLogging 
       )
     }
 
-    val leftKey = left.spatialKeyColumn
-    val rightKey = right.spatialKeyColumn
+    def updateNames(rf: RasterFrame,
+                    prefix: String,
+                    sk: TypedColumn[Any, SpatialKey],
+                    tk: Option[TypedColumn[Any, TemporalKey]]) = {
+      tk.combine(rf: DataFrame)((t, rf) ⇒ rf.withColumnRenamed(t.columnName, prefix + t.columnName))
+        .withColumnRenamed(sk.columnName, prefix + sk.columnName)
+        .certify
+    }
 
-    val joined = left.join(right, leftKey === rightKey, joinType).drop(rightKey)
-    joined.certify
+    val preppedLeft = updateNames(left, "left_", left.spatialKeyColumn, left.temporalKeyColumn)
+    val preppedRight = updateNames(right, "right_", right.spatialKeyColumn, right.temporalKeyColumn)
+
+    val leftSpatialKey = preppedLeft.spatialKeyColumn
+    val leftTemporalKey = preppedLeft.temporalKeyColumn
+    val rightSpatialKey = preppedRight.spatialKeyColumn
+    val rightTemporalKey = preppedRight.temporalKeyColumn
+
+    val spatialPred = leftSpatialKey === rightSpatialKey
+    val temporalPred = leftTemporalKey.flatMap(l ⇒ rightTemporalKey.map(r ⇒ l === r))
+
+    val joinPred = temporalPred.map(t ⇒ spatialPred && t).getOrElse(spatialPred)
+
+    val joined = preppedLeft.join(preppedRight, joinPred, joinType)
+
+    val result = joined
+
+    result.certify
   }
 
   /**
