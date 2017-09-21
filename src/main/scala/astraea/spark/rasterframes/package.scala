@@ -154,8 +154,10 @@ package object rasterframes extends Implicits with ColumnFunctions {
       thing.fold(identity, identity).asInstanceOf[Out]
   }
 
-  private[rasterframes] implicit class WithCombine[T](option: Option[T]) {
-    def combine[A, R >: A](a: A)(f: (T, A) ⇒ R): R = option.map(f(_, a)).getOrElse(a)
+  private[rasterframes] implicit class WithCombine[T](left: Option[T]) {
+    def combine[A, R >: A](a: A)(f: (T, A) ⇒ R): R = left.map(f(_, a)).getOrElse(a)
+    def tupleWith[R](right: Option[R]): Option[(T, R)] = left.flatMap(l ⇒ right.map((l, _)))
   }
+
 
 }

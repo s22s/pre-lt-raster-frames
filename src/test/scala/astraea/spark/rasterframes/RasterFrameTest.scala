@@ -104,10 +104,15 @@ class RasterFrameTest extends TestEnvironment with TestData {
     it("should support spatial joins") {
       val rf = sampleGeoTiff.projectedRaster.toRF(256, 256)
       val wt = rf.addTemporalComponent(TemporalKey(34))
-      wt.printSchema()
-      wt.show
 
-      wt.spatialJoin(wt).show()
+      assert(wt.columns.contains(TEMPORAL_KEY_COLUMN))
+
+      val joined = wt.spatialJoin(wt, "outer")
+      joined.printSchema
+
+      // Should be both left and right column names.
+      assert(joined.columns.count(_.contains(TEMPORAL_KEY_COLUMN)) === 2)
+      assert(joined.columns.count(_.contains(SPATIAL_KEY_COLUMN)) === 2)
     }
 
     it("should convert a GeoTiff to RasterFrame") {

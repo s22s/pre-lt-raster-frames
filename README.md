@@ -8,9 +8,8 @@ _RasterFrames™_ brings the power of Spark DataFrames to geospatial raster data
 
 ![](src/main/tut/RasterFramePipelineOverview.png)
 
-<div class="msg warn"> <p><strong> RasterFrames is a new project under active
-  development</strong>. Feedback and contributions are welcomed as we look
-  to improve it.</p></div>
+> **RasterFrames™ is a new project under active development**. Feedback and contributions are welcomed 
+as we continue to improve it.
 
 ## Getting Started
 

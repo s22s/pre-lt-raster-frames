@@ -25,12 +25,13 @@ import geotrellis.util.{LazyLogging, MethodExtensions}
 import geotrellis.vector.ProjectedExtent
 import org.apache.spark.annotation.Experimental
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{Column, DataFrame, Dataset, TypedColumn}
 import org.apache.spark.sql.functions._
+import org.apache.spark.sql.gt.NamedColumn
 import org.apache.spark.sql.gt.types.TileUDT
 import org.apache.spark.sql.types.{Metadata, StructField}
+import org.apache.spark.sql.{Column, DataFrame, Dataset, TypedColumn}
 import spray.json._
-import org.apache.spark.sql.gt.NamedColumn
+
 import scala.reflect.runtime.universe._
 
 /**
@@ -53,7 +54,6 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with LazyLogging 
   /** Get the spatial column. */
   def spatialKeyColumn: TypedColumn[Any, SpatialKey] = {
     val spark = self.sparkSession
-    import spark.implicits._
     val key = findSpatialKeyField
     key
       .map(_.name)
@@ -64,7 +64,6 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with LazyLogging 
   /** Get the temporal column, if any. */
   def temporalKeyColumn: Option[TypedColumn[Any, TemporalKey]] = {
     val spark = self.sparkSession
-    import spark.implicits._
     val key = findTemporalKeyField
     key.map(_.name).map(self(_).as[TemporalKey])
   }
@@ -88,8 +87,7 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with LazyLogging 
    * Reassemble the [[TileLayerMetadata]] record from DataFrame metadata.
    */
   def tileLayerMetadata: Either[TileLayerMetadata[SpatialKey], TileLayerMetadata[SpaceTimeKey]] = {
-    val spatialMD = self.schema
-      .find(_.name == SPATIAL_KEY_COLUMN)
+    val spatialMD = findSpatialKeyField
       .map(_.metadata)
       .getOrElse(throw new IllegalArgumentException(s"RasterFrame operation requsted on non-RasterFrame: $self"))
 
@@ -161,8 +159,18 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with LazyLogging 
 
     val joined = preppedLeft.join(preppedRight, joinPred, joinType)
 
-    val result = joined
+    val result = if (joinType == "inner") {
+      // Undo left renaming and drop right
+      val spatialFix = joined
+        .withColumnRenamed(leftSpatialKey.columnName, left.spatialKeyColumn.columnName)
+        .drop(rightSpatialKey.columnName)
 
+      left.temporalKeyColumn.tupleWith(leftTemporalKey).combine(spatialFix) {
+        case ((orig, updated), rf) ⇒ rf
+          .withColumnRenamed(orig.columnName, updated.columnName)
+          .drop(rightTemporalKey.get.columnName)
+      }
+    } else joined
     result.certify
   }
 
