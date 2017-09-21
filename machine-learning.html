@@ -12,7 +12,7 @@ gtag('js', new Date());
 gtag('config', 'UA-106630615-1');
 </script>
 
-<title>Machine Learning · RasterFrames</title>
+<title>Machine Learning · RasterFrames™</title>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="description" content='RasterFrames brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer operations of GeoTrellis'/>
@@ -39,10 +39,10 @@ gtag('config', 'UA-106630615-1');
 <nav class="off-canvas-nav">
 <div class="nav-home">
 <a href="index.html" >
-<span class="home-icon">⌂</span>RasterFrames
+<span class="home-icon">⌂</span>RasterFrames™
 </a>
 <div class="version-number">
-0.4.8
+0.4.9*
 </div>
 </div>
 <div class="nav-toc">
@@ -68,7 +68,7 @@ gtag('config', 'UA-106630615-1');
 H3.6C3.048,13,3,13.447,3,14c0,0.553,0.048,1,0.6,1H16.4c0.552,0,0.6-0.447,0.6-1C17,13.447,16.952,13,16.4,13z M3.6,7H16.4
 C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.048,7,3.6,7z"/></svg>
 </a>
-<div class="title"><a href="index.html">RasterFrames</a></div>
+<div class="title"><a href="index.html">RasterFrames™</a></div>
 
 <a href="http://www.astraea.earth" class="logo show-for-medium"><img style="height: 40px;" src="images/astraea.png"/></a>
 </div>
@@ -80,10 +80,10 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <nav class="site-nav">
 <div class="nav-home">
 <a href="index.html" >
-<span class="home-icon">⌂</span>RasterFrames
+<span class="home-icon">⌂</span>RasterFrames™
 </a>
 <div class="version-number">
-0.4.8
+0.4.9*
 </div>
 </div>
 <div class="nav-toc">
@@ -108,7 +108,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <div class="medium-12 show-for-medium column">
 <div class="nav-breadcrumbs">
 <ul>
-  <li><a href="index.html">RasterFrames</a></li>
+  <li><a href="index.html">RasterFrames™</a></li>
   <li>Machine Learning</li>
 </ul>
 </div>
@@ -119,63 +119,132 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <div class="small-12 large-9 column" id="docs">
 <h1><a href="#machine-learning" name="machine-learning" class="anchor"><span class="anchor-link"></span></a>Machine Learning</h1><div class="callout note "><div class="callout-title">Note</div>
 <p>This example only scratches the surface of the type of machine learning one can perform with RasterFrames. More examples are forthcoming. </p></div>
-<p>Most SparkML algorithms require each observation to be on an independent row. Here&rsquo;s an example of using RasterFrames <code>explodeTiles</code> UDFs to do that.</p>
-<pre class="prettyprint"><code class="language-scala">import org.apache.spark.ml._
-import org.apache.spark.ml.feature._
-val exploded = rf.select(rf.spatialKeyColumn, explodeTiles($&quot;tile&quot;)).withColumnRenamed(&quot;tile&quot;, &quot;pixel&quot;)
-exploded.printSchema
-val discretizer = new QuantileDiscretizer().
-  setInputCol(&quot;pixel&quot;).
-  setOutputCol(&quot;binned&quot;).
-  setHandleInvalid(&quot;skip&quot;).
-  setNumBuckets(5)
-val binned = discretizer.fit(exploded).transform(exploded)
+<h2><a href="#clustering" name="clustering" class="anchor"><span class="anchor-link"></span></a>Clustering</h2>
+<p>In this example we will do some simple cell clustering based on multiband imagery. First some setup:</p>
+<pre class="prettyprint"><code class="language-scala">import astraea.spark.rasterframes._
+import geotrellis.raster.io.geotiff.SinglebandGeoTiff
+import org.apache.spark.ml.Pipeline
+import org.apache.spark.ml.clustering.{KMeans, KMeansModel}
+import org.apache.spark.ml.feature.VectorAssembler
+import org.apache.spark.sql._
+
+// Utility for reading imagery from our test data set
+def readTiff(name: String): SinglebandGeoTiff = SinglebandGeoTiff(s&quot;src/test/resources/$name&quot;)
+
+implicit val spark = SparkSession.builder().master(&quot;local[*]&quot;).appName(getClass.getName).getOrCreate()
+spark.sparkContext.setLogLevel(&quot;ERROR&quot;)
+
+rfInit(spark.sqlContext)
 </code></pre>
-<pre class="prettyprint"><code class="language-scala">scala&gt; binned.show(false)
-+-----------+------+---+-------+------+
-|spatial_key|column|row|pixel  |binned|
-+-----------+------+---+-------+------+
-|[0,0]      |0     |0  |14294.0|4.0   |
-|[0,0]      |1     |0  |14277.0|4.0   |
-|[0,0]      |2     |0  |13939.0|4.0   |
-|[0,0]      |3     |0  |13604.0|4.0   |
-|[0,0]      |4     |0  |14182.0|4.0   |
-|[0,0]      |5     |0  |14851.0|4.0   |
-|[0,0]      |6     |0  |15584.0|4.0   |
-|[0,0]      |7     |0  |13905.0|4.0   |
-|[0,0]      |8     |0  |10834.0|3.0   |
-|[0,0]      |9     |0  |10284.0|2.0   |
-|[0,0]      |10    |0  |8973.0 |1.0   |
-|[0,0]      |11    |0  |8314.0 |0.0   |
-|[0,0]      |12    |0  |8051.0 |0.0   |
-|[0,0]      |13    |0  |8242.0 |0.0   |
-|[0,0]      |14    |0  |8448.0 |1.0   |
-|[0,0]      |15    |0  |8002.0 |0.0   |
-|[0,0]      |16    |0  |8302.0 |0.0   |
-|[0,0]      |17    |0  |8419.0 |1.0   |
-|[0,0]      |18    |0  |8044.0 |0.0   |
-|[0,0]      |19    |0  |8362.0 |0.0   |
-+-----------+------+---+-------+------+
-only showing top 20 rows
+<p>The first step is to load multiple bands of imagery and construct a single RasterFrame from them.</p>
+<pre class="prettyprint"><code class="language-scala">val filenamePattern = &quot;L8-B%d-Elkton-VA.tiff&quot;
+val bandNumbers = 1 to 4
 
-
-scala&gt; binned.groupBy(&quot;binned&quot;).count().show(false)
-+------+-----+
-|binned|count|
-+------+-----+
-|0.0   |77442|
-|1.0   |77246|
-|4.0   |77473|
-|3.0   |77019|
-|2.0   |77820|
-+------+-----+
+// For each identified band, load the associated image file, convert to a RasterFrame, and join
+val joinedRF = bandNumbers.
+  map { b ⇒ (b, filenamePattern.format(b)) }.
+  map { case (b,f) ⇒ (b, readTiff(f)) }.
+  map { case (b, t) ⇒ t.projectedRaster.toRF(s&quot;band_$b&quot;) }.
+  reduce(_ spatialJoin _)
+</code></pre>
+<p>We should see a single spatial_key column along with 4 columns of tiles.</p>
+<pre class="prettyprint"><code class="language-scala">scala&gt; joinedRF.printSchema()
+root
+ |-- spatial_key: struct (nullable = true)
+ |    |-- col: integer (nullable = true)
+ |    |-- row: integer (nullable = true)
+ |-- band_1: st_tile (nullable = true)
+ |-- band_2: st_tile (nullable = true)
+ |-- band_3: st_tile (nullable = true)
+ |-- band_4: st_tile (nullable = true)
 
 </code></pre>
+<p>SparkML requires that each observation be in its own row, and those observations be packed into a single <code>Vector</code>. The first step is to &ldquo;explode&rdquo; the tiles into a single row per cell/pixel.</p>
+<pre class="prettyprint"><code class="language-scala">val exploded = joinedRF.select(
+  joinedRF.spatialKeyColumn, explodeTiles(joinedRF.tileColumns: _*)
+)
+</code></pre>
+<p>As we see here, <code>explodeTiles</code> function adds <code>column_index</code> and <code>row_index</code> columns reporting where the cell originated from in the source tile.</p>
+<pre class="prettyprint"><code class="language-scala">scala&gt; exploded.show(8)
++-----------+------------+---------+-------+------+------+------+
+|spatial_key|column_index|row_index| band_1|band_2|band_3|band_4|
++-----------+------------+---------+-------+------+------+------+
+|      [0,0]|           0|        0| 9470.0|8491.0|7805.0|6697.0|
+|      [0,0]|           1|        0| 9566.0|8607.0|8046.0|6898.0|
+|      [0,0]|           2|        0| 9703.0|8808.0|8377.0|7222.0|
+|      [0,0]|           3|        0| 9856.0|8983.0|8565.0|7557.0|
+|      [0,0]|           4|        0|10105.0|9270.0|8851.0|7912.0|
+|      [0,0]|           5|        0|10273.0|9463.0|9196.0|8341.0|
+|      [0,0]|           6|        0| 9920.0|9077.0|8480.0|7534.0|
+|      [0,0]|           7|        0| 9559.0|8603.0|7847.0|6829.0|
++-----------+------------+---------+-------+------+------+------+
+only showing top 8 rows
+
+</code></pre>
+<p>To &ldquo;vectorize&rdquo; the the band columns, as required by SparkML, we use the SparkML <code>VectorAssembler</code>. We then configure our algorithm, create the transformation pipeline, and train our model.</p>
+<pre class="prettyprint"><code class="language-scala">val assembler = new VectorAssembler().
+  setInputCols(joinedRF.tileColumns.map(_.toString).toArray).
+  setOutputCol(&quot;features&quot;)
+
+// Configure our clustering algorithm
+val kmeans = new KMeans().setK(3)
+
+// Combine the two stages
+val pipeline = new Pipeline().setStages(Array(assembler, kmeans))
+
+// Compute clusters
+val model = pipeline.fit(exploded)
+</code></pre>
+<p>At this point the model can be saved off for later use, or used immediately on the same data we used to compute the model.</p>
+<pre class="prettyprint"><code class="language-scala">scala&gt; // Run the data through the model to assign cluster IDs to each
+     | val clustered = model.transform(exploded)
+clustered: org.apache.spark.sql.DataFrame = [spatial_key: struct&lt;col: int, row: int&gt;, column_index: int ... 7 more fields]
+
+scala&gt; clustered.show(8)
++-----------+------------+---------+-------+------+------+------+--------------------+----------+
+|spatial_key|column_index|row_index| band_1|band_2|band_3|band_4|            features|prediction|
++-----------+------------+---------+-------+------+------+------+--------------------+----------+
+|      [0,0]|           0|        0| 9470.0|8491.0|7805.0|6697.0|[9470.0,8491.0,78...|         0|
+|      [0,0]|           1|        0| 9566.0|8607.0|8046.0|6898.0|[9566.0,8607.0,80...|         0|
+|      [0,0]|           2|        0| 9703.0|8808.0|8377.0|7222.0|[9703.0,8808.0,83...|         0|
+|      [0,0]|           3|        0| 9856.0|8983.0|8565.0|7557.0|[9856.0,8983.0,85...|         2|
+|      [0,0]|           4|        0|10105.0|9270.0|8851.0|7912.0|[10105.0,9270.0,8...|         2|
+|      [0,0]|           5|        0|10273.0|9463.0|9196.0|8341.0|[10273.0,9463.0,9...|         2|
+|      [0,0]|           6|        0| 9920.0|9077.0|8480.0|7534.0|[9920.0,9077.0,84...|         2|
+|      [0,0]|           7|        0| 9559.0|8603.0|7847.0|6829.0|[9559.0,8603.0,78...|         0|
++-----------+------------+---------+-------+------+------+------+--------------------+----------+
+only showing top 8 rows
+
+</code></pre>
+<p>If we want to inspect the model statistics, the SparkML API requires us to go through this unfortunate contortion:</p>
+<pre class="prettyprint"><code class="language-scala">val clusterResults = model.stages.collect{ case km: KMeansModel ⇒ km}.head
+</code></pre>
+<p>Compute sum of squared distances of points to their nearest center:</p>
+<pre class="prettyprint"><code class="language-scala">scala&gt; val metric = clusterResults.computeCost(clustered)
+metric: Double = 2.5956496685251507E10
+
+scala&gt; println(&quot;Within set sum of squared errors: &quot; + metric)
+Within set sum of squared errors: 2.5956496685251507E10
+</code></pre><div class="callout note "><div class="callout-title">Note</div>
+<p><strong>Coming soon</strong>: how to create a new raster using the cluster ids as cell values.</p></div>
 <div class="nav-next">
 <p><strong>Next:</strong> <a href="geotrellis-ops.html">GeoTrellis Operations</a></p>
 </div>
 </div>
 <div class="large-3 show-for-large column" data-sticky-container>
+<nav class="sidebar sticky" data-sticky data-anchor="docs" data-sticky-on="large">
+<div class="page-nav">
+<div class="nav-title">On this page:</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="machine-learning.html#machine-learning" class="header">Machine Learning</a>
+  <ul>
+    <li><a href="machine-learning.html#clustering" class="header">Clustering</a></li>
+  </ul></li>
+</ul>
+</div>
+</div>
+</nav>
 </div>
 </div>
 
