@@ -184,7 +184,8 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with LazyLogging 
   private[rasterframes] def extract[M: JsonFormat](metadataKey: String)(md: Metadata) =
     md.getMetadata(metadataKey).json.parseJson.convertTo[M]
 
-  /** Convert the tiles in the RasterFrame into a single raster. */
+  /** Convert the tiles in the RasterFrame into a single raster. For RasterFrames keyed with temporal keys, this
+    * will merge based */
   def toRaster(tileCol: Column,
                rasterCols: Int,
                rasterRows: Int,
