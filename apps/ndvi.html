@@ -12,7 +12,7 @@ gtag('js', new Date());
 gtag('config', 'UA-106630615-1');
 </script>
 
-<title>Clustering · RasterFrames™</title>
+<title>Computing NDVI · RasterFrames™</title>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="description" content='RasterFrames brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer operations of GeoTrellis'/>
@@ -52,12 +52,12 @@ gtag('config', 'UA-106630615-1');
   <li><a href="../apps/index.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
-    <li><a href="../apps/ndvi.html" class="page">Computing NDVI</a></li>
+    <li><a href="../apps/ndvi.html" class="active page">Computing NDVI</a></li>
   </ul></li>
   <li><a href="../ml/index.html" class="page">Machine Learning</a>
   <ul>
     <li><a href="../ml/statistics.html" class="page">Raster Statistics</a></li>
-    <li><a href="../ml/clustering.html" class="active page">Clustering</a></li>
+    <li><a href="../ml/clustering.html" class="page">Clustering</a></li>
     <li><a href="../ml/classification.html" class="page">Classification</a></li>
   </ul></li>
   <li><a href="../exporting-rasterframes.html" class="page">Exporting RasterFrames</a></li>
@@ -101,12 +101,12 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   <li><a href="../apps/index.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
-    <li><a href="../apps/ndvi.html" class="page">Computing NDVI</a></li>
+    <li><a href="../apps/ndvi.html" class="active page">Computing NDVI</a></li>
   </ul></li>
   <li><a href="../ml/index.html" class="page">Machine Learning</a>
   <ul>
     <li><a href="../ml/statistics.html" class="page">Raster Statistics</a></li>
-    <li><a href="../ml/clustering.html" class="active page">Clustering</a></li>
+    <li><a href="../ml/clustering.html" class="page">Clustering</a></li>
     <li><a href="../ml/classification.html" class="page">Classification</a></li>
   </ul></li>
   <li><a href="../exporting-rasterframes.html" class="page">Exporting RasterFrames</a></li>
@@ -125,8 +125,8 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <div class="nav-breadcrumbs">
 <ul>
   <li><a href="../index.html">RasterFrames™</a></li>
-  <li><a href="../ml/index.html">Machine Learning</a></li>
-  <li>Clustering</li>
+  <li><a href="../apps/index.html">Applications</a></li>
+  <li>Computing NDVI</li>
 </ul>
 </div>
 </div>
@@ -134,99 +134,42 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 
 <div class="page-content row">
 <div class="small-12 large-9 column" id="docs">
-<h1><a href="#clustering" name="clustering" class="anchor"><span class="anchor-link"></span></a>Clustering</h1>
-<p>In this example we will do some simple cell clustering based on multiband imagery. </p>
-<p>First some setup:</p>
-<pre class="prettyprint"><code class="language-scala">import astraea.spark.rasterframes._
-import astraea.spark.rasterframes.ml.TileExploder
-import geotrellis.raster.io.geotiff.SinglebandGeoTiff
-import org.apache.spark.ml.Pipeline
-import org.apache.spark.ml.clustering.{KMeans, KMeansModel}
-import org.apache.spark.ml.feature.VectorAssembler
-import org.apache.spark.sql._
+<h1><a href="#computing-ndvi" name="computing-ndvi" class="anchor"><span class="anchor-link"></span></a>Computing NDVI</h1>
+<p>Here&rsquo;s an example of computing the Normalized Differential Vegetation Index (NDVI) is a standardized vegetation index which allows us to generate an image highlighting differences in relative biomass. </p>
+<blockquote>
+  <p>“An NDVI is often used worldwide to monitor drought, monitor and predict agricultural production, assist in predicting hazardous fire zones, and map desert encroachment. The NDVI is preferred for global vegetation monitoring because it helps to compensate for changing illumination conditions, surface slope, aspect, and other extraneous factors” (Lillesand. <em>Remote sensing and image interpretation</em>. 2004).</p>
+</blockquote>
+<pre class="prettyprint"><code class="language-scala">def redBand = SinglebandGeoTiff(&quot;src/test/resources/L8-B4-Elkton-VA.tiff&quot;).projectedRaster.toRF(&quot;red_band&quot;)
+def nirBand = SinglebandGeoTiff(&quot;src/test/resources/L8-B5-Elkton-VA.tiff&quot;).projectedRaster.toRF(&quot;nir_band&quot;)
 
-// Utility for reading imagery from our test data set
-def readTiff(name: String): SinglebandGeoTiff = SinglebandGeoTiff(s&quot;src/test/resources/$name&quot;)
+// Define UDF for computing NDVI from red and NIR bands
+val ndvi = udf((red: Tile, nir: Tile) ⇒ {
+  val redd = red.convert(DoubleConstantNoDataCellType)
+  val nird = nir.convert(DoubleConstantNoDataCellType)
+  (nird - redd)/(nird + redd)
+})
 
-implicit val spark = SparkSession.builder().master(&quot;local[*]&quot;).appName(getClass.getName).getOrCreate()
-spark.sparkContext.setLogLevel(&quot;ERROR&quot;)
+// We use `asRF` to indicate we know the structure still conforms to RasterFrame constraints
+val rf = redBand.spatialJoin(nirBand).withColumn(&quot;ndvi&quot;, ndvi($&quot;red_band&quot;, $&quot;nir_band&quot;)).asRF
 
-rfInit(spark.sqlContext)
+val pr = rf.toRaster($&quot;ndvi&quot;, 466, 428)
+
+val brownToGreen = ColorRamp(
+  RGBA(166,97,26,255),
+  RGBA(223,194,125,255),
+  RGBA(245,245,245,255),
+  RGBA(128,205,193,255),
+  RGBA(1,133,113,255)
+).stops(128)
+
+val colors = ColorMap.fromQuantileBreaks(pr.tile.histogramDouble(), brownToGreen)
+pr.tile.color(colors).renderPng().write(&quot;target/scala-2.11/tut/rf-ndvi.png&quot;)
+
+//For a georefrenced singleband greyscale image, could do: `GeoTiff(pr).write(&quot;ndvi.tiff&quot;)`
 </code></pre>
-<p>The first step is to load multiple bands of imagery and construct a single RasterFrame from them.</p>
-<pre class="prettyprint"><code class="language-scala">val filenamePattern = &quot;L8-B%d-Elkton-VA.tiff&quot;
-val bandNumbers = 1 to 4
-val bandColNames = bandNumbers.map(b ⇒ s&quot;band_$b&quot;).toArray
-
-// For each identified band, load the associated image file, convert to a RasterFrame, and join
-val joinedRF = bandNumbers.
-  map { b ⇒ (b, filenamePattern.format(b)) }.
-  map { case (b, f) ⇒ (b, readTiff(f)) }.
-  map { case (b, t) ⇒ t.projectedRaster.toRF(s&quot;band_$b&quot;) }.
-  reduce(_ spatialJoin _)
-</code></pre>
-<p>We should see a single spatial_key column along with 4 columns of tiles.</p>
-<pre class="prettyprint"><code class="language-scala">scala&gt; joinedRF.printSchema()
-root
- |-- spatial_key: struct (nullable = true)
- |    |-- col: integer (nullable = true)
- |    |-- row: integer (nullable = true)
- |-- band_1: st_tile (nullable = true)
- |-- band_2: st_tile (nullable = true)
- |-- band_3: st_tile (nullable = true)
- |-- band_4: st_tile (nullable = true)
-
-</code></pre>
-<p>SparkML requires that each observation be in its own row, and those observations be packed into a single <code>Vector</code>. The first step is to &ldquo;explode&rdquo; the tiles into a single row per cell/pixel.</p>
-<pre class="prettyprint"><code class="language-scala">val exploder = new TileExploder()
-</code></pre>
-<p>To &ldquo;vectorize&rdquo; the the band columns, as required by SparkML, we use the SparkML <code>VectorAssembler</code>. We then configure our algorithm, create the transformation pipeline, and train our model. (Note: the selected value of <em>K</em> below is arbitrary.) </p>
-<pre class="prettyprint"><code class="language-scala">val assembler = new VectorAssembler().
-  setInputCols(bandColNames).
-  setOutputCol(&quot;features&quot;)
-
-// Configure our clustering algorithm
-val kmeans = new KMeans().setK(3)
-
-// Combine the two stages
-val pipeline = new Pipeline().setStages(Array(exploder, assembler, kmeans))
-
-// Compute clusters
-val model = pipeline.fit(joinedRF)
-</code></pre>
-<p>At this point the model can be saved off for later use, or used immediately on the same data we used to compute the model. First we run the data through the model to assign cluster IDs to each cell.</p>
-<pre class="prettyprint"><code class="language-scala">scala&gt; val clustered = model.transform(joinedRF)
-clustered: org.apache.spark.sql.DataFrame = [spatial_key: struct&lt;col: int, row: int&gt;, column_index: int ... 7 more fields]
-
-scala&gt; clustered.show(8)
-+-----------+------------+---------+-------+------+------+------+--------------------+----------+
-|spatial_key|column_index|row_index| band_1|band_2|band_3|band_4|            features|prediction|
-+-----------+------------+---------+-------+------+------+------+--------------------+----------+
-|      [0,0]|           0|        0| 9470.0|8491.0|7805.0|6697.0|[9470.0,8491.0,78...|         0|
-|      [0,0]|           1|        0| 9566.0|8607.0|8046.0|6898.0|[9566.0,8607.0,80...|         0|
-|      [0,0]|           2|        0| 9703.0|8808.0|8377.0|7222.0|[9703.0,8808.0,83...|         0|
-|      [0,0]|           3|        0| 9856.0|8983.0|8565.0|7557.0|[9856.0,8983.0,85...|         2|
-|      [0,0]|           4|        0|10105.0|9270.0|8851.0|7912.0|[10105.0,9270.0,8...|         2|
-|      [0,0]|           5|        0|10273.0|9463.0|9196.0|8341.0|[10273.0,9463.0,9...|         2|
-|      [0,0]|           6|        0| 9920.0|9077.0|8480.0|7534.0|[9920.0,9077.0,84...|         2|
-|      [0,0]|           7|        0| 9559.0|8603.0|7847.0|6829.0|[9559.0,8603.0,78...|         0|
-+-----------+------------+---------+-------+------+------+------+--------------------+----------+
-only showing top 8 rows
-
-</code></pre>
-<p>If we want to inspect the model statistics, the SparkML API requires us to go through this unfortunate contortion:</p>
-<pre class="prettyprint"><code class="language-scala">val clusterResults = model.stages.collect{ case km: KMeansModel ⇒ km}.head
-</code></pre>
-<p>Compute sum of squared distances of points to their nearest center:</p>
-<pre class="prettyprint"><code class="language-scala">scala&gt; val metric = clusterResults.computeCost(clustered)
-metric: Double = 2.5956496685251507E10
-
-scala&gt; println(&quot;Within set sum of squared errors: &quot; + metric)
-Within set sum of squared errors: 2.5956496685251507E10
-</code></pre><div class="callout note "><div class="callout-title">Note</div>
-<p><em>Coming soon</em>: how to create a new raster using the cluster ids as cell values.</p></div>
+<p><img src="../rf-ndvi.png" /></p>
 <div class="nav-next">
-<p><strong>Next:</strong> <a href="../ml/classification.html">Classification</a></p>
+<p><strong>Next:</strong> <a href="../ml/index.html">Machine Learning</a></p>
 </div>
 </div>
 <div class="large-3 show-for-large column" data-sticky-container>

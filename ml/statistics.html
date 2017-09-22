@@ -12,18 +12,18 @@ gtag('js', new Date());
 gtag('config', 'UA-106630615-1');
 </script>
 
-<title>Raster Analysis · RasterFrames™</title>
+<title>Raster Statistics · RasterFrames™</title>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="description" content='RasterFrames brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer operations of GeoTrellis'/>
 <link href="https://fonts.googleapis.com/css?family=Roboto:100normal,100italic,300normal,300italic,400normal,400italic,500normal,500italic,700normal,700italic,900normal,900italicc" rel="stylesheet" type="text/css"/>
-<script type="text/javascript" src="lib/jquery/jquery.min.js"></script>
-<script type="text/javascript" src="js/page.js"></script>
-<script type="text/javascript" src="js/groups.js"></script>
-<link rel="stylesheet" type="text/css" href="lib/normalize.css/normalize.css"/>
-<link rel="stylesheet" type="text/css" href="lib/foundation/dist/foundation.min.css"/>
-<link rel="stylesheet" type="text/css" href="css/page.css"/>
-<link rel="shortcut icon" href="images/astraea.ico" />
+<script type="text/javascript" src="../lib/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../js/page.js"></script>
+<script type="text/javascript" src="../js/groups.js"></script>
+<link rel="stylesheet" type="text/css" href="../lib/normalize.css/normalize.css"/>
+<link rel="stylesheet" type="text/css" href="../lib/foundation/dist/foundation.min.css"/>
+<link rel="stylesheet" type="text/css" href="../css/page.css"/>
+<link rel="shortcut icon" href="../images/astraea.ico" />
 <style>
 .md-left { float: left; }
 .md-right { float: right; }
@@ -38,26 +38,30 @@ gtag('config', 'UA-106630615-1');
 <div class="off-canvas position-left" id="off-canvas-menu" data-off-canvas>
 <nav class="off-canvas-nav">
 <div class="nav-home">
-<a href="index.html" >
+<a href="../index.html" >
 <span class="home-icon">⌂</span>RasterFrames™
 </a>
 <div class="version-number">
-0.4.9
+0.5.0*
 </div>
 </div>
 <div class="nav-toc">
 <ul>
-  <li><a href="getting-started.html" class="page">Getting Started</a></li>
-  <li><a href="creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
-  <li><a href="exporting-rasterframes.html" class="page">Exporting RasterFrames</a></li>
-  <li><a href="raster-analysis.html" class="active page">Raster Analysis</a></li>
-  <li><a href="ml/index.html" class="page">Machine Learning</a>
+  <li><a href="../getting-started.html" class="page">Getting Started</a></li>
+  <li><a href="../creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
+  <li><a href="../apps/index.html" class="page">Applications</a>
   <ul>
-    <li><a href="ml/clustering.html" class="page">Clustering</a></li>
-    <li><a href="ml/classification.html" class="page">Classification</a></li>
+    <li><a href="../apps/geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
+    <li><a href="../apps/ndvi.html" class="page">Computing NDVI</a></li>
   </ul></li>
-  <li><a href="geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
-  <li><a href="reference.html" class="page">Reference</a></li>
+  <li><a href="../ml/index.html" class="page">Machine Learning</a>
+  <ul>
+    <li><a href="../ml/statistics.html" class="active page">Raster Statistics</a></li>
+    <li><a href="../ml/clustering.html" class="page">Clustering</a></li>
+    <li><a href="../ml/classification.html" class="page">Classification</a></li>
+  </ul></li>
+  <li><a href="../exporting-rasterframes.html" class="page">Exporting RasterFrames</a></li>
+  <li><a href="../reference.html" class="page">Reference</a></li>
 </ul>
 </div>
 
@@ -72,9 +76,9 @@ gtag('config', 'UA-106630615-1');
 H3.6C3.048,13,3,13.447,3,14c0,0.553,0.048,1,0.6,1H16.4c0.552,0,0.6-0.447,0.6-1C17,13.447,16.952,13,16.4,13z M3.6,7H16.4
 C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.048,7,3.6,7z"/></svg>
 </a>
-<div class="title"><a href="index.html">RasterFrames™</a></div>
+<div class="title"><a href="../index.html">RasterFrames™</a></div>
 
-<a href="http://www.astraea.earth" class="logo show-for-medium"><img style="height: 40px;" src="images/astraea.png"/></a>
+<a href="http://www.astraea.earth" class="logo show-for-medium"><img style="height: 40px;" src="../images/astraea.png"/></a>
 </div>
 </header>
 
@@ -83,26 +87,30 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <div class="medium-3 large-2 show-for-medium column">
 <nav class="site-nav">
 <div class="nav-home">
-<a href="index.html" >
+<a href="../index.html" >
 <span class="home-icon">⌂</span>RasterFrames™
 </a>
 <div class="version-number">
-0.4.9
+0.5.0*
 </div>
 </div>
 <div class="nav-toc">
 <ul>
-  <li><a href="getting-started.html" class="page">Getting Started</a></li>
-  <li><a href="creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
-  <li><a href="exporting-rasterframes.html" class="page">Exporting RasterFrames</a></li>
-  <li><a href="raster-analysis.html" class="active page">Raster Analysis</a></li>
-  <li><a href="ml/index.html" class="page">Machine Learning</a>
+  <li><a href="../getting-started.html" class="page">Getting Started</a></li>
+  <li><a href="../creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
+  <li><a href="../apps/index.html" class="page">Applications</a>
   <ul>
-    <li><a href="ml/clustering.html" class="page">Clustering</a></li>
-    <li><a href="ml/classification.html" class="page">Classification</a></li>
+    <li><a href="../apps/geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
+    <li><a href="../apps/ndvi.html" class="page">Computing NDVI</a></li>
   </ul></li>
-  <li><a href="geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
-  <li><a href="reference.html" class="page">Reference</a></li>
+  <li><a href="../ml/index.html" class="page">Machine Learning</a>
+  <ul>
+    <li><a href="../ml/statistics.html" class="active page">Raster Statistics</a></li>
+    <li><a href="../ml/clustering.html" class="page">Clustering</a></li>
+    <li><a href="../ml/classification.html" class="page">Classification</a></li>
+  </ul></li>
+  <li><a href="../exporting-rasterframes.html" class="page">Exporting RasterFrames</a></li>
+  <li><a href="../reference.html" class="page">Reference</a></li>
 </ul>
 </div>
 
@@ -116,8 +124,9 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <div class="medium-12 show-for-medium column">
 <div class="nav-breadcrumbs">
 <ul>
-  <li><a href="index.html">RasterFrames™</a></li>
-  <li>Raster Analysis</li>
+  <li><a href="../index.html">RasterFrames™</a></li>
+  <li><a href="../ml/index.html">Machine Learning</a></li>
+  <li>Raster Statistics</li>
 </ul>
 </div>
 </div>
@@ -125,66 +134,8 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 
 <div class="page-content row">
 <div class="small-12 large-9 column" id="docs">
-<h1><a href="#raster-analysis" name="raster-analysis" class="anchor"><span class="anchor-link"></span></a>Raster Analysis</h1>
-<p>Now that we have a <code>RasterFrame</code>, we have access to a number of extension methods and columnar functions for performing analysis on tiles.</p>
-<h2><a href="#inspection" name="inspection" class="anchor"><span class="anchor-link"></span></a>Inspection</h2>
-<p><code>RasterFrame</code> has a number of methods providing access to metadata about the contents of the RasterFrame. </p>
-<h3><a href="#tile-column-names" name="tile-column-names" class="anchor"><span class="anchor-link"></span></a>Tile Column Names</h3>
-<pre class="prettyprint"><code class="language-scala">rf.tileColumns.map(_.toString)
-// res2: Seq[String] = ArraySeq(tile)
-</code></pre>
-<h3><a href="#spatial-key-column-name" name="spatial-key-column-name" class="anchor"><span class="anchor-link"></span></a>Spatial Key Column Name</h3>
-<pre class="prettyprint"><code class="language-scala">rf.spatialKeyColumn.toString
-// res3: String = spatial_key
-</code></pre>
-<h3><a href="#temporal-key-column" name="temporal-key-column" class="anchor"><span class="anchor-link"></span></a>Temporal Key Column</h3>
-<p>Returns an <code>Option[Column]</code> since not all RasterFrames have an explicit temporal dimension.</p>
-<pre class="prettyprint"><code class="language-scala">rf.temporalKeyColumn.map(_.toString)
-// res4: Option[String] = None
-</code></pre>
-<h3><a href="#tile-layer-metadata" name="tile-layer-metadata" class="anchor"><span class="anchor-link"></span></a>Tile Layer Metadata</h3>
-<p>The Tile Layer Metadata defines how the spatial/spatiotemporal domain is discretized into tiles, and what the key bounds are.</p>
-<pre class="prettyprint"><code class="language-scala">scala&gt; import spray.json._
-import spray.json._
-
-scala&gt; // The `fold` is required because an `Either` is retured, depending on the key type. 
-     | rf.tileLayerMetadata.fold(_.toJson, _.toJson).prettyPrint
-res6: String =
-{
-  &quot;extent&quot;: {
-    &quot;xmin&quot;: 431902.5,
-    &quot;ymin&quot;: 4313647.5,
-    &quot;xmax&quot;: 443512.5,
-    &quot;ymax&quot;: 4321147.5
-  },
-  &quot;layoutDefinition&quot;: {
-    &quot;extent&quot;: {
-      &quot;xmin&quot;: 431902.5,
-      &quot;ymin&quot;: 4313467.5,
-      &quot;xmax&quot;: 445342.5,
-      &quot;ymax&quot;: 4321147.5
-    },
-    &quot;tileLayout&quot;: {
-      &quot;layoutCols&quot;: 7,
-      &quot;layoutRows&quot;: 4,
-      &quot;tileCols&quot;: 128,
-      &quot;tileRows&quot;: 128
-    }
-  },
-  &quot;bounds&quot;: {
-    &quot;minKey&quot;: {
-      &quot;col&quot;: 0,
-      &quot;row&quot;: 0
-    },
-    &quot;maxKey&quot;: {
-      &quot;col&quot;: 6,
-      &quot;row&quot;: 3
-    }
-  },
-  &quot;cellType&quot;: &quot;uint16&quot;,
-  &quot;crs&quot;: &quot;+proj=utm +zone=16 +datum=WGS84 +units=m +no_defs &quot;
-}
-</code></pre>
+<h1><a href="#raster-statistics" name="raster-statistics" class="anchor"><span class="anchor-link"></span></a>Raster Statistics</h1>
+<p>RasterFrames has a number of extension methods and columnar functions for performing analysis on tiles.</p>
 <h2><a href="#tile-statistics" name="tile-statistics" class="anchor"><span class="anchor-link"></span></a>Tile Statistics</h2>
 <h3><a href="#tile-dimensions" name="tile-dimensions" class="anchor"><span class="anchor-link"></span></a>Tile Dimensions</h3>
 <p>Get the nominal tile dimensions. Depending on the tiling there may be some tiles with different sizes on the edges.</p>
@@ -290,43 +241,8 @@ only showing top 5 rows
 only showing top 10 rows
 
 </code></pre>
-<h2><a href="#computing-ndvi" name="computing-ndvi" class="anchor"><span class="anchor-link"></span></a>Computing NDVI</h2>
-<p>Here&rsquo;s an example of computing the </p>
-<p>Normalized Differential Vegetation Index (NDVI) is a standardized vegetation index which allows us to generate an image highlighting differences in relative biomass. </p>
-<blockquote>
-  <p>“An NDVI is often used worldwide to monitor drought, monitor and predict agricultural production, assist in predicting hazardous fire zones, and map desert encroachment. The NDVI is preferred for global vegetation monitoring because it helps to compensate for changing illumination conditions, surface slope, aspect, and other extraneous factors” (Lillesand. <em>Remote sensing and image interpretation</em>. 2004).</p>
-</blockquote>
-<pre class="prettyprint"><code class="language-scala">def redBand = SinglebandGeoTiff(&quot;src/test/resources/L8-B4-Elkton-VA.tiff&quot;).projectedRaster.toRF(&quot;red_band&quot;)
-def nirBand = SinglebandGeoTiff(&quot;src/test/resources/L8-B5-Elkton-VA.tiff&quot;).projectedRaster.toRF(&quot;nir_band&quot;)
-
-// Define UDF for computing NDVI from red and NIR bands
-val ndvi = udf((red: Tile, nir: Tile) ⇒ {
-  val redd = red.convert(DoubleConstantNoDataCellType)
-  val nird = nir.convert(DoubleConstantNoDataCellType)
-  (nird - redd)/(nird + redd)
-})
-
-// We use `asRF` to indicate we know the structure still conforms to RasterFrame constraints
-val rf = redBand.spatialJoin(nirBand).withColumn(&quot;ndvi&quot;, ndvi($&quot;red_band&quot;, $&quot;nir_band&quot;)).asRF
-
-val pr = rf.toRaster($&quot;ndvi&quot;, 466, 428)
-
-val brownToGreen = ColorRamp(
-  RGBA(166,97,26,255),
-  RGBA(223,194,125,255),
-  RGBA(245,245,245,255),
-  RGBA(128,205,193,255),
-  RGBA(1,133,113,255)
-).stops(128)
-
-val colors = ColorMap.fromQuantileBreaks(pr.tile.histogramDouble(), brownToGreen)
-pr.tile.color(colors).renderPng().write(&quot;target/scala-2.11/tut/rf-ndvi.png&quot;)
-
-//For a georefrenced singleband greyscale image, could do: `GeoTiff(pr).write(&quot;ndvi.tiff&quot;)`
-</code></pre>
-<p><img src="rf-ndvi.png" /></p>
 <div class="nav-next">
-<p><strong>Next:</strong> <a href="ml/index.html">Machine Learning</a></p>
+<p><strong>Next:</strong> <a href="../ml/clustering.html">Clustering</a></p>
 </div>
 </div>
 <div class="large-3 show-for-large column" data-sticky-container>
@@ -335,12 +251,10 @@ pr.tile.color(colors).renderPng().write(&quot;target/scala-2.11/tut/rf-ndvi.png&
 <div class="nav-title">On this page:</div>
 <div class="nav-toc">
 <ul>
-  <li><a href="raster-analysis.html#raster-analysis" class="header">Raster Analysis</a>
+  <li><a href="../ml/statistics.html#raster-statistics" class="header">Raster Statistics</a>
   <ul>
-    <li><a href="raster-analysis.html#inspection" class="header">Inspection</a></li>
-    <li><a href="raster-analysis.html#tile-statistics" class="header">Tile Statistics</a></li>
-    <li><a href="raster-analysis.html#aggregate-statistics" class="header">Aggregate Statistics</a></li>
-    <li><a href="raster-analysis.html#computing-ndvi" class="header">Computing NDVI</a></li>
+    <li><a href="../ml/statistics.html#tile-statistics" class="header">Tile Statistics</a></li>
+    <li><a href="../ml/statistics.html#aggregate-statistics" class="header">Aggregate Statistics</a></li>
   </ul></li>
 </ul>
 </div>
@@ -379,12 +293,10 @@ pr.tile.color(colors).renderPng().write(&quot;target/scala-2.11/tut/rf-ndvi.png&
 <div class="small-12 large-offset-2 large-10 column">
 <div class="row site-footer-content">
 <div class="small-12 text-center large-9 column">
-<!--
 <div class="copyright">
-<span class="text">&copy; 2017</span>
-<a href="http://www.astraea.earth/" class="logo"><img src="images/astraea.png"/></a>
+<span class="text">&copy; 2017
+<a href="http://www.astraea.earth/">Astraea, Inc.</a></span>
 </div>
--->
 </div>
 </div>
 </div>
@@ -396,13 +308,13 @@ pr.tile.color(colors).renderPng().write(&quot;target/scala-2.11/tut/rf-ndvi.png&
 </div>
 </body>
 
-<script type="text/javascript" src="lib/foundation/dist/foundation.min.js"></script>
+<script type="text/javascript" src="../lib/foundation/dist/foundation.min.js"></script>
 <script type="text/javascript">jQuery(document).foundation();</script>
-<script type="text/javascript" src="js/magellan.js"></script>
+<script type="text/javascript" src="../js/magellan.js"></script>
 
-<style type="text/css">@import "lib/prettify/prettify.css";</style>
-<script type="text/javascript" src="lib/prettify/prettify.js"></script>
-<script type="text/javascript" src="lib/prettify/lang-scala.js"></script>
+<style type="text/css">@import "../lib/prettify/prettify.css";</style>
+<script type="text/javascript" src="../lib/prettify/prettify.js"></script>
+<script type="text/javascript" src="../lib/prettify/lang-scala.js"></script>
 <script type="text/javascript">jQuery(function(){window.prettyPrint && prettyPrint()});</script>
 
 </html>

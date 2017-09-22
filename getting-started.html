@@ -42,21 +42,25 @@ gtag('config', 'UA-106630615-1');
 <span class="home-icon">⌂</span>RasterFrames™
 </a>
 <div class="version-number">
-0.4.9
+0.5.0*
 </div>
 </div>
 <div class="nav-toc">
 <ul>
   <li><a href="getting-started.html" class="active page">Getting Started</a></li>
   <li><a href="creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
-  <li><a href="exporting-rasterframes.html" class="page">Exporting RasterFrames</a></li>
-  <li><a href="raster-analysis.html" class="page">Raster Analysis</a></li>
+  <li><a href="apps/index.html" class="page">Applications</a>
+  <ul>
+    <li><a href="apps/geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
+    <li><a href="apps/ndvi.html" class="page">Computing NDVI</a></li>
+  </ul></li>
   <li><a href="ml/index.html" class="page">Machine Learning</a>
   <ul>
+    <li><a href="ml/statistics.html" class="page">Raster Statistics</a></li>
     <li><a href="ml/clustering.html" class="page">Clustering</a></li>
     <li><a href="ml/classification.html" class="page">Classification</a></li>
   </ul></li>
-  <li><a href="geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
+  <li><a href="exporting-rasterframes.html" class="page">Exporting RasterFrames</a></li>
   <li><a href="reference.html" class="page">Reference</a></li>
 </ul>
 </div>
@@ -87,21 +91,25 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>RasterFrames™
 </a>
 <div class="version-number">
-0.4.9
+0.5.0*
 </div>
 </div>
 <div class="nav-toc">
 <ul>
   <li><a href="getting-started.html" class="active page">Getting Started</a></li>
   <li><a href="creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
-  <li><a href="exporting-rasterframes.html" class="page">Exporting RasterFrames</a></li>
-  <li><a href="raster-analysis.html" class="page">Raster Analysis</a></li>
+  <li><a href="apps/index.html" class="page">Applications</a>
+  <ul>
+    <li><a href="apps/geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
+    <li><a href="apps/ndvi.html" class="page">Computing NDVI</a></li>
+  </ul></li>
   <li><a href="ml/index.html" class="page">Machine Learning</a>
   <ul>
+    <li><a href="ml/statistics.html" class="page">Raster Statistics</a></li>
     <li><a href="ml/clustering.html" class="page">Clustering</a></li>
     <li><a href="ml/classification.html" class="page">Classification</a></li>
   </ul></li>
-  <li><a href="geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
+  <li><a href="exporting-rasterframes.html" class="page">Exporting RasterFrames</a></li>
   <li><a href="reference.html" class="page">Reference</a></li>
 </ul>
 </div>
@@ -130,22 +138,8 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <h2><a href="#sbt-configuration" name="sbt-configuration" class="anchor"><span class="anchor-link"></span></a>sbt configuration</h2>
 <p><em>RasterFrames</em> is published via Bintray&rsquo;s JCenter server, which is one of the default sbt resolvers. To use, just add the following library dependency:</p>
 <pre class="prettyprint"><code class="language-scala">libraryDependencies += &quot;io.astraea&quot; %% &quot;raster-frames&quot; % &quot;{version}&quot;
-</code></pre>
-<h2><a href="#initialization" name="initialization" class="anchor"><span class="anchor-link"></span></a>Initialization</h2>
-<p>First, some standard <code>import</code>s:</p>
-<pre class="prettyprint"><code class="language-scala">import astraea.spark.rasterframes._
-import geotrellis.raster._
-import geotrellis.raster.render._
-import geotrellis.raster.io.geotiff.SinglebandGeoTiff
-import org.apache.spark.sql._
-import org.apache.spark.sql.functions._
-</code></pre>
-<p>Next, initialize the <code>SparkSession</code>, and then register RasterFrames with Spark:</p>
-<pre class="prettyprint"><code class="language-scala">implicit val spark = SparkSession.builder().master(&quot;local&quot;).appName(&quot;RasterFrames&quot;).getOrCreate()
-
-rfInit(spark.sqlContext)
-import spark.implicits._
-</code></pre>
+</code></pre><div class="callout note "><div class="callout-title">Note</div>
+<p><em>Coming soon</em>: We&rsquo;ll soon be providing a new project template to streamline the process of getting started with <em>RasterFrames</em> </p></div>
 <div class="nav-next">
 <p><strong>Next:</strong> <a href="creating-rasterframes.html">Creating RasterFrames</a></p>
 </div>
@@ -159,7 +153,6 @@ import spark.implicits._
   <li><a href="getting-started.html#getting-started" class="header">Getting Started</a>
   <ul>
     <li><a href="getting-started.html#sbt-configuration" class="header">sbt configuration</a></li>
-    <li><a href="getting-started.html#initialization" class="header">Initialization</a></li>
   </ul></li>
 </ul>
 </div>
@@ -198,12 +191,10 @@ import spark.implicits._
 <div class="small-12 large-offset-2 large-10 column">
 <div class="row site-footer-content">
 <div class="small-12 text-center large-9 column">
-<!--
 <div class="copyright">
-<span class="text">&copy; 2017</span>
-<a href="http://www.astraea.earth/" class="logo"><img src="images/astraea.png"/></a>
+<span class="text">&copy; 2017
+<a href="http://www.astraea.earth/">Astraea, Inc.</a></span>
 </div>
--->
 </div>
 </div>
 </div>

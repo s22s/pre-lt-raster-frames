@@ -42,21 +42,25 @@ gtag('config', 'UA-106630615-1');
 <span class="home-icon">⌂</span>RasterFrames™
 </a>
 <div class="version-number">
-0.4.9
+0.5.0*
 </div>
 </div>
 <div class="nav-toc">
 <ul>
   <li><a href="getting-started.html" class="page">Getting Started</a></li>
   <li><a href="creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
-  <li><a href="exporting-rasterframes.html" class="page">Exporting RasterFrames</a></li>
-  <li><a href="raster-analysis.html" class="page">Raster Analysis</a></li>
+  <li><a href="apps/index.html" class="page">Applications</a>
+  <ul>
+    <li><a href="apps/geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
+    <li><a href="apps/ndvi.html" class="page">Computing NDVI</a></li>
+  </ul></li>
   <li><a href="ml/index.html" class="page">Machine Learning</a>
   <ul>
+    <li><a href="ml/statistics.html" class="page">Raster Statistics</a></li>
     <li><a href="ml/clustering.html" class="page">Clustering</a></li>
     <li><a href="ml/classification.html" class="page">Classification</a></li>
   </ul></li>
-  <li><a href="geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
+  <li><a href="exporting-rasterframes.html" class="page">Exporting RasterFrames</a></li>
   <li><a href="reference.html" class="page">Reference</a></li>
 </ul>
 </div>
@@ -87,21 +91,25 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>RasterFrames™
 </a>
 <div class="version-number">
-0.4.9
+0.5.0*
 </div>
 </div>
 <div class="nav-toc">
 <ul>
   <li><a href="getting-started.html" class="page">Getting Started</a></li>
   <li><a href="creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
-  <li><a href="exporting-rasterframes.html" class="page">Exporting RasterFrames</a></li>
-  <li><a href="raster-analysis.html" class="page">Raster Analysis</a></li>
+  <li><a href="apps/index.html" class="page">Applications</a>
+  <ul>
+    <li><a href="apps/geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
+    <li><a href="apps/ndvi.html" class="page">Computing NDVI</a></li>
+  </ul></li>
   <li><a href="ml/index.html" class="page">Machine Learning</a>
   <ul>
+    <li><a href="ml/statistics.html" class="page">Raster Statistics</a></li>
     <li><a href="ml/clustering.html" class="page">Clustering</a></li>
     <li><a href="ml/classification.html" class="page">Classification</a></li>
   </ul></li>
-  <li><a href="geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
+  <li><a href="exporting-rasterframes.html" class="page">Exporting RasterFrames</a></li>
   <li><a href="reference.html" class="page">Reference</a></li>
 </ul>
 </div>
@@ -132,12 +140,34 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   <li><a href="getting-started.html" class="page">Getting Started</a>
   <ul>
     <li><a href="getting-started.html#sbt-configuration" class="header">sbt configuration</a></li>
-    <li><a href="getting-started.html#initialization" class="header">Initialization</a></li>
   </ul></li>
   <li><a href="creating-rasterframes.html" class="page">Creating RasterFrames</a>
   <ul>
+    <li><a href="creating-rasterframes.html#initialization" class="header">Initialization</a></li>
     <li><a href="creating-rasterframes.html#from-projectedextent" class="header">From <code>ProjectedExtent</code></a></li>
     <li><a href="creating-rasterframes.html#from-tilelayerrdd" class="header">From <code>TileLayerRDD</code></a></li>
+    <li><a href="creating-rasterframes.html#inspecting-structure" class="header">Inspecting Structure</a>
+    <ul>
+      <li><a href="creating-rasterframes.html#tile-column-names" class="header">Tile Column Names</a></li>
+      <li><a href="creating-rasterframes.html#spatial-key-column-name" class="header">Spatial Key Column Name</a></li>
+      <li><a href="creating-rasterframes.html#temporal-key-column" class="header">Temporal Key Column</a></li>
+      <li><a href="creating-rasterframes.html#tile-layer-metadata" class="header">Tile Layer Metadata</a></li>
+    </ul></li>
+  </ul></li>
+  <li><a href="apps/index.html" class="page">Applications</a>
+  <ul>
+    <li><a href="apps/geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
+    <li><a href="apps/ndvi.html" class="page">Computing NDVI</a></li>
+  </ul></li>
+  <li><a href="ml/index.html" class="page">Machine Learning</a>
+  <ul>
+    <li><a href="ml/statistics.html" class="page">Raster Statistics</a>
+    <ul>
+      <li><a href="ml/statistics.html#tile-statistics" class="header">Tile Statistics</a></li>
+      <li><a href="ml/statistics.html#aggregate-statistics" class="header">Aggregate Statistics</a></li>
+    </ul></li>
+    <li><a href="ml/clustering.html" class="page">Clustering</a></li>
+    <li><a href="ml/classification.html" class="page">Classification</a></li>
   </ul></li>
   <li><a href="exporting-rasterframes.html" class="page">Exporting RasterFrames</a>
   <ul>
@@ -146,30 +176,6 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
     <li><a href="exporting-rasterframes.html#converting-to-rdd-and-tilelayerrdd" class="header">Converting to <code>RDD</code> and <code>TileLayerRDD</code></a></li>
     <li><a href="exporting-rasterframes.html#exporting-a-raster" class="header">Exporting a Raster</a></li>
   </ul></li>
-  <li><a href="raster-analysis.html" class="page">Raster Analysis</a>
-  <ul>
-    <li><a href="raster-analysis.html#inspection" class="header">Inspection</a>
-    <ul>
-      <li><a href="raster-analysis.html#tile-column-names" class="header">Tile Column Names</a></li>
-      <li><a href="raster-analysis.html#spatial-key-column-name" class="header">Spatial Key Column Name</a></li>
-      <li><a href="raster-analysis.html#temporal-key-column" class="header">Temporal Key Column</a></li>
-      <li><a href="raster-analysis.html#tile-layer-metadata" class="header">Tile Layer Metadata</a></li>
-    </ul></li>
-    <li><a href="raster-analysis.html#tile-statistics" class="header">Tile Statistics</a>
-    <ul>
-      <li><a href="raster-analysis.html#tile-dimensions" class="header">Tile Dimensions</a></li>
-      <li><a href="raster-analysis.html#descriptive-statistics" class="header">Descriptive Statistics</a></li>
-      <li><a href="raster-analysis.html#histogram" class="header">Histogram</a></li>
-    </ul></li>
-    <li><a href="raster-analysis.html#aggregate-statistics" class="header">Aggregate Statistics</a></li>
-    <li><a href="raster-analysis.html#computing-ndvi" class="header">Computing NDVI</a></li>
-  </ul></li>
-  <li><a href="ml/index.html" class="page">Machine Learning</a>
-  <ul>
-    <li><a href="ml/clustering.html" class="page">Clustering</a></li>
-    <li><a href="ml/classification.html" class="page">Classification</a></li>
-  </ul></li>
-  <li><a href="geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
   <li><a href="reference.html" class="page">Reference</a></li>
 </ul>
 </div></div><div class="md-right">
@@ -220,12 +226,10 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <div class="small-12 large-offset-2 large-10 column">
 <div class="row site-footer-content">
 <div class="small-12 text-center large-9 column">
-<!--
 <div class="copyright">
-<span class="text">&copy; 2017</span>
-<a href="http://www.astraea.earth/" class="logo"><img src="images/astraea.png"/></a>
+<span class="text">&copy; 2017
+<a href="http://www.astraea.earth/">Astraea, Inc.</a></span>
 </div>
--->
 </div>
 </div>
 </div>

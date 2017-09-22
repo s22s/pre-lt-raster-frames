@@ -42,21 +42,25 @@ gtag('config', 'UA-106630615-1');
 <span class="home-icon">⌂</span>RasterFrames™
 </a>
 <div class="version-number">
-0.4.9
+0.5.0*
 </div>
 </div>
 <div class="nav-toc">
 <ul>
   <li><a href="../getting-started.html" class="page">Getting Started</a></li>
   <li><a href="../creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
-  <li><a href="../exporting-rasterframes.html" class="page">Exporting RasterFrames</a></li>
-  <li><a href="../raster-analysis.html" class="page">Raster Analysis</a></li>
+  <li><a href="../apps/index.html" class="page">Applications</a>
+  <ul>
+    <li><a href="../apps/geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
+    <li><a href="../apps/ndvi.html" class="page">Computing NDVI</a></li>
+  </ul></li>
   <li><a href="../ml/index.html" class="page">Machine Learning</a>
   <ul>
+    <li><a href="../ml/statistics.html" class="page">Raster Statistics</a></li>
     <li><a href="../ml/clustering.html" class="page">Clustering</a></li>
     <li><a href="../ml/classification.html" class="active page">Classification</a></li>
   </ul></li>
-  <li><a href="../geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
+  <li><a href="../exporting-rasterframes.html" class="page">Exporting RasterFrames</a></li>
   <li><a href="../reference.html" class="page">Reference</a></li>
 </ul>
 </div>
@@ -87,21 +91,25 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>RasterFrames™
 </a>
 <div class="version-number">
-0.4.9
+0.5.0*
 </div>
 </div>
 <div class="nav-toc">
 <ul>
   <li><a href="../getting-started.html" class="page">Getting Started</a></li>
   <li><a href="../creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
-  <li><a href="../exporting-rasterframes.html" class="page">Exporting RasterFrames</a></li>
-  <li><a href="../raster-analysis.html" class="page">Raster Analysis</a></li>
+  <li><a href="../apps/index.html" class="page">Applications</a>
+  <ul>
+    <li><a href="../apps/geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
+    <li><a href="../apps/ndvi.html" class="page">Computing NDVI</a></li>
+  </ul></li>
   <li><a href="../ml/index.html" class="page">Machine Learning</a>
   <ul>
+    <li><a href="../ml/statistics.html" class="page">Raster Statistics</a></li>
     <li><a href="../ml/clustering.html" class="page">Clustering</a></li>
     <li><a href="../ml/classification.html" class="active page">Classification</a></li>
   </ul></li>
-  <li><a href="../geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
+  <li><a href="../exporting-rasterframes.html" class="page">Exporting RasterFrames</a></li>
   <li><a href="../reference.html" class="page">Reference</a></li>
 </ul>
 </div>
@@ -240,7 +248,7 @@ val trainer = new CrossValidator().
 </code></pre>
 <p>Push the &ldquo;go&rdquo; button:</p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; val model = trainer.fit(abt)
-model: org.apache.spark.ml.tuning.CrossValidatorModel = cv_26743ff92532
+model: org.apache.spark.ml.tuning.CrossValidatorModel = cv_c0ba02efa4e5
 </code></pre>
 <p>To view the model&rsquo;s performance we format the <code>paramGrid</code> settings used for each model and render the parameter/performance association.</p>
 <pre class="prettyprint"><code class="language-scala">val metrics = model.getEstimatorParamMaps.
@@ -274,7 +282,7 @@ scala&gt; scored.groupBy($&quot;prediction&quot; as &quot;class&quot;).count().s
 
 </code></pre>
 <div class="nav-next">
-<p><strong>Next:</strong> <a href="../geotrellis-ops.html">GeoTrellis Operations</a></p>
+<p><strong>Next:</strong> <a href="../exporting-rasterframes.html">Exporting RasterFrames</a></p>
 </div>
 </div>
 <div class="large-3 show-for-large column" data-sticky-container>
@@ -311,12 +319,10 @@ scala&gt; scored.groupBy($&quot;prediction&quot; as &quot;class&quot;).count().s
 <div class="small-12 large-offset-2 large-10 column">
 <div class="row site-footer-content">
 <div class="small-12 text-center large-9 column">
-<!--
 <div class="copyright">
-<span class="text">&copy; 2017</span>
-<a href="http://www.astraea.earth/" class="logo"><img src="../images/astraea.png"/></a>
+<span class="text">&copy; 2017
+<a href="http://www.astraea.earth/">Astraea, Inc.</a></span>
 </div>
--->
 </div>
 </div>
 </div>

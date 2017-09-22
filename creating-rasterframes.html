@@ -42,21 +42,25 @@ gtag('config', 'UA-106630615-1');
 <span class="home-icon">⌂</span>RasterFrames™
 </a>
 <div class="version-number">
-0.4.9
+0.5.0*
 </div>
 </div>
 <div class="nav-toc">
 <ul>
   <li><a href="getting-started.html" class="page">Getting Started</a></li>
   <li><a href="creating-rasterframes.html" class="active page">Creating RasterFrames</a></li>
-  <li><a href="exporting-rasterframes.html" class="page">Exporting RasterFrames</a></li>
-  <li><a href="raster-analysis.html" class="page">Raster Analysis</a></li>
+  <li><a href="apps/index.html" class="page">Applications</a>
+  <ul>
+    <li><a href="apps/geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
+    <li><a href="apps/ndvi.html" class="page">Computing NDVI</a></li>
+  </ul></li>
   <li><a href="ml/index.html" class="page">Machine Learning</a>
   <ul>
+    <li><a href="ml/statistics.html" class="page">Raster Statistics</a></li>
     <li><a href="ml/clustering.html" class="page">Clustering</a></li>
     <li><a href="ml/classification.html" class="page">Classification</a></li>
   </ul></li>
-  <li><a href="geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
+  <li><a href="exporting-rasterframes.html" class="page">Exporting RasterFrames</a></li>
   <li><a href="reference.html" class="page">Reference</a></li>
 </ul>
 </div>
@@ -87,21 +91,25 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>RasterFrames™
 </a>
 <div class="version-number">
-0.4.9
+0.5.0*
 </div>
 </div>
 <div class="nav-toc">
 <ul>
   <li><a href="getting-started.html" class="page">Getting Started</a></li>
   <li><a href="creating-rasterframes.html" class="active page">Creating RasterFrames</a></li>
-  <li><a href="exporting-rasterframes.html" class="page">Exporting RasterFrames</a></li>
-  <li><a href="raster-analysis.html" class="page">Raster Analysis</a></li>
+  <li><a href="apps/index.html" class="page">Applications</a>
+  <ul>
+    <li><a href="apps/geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
+    <li><a href="apps/ndvi.html" class="page">Computing NDVI</a></li>
+  </ul></li>
   <li><a href="ml/index.html" class="page">Machine Learning</a>
   <ul>
+    <li><a href="ml/statistics.html" class="page">Raster Statistics</a></li>
     <li><a href="ml/clustering.html" class="page">Clustering</a></li>
     <li><a href="ml/classification.html" class="page">Classification</a></li>
   </ul></li>
-  <li><a href="geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
+  <li><a href="exporting-rasterframes.html" class="page">Exporting RasterFrames</a></li>
   <li><a href="reference.html" class="page">Reference</a></li>
 </ul>
 </div>
@@ -126,10 +134,27 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <div class="page-content row">
 <div class="small-12 large-9 column" id="docs">
 <h1><a href="#creating-rasterframes" name="creating-rasterframes" class="anchor"><span class="anchor-link"></span></a>Creating RasterFrames</h1>
+<p>There are a number of ways to create a <code>RasterFrame</code>, as enumerated in the sections below.</p>
+<h2><a href="#initialization" name="initialization" class="anchor"><span class="anchor-link"></span></a>Initialization</h2>
+<p>First, some standard <code>import</code>s:</p>
+<pre class="prettyprint"><code class="language-scala">import astraea.spark.rasterframes._
+import geotrellis.raster._
+import geotrellis.raster.render._
+import geotrellis.spark.io._
+import geotrellis.raster.io.geotiff.SinglebandGeoTiff
+import org.apache.spark.sql._
+import org.apache.spark.sql.functions._
+</code></pre>
+<p>Next, initialize the <code>SparkSession</code>, and then register RasterFrames with Spark:</p>
+<pre class="prettyprint"><code class="language-scala">implicit val spark = SparkSession.builder().master(&quot;local&quot;).appName(&quot;RasterFrames&quot;).getOrCreate()
+
+rfInit(spark.sqlContext)
+import spark.implicits._
+</code></pre>
 <h2><a href="#from-projectedextent" name="from-projectedextent" class="anchor"><span class="anchor-link"></span></a>From <code>ProjectedExtent</code></h2>
 <p>The simplest mechanism for getting a RasterFrame is to use the <code>toRF(tileCols, tileRows)</code> extension method on <code>ProjectedRaster</code>. </p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; val scene = SinglebandGeoTiff(&quot;src/test/resources/L8-B8-Robinson-IL.tiff&quot;)
-scene: geotrellis.raster.io.geotiff.SinglebandGeoTiff = SinglebandGeoTiff(geotrellis.raster.UShortConstantNoDataArrayTile@5fa6e9e6,Extent(431902.5, 4313647.5, 443512.5, 4321147.5),geotrellis.proj4.CRS$$anon$3@87f96f9f,Tags(Map(AREA_OR_POINT -&gt; POINT),List(Map())),GeoTiffOptions(geotrellis.raster.io.geotiff.Striped@bab52b4,geotrellis.raster.io.geotiff.compression.DeflateCompression$@5168ac09,1,None))
+scene: geotrellis.raster.io.geotiff.SinglebandGeoTiff = SinglebandGeoTiff(geotrellis.raster.UShortConstantNoDataArrayTile@4f9e35e,Extent(431902.5, 4313647.5, 443512.5, 4321147.5),geotrellis.proj4.CRS$$anon$3@87f96f9f,Tags(Map(AREA_OR_POINT -&gt; POINT),List(Map())),GeoTiffOptions(geotrellis.raster.io.geotiff.Striped@ca2cadf,geotrellis.raster.io.geotiff.compression.DeflateCompression$@9faec11,1,None))
 
 scala&gt; val rf = scene.projectedRaster.toRF(128, 128)
 rf: astraea.spark.rasterframes.RasterFrame = [spatial_key: struct&lt;col: int, row: int&gt;, tile: st_tile]
@@ -138,11 +163,11 @@ scala&gt; rf.show(5, false)
 +-----------+--------------------------------------------------------+
 |spatial_key|tile                                                    |
 +-----------+--------------------------------------------------------+
-|[0,0]      |geotrellis.raster.UShortConstantNoDataArrayTile@4f908047|
-|[1,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@76520a87|
-|[6,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@29fd8005|
-|[3,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@4f939f07|
-|[4,2]      |geotrellis.raster.UShortConstantNoDataArrayTile@44abc0a |
+|[0,0]      |geotrellis.raster.UShortConstantNoDataArrayTile@2ef77483|
+|[1,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@794d4f34|
+|[6,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@6077f7da|
+|[3,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@15011657|
+|[4,2]      |geotrellis.raster.UShortConstantNoDataArrayTile@472b18  |
 +-----------+--------------------------------------------------------+
 only showing top 5 rows
 
@@ -153,9 +178,66 @@ only showing top 5 rows
 val tiledLayer: TileLayerRDD[SpatialKey] = ???
 val rf = tiledLayer.toRF
 </code></pre>
-<p>Now that we have a <code>RasterFrame</code> to work with, let&rsquo;s explore in the next section what we can do with it.</p>
+<h2><a href="#inspecting-structure" name="inspecting-structure" class="anchor"><span class="anchor-link"></span></a>Inspecting Structure</h2>
+<p><code>RasterFrame</code> has a number of methods providing access to metadata about the contents of the RasterFrame. </p>
+<h3><a href="#tile-column-names" name="tile-column-names" class="anchor"><span class="anchor-link"></span></a>Tile Column Names</h3>
+<pre class="prettyprint"><code class="language-scala">rf.tileColumns.map(_.toString)
+// res4: Seq[String] = ArraySeq(tile)
+</code></pre>
+<h3><a href="#spatial-key-column-name" name="spatial-key-column-name" class="anchor"><span class="anchor-link"></span></a>Spatial Key Column Name</h3>
+<pre class="prettyprint"><code class="language-scala">rf.spatialKeyColumn.toString
+// res5: String = spatial_key
+</code></pre>
+<h3><a href="#temporal-key-column" name="temporal-key-column" class="anchor"><span class="anchor-link"></span></a>Temporal Key Column</h3>
+<p>Returns an <code>Option[Column]</code> since not all RasterFrames have an explicit temporal dimension.</p>
+<pre class="prettyprint"><code class="language-scala">rf.temporalKeyColumn.map(_.toString)
+// res6: Option[String] = None
+</code></pre>
+<h3><a href="#tile-layer-metadata" name="tile-layer-metadata" class="anchor"><span class="anchor-link"></span></a>Tile Layer Metadata</h3>
+<p>The Tile Layer Metadata defines how the spatial/spatiotemporal domain is discretized into tiles, and what the key bounds are.</p>
+<pre class="prettyprint"><code class="language-scala">scala&gt; import spray.json._
+import spray.json._
+
+scala&gt; // The `fold` is required because an `Either` is retured, depending on the key type. 
+     | rf.tileLayerMetadata.fold(_.toJson, _.toJson).prettyPrint
+res8: String =
+{
+  &quot;extent&quot;: {
+    &quot;xmin&quot;: 431902.5,
+    &quot;ymin&quot;: 4313647.5,
+    &quot;xmax&quot;: 443512.5,
+    &quot;ymax&quot;: 4321147.5
+  },
+  &quot;layoutDefinition&quot;: {
+    &quot;extent&quot;: {
+      &quot;xmin&quot;: 431902.5,
+      &quot;ymin&quot;: 4313467.5,
+      &quot;xmax&quot;: 445342.5,
+      &quot;ymax&quot;: 4321147.5
+    },
+    &quot;tileLayout&quot;: {
+      &quot;layoutCols&quot;: 7,
+      &quot;layoutRows&quot;: 4,
+      &quot;tileCols&quot;: 128,
+      &quot;tileRows&quot;: 128
+    }
+  },
+  &quot;bounds&quot;: {
+    &quot;minKey&quot;: {
+      &quot;col&quot;: 0,
+      &quot;row&quot;: 0
+    },
+    &quot;maxKey&quot;: {
+      &quot;col&quot;: 6,
+      &quot;row&quot;: 3
+    }
+  },
+  &quot;cellType&quot;: &quot;uint16&quot;,
+  &quot;crs&quot;: &quot;+proj=utm +zone=16 +datum=WGS84 +units=m +no_defs &quot;
+}
+</code></pre>
 <div class="nav-next">
-<p><strong>Next:</strong> <a href="exporting-rasterframes.html">Exporting RasterFrames</a></p>
+<p><strong>Next:</strong> <a href="apps/index.html">Applications</a></p>
 </div>
 </div>
 <div class="large-3 show-for-large column" data-sticky-container>
@@ -166,8 +248,10 @@ val rf = tiledLayer.toRF
 <ul>
   <li><a href="creating-rasterframes.html#creating-rasterframes" class="header">Creating RasterFrames</a>
   <ul>
+    <li><a href="creating-rasterframes.html#initialization" class="header">Initialization</a></li>
     <li><a href="creating-rasterframes.html#from-projectedextent" class="header">From <code>ProjectedExtent</code></a></li>
     <li><a href="creating-rasterframes.html#from-tilelayerrdd" class="header">From <code>TileLayerRDD</code></a></li>
+    <li><a href="creating-rasterframes.html#inspecting-structure" class="header">Inspecting Structure</a></li>
   </ul></li>
 </ul>
 </div>
@@ -206,12 +290,10 @@ val rf = tiledLayer.toRF
 <div class="small-12 large-offset-2 large-10 column">
 <div class="row site-footer-content">
 <div class="small-12 text-center large-9 column">
-<!--
 <div class="copyright">
-<span class="text">&copy; 2017</span>
-<a href="http://www.astraea.earth/" class="logo"><img src="images/astraea.png"/></a>
+<span class="text">&copy; 2017
+<a href="http://www.astraea.earth/">Astraea, Inc.</a></span>
 </div>
--->
 </div>
 </div>
 </div>
