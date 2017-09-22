@@ -1,17 +1,32 @@
 # Creating RasterFrames
 
-```tut:invisible
+There are a number of ways to create a `RasterFrame`, as enumerated in the sections below.
+
+## Initialization
+
+First, some standard `import`s:
+
+```tut:silent
 import astraea.spark.rasterframes._
 import geotrellis.raster._
 import geotrellis.raster.render._
+import geotrellis.spark.io._
 import geotrellis.raster.io.geotiff.SinglebandGeoTiff
 import org.apache.spark.sql._
 import org.apache.spark.sql.functions._
+```
 
+Next, initialize the `SparkSession`, and then register RasterFrames with Spark:
+ 
+```tut:silent
 implicit val spark = SparkSession.builder().master("local").appName("RasterFrames").getOrCreate()
-spark.sparkContext.setLogLevel("ERROR")
+
 rfInit(spark.sqlContext)
 import spark.implicits._
+```
+
+```tut:invisible
+spark.sparkContext.setLogLevel("ERROR")
 ```
 
 ## From `ProjectedExtent`
@@ -34,7 +49,40 @@ val tiledLayer: TileLayerRDD[SpatialKey] = ???
 val rf = tiledLayer.toRF
 ```
 
-Now that we have a `RasterFrame` to work with, let's explore in the next section what we can do with it.
+## Inspecting Structure
+
+`RasterFrame` has a number of methods providing access to metadata about the contents of the RasterFrame. 
+
+### Tile Column Names
+
+```tut:book
+rf.tileColumns.map(_.toString)
+```
+
+### Spatial Key Column Name
+
+```tut:book
+rf.spatialKeyColumn.toString
+```
+
+### Temporal Key Column
+
+Returns an `Option[Column]` since not all RasterFrames have an explicit temporal dimension.
+
+```tut:book
+rf.temporalKeyColumn.map(_.toString)
+```
+
+### Tile Layer Metadata
+
+The Tile Layer Metadata defines how the spatial/spatiotemporal domain is discretized into tiles, 
+and what the key bounds are.
+
+```tut
+import spray.json._
+// The `fold` is required because an `Either` is retured, depending on the key type. 
+rf.tileLayerMetadata.fold(_.toJson, _.toJson).prettyPrint
+```
 
 ```tut:invisible
 spark.stop()

@@ -50,10 +50,9 @@ RasterFrames™ is a new project under active development. Feedback and contribu
 @@@ index
 * [Getting Started](getting-started.md)
 * [Creating RasterFrames](creating-rasterframes.md)
-* [Exporting Rasterframes](exporting-rasterframes.md)
-* [Raster Analysis](raster-analysis.md)
+* [Applications](apps/index.md)
 * [Machine Learning](ml/index.md)
-* [GeoTrellis Operations](geotrellis-ops.md)
+* [Exporting Rasterframes](exporting-rasterframes.md)
 * [UDF Reference](reference.md)
 @@@
 

@@ -125,12 +125,10 @@
             <div class="small-12 large-offset-2 large-10 column">
               <div class="row site-footer-content">
                 <div class="small-12 text-center large-9 column">
-                  <!--
                   <div class="copyright">
-                    <span class="text">&copy; $page.properties.("date.year")$</span>
-                    <a href="http://www.astraea.earth/" class="logo"><img src="$page.base$images/astraea.png"/></a>
+                    <span class="text">&copy; $page.properties.("date.year")$
+                    <a href="http://www.astraea.earth/">Astraea, Inc.</a></span>
                   </div>
-                  -->
                 </div>
               </div>
             </div>

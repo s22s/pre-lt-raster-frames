@@ -7,8 +7,11 @@ with RasterFrames. More examples are forthcoming.
 
 @@@
 
+@@ toc { depth=2 }
+
 @@@ index
 
+* [Statistics](statistics.md)
 * [Clustering](clustering.md)
 * [Classification](classification.md)
 
