@@ -57,7 +57,6 @@ object Clustering extends App {
   // observations be packed into a single `Vector`. The first step is to
   // "explode" the tiles into a single row per cell/pixel
   val exploder = new TileExploder()
-    .setInputCols(bandColNames)
 
   // To "vectorize" the the band columns we use the SparkML `VectorAssembler`
   val assembler = new VectorAssembler()

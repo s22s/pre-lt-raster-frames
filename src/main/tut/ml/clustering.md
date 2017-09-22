@@ -1,16 +1,8 @@
-# Machine Learning
+# Clustering
 
-@@@ note
+In this example we will do some simple cell clustering based on multiband imagery. 
 
-This example only scratches the surface of the type of machine learning one can perform 
-with RasterFrames. More examples are forthcoming. 
-
-@@@
-
-## Clustering
-
-In this example we will do some simple cell clustering based on multiband imagery. First some setup:
-
+First some setup:
 
 ```tut:silent
 import astraea.spark.rasterframes._
@@ -56,9 +48,7 @@ observations be packed into a single `Vector`. The first step is to
 "explode" the tiles into a single row per cell/pixel.
 
 ```tut:silent
-val exploder = new TileExploder().
-    setInputCols(bandColNames)
-
+val exploder = new TileExploder()
 ```
 
 To "vectorize" the the band columns, as required by SparkML, we use the SparkML 
