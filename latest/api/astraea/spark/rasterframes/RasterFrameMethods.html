@@ -546,7 +546,7 @@ tile layer metadata. A more flexible spatial join is in the works.**
       </a>
     </span>
       <p class="shortcomment cmt">Reassemble the <span class="extype" name="TileLayerMetadata">TileLayerMetadata</span> record from DataFrame metadata.</p>
-    </li><li name="astraea.spark.rasterframes.RasterFrameMethods#toRaster" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="astraea.spark.rasterframes.RasterFrameMethods#toRaster" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toRaster(tileCol:org.apache.spark.sql.Column,rasterCols:Int,rasterRows:Int,resampler:geotrellis.raster.resample.ResampleMethod):geotrellis.raster.ProjectedRaster[geotrellis.raster.Tile]"></a>
       <a id="toRaster(Column,Int,Int,ResampleMethod):ProjectedRaster[Tile]"></a>
       <h4 class="signature">
@@ -562,7 +562,8 @@ tile layer metadata. A more flexible spatial join is in the works.**
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Convert the tiles in the RasterFrame into a single raster.</p>
+      <p class="shortcomment cmt">Convert the tiles in the RasterFrame into a single raster.</p><div class="fullcomment"><div class="comment cmt"><p>Convert the tiles in the RasterFrame into a single raster. For RasterFrames keyed with temporal keys, this
+will merge based</p></div></div>
     </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
       <a id="toString():String"></a>

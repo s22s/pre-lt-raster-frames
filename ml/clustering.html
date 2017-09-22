@@ -12,18 +12,18 @@ gtag('js', new Date());
 gtag('config', 'UA-106630615-1');
 </script>
 
-<title>Machine Learning</title>
+<title>Clustering · RasterFrames™</title>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="description" content='RasterFrames brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer operations of GeoTrellis'/>
 <link href="https://fonts.googleapis.com/css?family=Roboto:100normal,100italic,300normal,300italic,400normal,400italic,500normal,500italic,700normal,700italic,900normal,900italicc" rel="stylesheet" type="text/css"/>
-<script type="text/javascript" src="lib/jquery/jquery.min.js"></script>
-<script type="text/javascript" src="js/page.js"></script>
-<script type="text/javascript" src="js/groups.js"></script>
-<link rel="stylesheet" type="text/css" href="lib/normalize.css/normalize.css"/>
-<link rel="stylesheet" type="text/css" href="lib/foundation/dist/foundation.min.css"/>
-<link rel="stylesheet" type="text/css" href="css/page.css"/>
-<link rel="shortcut icon" href="images/astraea.ico" />
+<script type="text/javascript" src="../lib/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../js/page.js"></script>
+<script type="text/javascript" src="../js/groups.js"></script>
+<link rel="stylesheet" type="text/css" href="../lib/normalize.css/normalize.css"/>
+<link rel="stylesheet" type="text/css" href="../lib/foundation/dist/foundation.min.css"/>
+<link rel="stylesheet" type="text/css" href="../css/page.css"/>
+<link rel="shortcut icon" href="../images/astraea.ico" />
 <style>
 .md-left { float: left; }
 .md-right { float: right; }
@@ -38,8 +38,8 @@ gtag('config', 'UA-106630615-1');
 <div class="off-canvas position-left" id="off-canvas-menu" data-off-canvas>
 <nav class="off-canvas-nav">
 <div class="nav-home">
-<a href="machine-learning.html" class="active">
-<span class="home-icon">⌂</span>Machine Learning
+<a href="../index.html" >
+<span class="home-icon">⌂</span>RasterFrames™
 </a>
 <div class="version-number">
 0.4.9
@@ -47,6 +47,17 @@ gtag('config', 'UA-106630615-1');
 </div>
 <div class="nav-toc">
 <ul>
+  <li><a href="../getting-started.html" class="page">Getting Started</a></li>
+  <li><a href="../creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
+  <li><a href="../exporting-rasterframes.html" class="page">Exporting RasterFrames</a></li>
+  <li><a href="../raster-analysis.html" class="page">Raster Analysis</a></li>
+  <li><a href="../ml/index.html" class="page">Machine Learning</a>
+  <ul>
+    <li><a href="../ml/clustering.html" class="active page">Clustering</a></li>
+    <li><a href="../ml/classification.html" class="page">Classification</a></li>
+  </ul></li>
+  <li><a href="../geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
+  <li><a href="../reference.html" class="page">Reference</a></li>
 </ul>
 </div>
 
@@ -61,9 +72,9 @@ gtag('config', 'UA-106630615-1');
 H3.6C3.048,13,3,13.447,3,14c0,0.553,0.048,1,0.6,1H16.4c0.552,0,0.6-0.447,0.6-1C17,13.447,16.952,13,16.4,13z M3.6,7H16.4
 C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.048,7,3.6,7z"/></svg>
 </a>
-<div class="title"><a href="machine-learning.html" class="active">Machine Learning</a></div>
+<div class="title"><a href="../index.html">RasterFrames™</a></div>
 
-<a href="http://www.astraea.earth" class="logo show-for-medium"><img style="height: 40px;" src="images/astraea.png"/></a>
+<a href="http://www.astraea.earth" class="logo show-for-medium"><img style="height: 40px;" src="../images/astraea.png"/></a>
 </div>
 </header>
 
@@ -72,8 +83,8 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <div class="medium-3 large-2 show-for-medium column">
 <nav class="site-nav">
 <div class="nav-home">
-<a href="machine-learning.html" class="active">
-<span class="home-icon">⌂</span>Machine Learning
+<a href="../index.html" >
+<span class="home-icon">⌂</span>RasterFrames™
 </a>
 <div class="version-number">
 0.4.9
@@ -81,6 +92,17 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 </div>
 <div class="nav-toc">
 <ul>
+  <li><a href="../getting-started.html" class="page">Getting Started</a></li>
+  <li><a href="../creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
+  <li><a href="../exporting-rasterframes.html" class="page">Exporting RasterFrames</a></li>
+  <li><a href="../raster-analysis.html" class="page">Raster Analysis</a></li>
+  <li><a href="../ml/index.html" class="page">Machine Learning</a>
+  <ul>
+    <li><a href="../ml/clustering.html" class="active page">Clustering</a></li>
+    <li><a href="../ml/classification.html" class="page">Classification</a></li>
+  </ul></li>
+  <li><a href="../geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
+  <li><a href="../reference.html" class="page">Reference</a></li>
 </ul>
 </div>
 
@@ -92,15 +114,21 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 
 <div class="page-header row">
 <div class="medium-12 show-for-medium column">
+<div class="nav-breadcrumbs">
+<ul>
+  <li><a href="../index.html">RasterFrames™</a></li>
+  <li><a href="../ml/index.html">Machine Learning</a></li>
+  <li>Clustering</li>
+</ul>
+</div>
 </div>
 </div>
 
 <div class="page-content row">
 <div class="small-12 large-9 column" id="docs">
-<h1><a href="#machine-learning" name="machine-learning" class="anchor"><span class="anchor-link"></span></a>Machine Learning</h1><div class="callout note "><div class="callout-title">Note</div>
-<p>This example only scratches the surface of the type of machine learning one can perform with RasterFrames. More examples are forthcoming. </p></div>
-<h2><a href="#clustering" name="clustering" class="anchor"><span class="anchor-link"></span></a>Clustering</h2>
-<p>In this example we will do some simple cell clustering based on multiband imagery. First some setup:</p>
+<h1><a href="#clustering" name="clustering" class="anchor"><span class="anchor-link"></span></a>Clustering</h1>
+<p>In this example we will do some simple cell clustering based on multiband imagery. </p>
+<p>First some setup:</p>
 <pre class="prettyprint"><code class="language-scala">import astraea.spark.rasterframes._
 import astraea.spark.rasterframes.ml.TileExploder
 import geotrellis.raster.io.geotiff.SinglebandGeoTiff
@@ -141,10 +169,8 @@ root
  |-- band_4: st_tile (nullable = true)
 
 </code></pre>
-<p>SparkML requires that each observation be in its own row, and those observations be packed into a single <code>Vector</code>. The first step is to &ldquo;explode&rdquo; the tiles into a single row per cell/pixel</p>
-<pre class="prettyprint"><code class="language-scala">val exploder = new TileExploder().
-    setInputCols(bandColNames)
-
+<p>SparkML requires that each observation be in its own row, and those observations be packed into a single <code>Vector</code>. The first step is to &ldquo;explode&rdquo; the tiles into a single row per cell/pixel.</p>
+<pre class="prettyprint"><code class="language-scala">val exploder = new TileExploder()
 </code></pre>
 <p>To &ldquo;vectorize&rdquo; the the band columns, as required by SparkML, we use the SparkML <code>VectorAssembler</code>. We then configure our algorithm, create the transformation pipeline, and train our model. (Note: the selected value of <em>K</em> below is arbitrary.) </p>
 <pre class="prettyprint"><code class="language-scala">val assembler = new VectorAssembler().
@@ -191,21 +217,11 @@ scala&gt; println(&quot;Within set sum of squared errors: &quot; + metric)
 Within set sum of squared errors: 2.5956496685251507E10
 </code></pre><div class="callout note "><div class="callout-title">Note</div>
 <p><em>Coming soon</em>: how to create a new raster using the cluster ids as cell values.</p></div>
+<div class="nav-next">
+<p><strong>Next:</strong> <a href="../ml/classification.html">Classification</a></p>
+</div>
 </div>
 <div class="large-3 show-for-large column" data-sticky-container>
-<nav class="sidebar sticky" data-sticky data-anchor="docs" data-sticky-on="large">
-<div class="page-nav">
-<div class="nav-title">On this page:</div>
-<div class="nav-toc">
-<ul>
-  <li><a href="machine-learning.html#machine-learning" class="header">Machine Learning</a>
-  <ul>
-    <li><a href="machine-learning.html#clustering" class="header">Clustering</a></li>
-  </ul></li>
-</ul>
-</div>
-</div>
-</nav>
 </div>
 </div>
 
@@ -242,7 +258,7 @@ Within set sum of squared errors: 2.5956496685251507E10
 <!--
 <div class="copyright">
 <span class="text">&copy; 2017</span>
-<a href="http://www.astraea.earth/" class="logo"><img src="images/astraea.png"/></a>
+<a href="http://www.astraea.earth/" class="logo"><img src="../images/astraea.png"/></a>
 </div>
 -->
 </div>
@@ -256,13 +272,13 @@ Within set sum of squared errors: 2.5956496685251507E10
 </div>
 </body>
 
-<script type="text/javascript" src="lib/foundation/dist/foundation.min.js"></script>
+<script type="text/javascript" src="../lib/foundation/dist/foundation.min.js"></script>
 <script type="text/javascript">jQuery(document).foundation();</script>
-<script type="text/javascript" src="js/magellan.js"></script>
+<script type="text/javascript" src="../js/magellan.js"></script>
 
-<style type="text/css">@import "lib/prettify/prettify.css";</style>
-<script type="text/javascript" src="lib/prettify/prettify.js"></script>
-<script type="text/javascript" src="lib/prettify/lang-scala.js"></script>
+<style type="text/css">@import "../lib/prettify/prettify.css";</style>
+<script type="text/javascript" src="../lib/prettify/prettify.js"></script>
+<script type="text/javascript" src="../lib/prettify/lang-scala.js"></script>
 <script type="text/javascript">jQuery(function(){window.prettyPrint && prettyPrint()});</script>
 
 </html>
