@@ -26,7 +26,6 @@ import org.apache.commons.io.IOUtils
 import org.apache.spark.sql._
 import org.apache.spark.sql.functions._
 
-
 object NDVI extends App {
 
   def readTiff(name: String) = SinglebandGeoTiff(IOUtils.toByteArray(getClass.getResourceAsStream(s"/$name")))

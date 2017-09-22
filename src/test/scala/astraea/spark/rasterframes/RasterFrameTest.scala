@@ -101,6 +101,20 @@ class RasterFrameTest extends TestEnvironment with TestData {
       assert(rf.columns.toSet === Set(SPATIAL_KEY_COLUMN, TEMPORAL_KEY_COLUMN, TILE_COLUMN, TILE_FEATURE_DATA_COLUMN))
     }
 
+    it("should support spatial joins") {
+      val rf = sampleGeoTiff.projectedRaster.toRF(256, 256)
+      val wt = rf.addTemporalComponent(TemporalKey(34))
+
+      assert(wt.columns.contains(TEMPORAL_KEY_COLUMN))
+
+      val joined = wt.spatialJoin(wt, "outer")
+      joined.printSchema
+
+      // Should be both left and right column names.
+      assert(joined.columns.count(_.contains(TEMPORAL_KEY_COLUMN)) === 2)
+      assert(joined.columns.count(_.contains(SPATIAL_KEY_COLUMN)) === 2)
+    }
+
     it("should convert a GeoTiff to RasterFrame") {
       val praster: ProjectedRaster[Tile] = sampleGeoTiff.projectedRaster
       val (cols, rows) = praster.raster.dimensions
