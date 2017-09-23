@@ -1,4 +1,4 @@
-# RasterFrames™
+# RasterFrames
 
 _RasterFrames™_ brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer 
 operations of [GeoTrellis](https://geotrellis.io/). 
@@ -11,9 +11,6 @@ core is a user-defined type (UDF) called @scaladoc[`TileUDT`](org.apache.spark.s
 which encodes a GeoTrellis @scaladoc[`Tile`](geotrellis.raster.Tile) in a form the Spark Catalyst engine can process. 
 Furthermore, we extend the definition of a DataFrame to encompass some additional invariants, allowing for geospatial 
 operations within and between RasterFrames to occur, while still maintaining necessary geo-referencing constructs.
-
-
-![](RasterFrameInvariants.png)
 
 To learn more, please see the [Getting Started](getting-started.md) section of this manual.
 
