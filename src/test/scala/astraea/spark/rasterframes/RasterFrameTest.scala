@@ -103,6 +103,20 @@ class RasterFrameTest extends TestEnvironment with TestData {
       assert(rf.columns.toSet === Set(SPATIAL_KEY_COLUMN, TEMPORAL_KEY_COLUMN, TILE_COLUMN, TILE_FEATURE_DATA_COLUMN))
     }
 
+    it("should support spatial joins") {
+      val rf = sampleGeoTiff.projectedRaster.toRF(256, 256)
+      val wt = rf.addTemporalComponent(TemporalKey(34))
+
+      assert(wt.columns.contains(TEMPORAL_KEY_COLUMN))
+
+      val joined = wt.spatialJoin(wt, "outer")
+      joined.printSchema
+
+      // Should be both left and right column names.
+      assert(joined.columns.count(_.contains(TEMPORAL_KEY_COLUMN)) === 2)
+      assert(joined.columns.count(_.contains(SPATIAL_KEY_COLUMN)) === 2)
+    }
+
     it("should convert a GeoTiff to RasterFrame") {
       val praster: ProjectedRaster[Tile] = sampleGeoTiff.projectedRaster
       val (cols, rows) = praster.raster.dimensions
@@ -228,7 +242,7 @@ class RasterFrameTest extends TestEnvironment with TestData {
       }
     }
 
-    it("should rasterize a spatiotemporal key") {
+    it("should rasterize with a spatiotemporal key") {
       val rf = TestData.randomSpatioTemporalTileLayerRDD(20, 20, 2, 2).toRF
 
       val md = rf.schema.fields(0).metadata
@@ -236,6 +250,18 @@ class RasterFrameTest extends TestEnvironment with TestData {
       println(rf.extract[TileLayerMetadata[SpaceTimeKey]](CONTEXT_METADATA_KEY)(md))
 
       rf.toRaster($"tile", 128, 128)
+    }
+
+    it("should maintain metadata after all spatial join operations") {
+      val rf1 = TestData.randomSpatioTemporalTileLayerRDD(20, 20, 2, 2).toRF
+      val rf2 = TestData.randomSpatioTemporalTileLayerRDD(20, 20, 2, 2).toRF
+
+      val joinTypes = Seq("inner", "outer", "fullouter", "left_outer", "right_outer", "leftsemi")
+      forEvery(joinTypes) { jt ⇒
+        val joined = rf1.spatialJoin(rf2, jt)
+        println(joined.schema.json)
+        assert(joined.tileLayerMetadata.isRight)
+      }
     }
   }
 }

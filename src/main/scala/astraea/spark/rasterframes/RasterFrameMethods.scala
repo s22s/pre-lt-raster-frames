@@ -25,11 +25,13 @@ import geotrellis.util.{LazyLogging, MethodExtensions}
 import geotrellis.vector.ProjectedExtent
 import org.apache.spark.annotation.Experimental
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{Column, DataFrame, Dataset, TypedColumn}
 import org.apache.spark.sql.functions._
+import org.apache.spark.sql.gt.NamedColumn
 import org.apache.spark.sql.gt.types.TileUDT
 import org.apache.spark.sql.types.{Metadata, StructField}
+import org.apache.spark.sql.{Column, DataFrame, Dataset, TypedColumn}
 import spray.json._
+
 import scala.reflect.runtime.universe._
 
 /**
@@ -51,8 +53,6 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with LazyLogging 
 
   /** Get the spatial column. */
   def spatialKeyColumn: TypedColumn[Any, SpatialKey] = {
-    val spark = self.sparkSession
-    import spark.implicits._
     val key = findSpatialKeyField
     key
       .map(_.name)
@@ -62,8 +62,6 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with LazyLogging 
 
   /** Get the temporal column, if any. */
   def temporalKeyColumn: Option[TypedColumn[Any, TemporalKey]] = {
-    val spark = self.sparkSession
-    import spark.implicits._
     val key = findTemporalKeyField
     key.map(_.name).map(self(_).as[TemporalKey])
   }
@@ -87,8 +85,7 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with LazyLogging 
    * Reassemble the [[TileLayerMetadata]] record from DataFrame metadata.
    */
   def tileLayerMetadata: Either[TileLayerMetadata[SpatialKey], TileLayerMetadata[SpaceTimeKey]] = {
-    val spatialMD = self.schema
-      .find(_.name == SPATIAL_KEY_COLUMN)
+    val spatialMD = findSpatialKeyField
       .map(_.metadata)
       .getOrElse(throw new IllegalArgumentException(s"RasterFrame operation requsted on non-RasterFrame: $self"))
 
@@ -96,6 +93,20 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with LazyLogging 
       Right(extract[TileLayerMetadata[SpaceTimeKey]](CONTEXT_METADATA_KEY)(spatialMD))
     else
       Left(extract[TileLayerMetadata[SpatialKey]](CONTEXT_METADATA_KEY)(spatialMD))
+  }
+
+  def addTemporalComponent(value: TemporalKey): RasterFrame = {
+    require(temporalKeyColumn.isEmpty, "RasterFrame already has a temporal component")
+    val tlm = tileLayerMetadata.left.get
+    val newTlm = tlm.map(k ⇒ SpaceTimeKey(k, value))
+
+    val litKey = udf(() ⇒ value)
+
+    val df = self.withColumn(TEMPORAL_KEY_COLUMN, litKey())
+
+    df.setSpatialColumnRole(df(SPATIAL_KEY_COLUMN), newTlm)
+      .setColumnRole(df(TEMPORAL_KEY_COLUMN), classOf[TemporalKey].getSimpleName)
+      .certify
   }
 
   /**
@@ -122,11 +133,43 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with LazyLogging 
       )
     }
 
-    val leftKey = left.spatialKeyColumn
-    val rightKey = right.spatialKeyColumn
+    def updateNames(rf: RasterFrame,
+                    prefix: String,
+                    sk: TypedColumn[Any, SpatialKey],
+                    tk: Option[TypedColumn[Any, TemporalKey]]) = {
+      tk.combine(rf: DataFrame)((t, rf) ⇒ rf.withColumnRenamed(t.columnName, prefix + t.columnName))
+        .withColumnRenamed(sk.columnName, prefix + sk.columnName)
+        .certify
+    }
 
-    val joined = left.join(right, leftKey === rightKey, joinType).drop(rightKey)
-    joined.certify
+    val preppedLeft = updateNames(left, "left_", left.spatialKeyColumn, left.temporalKeyColumn)
+    val preppedRight = updateNames(right, "right_", right.spatialKeyColumn, right.temporalKeyColumn)
+
+    val leftSpatialKey = preppedLeft.spatialKeyColumn
+    val leftTemporalKey = preppedLeft.temporalKeyColumn
+    val rightSpatialKey = preppedRight.spatialKeyColumn
+    val rightTemporalKey = preppedRight.temporalKeyColumn
+
+    val spatialPred = leftSpatialKey === rightSpatialKey
+    val temporalPred = leftTemporalKey.flatMap(l ⇒ rightTemporalKey.map(r ⇒ l === r))
+
+    val joinPred = temporalPred.map(t ⇒ spatialPred && t).getOrElse(spatialPred)
+
+    val joined = preppedLeft.join(preppedRight, joinPred, joinType)
+
+    val result = if (joinType == "inner") {
+      // Undo left renaming and drop right
+      val spatialFix = joined
+        .withColumnRenamed(leftSpatialKey.columnName, left.spatialKeyColumn.columnName)
+        .drop(rightSpatialKey.columnName)
+
+      left.temporalKeyColumn.tupleWith(leftTemporalKey).combine(spatialFix) {
+        case ((orig, updated), rf) ⇒ rf
+          .withColumnRenamed(orig.columnName, updated.columnName)
+          .drop(rightTemporalKey.get.columnName)
+      }
+    } else joined
+    result.certify
   }
 
   /**
@@ -184,7 +227,8 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with LazyLogging 
   private[rasterframes] def extract[M: JsonFormat](metadataKey: String)(md: Metadata) =
     md.getMetadata(metadataKey).json.parseJson.convertTo[M]
 
-  /** Convert the tiles in the RasterFrame into a single raster. */
+  /** Convert the tiles in the RasterFrame into a single raster. For RasterFrames keyed with temporal keys, this
+    * will merge based */
   def toRaster(tileCol: Column,
                rasterCols: Int,
                rasterRows: Int,
