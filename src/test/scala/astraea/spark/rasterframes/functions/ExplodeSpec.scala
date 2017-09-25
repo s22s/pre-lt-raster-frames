@@ -21,6 +21,7 @@ package astraea.spark.rasterframes.functions
 
 import astraea.spark.rasterframes._
 import geotrellis.raster._
+import geotrellis.raster.io.geotiff.GeoTiff
 import org.apache.spark.sql.functions._
 
 /**
@@ -83,7 +84,8 @@ class ExplodeSpec extends TestEnvironment with TestData {
       }
 
       withClue("multiple tiles") {
-        val tinyTiles = sampleGeoTiff.projectedRaster.toRF(10, 10)
+        val image = sampleGeoTiff
+        val tinyTiles = image.projectedRaster.toRF(10, 10)
 
         val exploded = tinyTiles.select(tinyTiles.spatialKeyColumn, explodeTiles(tinyTiles.tileColumns.head))
 
@@ -97,7 +99,17 @@ class ExplodeSpec extends TestEnvironment with TestData {
             10, 10, IntConstantNoDataCellType
           ))
 
-        assembled.show
+        val tlm = tinyTiles.tileLayerMetadata.left.get
+
+        val rf = assembled.asRF(col(SPATIAL_KEY_COLUMN), tlm)
+
+        val (cols, rows) = image.tile.dimensions
+
+        val recovered = rf.toRaster(col(TILE_COLUMN), cols, rows)
+
+        //GeoTiff(recovered).write("foo.tiff")
+
+        assert(image.tile.toArrayTile() === recovered.tile.toArrayTile())
       }
     }
 

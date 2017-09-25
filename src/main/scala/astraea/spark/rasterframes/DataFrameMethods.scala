@@ -17,7 +17,7 @@
 package astraea.spark.rasterframes
 
 import geotrellis.spark.io._
-import geotrellis.spark.{SpatialComponent, SpatialKey, TileLayerMetadata}
+import geotrellis.spark.{SpaceTimeKey, SpatialComponent, SpatialKey, TemporalKey, TileLayerMetadata}
 import geotrellis.util.MethodExtensions
 import org.apache.spark.sql.catalyst.expressions.Attribute
 import org.apache.spark.sql.gt._
@@ -104,6 +104,35 @@ trait DataFrameMethods extends MethodExtensions[DataFrame] {
 
     potentialRF
   }
+
+  /**
+   * Convert DataFrame into a RasterFrame
+   *
+   * @param spatialKey The column where the spatial key is stored
+   * @param tlm Metadata describing layout under which tiles were created. Note: no checking is
+   *            performed to ensure metadata, key-space, and tiles are coherent.
+   * @throws IllegalArgumentException when constraints outlined in `asRF` are not met.
+   * @return Encoded RasterFrame
+   */
+  @throws[IllegalArgumentException]
+  def asRF(spatialKey: Column, tlm: TileLayerMetadata[SpatialKey]): RasterFrame =
+    self.setSpatialColumnRole(spatialKey, tlm).asRF
+
+  /**
+   * Convert DataFrame into a RasterFrame
+   *
+   * @param spatialKey The column where the spatial key is stored
+   * @param temporalKey The column tagged under the temporal role
+   * @param tlm Metadata describing layout under which tiles were created. Note: no checking is
+   *            performed to ensure metadata, key-space, and tiles are coherent.
+   * @throws IllegalArgumentException when constraints outlined in `asRF` are not met.
+   * @return Encoded RasterFrame
+   */
+  @throws[IllegalArgumentException]
+  def asRF(spatialKey: Column, temporalKey: Column, tlm: TileLayerMetadata[SpaceTimeKey]): RasterFrame =
+    self.setSpatialColumnRole(spatialKey, tlm)
+      .setColumnRole(temporalKey, classOf[TemporalKey].getSimpleName)
+      .asRF
 
   /**
    * Converts [[DataFrame]] to a RasterFrame if the following constraints are fulfilled:
