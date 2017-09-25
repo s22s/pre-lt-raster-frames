@@ -8,7 +8,7 @@ import org.apache.spark.sql.types.MetadataBuilder
  * @author sfitch 
  * @since 9/6/17
  */
-class MetadataTest extends TestEnvironment with TestData  {
+class MetadataSpec extends TestEnvironment with TestData  {
   import spark.implicits._
 
   private val sampleMetadata = new MetadataBuilder().putBoolean("haz", true).putLong("baz", 42).build()

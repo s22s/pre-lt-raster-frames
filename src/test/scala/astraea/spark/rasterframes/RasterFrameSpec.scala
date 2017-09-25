@@ -21,7 +21,7 @@ import org.apache.spark.sql.gt.NamedColumn
  * @author sfitch 
  * @since 7/10/17
  */
-class RasterFrameTest extends TestEnvironment with TestData {
+class RasterFrameSpec extends TestEnvironment with TestData {
   // This is to avoid an IntelliJ error
   protected def withFixture(test: Any) = ???
   import TestData.randomTile

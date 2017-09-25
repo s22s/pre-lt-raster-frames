@@ -22,6 +22,7 @@ package astraea.spark.rasterframes.functions
 import astraea.spark.rasterframes._
 import geotrellis.raster._
 import org.apache.spark.sql.ColumnName
+import org.apache.spark.sql.functions._
 
 /**
  * Test rig for Tile operations associated with converting to/from
@@ -69,7 +70,17 @@ class ExplodeSpec extends TestEnvironment with TestData {
     it("should reassemble exploded tile") {
       val df = Seq[Tile](byteArrayTile).toDF("tile").select(explodeTiles($"tile"))
       df.printSchema()
-      df.agg(assembleTile($"column", $"row", $"tile"))
+      val assembled = df.agg(assembleTile(
+        col(COLUMN_INDEX_COLUMN),
+        col(ROW_INDEX_COLUMN),
+        col(TILE_COLUMN)
+      )).as[Tile]
+
+      assembled.show(false)
+      val result = assembled.first()
+      println(result.asciiDraw())
+
+      assert(result === byteArrayTile)
     }
 
     it("should convert tile into array") {

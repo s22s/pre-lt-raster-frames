@@ -72,6 +72,8 @@ object UDFs {
     }
   }
 
+  private[rasterframes] val assembleTile = new TileAssemblerFunction()
+
   /** Computes the column aggregate histogram */
   private[rasterframes] val aggHistogram = new AggregateHistogramFunction()
 

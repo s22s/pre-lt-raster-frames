@@ -62,7 +62,9 @@ trait ColumnFunctions {
 
   /** Create a Tile from  */
   @Experimental
-  def assembleTile(columnIndex: Column,  rowIndex: Column, tile: Column) = ???
+  def assembleTile(columnIndex: Column, rowIndex: Column, tile: Column): TypedColumn[Any, Tile] = {
+    UDFs.assembleTile(columnIndex, rowIndex, tile)
+  }.as(tile.columnName).as[Tile]
 
   /** Query the number of (cols, rows) in a Tile. */
   @Experimental
