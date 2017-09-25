@@ -21,7 +21,6 @@ package astraea.spark.rasterframes.functions
 
 import astraea.spark.rasterframes._
 import geotrellis.raster._
-import org.apache.spark.sql.ColumnName
 import org.apache.spark.sql.functions._
 
 /**
@@ -38,16 +37,16 @@ class ExplodeSpec extends TestEnvironment with TestData {
 
     it("should explode tiles") {
       val query = sql(
-        """select st_explodeTiles(
-          |  st_makeConstantTile(1, 10, 10, 'int8raw'),
-          |  st_makeConstantTile(2, 10, 10, 'int8raw')
+        """select rf_explodeTiles(
+          |  rf_makeConstantTile(1, 10, 10, 'int8raw'),
+          |  rf_makeConstantTile(2, 10, 10, 'int8raw')
           |)
           |""".stripMargin)
       write(query)
       assert(query.select("cell_0", "cell_1").as[(Double, Double)].collect().forall(_ == ((1.0, 2.0))))
       val query2 = sql(
-        """|select st_tileDimensions(tiles) as dims, st_explodeTiles(tiles) from (
-           |select st_makeConstantTile(1, 10, 10, 'int8raw') as tiles)
+        """|select rf_tileDimensions(tiles) as dims, rf_explodeTiles(tiles) from (
+           |select rf_makeConstantTile(1, 10, 10, 'int8raw') as tiles)
            |""".stripMargin)
       write(query2)
       assert(query2.columns.length === 4)
@@ -68,25 +67,30 @@ class ExplodeSpec extends TestEnvironment with TestData {
     }
 
     it("should reassemble exploded tile") {
-      val df = Seq[Tile](byteArrayTile).toDF("tile").select(explodeTiles($"tile"))
-      df.printSchema()
-      val assembled = df.agg(assembleTile(
-        col(COLUMN_INDEX_COLUMN),
-        col(ROW_INDEX_COLUMN),
-        col(TILE_COLUMN)
-      )).as[Tile]
+      withClue("single tile") {
+        val df = Seq[Tile](byteArrayTile).toDF("tile")
+          .select(explodeTiles($"tile"))
 
-      assembled.show(false)
-      val result = assembled.first()
-      println(result.asciiDraw())
+        val assembled = df.agg(assembleTile(
+          col(COLUMN_INDEX_COLUMN),
+          col(ROW_INDEX_COLUMN),
+          col(TILE_COLUMN),
+          3, 3, byteArrayTile.cellType
+        )).as[Tile]
 
-      assert(result === byteArrayTile)
+        val result = assembled.first()
+        assert(result === byteArrayTile)
+      }
+
+      withClue("multiple tiles") {
+        fail("todo")
+      }
     }
 
     it("should convert tile into array") {
       val query = sql(
-        """select st_tileToArrayInt(
-          |  st_makeConstantTile(1, 10, 10, 'int8raw')
+        """select rf_tileToArrayInt(
+          |  rf_makeConstantTile(1, 10, 10, 'int8raw')
           |) as intArray
           |""".stripMargin)
       assert(query.as[Array[Int]].first.sum === 100)
@@ -114,4 +118,6 @@ class ExplodeSpec extends TestEnvironment with TestData {
       assert(result2.cellType.asInstanceOf[UserDefinedNoData[_]].noDataValue === 0)
     }
   }
+
+  protected def withFixture(test: Any) = ???
 }

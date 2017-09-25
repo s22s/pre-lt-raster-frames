@@ -17,7 +17,7 @@
 package astraea.spark.rasterframes.functions
 
 import astraea.spark.rasterframes.HasCellType
-import geotrellis.raster.Tile
+import geotrellis.raster.{CellType, Tile}
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.LocalTileBinaryOp
 import geotrellis.raster.summary.Statistics
@@ -25,10 +25,9 @@ import org.apache.spark.annotation.Experimental
 import org.apache.spark.sql._
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.gt.Implicits._
-import org.apache.spark.sql.gt._
-import org.apache.spark.sql.types._
 
+import org.apache.spark.sql.types._
+import astraea.spark.rasterframes._
 import scala.reflect.runtime.universe._
 
 /**
@@ -60,11 +59,6 @@ trait ColumnFunctions {
     new Column(exploder).as(metaNames ++ colNames)
   }
 
-  /** Create a Tile from  */
-  @Experimental
-  def assembleTile(columnIndex: Column, rowIndex: Column, tile: Column): TypedColumn[Any, Tile] = {
-    UDFs.assembleTile(columnIndex, rowIndex, tile)
-  }.as(tile.columnName).as[Tile]
 
   /** Query the number of (cols, rows) in a Tile. */
   @Experimental
@@ -83,6 +77,12 @@ trait ColumnFunctions {
   def arrayToTile(arrayCol: Column, cols: Int, rows: Int) = withAlias("arrayToTile", arrayCol)(
     udf[Tile, AnyRef](UDFs.arrayToTile(cols, rows)).apply(arrayCol)
   )
+
+  /** Create a Tile from  */
+  @Experimental
+  def assembleTile(columnIndex: Column, rowIndex: Column, tile: Column, cols: Int, rows: Int, ct: CellType): TypedColumn[Any, Tile] = {
+    UDFs.assembleTile(cols, rows, ct)(columnIndex, rowIndex, tile)
+  }.as(tile.columnName).as[Tile]
 
   /** Get the Tile's cell type*/
   @Experimental

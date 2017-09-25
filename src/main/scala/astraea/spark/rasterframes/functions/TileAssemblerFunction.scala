@@ -19,7 +19,7 @@
 
 package astraea.spark.rasterframes.functions
 
-import geotrellis.raster.{ArrayTile, DoubleConstantNoDataCellType, MutableArrayTile}
+import geotrellis.raster.{ArrayTile, CellType, DoubleConstantNoDataCellType, MutableArrayTile}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.expressions.{MutableAggregationBuffer, UserDefinedAggregateFunction}
 import org.apache.spark.sql.gt.types.TileUDT
@@ -31,7 +31,7 @@ import org.apache.spark.sql.types._
  * @author sfitch 
  * @since 9/24/17
  */
-class TileAssemblerFunction extends UserDefinedAggregateFunction {
+class TileAssemblerFunction(cols: Int, rows: Int, ct: CellType) extends UserDefinedAggregateFunction {
   def inputSchema: StructType = StructType(Seq(
     StructField("columnIndex", IntegerType, false),
     StructField("rowIndex", IntegerType, false),

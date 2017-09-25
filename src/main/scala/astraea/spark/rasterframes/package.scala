@@ -16,13 +16,15 @@
 
 package astraea.spark
 
+import astraea.spark.rasterframes.encoders.Implicits
 import geotrellis.raster.{ProjectedRaster, Tile, TileFeature}
 import geotrellis.spark.{Bounds, ContextRDD, Metadata, SpaceTimeKey, SpatialComponent, TileLayerMetadata}
 import geotrellis.util.GetComponent
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql._
-import org.apache.spark.sql.gt.Implicits
 import astraea.spark.rasterframes.functions.ColumnFunctions
+import org.apache.spark.sql.catalyst.analysis.UnresolvedAttribute
+import org.apache.spark.sql.catalyst.expressions.{Alias, AttributeReference}
 import spray.json.JsonFormat
 
 import scala.reflect.runtime.universe._
@@ -159,5 +161,12 @@ package object rasterframes extends Implicits with ColumnFunctions {
     def tupleWith[R](right: Option[R]): Option[(T, R)] = left.flatMap(l ⇒ right.map((l, _)))
   }
 
-
+  implicit class NamedColumn(col: Column) {
+    def columnName: String = col.expr match {
+      case ua: UnresolvedAttribute ⇒ ua.name
+      case ar: AttributeReference ⇒ ar.name
+      case as: Alias ⇒ as.name
+      case o ⇒ o.prettyName
+    }
+  }
 }

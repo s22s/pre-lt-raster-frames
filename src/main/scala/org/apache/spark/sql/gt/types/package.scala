@@ -31,12 +31,6 @@ import scala.reflect.runtime.universe._
  * @since 4/12/17
  */
 package object types {
-  private[gt] def runtimeClass[T: TypeTag]: Class[T] =
-    typeTag[T].mirror.runtimeClass(typeTag[T].tpe).asInstanceOf[Class[T]]
-
-  private[gt] def typeToClassTag[T: TypeTag]: ClassTag[T] = {
-    ClassTag[T](typeTag[T].mirror.runtimeClass(typeTag[T].tpe))
-  }
 
   /** Lookup the registered Catalyst UDT for the given Scala type. */
   def udtOf[T >: Null: TypeTag]: UserDefinedType[T] =

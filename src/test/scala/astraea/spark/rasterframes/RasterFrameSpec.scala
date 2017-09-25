@@ -4,7 +4,6 @@ package astraea.spark.rasterframes
 
 import java.time.ZonedDateTime
 
-import com.typesafe.scalalogging.LazyLogging
 import geotrellis.proj4.LatLng
 import geotrellis.raster.render.{ColorMap, ColorRamp}
 import geotrellis.raster.{ProjectedRaster, Tile, TileFeature, TileLayout}
@@ -13,7 +12,6 @@ import geotrellis.spark.io._
 import geotrellis.spark.tiling._
 import geotrellis.vector.{Extent, ProjectedExtent}
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.gt.NamedColumn
 
 /**
  * RasterFrame test rig.

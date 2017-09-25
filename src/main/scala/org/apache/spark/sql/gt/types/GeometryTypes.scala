@@ -25,31 +25,31 @@ import org.apache.spark.sql.types.UDTRegistration
  * @author sfitch
  * @since 5/11/17
  */
-private[gt] class PointUDT extends AbstractGeometryUDT[Point]("st_point")
+private[gt] class PointUDT extends AbstractGeometryUDT[Point]("gt_point")
 
 case object PointUDT extends PointUDT {
   UDTRegistration.register(classOf[Point].getName, classOf[PointUDT].getName)
 }
 
-private[gt] class LineUDT extends AbstractGeometryUDT[Line]("st_line")
+private[gt] class LineUDT extends AbstractGeometryUDT[Line]("gt_line")
 
 case object LineUDT extends LineUDT {
   UDTRegistration.register(classOf[Line].getName, classOf[LineUDT].getName)
 }
 
-private[gt] class MultiLineUDT extends AbstractGeometryUDT[MultiLine]("st_multiline")
+private[gt] class MultiLineUDT extends AbstractGeometryUDT[MultiLine]("gt_multiline")
 
 case object MultiLineUDT extends MultiLineUDT {
   UDTRegistration.register(classOf[MultiLine].getName, classOf[MultiLineUDT].getName)
 }
 
-private[gt] class PolygonUDT extends AbstractGeometryUDT[Polygon]("st_polygon")
+private[gt] class PolygonUDT extends AbstractGeometryUDT[Polygon]("gt_polygon")
 
 case object PolygonUDT extends PolygonUDT {
   UDTRegistration.register(classOf[Polygon].getName, classOf[PolygonUDT].getName)
 }
 
-private[gt] class MultiPolygonUDT extends AbstractGeometryUDT[MultiPolygon]("st_multipolygon")
+private[gt] class MultiPolygonUDT extends AbstractGeometryUDT[MultiPolygon]("gt_multipolygon")
 
 case object MultiPolygonUDT extends MultiPolygonUDT {
   UDTRegistration.register(classOf[MultiPolygon].getName, classOf[MultiPolygonUDT].getName)

@@ -24,7 +24,7 @@ import org.apache.spark.sql.types._
 import scala.reflect.ClassTag
 
 /**
- *
+ * Base class for UDTs backed by "well-known binary" (WKB) encoding.
  * @author sfitch
  * @since 4/18/17
  */
