@@ -83,7 +83,21 @@ class ExplodeSpec extends TestEnvironment with TestData {
       }
 
       withClue("multiple tiles") {
-        fail("todo")
+        val tinyTiles = sampleGeoTiff.projectedRaster.toRF(10, 10)
+
+        val exploded = tinyTiles.select(tinyTiles.spatialKeyColumn, explodeTiles(tinyTiles.tileColumns.head))
+
+        exploded.printSchema()
+
+        val assembled = exploded.groupBy(tinyTiles.spatialKeyColumn)
+          .agg(assembleTile(
+            col(COLUMN_INDEX_COLUMN),
+            col(ROW_INDEX_COLUMN),
+            col(TILE_COLUMN),
+            10, 10, IntConstantNoDataCellType
+          ))
+
+        assembled.show
       }
     }
 
@@ -115,6 +129,7 @@ class ExplodeSpec extends TestEnvironment with TestData {
       val hasNoData = back.withColumn("withNoData", withNoData($"backToTile", 0))
 
       val result2 = hasNoData.select($"withNoData".as[Tile]).first
+
       assert(result2.cellType.asInstanceOf[UserDefinedNoData[_]].noDataValue === 0)
     }
   }

@@ -19,11 +19,13 @@
 
 package astraea.spark.rasterframes.functions
 
-import geotrellis.raster.{ArrayTile, CellType, DoubleConstantNoDataCellType, MutableArrayTile}
+import geotrellis.raster.{DataType ⇒ _, _}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.expressions.{MutableAggregationBuffer, UserDefinedAggregateFunction}
 import org.apache.spark.sql.gt.types.TileUDT
 import org.apache.spark.sql.types._
+
+import scala.collection.mutable
 
 /**
  * Aggregator for reassembling tiles from from exploded form
@@ -39,10 +41,7 @@ class TileAssemblerFunction(cols: Int, rows: Int, ct: CellType) extends UserDefi
   ))
 
   def bufferSchema: StructType = StructType(Seq(
-    StructField("cells",
-      DataTypes.createMapType(IntegerType,
-        DataTypes.createMapType(IntegerType, DoubleType, false), false),
-      false)
+    StructField("cells", DataTypes.createArrayType(DoubleType, false), false)
   ))
 
   def dataType: DataType = new TileUDT()
@@ -50,7 +49,7 @@ class TileAssemblerFunction(cols: Int, rows: Int, ct: CellType) extends UserDefi
   def deterministic: Boolean = true
 
   def initialize(buffer: MutableAggregationBuffer): Unit = {
-    buffer(0) = Map.empty[Int, Map[Int, Double]]
+    buffer(0) = Array.ofDim[Double](cols * rows).fill(doubleNODATA)
   }
 
   def update(buffer: MutableAggregationBuffer, input: Row): Unit = {
@@ -58,44 +57,28 @@ class TileAssemblerFunction(cols: Int, rows: Int, ct: CellType) extends UserDefi
     val row = input.getInt(1)
     val cell = input.getDouble(2)
 
-    val columns = buffer.getAs[Map[Int, Map[Int, Double]]](0)
-    val rows = columns.getOrElse(col, Map.empty[Int, Double])
-    val updatedRows = rows + (row -> cell)
-    val updatedColumns = columns + (col -> updatedRows)
-    buffer(0) = updatedColumns
+    val cells = buffer.getAs[mutable.WrappedArray[Double]](0)
+
+    cells(row * cols + col) = cell
+
+    buffer(0) = cells
   }
 
   def merge(buffer1: MutableAggregationBuffer, buffer2: Row): Unit = {
-    var destColumns = buffer1.getAs[Map[Int, Map[Int, Double]]](0)
-    val sourceColumns = buffer2.getAs[Map[Int, Map[Int, Double]]](0)
+    val source = buffer2.getAs[mutable.WrappedArray[Double]](0)
+    val dest = buffer1.getAs[mutable.WrappedArray[Double]](0)
 
     for {
-      (col, map) ← sourceColumns
-      (row, cell) ← map
-    } {
-      val rows = destColumns.getOrElse(col, Map.empty[Int, Double])
-      val updatedRows = rows + (row -> cell)
-      destColumns = destColumns + (col -> updatedRows)
-    }
-    buffer1(0) = destColumns
+      i ← source.indices
+      cell = source(i)
+      if isData(cell)
+    } dest(i) = cell
+
+    buffer1(0) = dest
   }
 
   def evaluate(buffer: Row): Any = {
-    val columns = buffer.getAs[Map[Int, Map[Int, Double]]](0)
-
-    // We assume that the shape of the tile is associated with the found
-    // keys. Which is probably not a good assumption since ND could have been
-    // filtered out.
-    val maxCol = columns.keys.max
-    val maxRow = columns.values.map(_.keys.max).max
-
-    val retval = ArrayTile.empty(DoubleConstantNoDataCellType, maxCol + 1, maxRow + 1)
-
-    for {
-      (col, map) ← columns
-      (row, cell) ← map
-    } retval.setDouble(col, row, cell)
-
-    retval
+    val cells = buffer.getAs[mutable.WrappedArray[Double]](0).toArray[Double]
+    ArrayTile.apply(cells.array, cols, rows).convert(ct)
   }
 }
