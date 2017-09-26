@@ -255,7 +255,7 @@ val trainer = new CrossValidator().
 </code></pre>
 <p>Push the &ldquo;go&rdquo; button:</p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; val model = trainer.fit(abt)
-model: org.apache.spark.ml.tuning.CrossValidatorModel = cv_ecf4d3b10e4b
+model: org.apache.spark.ml.tuning.CrossValidatorModel = cv_645f71f9892e
 </code></pre>
 <p>To view the model&rsquo;s performance we format the <code>paramGrid</code> settings used for each model and render the parameter/performance association.</p>
 <pre class="prettyprint"><code class="language-scala">val metrics = model.getEstimatorParamMaps.
@@ -320,7 +320,7 @@ raster.tile.renderPng(clusterColors).write(&quot;target/scala-2.11/tut/ml/classi
   </thead>
   <tbody>
     <tr>
-      <td><img src="rgb.png" /> </td>
+      <td><img src="L8-RGB-VA.png" /> </td>
       <td><img src="target-labels.png" /> </td>
       <td><img src="classified.png" /> </td>
     </tr>
