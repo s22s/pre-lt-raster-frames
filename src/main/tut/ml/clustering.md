@@ -8,6 +8,8 @@ First some setup:
 import astraea.spark.rasterframes._
 import astraea.spark.rasterframes.ml.TileExploder
 import geotrellis.raster.io.geotiff.SinglebandGeoTiff
+import geotrellis.raster._
+import geotrellis.raster.render._
 import org.apache.spark.ml.Pipeline
 import org.apache.spark.ml.clustering.{KMeans, KMeansModel}
 import org.apache.spark.ml.feature.VectorAssembler
@@ -20,6 +22,7 @@ implicit val spark = SparkSession.builder().master("local[*]").appName(getClass.
 spark.sparkContext.setLogLevel("ERROR")
 
 rfInit(spark.sqlContext)
+import spark.implicits._
 ```
 
 The first step is to load multiple bands of imagery and construct a single RasterFrame from them.
@@ -61,7 +64,8 @@ val assembler = new VectorAssembler().
   setOutputCol("features")
 
 // Configure our clustering algorithm
-val kmeans = new KMeans().setK(3)
+val k = 5
+val kmeans = new KMeans().setK(k)
 
 // Combine the two stages
 val pipeline = new Pipeline().setStages(Array(exploder, assembler, kmeans))
@@ -93,12 +97,56 @@ val metric = clusterResults.computeCost(clustered)
 println("Within set sum of squared errors: " + metric)
 ```
 
-@@@ note
 
-*Coming soon*: how to create a new raster using the cluster ids as cell values.
+## Visualizing Results
 
-@@@
+The predictions are in a DataFrame with each row representing a separate pixel. 
+To assemble a raster to visualize the cluster assignments, we have to go through a
+multi-stage process to get the data back in tile form, and from there to combined
+raster form.
+
+First, we get the DataFrame back into RasterFrame form:
+
+```tut:silent
+val tlm = joinedRF.tileLayerMetadata.left.get
+
+val retiled = clustered.groupBy($"spatial_key").agg(
+  assembleTile(
+    $"column_index", $"row_index", $"prediction",
+    tlm.tileCols, tlm.tileRows, ByteConstantNoDataCellType
+  )
+)
+
+val rf = retiled.asRF($"spatial_key", tlm)
+```
+
+To render our visualization, we convert to a raster first, and then use an
+`IndexedColorMap` to assign each discrete cluster a different color, and finally
+rendering to a PNG file.
+
+```tut:silent
+val raster = rf.toRaster($"prediction", 186, 169)
+
+val clusterColors = IndexedColorMap.fromColorMap(
+  ColorRamps.Viridis.toColorMap((0 until k).toArray)
+)
+
+raster.tile.renderPng(clusterColors).write("target/scala-2.11/tut/ml/clustered.png")
+```
+
+| Color Composite | Cluster Assignments |
+| --------------- | ------------------- |
+| ![](rgb.png)    | ![](clustered.png)  |
+
 
 ```tut:invisible
+import java.nio.file._
+
+Files.copy(
+  Paths.get("src/test/resources/L8-RGB-VA.tiff"), 
+  Paths.get("target/scala-2.11/tut/ml/rgb.png"),
+  StandardCopyOption.REPLACE_EXISTING
+)
+
 spark.stop()
 ```

@@ -80,9 +80,9 @@ trait ColumnFunctions {
 
   /** Create a Tile from  */
   @Experimental
-  def assembleTile(columnIndex: Column, rowIndex: Column, tile: Column, cols: Int, rows: Int, ct: CellType): TypedColumn[Any, Tile] = {
-    UDFs.assembleTile(cols, rows, ct)(columnIndex, rowIndex, tile)
-  }.as(tile.columnName).as[Tile]
+  def assembleTile(columnIndex: Column, rowIndex: Column, cellData: Column, cols: Int, rows: Int, ct: CellType): TypedColumn[Any, Tile] = {
+    UDFs.assembleTile(cols, rows, ct)(columnIndex, rowIndex, cellData)
+  }.as(cellData.columnName).as[Tile]
 
   /** Get the Tile's cell type*/
   @Experimental

@@ -22,6 +22,7 @@ package astraea.spark.rasterframes.functions
 import astraea.spark.rasterframes._
 import geotrellis.raster._
 import geotrellis.raster.io.geotiff.GeoTiff
+import geotrellis.raster.resample.NearestNeighbor
 import org.apache.spark.sql.functions._
 
 /**
@@ -105,7 +106,7 @@ class ExplodeSpec extends TestEnvironment with TestData {
 
         val (cols, rows) = image.tile.dimensions
 
-        val recovered = rf.toRaster(col(TILE_COLUMN), cols, rows)
+        val recovered = rf.toRaster(col(TILE_COLUMN), cols, rows, NearestNeighbor)
 
         //GeoTiff(recovered).write("foo.tiff")
 

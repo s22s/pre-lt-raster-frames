@@ -9,7 +9,8 @@ First some setup:
 ```tut:silent
 import astraea.spark.rasterframes._
 import astraea.spark.rasterframes.ml.{NoDataFilter, TileExploder}
-import geotrellis.raster.DoubleConstantNoDataCellType
+import geotrellis.raster._
+import geotrellis.raster.render._
 import geotrellis.raster.io.geotiff.SinglebandGeoTiff
 import org.apache.spark.ml.Pipeline
 import org.apache.spark.ml.classification.DecisionTreeClassifier
@@ -121,10 +122,10 @@ vary and evaluate. Finally we configure the cross validator.
 val evaluator = new MulticlassClassificationEvaluator().
   setLabelCol(targetCol).
   setPredictionCol("prediction").
-  setMetricName("f1")
+  setMetricName("accuracy")
 
 val paramGrid = new ParamGridBuilder().
-  addGrid(classifier.maxDepth, Array(1, 2, 3, 4)).
+  addGrid(classifier.maxDepth, Array(2, 3, 4)).
   build()
 
 val trainer = new CrossValidator().
@@ -162,6 +163,65 @@ val scored = model.bestModel.transform(joinedRF)
 scored.groupBy($"prediction" as "class").count().show
 ```
 
+## Visualizing Results
+
+The predictions are in a DataFrame with each row representing a separate pixel. 
+To assemble a raster to visualize the class assignments, we have to go through a
+multi-stage process to get the data back in tile form, and from there to combined
+raster form.
+
+First, we get the DataFrame back into RasterFrame form:
+
+```tut:silent
+val tlm = joinedRF.tileLayerMetadata.left.get
+
+val retiled = scored.groupBy($"spatial_key").agg(
+  assembleTile(
+    $"column_index", $"row_index", $"prediction",
+    tlm.tileCols, tlm.tileRows, ByteConstantNoDataCellType
+  )
+)
+
+val rf = retiled.asRF($"spatial_key", tlm)
+```
+
+To render our visualization, we convert to a raster first, and then use an
+`IndexedColorMap` to assign each discrete class a different color, and finally
+rendering to a PNG file.
+
+```tut:silent
+val raster = rf.toRaster($"prediction", 186, 169)
+
+val clusterColors = IndexedColorMap.fromColorMap(
+  ColorRamps.Viridis.toColorMap((0 until 3).toArray)
+)
+
+raster.tile.renderPng(clusterColors).write("target/scala-2.11/tut/ml/classified.png")
+```
+
+| Color Composite | Target Labels          | Class Assignments |
+| --------------- | ---------------------- | ------------------- |
+| ![](rgb.png)    | ![](target-labels.png) | ![](classified.png)  |
+
+
 ```tut:invisible
+import java.nio.file._
+
+Files.copy(
+  Paths.get("src/test/resources/L8-RGB-VA.tiff"), 
+  Paths.get("target/scala-2.11/tut/ml/rgb.png"),
+  StandardCopyOption.REPLACE_EXISTING
+)
+
+val raster = SinglebandGeoTiff("src/test/resources/L8-Labels-Elkton-VA.tiff").raster
+
+val k = raster.findMinMax._2
+
+val clusterColors = IndexedColorMap.fromColorMap(
+    ColorRamps.Viridis.toColorMap((0 to k).toArray)
+  )
+
+raster.tile.renderPng(clusterColors).write("target/scala-2.11/tut/ml/target-labels.png")
+
 spark.stop()
 ```

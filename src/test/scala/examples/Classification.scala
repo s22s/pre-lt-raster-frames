@@ -21,117 +21,140 @@ package examples
 
 import astraea.spark.rasterframes._
 import astraea.spark.rasterframes.ml.{NoDataFilter, TileExploder}
-import geotrellis.raster.DoubleConstantNoDataCellType
+import geotrellis.raster.{ByteConstantNoDataCellType, DoubleConstantNoDataCellType, IntConstantNoDataCellType, UByteConstantNoDataCellType}
 import geotrellis.raster.io.geotiff.SinglebandGeoTiff
+import geotrellis.raster.render.{ColorRamps, IndexedColorMap}
 import org.apache.spark.ml.Pipeline
 import org.apache.spark.ml.classification.DecisionTreeClassifier
 import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
 import org.apache.spark.ml.feature.VectorAssembler
 import org.apache.spark.ml.tuning.{CrossValidator, ParamGridBuilder}
 import org.apache.spark.sql._
+import org.apache.spark.sql.types.IntegerType
 
 object Classification extends App {
 
-// Utility for reading imagery from our test data set
-def readTiff(name: String): SinglebandGeoTiff =
-  SinglebandGeoTiff(getClass.getResource(s"/$name").getPath)
+  // Utility for reading imagery from our test data set
+  def readTiff(name: String): SinglebandGeoTiff =
+    SinglebandGeoTiff(getClass.getResource(s"/$name").getPath)
 
-implicit val spark = SparkSession.builder().
-  master("local[*]").appName(getClass.getName).getOrCreate()
+  implicit val spark = SparkSession.builder().
+    master("local[*]").appName(getClass.getName).getOrCreate()
 
-rfInit(spark.sqlContext)
-import spark.implicits._
+  rfInit(spark.sqlContext)
+  import spark.implicits._
 
-// The first step is to load multiple bands of imagery and construct
-// a single RasterFrame from them.
-val filenamePattern = "L8-%s-Elkton-VA.tiff"
-val bandNumbers = 2 to 7
-val bandColNames = bandNumbers.map(b ⇒ s"band_$b").toArray
-val tileSize = 10
+  // The first step is to load multiple bands of imagery and construct
+  // a single RasterFrame from them.
+  val filenamePattern = "L8-%s-Elkton-VA.tiff"
+  val bandNumbers = 2 to 7
+  val bandColNames = bandNumbers.map(b ⇒ s"band_$b").toArray
+  val tileSize = 10
 
-// For each identified band, load the associated image file
-val joinedRF = bandNumbers
-  .map { b ⇒ (b, filenamePattern.format("B" + b)) }
-  .map { case (b, f) ⇒ (b, readTiff(f)) }
-  .map { case (b, t) ⇒ t.projectedRaster.toRF(tileSize, tileSize, s"band_$b") }
-  .reduce(_ spatialJoin _)
+  // For each identified band, load the associated image file
+  val joinedRF = bandNumbers
+    .map { b ⇒ (b, filenamePattern.format("B" + b)) }
+    .map { case (b, f) ⇒ (b, readTiff(f)) }
+    .map { case (b, t) ⇒ t.projectedRaster.toRF(tileSize, tileSize, s"band_$b") }
+    .reduce(_ spatialJoin _)
 
-// We should see a single spatial_key column along with 4 columns of tiles.
-joinedRF.printSchema()
+  // We should see a single spatial_key column along with 4 columns of tiles.
+  joinedRF.printSchema()
 
-// Similarly pull in the target label data.
-val targetCol = "target"
+  // Similarly pull in the target label data.
+  val targetCol = "target"
 
-// Load the target label raster. We have to convert the cell type to
-// Double to meet expectations of SparkML
-val target = readTiff(filenamePattern.format("Labels"))
-  .mapTile(_.convert(DoubleConstantNoDataCellType))
-  .projectedRaster
-  .toRF(tileSize, tileSize, targetCol)
+  // Load the target label raster. We have to convert the cell type to
+  // Double to meet expectations of SparkML
+  val target = readTiff(filenamePattern.format("Labels"))
+    .mapTile(_.convert(DoubleConstantNoDataCellType))
+    .projectedRaster
+    .toRF(tileSize, tileSize, targetCol)
 
-// Take a peek at what kind of label data we have to work with.
-target.select(aggStats(target(targetCol))).show
+  // Take a peek at what kind of label data we have to work with.
+  target.select(aggStats(target(targetCol))).show
 
-val abt = joinedRF.spatialJoin(target)
+  val abt = joinedRF.spatialJoin(target)
 
-// SparkML requires that each observation be in its own row, and those
-// observations be packed into a single `Vector`. The first step is to
-// "explode" the tiles into a single row per cell/pixel
-val exploder = new TileExploder()
+  // SparkML requires that each observation be in its own row, and those
+  // observations be packed into a single `Vector`. The first step is to
+  // "explode" the tiles into a single row per cell/pixel
+  val exploder = new TileExploder()
 
-val noDataFilter = new NoDataFilter()
-  .setInputCols(bandColNames :+ targetCol)
+  val noDataFilter = new NoDataFilter()
+    .setInputCols(bandColNames :+ targetCol)
 
-// To "vectorize" the the band columns we use the SparkML `VectorAssembler`
-val assembler = new VectorAssembler()
-  .setInputCols(bandColNames)
-  .setOutputCol("features")
+  // To "vectorize" the the band columns we use the SparkML `VectorAssembler`
+  val assembler = new VectorAssembler()
+    .setInputCols(bandColNames)
+    .setOutputCol("features")
 
-// Using a decision tree for classification
-val classifier = new DecisionTreeClassifier()
-  .setLabelCol(targetCol)
-  .setFeaturesCol(assembler.getOutputCol)
+  // Using a decision tree for classification
+  val classifier = new DecisionTreeClassifier()
+    .setLabelCol(targetCol)
+    .setFeaturesCol(assembler.getOutputCol)
 
-// Assemble the model pipeline
-val pipeline = new Pipeline()
-  .setStages(Array(exploder, noDataFilter, assembler, classifier))
+  // Assemble the model pipeline
+  val pipeline = new Pipeline()
+    .setStages(Array(exploder, noDataFilter, assembler, classifier))
 
-// Configure how we're going to evaluate our model's performance.
-val evaluator = new MulticlassClassificationEvaluator()
-  .setLabelCol(targetCol)
-  .setPredictionCol("prediction")
-  .setMetricName("f1")
+  // Configure how we're going to evaluate our model's performance.
+  val evaluator = new MulticlassClassificationEvaluator()
+    .setLabelCol(targetCol)
+    .setPredictionCol("prediction")
+    .setMetricName("f1")
 
-// Use a parameter grid to determine what the optimal max tree depth is for this data
-val paramGrid = new ParamGridBuilder()
-  //.addGrid(classifier.maxDepth, Array(1, 2, 3, 4))
-  .build()
+  // Use a parameter grid to determine what the optimal max tree depth is for this data
+  val paramGrid = new ParamGridBuilder()
+    //.addGrid(classifier.maxDepth, Array(1, 2, 3, 4))
+    .build()
 
-// Configure the cross validator
-val trainer = new CrossValidator()
-  .setEstimator(pipeline)
-  .setEvaluator(evaluator)
-  .setEstimatorParamMaps(paramGrid)
-  .setNumFolds(4)
+  // Configure the cross validator
+  val trainer = new CrossValidator()
+    .setEstimator(pipeline)
+    .setEvaluator(evaluator)
+    .setEstimatorParamMaps(paramGrid)
+    .setNumFolds(4)
 
-// Push the "go" button
-val model = trainer.fit(abt)
+  // Push the "go" button
+  val model = trainer.fit(abt)
 
-// Format the `paramGrid` settings resultant model
-val metrics = model.getEstimatorParamMaps
-  .map(_.toSeq.map(p ⇒ s"${p.param.name} = ${p.value}"))
-  .map(_.mkString(", "))
-  .zip(model.avgMetrics)
+  // Format the `paramGrid` settings resultant model
+  val metrics = model.getEstimatorParamMaps
+    .map(_.toSeq.map(p ⇒ s"${p.param.name} = ${p.value}"))
+    .map(_.mkString(", "))
+    .zip(model.avgMetrics)
 
-// Render the parameter/performance association
-metrics.toSeq.toDF("params", "metric").show(false)
+  // Render the parameter/performance association
+  metrics.toSeq.toDF("params", "metric").show(false)
 
-// Score the original data set, including cells
-// without target values.
-val scored = model.bestModel.transform(joinedRF)
+  // Score the original data set, including cells
+  // without target values.
+  val scored = model.bestModel.transform(joinedRF)
 
-// Add up class membership results
-scored.groupBy($"prediction" as "class").count().show
+  // Add up class membership results
+  scored.groupBy($"prediction" as "class").count().show
 
-spark.stop()
+  scored.show(10)
+
+  val tlm = joinedRF.tileLayerMetadata.left.get
+
+  val retiled = scored.groupBy($"spatial_key").agg(
+    assembleTile(
+      $"column_index", $"row_index", $"prediction",
+      tlm.tileCols, tlm.tileRows, IntConstantNoDataCellType
+    )
+  )
+
+  val rf = retiled.asRF($"spatial_key", tlm)
+
+  val raster = rf.toRaster($"prediction", 186, 169)
+
+  val clusterColors = IndexedColorMap.fromColorMap(
+    ColorRamps.Viridis.toColorMap((0 until 3).toArray)
+  )
+
+  raster.tile.renderPng(clusterColors).write("target/scala-2.11/tut/ml/classified.png")
+
+  spark.stop()
 }
