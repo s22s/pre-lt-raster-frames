@@ -8,11 +8,21 @@ Most of the examples are shown using the Spark DataFrames API. However, many cou
 
 *RasterFrames* is published via Bintray's JCenter server, which is one of the default sbt resolvers. To use, just add the following library dependency:
 
-@@dependency[sbt,Maven,Gradle] {
-  group="io.astraea"
-  artifact="raster-frames"
-  version="x.y.z"
-}
+sbt:
+
+```scala
+libraryDependencies += "io.astraea" %% "raster-frames" % "x.y.z"
+```
+
+Maven:
+
+```
+<dependency>
+  <groupId>io.astraea</groupId>
+  <artifactId>raster-frames</artifactId>
+  <version>x.y.z</version>
+</dependency>
+```
 
 @@@ note
 
