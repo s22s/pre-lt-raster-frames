@@ -45,7 +45,7 @@ gtag('config', 'UA-106630615-1');
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.5.0*
+0.5.0
 </div>
 </div>
 <div class="nav-toc">
@@ -97,7 +97,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.5.0*
+0.5.0
 </div>
 </div>
 <div class="nav-toc">
@@ -168,11 +168,11 @@ scala&gt; tileBack.drop(&quot;tileData&quot;).show(5, 40)
 +-----------+--------------------------------------+
 |spatial_key|                             tileAgain|
 +-----------+--------------------------------------+
-|      [6,3]|ShortRawArrayTile([S@5e1134b4,128,128)|
-|      [4,0]|ShortRawArrayTile([S@17205592,128,128)|
-|      [0,0]|ShortRawArrayTile([S@3bcb63b1,128,128)|
-|      [4,2]|ShortRawArrayTile([S@34593f84,128,128)|
-|      [0,2]|ShortRawArrayTile([S@633a092f,128,128)|
+|      [6,3]|ShortRawArrayTile([S@212429e8,128,128)|
+|      [4,0]|ShortRawArrayTile([S@40edf6ba,128,128)|
+|      [0,0]|ShortRawArrayTile([S@1f781848,128,128)|
+|      [4,2]|ShortRawArrayTile([S@4c29efd0,128,128)|
+|      [0,2]|ShortRawArrayTile([S@4cc2f4d4,128,128)|
 +-----------+--------------------------------------+
 only showing top 5 rows
 
@@ -185,11 +185,11 @@ scala&gt; tileBackAgain.drop(&quot;tileData&quot;).show(5, 50)
 +-----------+--------------------------------------------------+
 |spatial_key|                                         tileAgain|
 +-----------+--------------------------------------------------+
-|      [6,3]|ShortUserDefinedNoDataArrayTile([S@7a7d251d,128...|
-|      [4,0]|ShortUserDefinedNoDataArrayTile([S@b2668af,128,...|
-|      [0,0]|ShortUserDefinedNoDataArrayTile([S@5eb27084,128...|
-|      [4,2]|ShortUserDefinedNoDataArrayTile([S@43ee0bce,128...|
-|      [0,2]|ShortUserDefinedNoDataArrayTile([S@2f5f547c,128...|
+|      [6,3]|ShortUserDefinedNoDataArrayTile([S@249c24b5,128...|
+|      [4,0]|ShortUserDefinedNoDataArrayTile([S@6a5e1f1a,128...|
+|      [0,0]|ShortUserDefinedNoDataArrayTile([S@4575da83,128...|
+|      [4,2]|ShortUserDefinedNoDataArrayTile([S@2c6a3ac,128,...|
+|      [0,2]|ShortUserDefinedNoDataArrayTile([S@d00f173,128,...|
 +-----------+--------------------------------------------------+
 only showing top 5 rows
 
@@ -206,8 +206,8 @@ root
  |-- spatial_key: struct (nullable = true)
  |    |-- col: integer (nullable = true)
  |    |-- row: integer (nullable = true)
- |-- tile: st_tile (nullable = true)
- |-- equalized: st_tile (nullable = true)
+ |-- tile: rf_tile (nullable = true)
+ |-- equalized: rf_tile (nullable = true)
 
 
 scala&gt; equalized.select(aggStats($&quot;tile&quot;)).show(false)
@@ -245,8 +245,8 @@ root
  |-- spatial_key: struct (nullable = true)
  |    |-- col: integer (nullable = true)
  |    |-- row: integer (nullable = true)
- |-- tile: st_tile (nullable = true)
- |-- equalized: st_tile (nullable = true)
+ |-- tile: rf_tile (nullable = true)
+ |-- equalized: rf_tile (nullable = true)
  |-- col: integer (nullable = true)
  |-- row: integer (nullable = true)
 

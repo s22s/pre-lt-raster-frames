@@ -45,7 +45,7 @@ gtag('config', 'UA-106630615-1');
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.5.0*
+0.5.0
 </div>
 </div>
 <div class="nav-toc">
@@ -97,7 +97,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.5.0*
+0.5.0
 </div>
 </div>
 <div class="nav-toc">
@@ -184,7 +184,7 @@ val joinedRF = bandNumbers.
   map { case (b, t) ⇒ t.projectedRaster.toRF(tileSize, tileSize, s&quot;band_$b&quot;) }.
   reduce(_ spatialJoin _)
 </code></pre>
-<p>We should see a single spatial_key column along with 6 columns of tiles.</p>
+<p>We should see a single <code>spatial_key</code> column along with 6 columns of tiles.</p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; joinedRF.printSchema()
 root
  |-- spatial_key: struct (nullable = true)
@@ -255,7 +255,7 @@ val trainer = new CrossValidator().
 </code></pre>
 <p>Push the &ldquo;go&rdquo; button:</p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; val model = trainer.fit(abt)
-model: org.apache.spark.ml.tuning.CrossValidatorModel = cv_645f71f9892e
+model: org.apache.spark.ml.tuning.CrossValidatorModel = cv_bb382f6070b2
 </code></pre>
 <p>To view the model&rsquo;s performance we format the <code>paramGrid</code> settings used for each model and render the parameter/performance association.</p>
 <pre class="prettyprint"><code class="language-scala">val metrics = model.getEstimatorParamMaps.
