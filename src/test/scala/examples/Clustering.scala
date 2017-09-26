@@ -21,7 +21,9 @@ package examples
 
 import astraea.spark.rasterframes._
 import astraea.spark.rasterframes.ml.TileExploder
+import geotrellis.raster.ByteConstantNoDataCellType
 import geotrellis.raster.io.geotiff.SinglebandGeoTiff
+import geotrellis.raster.render.{ColorRamps, IndexedColorMap}
 import org.apache.spark.ml.Pipeline
 import org.apache.spark.ml.clustering.{KMeans, KMeansModel}
 import org.apache.spark.ml.feature.VectorAssembler
@@ -36,11 +38,12 @@ object Clustering extends App {
   implicit val spark = SparkSession.builder().master("local[*]").appName(getClass.getName).getOrCreate()
 
   rfInit(spark.sqlContext)
+  import spark.implicits._
 
   // The first step is to load multiple bands of imagery and construct
   // a single RasterFrame from them.
   val filenamePattern = "L8-B%d-Elkton-VA.tiff"
-  val bandNumbers = 1 to 4
+  val bandNumbers = 1 to 7
   val bandColNames = bandNumbers.map(b ⇒ s"band_$b").toArray
 
   // For each identified band, load the associated image file
@@ -64,7 +67,8 @@ object Clustering extends App {
     .setOutputCol("features")
 
   // Configure our clustering algorithm
-  val kmeans = new KMeans().setK(3)
+  val k = 5
+  val kmeans = new KMeans().setK(k)
 
   // Combine the two stages
   val pipeline = new Pipeline().setStages(Array(exploder, assembler, kmeans))
@@ -83,6 +87,24 @@ object Clustering extends App {
   // Compute sum of squared distances of points to their nearest center
   val metric = clusterResults.computeCost(clustered)
   println("Within set sum of squared errors: " + metric)
+
+  val tlm = joinedRF.tileLayerMetadata.left.get
+
+  val retiled = clustered.groupBy($"spatial_key").agg(
+    assembleTile(
+      $"column_index", $"row_index", $"prediction",
+      tlm.tileCols, tlm.tileRows, ByteConstantNoDataCellType)
+  )
+
+  val rf = retiled.asRF($"spatial_key", tlm)
+
+  val raster = rf.toRaster($"prediction", 186, 169)
+
+  val clusterColors = IndexedColorMap.fromColorMap(
+    ColorRamps.Viridis.toColorMap((0 until k).toArray)
+  )
+
+  raster.tile.renderPng(clusterColors).write("clustered.png")
 
   spark.stop()
 }

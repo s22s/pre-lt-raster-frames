@@ -35,6 +35,7 @@ RasterFrames™ is a new project under active development. Feedback and contribu
 * [GitHub Repository](https://github.com/s22s/raster-frames)
 * [GeoTrellis Documentation](https://docs.geotrellis.io/en/latest/)
 * [Astraea, Inc.](http://www.astraea.earth/) (the company behind RasterFrames)
+* [Azavea](https://www.azavea.com/) (the company behind GeoTrellis)
 
 @@@
 

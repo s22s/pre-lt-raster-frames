@@ -17,9 +17,8 @@
 package astraea.spark.rasterframes.functions
 
 import geotrellis.raster.histogram.Histogram
+import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.DataType
-import org.apache.spark.sql.{Row, gt}
-import org.apache.spark.sql.gt.Implicits._
 
 /**
  * Statistics aggregation function for a full column of tiles.
@@ -27,6 +26,9 @@ import org.apache.spark.sql.gt.Implicits._
  * @since 5/18/17
  */
 class AggregateStatsFunction extends AggregateHistogramFunction {
+
+  import astraea.spark.rasterframes._
+
   override def dataType: DataType = histogramStatsEncoder.schema
 
   override def evaluate(buffer: Row): Any =

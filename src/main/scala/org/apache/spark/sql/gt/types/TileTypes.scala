@@ -24,7 +24,7 @@ import org.apache.spark.sql.types.UDTRegistration
  * @author sfitch
  * @since 5/11/17
  */
-class TileUDT extends AbstractTileUDT[Tile]("st_tile")
+class TileUDT extends AbstractTileUDT[Tile]("rf_tile")
 case object TileUDT extends TileUDT {
   UDTRegistration.register(classOf[Tile].getName, classOf[TileUDT].getName)
 }
@@ -34,7 +34,7 @@ case object TileUDT extends TileUDT {
  * @author sfitch
  * @since 5/11/17
  */
-class MultibandTileUDT extends AbstractTileUDT[MultibandTile]("st_multibandtile")
+class MultibandTileUDT extends AbstractTileUDT[MultibandTile]("rf_multibandtile")
 case object MultibandTileUDT extends MultibandTileUDT {
   UDTRegistration.register(classOf[MultibandTile].getName, classOf[MultibandTileUDT].getName)
 }

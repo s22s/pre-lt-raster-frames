@@ -16,7 +16,6 @@
 
 package org.apache.spark.sql.gt.types
 
-import geotrellis.raster.{MultibandTile, Tile}
 import org.apache.spark.sql.types._
 
 import scala.reflect._

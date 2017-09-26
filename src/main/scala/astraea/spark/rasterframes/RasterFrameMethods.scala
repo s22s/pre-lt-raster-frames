@@ -26,7 +26,6 @@ import geotrellis.vector.ProjectedExtent
 import org.apache.spark.annotation.Experimental
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.gt.NamedColumn
 import org.apache.spark.sql.gt.types.TileUDT
 import org.apache.spark.sql.types.{Metadata, StructField}
 import org.apache.spark.sql.{Column, DataFrame, Dataset, TypedColumn}

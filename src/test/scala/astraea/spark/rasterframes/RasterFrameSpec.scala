@@ -4,7 +4,6 @@ package astraea.spark.rasterframes
 
 import java.time.ZonedDateTime
 
-import com.typesafe.scalalogging.LazyLogging
 import geotrellis.proj4.LatLng
 import geotrellis.raster.render.{ColorMap, ColorRamp}
 import geotrellis.raster.{ProjectedRaster, Tile, TileFeature, TileLayout}
@@ -13,7 +12,6 @@ import geotrellis.spark.io._
 import geotrellis.spark.tiling._
 import geotrellis.vector.{Extent, ProjectedExtent}
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.gt.NamedColumn
 
 /**
  * RasterFrame test rig.
@@ -21,7 +19,9 @@ import org.apache.spark.sql.gt.NamedColumn
  * @author sfitch 
  * @since 7/10/17
  */
-class RasterFrameTest extends TestEnvironment with TestData {
+class RasterFrameSpec extends TestEnvironment with TestData {
+  // This is to avoid an IntelliJ error
+  protected def withFixture(test: Any) = ???
   import TestData.randomTile
   import spark.implicits._
 

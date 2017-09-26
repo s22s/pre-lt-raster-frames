@@ -34,15 +34,6 @@ package object gt {
     gt.types.Registrator.register()
   }
 
-  implicit class NamedColumn(col: Column) {
-    def columnName: String = col.expr match {
-      case ua: UnresolvedAttribute ⇒ ua.name
-      case ar: AttributeReference ⇒ ar.name
-      case as: Alias ⇒ as.name
-      case o ⇒ o.prettyName
-    }
-  }
-
   implicit class WithDecoder[T](enc: ExpressionEncoder[T]) {
     def decode(row: InternalRow): T =
       enc.resolveAndBind(enc.schema.toAttributes).fromRow(row)
