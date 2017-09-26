@@ -53,7 +53,7 @@ val joinedRF = bandNumbers.
   reduce(_ spatialJoin _)
 ```
 
-We should see a single spatial_key column along with 6 columns of tiles.
+We should see a single `spatial_key` column along with 6 columns of tiles.
 
 ```tut
 joinedRF.printSchema()
@@ -199,27 +199,19 @@ val clusterColors = IndexedColorMap.fromColorMap(
 raster.tile.renderPng(clusterColors).write("target/scala-2.11/tut/ml/classified.png")
 ```
 
-| Color Composite | Target Labels          | Class Assignments |
-| --------------- | ---------------------- | ------------------- |
-| ![](rgb.png)    | ![](target-labels.png) | ![](classified.png)  |
+| Color Composite    | Target Labels          | Class Assignments   |
+| ------------------ | ---------------------- | ------------------- |
+| ![](L8-RGB-VA.png) | ![](target-labels.png) | ![](classified.png) |
 
 
 ```tut:invisible
-import java.nio.file._
-
-Files.copy(
-  Paths.get("src/test/resources/L8-RGB-VA.tiff"), 
-  Paths.get("target/scala-2.11/tut/ml/rgb.png"),
-  StandardCopyOption.REPLACE_EXISTING
-)
-
 val raster = SinglebandGeoTiff("src/test/resources/L8-Labels-Elkton-VA.tiff").raster
 
 val k = raster.findMinMax._2
 
 val clusterColors = IndexedColorMap.fromColorMap(
-    ColorRamps.Viridis.toColorMap((0 to k).toArray)
-  )
+  ColorRamps.Viridis.toColorMap((0 to k).toArray)
+)
 
 raster.tile.renderPng(clusterColors).write("target/scala-2.11/tut/ml/target-labels.png")
 

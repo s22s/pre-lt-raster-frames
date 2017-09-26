@@ -40,7 +40,7 @@ val joinedRF = bandNumbers.
   reduce(_ spatialJoin _)
 ```
 
-We should see a single spatial_key column along with 4 columns of tiles.
+We should see a single `spatial_key` column along with 4 columns of tiles.
 
 ```tut
 joinedRF.printSchema()
@@ -134,19 +134,11 @@ val clusterColors = IndexedColorMap.fromColorMap(
 raster.tile.renderPng(clusterColors).write("target/scala-2.11/tut/ml/clustered.png")
 ```
 
-| Color Composite | Cluster Assignments |
-| --------------- | ------------------- |
-| ![](rgb.png)    | ![](clustered.png)  |
+| Color Composite    | Cluster Assignments |
+| ------------------ | ------------------- |
+| ![](L8-RGB-VA.png) | ![](clustered.png)  |
 
 
 ```tut:invisible
-import java.nio.file._
-
-Files.copy(
-  Paths.get("src/test/resources/L8-RGB-VA.tiff"), 
-  Paths.get("target/scala-2.11/tut/ml/rgb.png"),
-  StandardCopyOption.REPLACE_EXISTING
-)
-
 spark.stop()
 ```

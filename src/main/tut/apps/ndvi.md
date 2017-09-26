@@ -49,7 +49,7 @@ val brownToGreen = ColorRamp(
 ).stops(128)
 
 val colors = ColorMap.fromQuantileBreaks(pr.tile.histogramDouble(), brownToGreen)
-pr.tile.color(colors).renderPng().write("target/scala-2.11/tut/ndvi/rf-ndvi.png")
+pr.tile.color(colors).renderPng().write("target/scala-2.11/tut/apps/rf-ndvi.png")
 
 //For a georefrenced singleband greyscale image, could do: `GeoTiff(pr).write("ndvi.tiff")`
 ```
