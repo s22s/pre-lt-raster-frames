@@ -15,7 +15,7 @@ addSbtPlugin("org.tpolecat" % "tut-plugin" % "0.5.2")
 
 addSbtPlugin("com.thoughtworks.sbt-api-mappings" % "sbt-api-mappings" % "1.1.0")
 
-addSbtPlugin("com.typesafe.sbt" % "sbt-site" % "1.3.0")
+addSbtPlugin("com.typesafe.sbt" % "sbt-site" % "1.3.1")
 
 addSbtPlugin("com.servicerocket" % "sbt-git-flow" % "0.1.2")
 

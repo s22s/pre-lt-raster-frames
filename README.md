@@ -13,8 +13,20 @@ as we continue to improve it.
 
 RasterFrames™ is currently available for Scala 2.11 + Spark 2.1.0 and is published via Bintray's JCenter, one of the default sbt resolvers. To use, just add the following library dependency:
 
+sbt:
+
 ```scala
-libraryDependencies += "io.astraea" %% "raster-frames" % "{version}"
+libraryDependencies += "io.astraea" %% "raster-frames" % "x.y.z"
+```
+
+Maven:
+
+```
+<dependency>
+  <groupId>io.astraea</groupId>
+  <artifactId>raster-frames</artifactId>
+  <version>x.y.z</version>
+</dependency>
 ```
 
 ## Documentation
