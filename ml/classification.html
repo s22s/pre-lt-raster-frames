@@ -145,7 +145,8 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <p>First some setup:</p>
 <pre class="prettyprint"><code class="language-scala">import astraea.spark.rasterframes._
 import astraea.spark.rasterframes.ml.{NoDataFilter, TileExploder}
-import geotrellis.raster.DoubleConstantNoDataCellType
+import geotrellis.raster._
+import geotrellis.raster.render._
 import geotrellis.raster.io.geotiff.SinglebandGeoTiff
 import org.apache.spark.ml.Pipeline
 import org.apache.spark.ml.classification.DecisionTreeClassifier
@@ -189,12 +190,12 @@ root
  |-- spatial_key: struct (nullable = true)
  |    |-- col: integer (nullable = true)
  |    |-- row: integer (nullable = true)
- |-- band_2: st_tile (nullable = true)
- |-- band_3: st_tile (nullable = true)
- |-- band_4: st_tile (nullable = true)
- |-- band_5: st_tile (nullable = true)
- |-- band_6: st_tile (nullable = true)
- |-- band_7: st_tile (nullable = true)
+ |-- band_2: rf_tile (nullable = true)
+ |-- band_3: rf_tile (nullable = true)
+ |-- band_4: rf_tile (nullable = true)
+ |-- band_5: rf_tile (nullable = true)
+ |-- band_6: rf_tile (nullable = true)
+ |-- band_7: rf_tile (nullable = true)
 
 </code></pre>
 <p>Similarly pull we pull in the target label data. When load the target label raster we have to convert the cell type to <code>Double</code> to meet expectations of SparkML. </p>
@@ -240,10 +241,10 @@ val pipeline = new Pipeline().
 <pre class="prettyprint"><code class="language-scala">val evaluator = new MulticlassClassificationEvaluator().
   setLabelCol(targetCol).
   setPredictionCol(&quot;prediction&quot;).
-  setMetricName(&quot;f1&quot;)
+  setMetricName(&quot;accuracy&quot;)
 
 val paramGrid = new ParamGridBuilder().
-  addGrid(classifier.maxDepth, Array(1, 2, 3, 4)).
+  addGrid(classifier.maxDepth, Array(2, 3, 4)).
   build()
 
 val trainer = new CrossValidator().
@@ -254,7 +255,7 @@ val trainer = new CrossValidator().
 </code></pre>
 <p>Push the &ldquo;go&rdquo; button:</p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; val model = trainer.fit(abt)
-model: org.apache.spark.ml.tuning.CrossValidatorModel = cv_c0ba02efa4e5
+model: org.apache.spark.ml.tuning.CrossValidatorModel = cv_ecf4d3b10e4b
 </code></pre>
 <p>To view the model&rsquo;s performance we format the <code>paramGrid</code> settings used for each model and render the parameter/performance association.</p>
 <pre class="prettyprint"><code class="language-scala">val metrics = model.getEstimatorParamMaps.
@@ -266,10 +267,9 @@ model: org.apache.spark.ml.tuning.CrossValidatorModel = cv_c0ba02efa4e5
 +------------+------------------+
 |params      |metric            |
 +------------+------------------+
-|maxDepth = 1|0.8812107971214322|
-|maxDepth = 2|0.9625103996853914|
-|maxDepth = 3|0.9853430649503114|
-|maxDepth = 4|0.9859399936121395|
+|maxDepth = 2|0.9612720982887348|
+|maxDepth = 3|0.9850291835043165|
+|maxDepth = 4|0.9856287038880095|
 +------------+------------------+
 
 </code></pre>
@@ -287,11 +287,63 @@ scala&gt; scored.groupBy($&quot;prediction&quot; as &quot;class&quot;).count().s
 +-----+-----+
 
 </code></pre>
+<h2><a href="#visualizing-results" name="visualizing-results" class="anchor"><span class="anchor-link"></span></a>Visualizing Results</h2>
+<p>The predictions are in a DataFrame with each row representing a separate pixel. To assemble a raster to visualize the class assignments, we have to go through a multi-stage process to get the data back in tile form, and from there to combined raster form.</p>
+<p>First, we get the DataFrame back into RasterFrame form:</p>
+<pre class="prettyprint"><code class="language-scala">val tlm = joinedRF.tileLayerMetadata.left.get
+
+val retiled = scored.groupBy($&quot;spatial_key&quot;).agg(
+  assembleTile(
+    $&quot;column_index&quot;, $&quot;row_index&quot;, $&quot;prediction&quot;,
+    tlm.tileCols, tlm.tileRows, ByteConstantNoDataCellType
+  )
+)
+
+val rf = retiled.asRF($&quot;spatial_key&quot;, tlm)
+</code></pre>
+<p>To render our visualization, we convert to a raster first, and then use an <code>IndexedColorMap</code> to assign each discrete class a different color, and finally rendering to a PNG file.</p>
+<pre class="prettyprint"><code class="language-scala">val raster = rf.toRaster($&quot;prediction&quot;, 186, 169)
+
+val clusterColors = IndexedColorMap.fromColorMap(
+  ColorRamps.Viridis.toColorMap((0 until 3).toArray)
+)
+
+raster.tile.renderPng(clusterColors).write(&quot;target/scala-2.11/tut/ml/classified.png&quot;)
+</code></pre>
+<table>
+  <thead>
+    <tr>
+      <th>Color Composite </th>
+      <th>Target Labels </th>
+      <th>Class Assignments </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><img src="rgb.png" /> </td>
+      <td><img src="target-labels.png" /> </td>
+      <td><img src="classified.png" /> </td>
+    </tr>
+  </tbody>
+</table>
 <div class="nav-next">
 <p><strong>Next:</strong> <a href="../exporting-rasterframes.html">Exporting RasterFrames</a></p>
 </div>
 </div>
 <div class="large-3 show-for-large column" data-sticky-container>
+<nav class="sidebar sticky" data-sticky data-anchor="docs" data-sticky-on="large">
+<div class="page-nav">
+<div class="nav-title">On this page:</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="../ml/classification.html#classification" class="header">Classification</a>
+  <ul>
+    <li><a href="../ml/classification.html#visualizing-results" class="header">Visualizing Results</a></li>
+  </ul></li>
+</ul>
+</div>
+</div>
+</nav>
 </div>
 </div>
 

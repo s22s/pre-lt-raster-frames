@@ -89,25 +89,7 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="org.apache.spark.sql.gt.types.DelegatingSubfieldEncoder" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="DelegatingSubfieldEncoderextendsAnyRef"></a>
-      <a id="DelegatingSubfieldEncoder:DelegatingSubfieldEncoder"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">trait</span>
-      </span>
-      <span class="symbol">
-        <a href="DelegatingSubfieldEncoder.html"><span class="name">DelegatingSubfieldEncoder</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.package@DelegatingSubfieldEncoderextendsAnyRef" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Encoder builder for types composed of other fields with {{ExpressionEncoder}}s.</p><div class="fullcomment"><div class="comment cmt"><p>Encoder builder for types composed of other fields with {{ExpressionEncoder}}s.
-</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>8/2/17</p></dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.types.HistogramUDT" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+              <ol><li name="org.apache.spark.sql.gt.types.HistogramUDT" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="HistogramUDTextendsUserDefinedType[geotrellis.raster.histogram.Histogram[Double]]withKryoBackedUDT[geotrellis.raster.histogram.Histogram[Double]]"></a>
       <a id="HistogramUDT:HistogramUDT"></a>
       <h4 class="signature">
@@ -141,7 +123,9 @@
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>Since</dt><dd><p>4/18/17</p></dd></dl></div>
+      <p class="shortcomment cmt">Base class for UDTs who's contents is encoded using kryo
+</p><div class="fullcomment"><div class="comment cmt"><p>Base class for UDTs who's contents is encoded using kryo
+</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>4/18/17</p></dd></dl></div>
     </li><li name="org.apache.spark.sql.gt.types.MultibandTileUDT" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="MultibandTileUDTextendsAbstractTileUDT[geotrellis.raster.MultibandTile]"></a>
       <a id="MultibandTileUDT:MultibandTileUDT"></a>
@@ -192,7 +176,7 @@
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>Since</dt><dd><p>4/18/17</p></dd></dl></div>
+      <p class="shortcomment cmt">Base class for UDTs backed by &quot;well-known binary&quot; (WKB) encoding.</p><div class="fullcomment"><div class="comment cmt"><p>Base class for UDTs backed by &quot;well-known binary&quot; (WKB) encoding.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>4/18/17</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -200,43 +184,7 @@
 
         <div id="values" class="values members">
               <h3>Value Members</h3>
-              <ol><li name="org.apache.spark.sql.gt.types.CRSEncoder" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="CRSEncoder"></a>
-      <a id="CRSEncoder:CRSEncoder"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">object</span>
-      </span>
-      <span class="symbol">
-        <a href="CRSEncoder$.html"><span class="name">CRSEncoder</span></a>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.package@CRSEncoder" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Custom encoder for GT <code>CRS</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Custom encoder for GT <code>CRS</code>.
-</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>7/21/17</p></dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.types.CellTypeEncoder" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="CellTypeEncoder"></a>
-      <a id="CellTypeEncoder:CellTypeEncoder"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">object</span>
-      </span>
-      <span class="symbol">
-        <a href="CellTypeEncoder$.html"><span class="name">CellTypeEncoder</span></a>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.package@CellTypeEncoder" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Custom encoder for GT <span class="extype" name="CellType">CellType</span>.</p><div class="fullcomment"><div class="comment cmt"><p>Custom encoder for GT <span class="extype" name="CellType">CellType</span>. It's necessary since <span class="extype" name="CellType">CellType</span> is a type alias of
-a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>7/21/17</p></dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.types.HistogramUDT" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="org.apache.spark.sql.gt.types.HistogramUDT" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="HistogramUDT"></a>
       <a id="HistogramUDT:HistogramUDT"></a>
       <h4 class="signature">
@@ -355,61 +303,6 @@ a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p
       </a>
     </span>
       
-    </li><li name="org.apache.spark.sql.gt.types.ProjectedExtentEncoder" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="ProjectedExtentEncoder"></a>
-      <a id="ProjectedExtentEncoder:ProjectedExtentEncoder"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">object</span>
-      </span>
-      <span class="symbol">
-        <a href="ProjectedExtentEncoder$.html"><span class="name">ProjectedExtentEncoder</span></a><span class="result"> extends <a href="DelegatingSubfieldEncoder.html" class="extype" name="org.apache.spark.sql.gt.types.DelegatingSubfieldEncoder">DelegatingSubfieldEncoder</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.package@ProjectedExtentEncoder" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Custom encoder for <span class="extype" name="ProjectedExtent">ProjectedExtent</span>.</p><div class="fullcomment"><div class="comment cmt"><p>Custom encoder for <span class="extype" name="ProjectedExtent">ProjectedExtent</span>. Necessary because CRS isn't a case class.
-</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>8/2/17</p></dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.types.TemporalProjectedExtentEncoder" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="TemporalProjectedExtentEncoder"></a>
-      <a id="TemporalProjectedExtentEncoder:TemporalProjectedExtentEncoder"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">object</span>
-      </span>
-      <span class="symbol">
-        <a href="TemporalProjectedExtentEncoder$.html"><span class="name">TemporalProjectedExtentEncoder</span></a><span class="result"> extends <a href="DelegatingSubfieldEncoder.html" class="extype" name="org.apache.spark.sql.gt.types.DelegatingSubfieldEncoder">DelegatingSubfieldEncoder</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.package@TemporalProjectedExtentEncoder" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Custom encoder for <span class="extype" name="ProjectedExtent">ProjectedExtent</span>.</p><div class="fullcomment"><div class="comment cmt"><p>Custom encoder for <span class="extype" name="ProjectedExtent">ProjectedExtent</span>. Necessary because <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-proj4_2.11/1.1.1/geotrellis-proj4_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.proj4.CRS" class="extype" target="_top">geotrellis.proj4.CRS</a> within <span class="extype" name="ProjectedExtent">ProjectedExtent</span> isn't a case class, and <span class="extype" name="ZonedDateTime">ZonedDateTime</span> doesn't have a natural encoder.
-</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>8/2/17</p></dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.types.TileLayerMetadataEncoder" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="TileLayerMetadataEncoder"></a>
-      <a id="TileLayerMetadataEncoder:TileLayerMetadataEncoder"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">object</span>
-      </span>
-      <span class="symbol">
-        <a href="TileLayerMetadataEncoder$.html"><span class="name">TileLayerMetadataEncoder</span></a><span class="result"> extends <a href="DelegatingSubfieldEncoder.html" class="extype" name="org.apache.spark.sql.gt.types.DelegatingSubfieldEncoder">DelegatingSubfieldEncoder</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.package@TileLayerMetadataEncoder" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Specialized encoder for <span class="extype" name="TileLayerMetadata">TileLayerMetadata</span>, necessary to be able to delegate to the
-speciallized cell type and crs encoders.</p><div class="fullcomment"><div class="comment cmt"><p>Specialized encoder for <span class="extype" name="TileLayerMetadata">TileLayerMetadata</span>, necessary to be able to delegate to the
-speciallized cell type and crs encoders.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>7/21/17</p></dd></dl></div>
     </li><li name="org.apache.spark.sql.gt.types.TileUDT" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="TileUDT"></a>
       <a id="TileUDT:TileUDT"></a>
@@ -462,7 +355,7 @@ speciallized cell type and crs encoders.</p></div><dl class="attributes block"> 
     </span>
       <p class="shortcomment cmt">Creates a Catalyst expression for flattening the fields in a struct into columns.</p>
     </li><li name="org.apache.spark.sql.gt.types#udtOf" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="udtOf[T&gt;:Null](implicitevidence$3:reflect.runtime.universe.TypeTag[T]):org.apache.spark.sql.types.UserDefinedType[T]"></a>
+      <a id="udtOf[T&gt;:Null](implicitevidence$1:reflect.runtime.universe.TypeTag[T]):org.apache.spark.sql.types.UserDefinedType[T]"></a>
       <a id="udtOf[T&gt;:Null](scala.reflect.api.JavaUniverse.TypeTag[T]):UserDefinedType[T]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -473,7 +366,7 @@ speciallized cell type and crs encoders.</p></div><dl class="attributes block"> 
         <span class="name">udtOf</span><span class="tparams">[<span name="T">T &gt;: <span class="extype" name="scala.Null">Null</span></span>]</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.api.TypeTags.TypeTag">scala.reflect.api.JavaUniverse.TypeTag</span>[<span class="extype" name="org.apache.spark.sql.gt.types.udtOf.T">T</span>]</span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.types.UserDefinedType" class="extype" target="_top">UserDefinedType</a>[<span class="extype" name="org.apache.spark.sql.gt.types.udtOf.T">T</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.package@udtOf[T&gt;:Null](implicitevidence$3:reflect.runtime.universe.TypeTag[T]):org.apache.spark.sql.types.UserDefinedType[T]" title="Permalink" target="_top">
+      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.package@udtOf[T&gt;:Null](implicitevidence$1:reflect.runtime.universe.TypeTag[T]):org.apache.spark.sql.types.UserDefinedType[T]" title="Permalink" target="_top">
         <img src="../../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>

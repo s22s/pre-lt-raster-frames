@@ -183,6 +183,58 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="astraea.spark.rasterframes.DataFrameMethods#asRF" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="asRF(spatialKey:org.apache.spark.sql.Column,temporalKey:org.apache.spark.sql.Column,tlm:geotrellis.spark.TileLayerMetadata[geotrellis.spark.SpaceTimeKey]):astraea.spark.rasterframes.RasterFrame"></a>
+      <a id="asRF(Column,Column,TileLayerMetadata[SpaceTimeKey]):RasterFrame"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">asRF</span><span class="params">(<span name="spatialKey">spatialKey: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>, <span name="temporalKey">temporalKey: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>, <span name="tlm">tlm: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.TileLayerMetadata" class="extype" target="_top">TileLayerMetadata</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.SpaceTimeKey" class="extype" target="_top">SpaceTimeKey</a>]</span>)</span><span class="result">: <a href="package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#astraea.spark.rasterframes.package$$WithDataFrameMethods@asRF(spatialKey:org.apache.spark.sql.Column,temporalKey:org.apache.spark.sql.Column,tlm:geotrellis.spark.TileLayerMetadata[geotrellis.spark.SpaceTimeKey]):astraea.spark.rasterframes.RasterFrame" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Convert DataFrame into a RasterFrame
+</p><div class="fullcomment"><div class="comment cmt"><p>Convert DataFrame into a RasterFrame
+</p></div><dl class="paramcmts block"><dt class="param">spatialKey</dt><dd class="cmt"><p>The column where the spatial key is stored</p></dd><dt class="param">temporalKey</dt><dd class="cmt"><p>The column tagged under the temporal role</p></dd><dt class="param">tlm</dt><dd class="cmt"><p>Metadata describing layout under which tiles were created. Note: no checking is
+           performed to ensure metadata, key-space, and tiles are coherent.</p></dd><dt>returns</dt><dd class="cmt"><p>Encoded RasterFrame</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="DataFrameMethods.html" class="extype" name="astraea.spark.rasterframes.DataFrameMethods">DataFrameMethods</a></dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="scala.this.throws.&lt;init&gt;$default$1[IllegalArgumentException]">...</span>
+    </span>)</span>
+              
+        </dd><dt>Exceptions thrown</dt><dd><span class="cmt"><p><span class="extype" name="IllegalArgumentException"><code>IllegalArgumentException</code></span> when constraints outlined in <code>asRF</code> are not met.</p></span></dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.DataFrameMethods#asRF" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="asRF(spatialKey:org.apache.spark.sql.Column,tlm:geotrellis.spark.TileLayerMetadata[geotrellis.spark.SpatialKey]):astraea.spark.rasterframes.RasterFrame"></a>
+      <a id="asRF(Column,TileLayerMetadata[SpatialKey]):RasterFrame"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">asRF</span><span class="params">(<span name="spatialKey">spatialKey: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>, <span name="tlm">tlm: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.TileLayerMetadata" class="extype" target="_top">TileLayerMetadata</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.SpatialKey" class="extype" target="_top">SpatialKey</a>]</span>)</span><span class="result">: <a href="package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#astraea.spark.rasterframes.package$$WithDataFrameMethods@asRF(spatialKey:org.apache.spark.sql.Column,tlm:geotrellis.spark.TileLayerMetadata[geotrellis.spark.SpatialKey]):astraea.spark.rasterframes.RasterFrame" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Convert DataFrame into a RasterFrame
+</p><div class="fullcomment"><div class="comment cmt"><p>Convert DataFrame into a RasterFrame
+</p></div><dl class="paramcmts block"><dt class="param">spatialKey</dt><dd class="cmt"><p>The column where the spatial key is stored</p></dd><dt class="param">tlm</dt><dd class="cmt"><p>Metadata describing layout under which tiles were created. Note: no checking is
+           performed to ensure metadata, key-space, and tiles are coherent.</p></dd><dt>returns</dt><dd class="cmt"><p>Encoded RasterFrame</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="DataFrameMethods.html" class="extype" name="astraea.spark.rasterframes.DataFrameMethods">DataFrameMethods</a></dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="scala.this.throws.&lt;init&gt;$default$1[IllegalArgumentException]">...</span>
+    </span>)</span>
+              
+        </dd><dt>Exceptions thrown</dt><dd><span class="cmt"><p><span class="extype" name="IllegalArgumentException"><code>IllegalArgumentException</code></span> when constraints outlined in <code>asRF</code> are not met.</p></span></dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.DataFrameMethods#asRF" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asRF:astraea.spark.rasterframes.RasterFrame"></a>
       <a id="asRF:RasterFrame"></a>
       <h4 class="signature">

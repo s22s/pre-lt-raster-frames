@@ -1,22 +1,22 @@
 <!DOCTYPE html >
 <html>
         <head>
-          <title>CellTypeEncoder - org.apache.spark.sql.gt.types.CellTypeEncoder</title>
-          <meta name="description" content="CellTypeEncoder - org.apache.spark.sql.gt.types.CellTypeEncoder" />
-          <meta name="keywords" content="CellTypeEncoder org.apache.spark.sql.gt.types.CellTypeEncoder" />
+          <title>DelegatingSubfieldEncoder - astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder</title>
+          <meta name="description" content="DelegatingSubfieldEncoder - astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder" />
+          <meta name="keywords" content="DelegatingSubfieldEncoder astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
-      <link href="../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
-      <link href="../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
-      <script type="text/javascript" src="../../../../../../lib/jquery.js" id="jquery-js"></script>
-      <script type="text/javascript" src="../../../../../../lib/jquery-ui.js"></script>
-      <script type="text/javascript" src="../../../../../../lib/template.js"></script>
-      <script type="text/javascript" src="../../../../../../lib/tools.tooltip.js"></script>
+      <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../lib/tools.tooltip.js"></script>
       
       <script type="text/javascript">
          if(top === self) {
-            var url = '../../../../../../index.html';
-            var hash = 'org.apache.spark.sql.gt.types.CellTypeEncoder$';
+            var url = '../../../../index.html';
+            var hash = 'astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -26,15 +26,15 @@
    	  </script>
     
         </head>
-        <body class="value">
+        <body class="type">
       <div id="definition">
-        <img alt="Object" src="../../../../../../lib/object_big.png" />
-        <p id="owner"><a href="../../../../../package.html" class="extype" name="org">org</a>.<a href="../../../../package.html" class="extype" name="org.apache">apache</a>.<a href="../../../package.html" class="extype" name="org.apache.spark">spark</a>.<a href="../../package.html" class="extype" name="org.apache.spark.sql">sql</a>.<a href="../package.html" class="extype" name="org.apache.spark.sql.gt">gt</a>.<a href="package.html" class="extype" name="org.apache.spark.sql.gt.types">types</a></p>
-        <h1>CellTypeEncoder</h1><h3><span class="morelinks"><div>Related Doc:
-            <a href="package.html" class="extype" name="org.apache.spark.sql.gt.types">package types</a>
+        <img alt="Trait" src="../../../../lib/trait_big.png" />
+        <p id="owner"><a href="../../../package.html" class="extype" name="astraea">astraea</a>.<a href="../../package.html" class="extype" name="astraea.spark">spark</a>.<a href="../package.html" class="extype" name="astraea.spark.rasterframes">rasterframes</a>.<a href="package.html" class="extype" name="astraea.spark.rasterframes.encoders">encoders</a></p>
+        <h1>DelegatingSubfieldEncoder</h1><h3><span class="morelinks"><div>Related Doc:
+            <a href="package.html" class="extype" name="astraea.spark.rasterframes.encoders">package encoders</a>
           </div></span></h3><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.CellTypeEncoder$" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       </div>
@@ -42,18 +42,21 @@
       <h4 id="signature" class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">object</span>
+        <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <span class="name">CellTypeEncoder</span>
+        <span class="name">DelegatingSubfieldEncoder</span><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Custom encoder for GT <span class="extype" name="CellType">CellType</span>. It's necessary since <span class="extype" name="CellType">CellType</span> is a type alias of
-a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>7/21/17</p></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Encoder builder for types composed of other fields with {{ExpressionEncoder}}s.
+</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>8/2/17</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></div>
-        </div></div>
+        </div><div class="toggleContainer block">
+            <span class="toggle">Known Subclasses</span>
+            <div class="subClasses hiddenContent"><a href="ProjectedExtentEncoder$.html" class="extype" name="astraea.spark.rasterframes.encoders.ProjectedExtentEncoder">ProjectedExtentEncoder</a>, <a href="TemporalProjectedExtentEncoder$.html" class="extype" name="astraea.spark.rasterframes.encoders.TemporalProjectedExtentEncoder">TemporalProjectedExtentEncoder</a>, <a href="TileLayerMetadataEncoder$.html" class="extype" name="astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder">TileLayerMetadataEncoder</a></div>
+          </div></div>
         
 
       <div id="mbrsel">
@@ -70,7 +73,7 @@ a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="org.apache.spark.sql.gt.types.CellTypeEncoder"><span>CellTypeEncoder</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder"><span>DelegatingSubfieldEncoder</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -107,8 +110,8 @@ a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p
         <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.CellTypeEncoder$@!=(x$1:Any):Boolean" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder@!=(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -124,8 +127,8 @@ a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p
         <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.CellTypeEncoder$@##():Int" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder@##():Int" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -141,28 +144,11 @@ a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p
         <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.CellTypeEncoder$@==(x$1:Any):Boolean" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder@==(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.types.CellTypeEncoder#apply" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="apply():org.apache.spark.sql.catalyst.encoders.ExpressionEncoder[geotrellis.raster.CellType]"></a>
-      <a id="apply():ExpressionEncoder[CellType]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">apply</span><span class="params">()</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.encoders.ExpressionEncoder" class="extype" target="_top">ExpressionEncoder</a>[<a href="../../../../../../geotrellis/raster/package.html#CellType=geotrellis.raster.DataTypewithgeotrellis.raster.NoDataHandling" class="extmbr" name="geotrellis.raster.CellType">CellType</a>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.CellTypeEncoder$@apply():org.apache.spark.sql.catalyst.encoders.ExpressionEncoder[geotrellis.raster.CellType]" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -175,8 +161,8 @@ a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p
         <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.CellTypeEncoder$@asInstanceOf[T0]:T0" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder@asInstanceOf[T0]:T0" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
@@ -192,17 +178,34 @@ a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p
         <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.CellTypeEncoder$@clone():Object" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder@clone():Object" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
       <span class="defval" name="classOf[java.lang.CloneNotSupportedException]">...</span>
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder#create" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="create[T](fieldEncoders:Seq[(String,org.apache.spark.sql.catalyst.encoders.ExpressionEncoder[_])])(implicitevidence$1:reflect.runtime.universe.TypeTag[T]):org.apache.spark.sql.catalyst.encoders.ExpressionEncoder[T]"></a>
+      <a id="create[T](Seq[(String,ExpressionEncoder[_])])(scala.reflect.api.JavaUniverse.TypeTag[T]):ExpressionEncoder[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">create</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="fieldEncoders">fieldEncoders: <span class="extype" name="scala.Seq">Seq</span>[(<span class="extype" name="scala.Predef.String">String</span>, <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.encoders.ExpressionEncoder" class="extype" target="_top">ExpressionEncoder</a>[_])]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.api.TypeTags.TypeTag">scala.reflect.api.JavaUniverse.TypeTag</span>[<span class="extype" name="astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder.create.T">T</span>]</span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.encoders.ExpressionEncoder" class="extype" target="_top">ExpressionEncoder</a>[<span class="extype" name="astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder.create.T">T</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder@create[T](fieldEncoders:Seq[(String,org.apache.spark.sql.catalyst.encoders.ExpressionEncoder[_])])(implicitevidence$1:reflect.runtime.universe.TypeTag[T]):org.apache.spark.sql.catalyst.encoders.ExpressionEncoder[T]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -215,8 +218,8 @@ a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p
         <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.CellTypeEncoder$@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -232,8 +235,8 @@ a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p
         <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.CellTypeEncoder$@equals(x$1:Any):Boolean" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder@equals(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -249,11 +252,11 @@ a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p
         <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.CellTypeEncoder$@finalize():Unit" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder@finalize():Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
       <span class="symbol">classOf[java.lang.Throwable]</span>
@@ -272,8 +275,8 @@ a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p
         <span class="name">getClass</span><span class="params">()</span><span class="result">: <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.lang.Class" class="extype" target="_top">Class</a>[_]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.CellTypeEncoder$@getClass():Class[_]" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder@getClass():Class[_]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -289,8 +292,8 @@ a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p
         <span class="name">hashCode</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.CellTypeEncoder$@hashCode():Int" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder@hashCode():Int" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -306,8 +309,8 @@ a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p
         <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.CellTypeEncoder$@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
@@ -323,8 +326,8 @@ a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p
         <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.CellTypeEncoder$@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -340,8 +343,8 @@ a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p
         <span class="name">notify</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.CellTypeEncoder$@notify():Unit" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder@notify():Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -357,8 +360,8 @@ a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p
         <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.CellTypeEncoder$@notifyAll():Unit" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder@notifyAll():Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -374,8 +377,8 @@ a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p
         <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.CellTypeEncoder$@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -391,8 +394,8 @@ a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p
         <span class="name">toString</span><span class="params">()</span><span class="result">: <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.lang.String" class="extype" target="_top">String</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.CellTypeEncoder$@toString():String" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder@toString():String" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -408,8 +411,8 @@ a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p
         <span class="name">wait</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.CellTypeEncoder$@wait():Unit" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder@wait():Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -431,8 +434,8 @@ a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Long" class="extype" target="_top">Long</a></span>, <span name="arg1">arg1: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.CellTypeEncoder$@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -454,8 +457,8 @@ a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Long" class="extype" target="_top">Long</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.types.CellTypeEncoder$@wait(x$1:Long):Unit" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder@wait(x$1:Long):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>

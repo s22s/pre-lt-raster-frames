@@ -169,11 +169,11 @@ val brownToGreen = ColorRamp(
 ).stops(128)
 
 val colors = ColorMap.fromQuantileBreaks(pr.tile.histogramDouble(), brownToGreen)
-pr.tile.color(colors).renderPng().write(&quot;target/scala-2.11/tut/rf-ndvi.png&quot;)
+pr.tile.color(colors).renderPng().write(&quot;target/scala-2.11/tut/apps/rf-ndvi.png&quot;)
 
 //For a georefrenced singleband greyscale image, could do: `GeoTiff(pr).write(&quot;ndvi.tiff&quot;)`
 </code></pre>
-<p><img src="../rf-ndvi.png" /></p>
+<p><img src="rf-ndvi.png" /></p>
 <div class="nav-next">
 <p><strong>Next:</strong> <a href="../ml/index.html">Machine Learning</a></p>
 </div>
