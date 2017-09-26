@@ -23,6 +23,7 @@ import org.apache.spark.sql.types._
 import scala.reflect.ClassTag
 
 /**
+ * Base class for UDTs who's contents is encoded using kryo
  *
  * @author sfitch
  * @since 4/18/17

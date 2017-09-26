@@ -4,7 +4,6 @@ package astraea.spark.rasterframes
 
 import java.time.ZonedDateTime
 
-import com.typesafe.scalalogging.LazyLogging
 import geotrellis.proj4.LatLng
 import geotrellis.raster.render.{ColorMap, ColorRamp}
 import geotrellis.raster.{ProjectedRaster, Tile, TileFeature, TileLayout}
@@ -13,7 +12,6 @@ import geotrellis.spark.io._
 import geotrellis.spark.tiling._
 import geotrellis.vector.{Extent, ProjectedExtent}
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.gt.NamedColumn
 
 /**
  * RasterFrame test rig.
@@ -21,7 +19,9 @@ import org.apache.spark.sql.gt.NamedColumn
  * @author sfitch 
  * @since 7/10/17
  */
-class RasterFrameTest extends TestEnvironment with TestData {
+class RasterFrameSpec extends TestEnvironment with TestData {
+  // This is to avoid an IntelliJ error
+  protected def withFixture(test: Any) = ???
   import TestData.randomTile
   import spark.implicits._
 
@@ -240,7 +240,7 @@ class RasterFrameTest extends TestEnvironment with TestData {
       }
     }
 
-    it("should rasterize a spatiotemporal key") {
+    it("should rasterize with a spatiotemporal key") {
       val rf = TestData.randomSpatioTemporalTileLayerRDD(20, 20, 2, 2).toRF
 
       val md = rf.schema.fields(0).metadata
@@ -248,7 +248,18 @@ class RasterFrameTest extends TestEnvironment with TestData {
       println(rf.extract[TileLayerMetadata[SpaceTimeKey]](CONTEXT_METADATA_KEY)(md))
 
       rf.toRaster($"tile", 128, 128)
+    }
 
+    it("should maintain metadata after all spatial join operations") {
+      val rf1 = TestData.randomSpatioTemporalTileLayerRDD(20, 20, 2, 2).toRF
+      val rf2 = TestData.randomSpatioTemporalTileLayerRDD(20, 20, 2, 2).toRF
+
+      val joinTypes = Seq("inner", "outer", "fullouter", "left_outer", "right_outer", "leftsemi")
+      forEvery(joinTypes) { jt ⇒
+        val joined = rf1.spatialJoin(rf2, jt)
+        println(joined.schema.json)
+        assert(joined.tileLayerMetadata.isRight)
+      }
     }
   }
 }

@@ -1,4 +1,4 @@
-# RasterFrames™
+# RasterFrames
 
 _RasterFrames™_ brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer 
 operations of [GeoTrellis](https://geotrellis.io/). 
@@ -11,9 +11,6 @@ core is a user-defined type (UDF) called @scaladoc[`TileUDT`](org.apache.spark.s
 which encodes a GeoTrellis @scaladoc[`Tile`](geotrellis.raster.Tile) in a form the Spark Catalyst engine can process. 
 Furthermore, we extend the definition of a DataFrame to encompass some additional invariants, allowing for geospatial 
 operations within and between RasterFrames to occur, while still maintaining necessary geo-referencing constructs.
-
-
-![](RasterFrameInvariants.png)
 
 To learn more, please see the [Getting Started](getting-started.md) section of this manual.
 
@@ -38,6 +35,7 @@ RasterFrames™ is a new project under active development. Feedback and contribu
 * [GitHub Repository](https://github.com/s22s/raster-frames)
 * [GeoTrellis Documentation](https://docs.geotrellis.io/en/latest/)
 * [Astraea, Inc.](http://www.astraea.earth/) (the company behind RasterFrames)
+* [Azavea](https://www.azavea.com/) (the company behind GeoTrellis)
 
 @@@
 
@@ -50,10 +48,9 @@ RasterFrames™ is a new project under active development. Feedback and contribu
 @@@ index
 * [Getting Started](getting-started.md)
 * [Creating RasterFrames](creating-rasterframes.md)
-* [Exporting Rasterframes](exporting-rasterframes.md)
-* [Raster Analysis](raster-analysis.md)
+* [Applications](apps/index.md)
 * [Machine Learning](ml/index.md)
-* [GeoTrellis Operations](geotrellis-ops.md)
+* [Exporting Rasterframes](exporting-rasterframes.md)
 * [UDF Reference](reference.md)
 @@@
 

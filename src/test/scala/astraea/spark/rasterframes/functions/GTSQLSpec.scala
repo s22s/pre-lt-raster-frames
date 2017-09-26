@@ -40,7 +40,7 @@ class GTSQLSpec extends TestEnvironment with TestData  {
   import TestData.{makeTiles, randomTile}
   import sqlContext.implicits._
 
-  sqlContext.udf.register("st_makeTiles", makeTiles)
+  sqlContext.udf.register("rf_makeTiles", makeTiles)
 
   describe("Dataframe Ops on GeoTrellis types") {
     it("should resolve column names") {
@@ -50,14 +50,14 @@ class GTSQLSpec extends TestEnvironment with TestData  {
     }
 
     it("should create constant tiles") {
-      val query = sql("select st_makeConstantTile(1, 10, 10, 'int8raw')")
+      val query = sql("select rf_makeConstantTile(1, 10, 10, 'int8raw')")
       write(query)
       val tile = query.as[Tile].first
       assert((tile.cellType === ByteCellType) (org.scalactic.Equality.default))
     }
 
     it("should generate multiple rows") {
-      val query = sql("select explode(st_makeTiles(3))")
+      val query = sql("select explode(rf_makeTiles(3))")
       write(query)
       assert(query.count === 3)
     }
@@ -71,7 +71,7 @@ class GTSQLSpec extends TestEnvironment with TestData  {
 
     it("should list supported cell types") {
       import gt.types.cellTypes
-      val ct = sql("select explode(st_cellTypes())").as[String].collect
+      val ct = sql("select explode(rf_cellTypes())").as[String].collect
       forEvery(cellTypes()) { c ⇒
         assert(ct.contains(c))
       }
@@ -86,7 +86,7 @@ class GTSQLSpec extends TestEnvironment with TestData  {
         val expected = Add(byteArrayTile, byteConstantTile)
         assert(sum.as[Tile].first() === expected)
 
-        val sqlSum = sql("select st_localAdd(left, right) from tmp")
+        val sqlSum = sql("select rf_localAdd(left, right) from tmp")
         assert(sqlSum.as[Tile].first() === expected)
       }
 
@@ -95,7 +95,7 @@ class GTSQLSpec extends TestEnvironment with TestData  {
         val expected = Subtract(byteArrayTile, byteConstantTile)
         assert(sub.as[Tile].first() === expected)
 
-        val sqlSub = sql("select st_localSubtract(left, right) from tmp")
+        val sqlSub = sql("select rf_localSubtract(left, right) from tmp")
         assert(sqlSub.as[Tile].first() === expected)
       }
 
@@ -104,7 +104,7 @@ class GTSQLSpec extends TestEnvironment with TestData  {
         val expected = Multiply(byteArrayTile, byteConstantTile)
         assert(sub.as[Tile].first() === expected)
 
-        val sqlSub = sql("select st_localMultiply(left, right) from tmp")
+        val sqlSub = sql("select rf_localMultiply(left, right) from tmp")
         assert(sqlSub.as[Tile].first() === expected)
       }
 
@@ -113,7 +113,7 @@ class GTSQLSpec extends TestEnvironment with TestData  {
         val expected = Divide(byteArrayTile, byteConstantTile)
         assert(sub.as[Tile].first() === expected)
 
-        val sqlSub = sql("select st_localDivide(left, right) from tmp")
+        val sqlSub = sql("select rf_localDivide(left, right) from tmp")
         assert(sqlSub.as[Tile].first() === expected)
       }
     }

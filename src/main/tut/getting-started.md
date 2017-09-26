@@ -8,34 +8,25 @@ Most of the examples are shown using the Spark DataFrames API. However, many cou
 
 *RasterFrames* is published via Bintray's JCenter server, which is one of the default sbt resolvers. To use, just add the following library dependency:
 
+sbt:
+
 ```scala
-libraryDependencies += "io.astraea" %% "raster-frames" % "{version}"
+libraryDependencies += "io.astraea" %% "raster-frames" % "x.y.z"
 ```
 
-## Initialization
+Maven:
 
-First, some standard `import`s:
-
-```tut:silent
-import astraea.spark.rasterframes._
-import geotrellis.raster._
-import geotrellis.raster.render._
-import geotrellis.raster.io.geotiff.SinglebandGeoTiff
-import org.apache.spark.sql._
-import org.apache.spark.sql.functions._
+```
+<dependency>
+  <groupId>io.astraea</groupId>
+  <artifactId>raster-frames</artifactId>
+  <version>x.y.z</version>
+</dependency>
 ```
 
-Next, initialize the `SparkSession`, and then register RasterFrames with Spark:
- 
-```tut:silent
-implicit val spark = SparkSession.builder().master("local").appName("RasterFrames").getOrCreate()
+@@@ note
 
-rfInit(spark.sqlContext)
-import spark.implicits._
-```
+*Coming soon*: We'll soon be providing a new project template to streamline the process of getting
+started with *RasterFrames* 
 
-
-```tut:invisible
-spark.stop()
-```
-
+@@@

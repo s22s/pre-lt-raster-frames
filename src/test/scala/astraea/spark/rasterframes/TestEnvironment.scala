@@ -51,6 +51,4 @@ trait TestEnvironment extends FunSpec with GeoTrellisTestEnvironment
     logger.debug(s" it has $rows row(s)")
   }
 
-  // This is to avoid an IntelliJ error
-  protected def withFixture(test: Any) = ???
 }

@@ -45,7 +45,6 @@ abstract class SpatialContextRDDMethods[K: SpatialComponent: JsonFormat: TypeTag
       .toDF(SPATIAL_KEY_COLUMN, tileColumnName)
 
     df.setSpatialColumnRole(df(SPATIAL_KEY_COLUMN), self.metadata)
-      .setColumnRole(df(tileColumnName), classOf[Tile].getSimpleName)
       .certify
   }
 }
@@ -68,7 +67,6 @@ abstract class SpatioTemporalContextRDDMethods(implicit spark: SparkSession)
     df
       .setSpatialColumnRole(df(SPATIAL_KEY_COLUMN), self.metadata)
       .setColumnRole(df(TEMPORAL_KEY_COLUMN), classOf[TemporalKey].getSimpleName)
-      .setColumnRole(df(TILE_COLUMN), classOf[Tile].getSimpleName)
       .certify
   }
 }
@@ -94,7 +92,6 @@ abstract class TFContextRDDMethods[K: SpatialComponent: JsonFormat: ClassTag: Ty
 
     df
       .setSpatialColumnRole(df(SPATIAL_KEY_COLUMN), self.metadata)
-      .setColumnRole(df(TILE_COLUMN), classOf[Tile].getSimpleName)
       .certify
   }
 }
@@ -119,7 +116,6 @@ abstract class TFSTContextRDDMethods[D: TypeTag](implicit spark: SparkSession)
     df
       .setSpatialColumnRole(df(SPATIAL_KEY_COLUMN), self.metadata)
       .setColumnRole(df(TEMPORAL_KEY_COLUMN), classOf[TemporalKey].getSimpleName)
-      .setColumnRole(df(TILE_COLUMN), classOf[Tile].getSimpleName)
       .certify
   }
 }

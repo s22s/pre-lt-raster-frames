@@ -23,7 +23,10 @@
   <link rel="stylesheet" type="text/css" href="$page.base$lib/normalize.css/normalize.css"/>
   <link rel="stylesheet" type="text/css" href="$page.base$lib/foundation/dist/foundation.min.css"/>
   <link rel="stylesheet" type="text/css" href="$page.base$css/page.css"/>
-  <link rel="shortcut icon" href="$page.base$images/astraea.ico" />
+
+  <link rel="icon" href="$page.base$images/RasterFrames_16x16.ico" sizes="16x16"/>
+  <link rel="icon" href="i$page.base$mages/RasterFrames_32x32.ico" sizes="32x32"/>
+
   <style>
     .md-left { float: left; }
     .md-right { float: right; }
@@ -46,8 +49,11 @@
       <header class="site-header expanded row">
         <div class="small-12 column">
           <a href="#" class="off-canvas-toggle hide-for-medium" data-toggle="off-canvas-menu">$menu()$</a>
-          $title()$
-          <a href="http://www.astraea.earth" class="logo show-for-medium"><img style="height: 40px;" src="$page.base$images/astraea.png"/></a>
+          <img style="max-height: 60px;" src="$page.base$images/RasterFramesLogo.png" />
+          <!-- $title()$ -->
+          <a href="http://www.astraea.earth" class="logo show-for-medium">
+            <img style="max-height: 40px;" src="$page.base$images/astraea.png"/>
+          </a>
         </div>
       </header>
 
@@ -125,12 +131,10 @@
             <div class="small-12 large-offset-2 large-10 column">
               <div class="row site-footer-content">
                 <div class="small-12 text-center large-9 column">
-                  <!--
                   <div class="copyright">
-                    <span class="text">&copy; $page.properties.("date.year")$</span>
-                    <a href="http://www.astraea.earth/" class="logo"><img src="$page.base$images/astraea.png"/></a>
+                    <span class="text">&copy; $page.properties.("date.year")$
+                    <a href="http://www.astraea.earth/">Astraea, Inc.</a></span>
                   </div>
-                  -->
                 </div>
               </div>
             </div>

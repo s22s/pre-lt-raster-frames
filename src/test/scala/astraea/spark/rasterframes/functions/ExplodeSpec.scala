@@ -21,7 +21,9 @@ package astraea.spark.rasterframes.functions
 
 import astraea.spark.rasterframes._
 import geotrellis.raster._
-import org.apache.spark.sql.ColumnName
+import geotrellis.raster.io.geotiff.GeoTiff
+import geotrellis.raster.resample.NearestNeighbor
+import org.apache.spark.sql.functions._
 
 /**
  * Test rig for Tile operations associated with converting to/from
@@ -37,16 +39,16 @@ class ExplodeSpec extends TestEnvironment with TestData {
 
     it("should explode tiles") {
       val query = sql(
-        """select st_explodeTiles(
-          |  st_makeConstantTile(1, 10, 10, 'int8raw'),
-          |  st_makeConstantTile(2, 10, 10, 'int8raw')
+        """select rf_explodeTiles(
+          |  rf_makeConstantTile(1, 10, 10, 'int8raw'),
+          |  rf_makeConstantTile(2, 10, 10, 'int8raw')
           |)
           |""".stripMargin)
       write(query)
       assert(query.select("cell_0", "cell_1").as[(Double, Double)].collect().forall(_ == ((1.0, 2.0))))
       val query2 = sql(
-        """|select st_tileDimensions(tiles) as dims, st_explodeTiles(tiles) from (
-           |select st_makeConstantTile(1, 10, 10, 'int8raw') as tiles)
+        """|select rf_tileDimensions(tiles) as dims, rf_explodeTiles(tiles) from (
+           |select rf_makeConstantTile(1, 10, 10, 'int8raw') as tiles)
            |""".stripMargin)
       write(query2)
       assert(query2.columns.length === 4)
@@ -67,13 +69,55 @@ class ExplodeSpec extends TestEnvironment with TestData {
     }
 
     it("should reassemble exploded tile") {
+      withClue("single tile") {
+        val df = Seq[Tile](byteArrayTile).toDF("tile")
+          .select(explodeTiles($"tile"))
 
+        val assembled = df.agg(assembleTile(
+          col(COLUMN_INDEX_COLUMN),
+          col(ROW_INDEX_COLUMN),
+          col(TILE_COLUMN),
+          3, 3, byteArrayTile.cellType
+        )).as[Tile]
+
+        val result = assembled.first()
+        assert(result === byteArrayTile)
+      }
+
+      withClue("multiple tiles") {
+        val image = sampleGeoTiff
+        val tinyTiles = image.projectedRaster.toRF(10, 10)
+
+        val exploded = tinyTiles.select(tinyTiles.spatialKeyColumn, explodeTiles(tinyTiles.tileColumns.head))
+
+        exploded.printSchema()
+
+        val assembled = exploded.groupBy(tinyTiles.spatialKeyColumn)
+          .agg(assembleTile(
+            col(COLUMN_INDEX_COLUMN),
+            col(ROW_INDEX_COLUMN),
+            col(TILE_COLUMN),
+            10, 10, IntConstantNoDataCellType
+          ))
+
+        val tlm = tinyTiles.tileLayerMetadata.left.get
+
+        val rf = assembled.asRF(col(SPATIAL_KEY_COLUMN), tlm)
+
+        val (cols, rows) = image.tile.dimensions
+
+        val recovered = rf.toRaster(col(TILE_COLUMN), cols, rows, NearestNeighbor)
+
+        //GeoTiff(recovered).write("foo.tiff")
+
+        assert(image.tile.toArrayTile() === recovered.tile.toArrayTile())
+      }
     }
 
     it("should convert tile into array") {
       val query = sql(
-        """select st_tileToArrayInt(
-          |  st_makeConstantTile(1, 10, 10, 'int8raw')
+        """select rf_tileToArrayInt(
+          |  rf_makeConstantTile(1, 10, 10, 'int8raw')
           |) as intArray
           |""".stripMargin)
       assert(query.as[Array[Int]].first.sum === 100)
@@ -98,8 +142,10 @@ class ExplodeSpec extends TestEnvironment with TestData {
       val hasNoData = back.withColumn("withNoData", withNoData($"backToTile", 0))
 
       val result2 = hasNoData.select($"withNoData".as[Tile]).first
+
       assert(result2.cellType.asInstanceOf[UserDefinedNoData[_]].noDataValue === 0)
     }
   }
 
+  protected def withFixture(test: Any) = ???
 }

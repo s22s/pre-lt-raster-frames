@@ -27,7 +27,7 @@ import org.apache.spark.sql.types._
  */
 class HistogramUDT extends UserDefinedType[Histogram[Double]] with KryoBackedUDT[Histogram[Double]] {
 
-  override val typeName = "st_histogram"
+  override val typeName = "gt_histogram"
 
   override val targetClassTag = scala.reflect.classTag[Histogram[Double]]
 
