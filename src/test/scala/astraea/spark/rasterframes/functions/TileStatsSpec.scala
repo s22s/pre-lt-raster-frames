@@ -173,7 +173,7 @@ class TileStatsSpec extends TestEnvironment with TestData  {
 
       val ds = Seq.fill(20)(tile).toDF("tiles")
 
-      val stats = ds.select(localAggStats($"tiles") as "stats").select("stats.*")
+      //val stats = ds.select(localAggStats($"tiles") as "stats").select("stats.*")
       //printStatsRows(stats)
 
       // counted everything properly

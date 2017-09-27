@@ -18,8 +18,8 @@ package astraea.spark.rasterframes.functions
 
 import geotrellis.raster
 import geotrellis.raster.mapalgebra.local._
-import geotrellis.raster.{IntArrayTile, IntConstantNoDataCellType, Tile, isNoData}
-import org.apache.spark.sql.{Row, gt}
+import geotrellis.raster.{IntConstantNoDataCellType, Tile, isNoData}
+import org.apache.spark.sql.Row
 import org.apache.spark.sql.expressions.{MutableAggregationBuffer, UserDefinedAggregateFunction}
 import org.apache.spark.sql.gt.types.TileUDT
 import org.apache.spark.sql.types._
@@ -71,9 +71,9 @@ class StatsLocalTileAggregateFunction() extends UserDefinedAggregateFunction {
 
   private val initFunctions = Seq(
     (t: Tile) ⇒ Defined(t).convert(IntConstantNoDataCellType),
-    identity[Tile] _,
-    identity[Tile] _,
-    identity[Tile] _,
+    (t: Tile) ⇒ t.convert(IntConstantNoDataCellType),
+    (t: Tile) ⇒ t.convert(IntConstantNoDataCellType),
+    (t: Tile) ⇒ t.convert(IntConstantNoDataCellType),
     (t: Tile) ⇒ Multiply(t, t)
   )
 
@@ -95,7 +95,11 @@ class StatsLocalTileAggregateFunction() extends UserDefinedAggregateFunction {
 
   override def deterministic: Boolean = true
 
-  override def initialize(buffer: MutableAggregationBuffer): Unit = ()
+  override def initialize(buffer: MutableAggregationBuffer): Unit = {
+    for(i ← initFunctions.indices) {
+      buffer(i) = null
+    }
+  }
 
   override def update(buffer: MutableAggregationBuffer, input: Row): Unit = {
     val right = input.getAs[Tile](0)

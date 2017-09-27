@@ -138,6 +138,8 @@ object UDFs {
   private[rasterframes] val renderAscii: (Tile) ⇒ String = safeEval(_.asciiDraw)
 
   /** Count tile cells that have a data value. */
+  // TODO: Do we need to `safeEval` here?
+  // TODO: Should we get rid of the `var`?
   private[rasterframes] val dataCells: (Tile) ⇒ Long = (t: Tile) ⇒ {
     var count: Long = 0
     t.foreach(z ⇒ if(isData(z)) count = count + 1)
