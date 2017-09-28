@@ -16,6 +16,6 @@ class LocalMeanAggregateFunction extends StatsLocalTileAggregateFunction {
   override def dataType: DataType = new TileUDT()
   override def evaluate(buffer: Row): Any = {
     val superRow = super.evaluate(buffer).asInstanceOf[Row]
-    superRow.get(3)
+    if (superRow != null) superRow.get(3) else null
   }
 }
