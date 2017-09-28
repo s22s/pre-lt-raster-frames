@@ -45,7 +45,7 @@ gtag('config', 'UA-106630615-1');
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.5.2
+0.5.3*
 </div>
 </div>
 <div class="nav-toc">
@@ -97,7 +97,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.5.2
+0.5.3*
 </div>
 </div>
 <div class="nav-toc">
@@ -142,6 +142,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <div class="small-12 large-9 column" id="docs">
 <h1><a href="#classification" name="classification" class="anchor"><span class="anchor-link"></span></a>Classification</h1>
 <p>In this example we will do some simple cell classification based on multiband imagery and a target/label raster. As a part of the process we&rsquo;ll explore the cross-validation support in SparkML.</p>
+<h2><a href="#setup" name="setup" class="anchor"><span class="anchor-link"></span></a>Setup</h2>
 <p>First some setup:</p>
 <pre class="prettyprint"><code class="language-scala">import astraea.spark.rasterframes._
 import astraea.spark.rasterframes.ml.{NoDataFilter, TileExploder}
@@ -165,6 +166,7 @@ import spark.implicits._
 // Utility for reading imagery from our test data set
 def readTiff(name: String): SinglebandGeoTiff = SinglebandGeoTiff(s&quot;src/test/resources/$name&quot;)
 </code></pre>
+<h2><a href="#loading-data" name="loading-data" class="anchor"><span class="anchor-link"></span></a>Loading Data</h2>
 <p>The first step is to load multiple bands of imagery and construct a single RasterFrame from them. To do this we:</p>
 <ol>
   <li>Identify the GeoTIFF filename.</li>
@@ -219,6 +221,7 @@ val target = readTiff(filenamePattern.format(&quot;Labels&quot;)).
 <pre class="prettyprint"><code class="language-scala">val abt = joinedRF.spatialJoin(target)
 
 </code></pre>
+<h2><a href="#ml-pipeline" name="ml-pipeline" class="anchor"><span class="anchor-link"></span></a>ML Pipeline</h2>
 <p>The data preparation modeling pipeline is next. SparkML requires that each observation be in its own row, and those observations be packed into a single <code>Vector</code> type. The first step is to &ldquo;explode&rdquo; the tiles into a single row per cell/pixel. Then we filter out any rows that have <code>NoData</code> values (which will cause an error during training). Finally we use the SparkML <code>VectorAssembler</code> to create that <code>Vector</code>. </p>
 <pre class="prettyprint"><code class="language-scala">val exploder = new TileExploder()
 
@@ -237,6 +240,7 @@ val assembler = new VectorAssembler().
 val pipeline = new Pipeline().
   setStages(Array(exploder, noDataFilter, assembler, classifier))
 </code></pre>
+<h2><a href="#cross-validation" name="cross-validation" class="anchor"><span class="anchor-link"></span></a>Cross Validation</h2>
 <p>To extend the sophistication of the example we are going to use the SparkML support for cross-validation and hyper-parameter tuning. The first step is to configure how we&rsquo;re going to evaluate our model&rsquo;s performance. Then we define the hyperparmeter(s) we&rsquo;re going to vary and evaluate. Finally we configure the cross validator. </p>
 <pre class="prettyprint"><code class="language-scala">val evaluator = new MulticlassClassificationEvaluator().
   setLabelCol(targetCol).
@@ -255,8 +259,9 @@ val trainer = new CrossValidator().
 </code></pre>
 <p>Push the &ldquo;go&rdquo; button:</p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; val model = trainer.fit(abt)
-model: org.apache.spark.ml.tuning.CrossValidatorModel = cv_bb382f6070b2
+model: org.apache.spark.ml.tuning.CrossValidatorModel = cv_4d5cafe012dc
 </code></pre>
+<h2><a href="#model-evaluation" name="model-evaluation" class="anchor"><span class="anchor-link"></span></a>Model Evaluation</h2>
 <p>To view the model&rsquo;s performance we format the <code>paramGrid</code> settings used for each model and render the parameter/performance association.</p>
 <pre class="prettyprint"><code class="language-scala">val metrics = model.getEstimatorParamMaps.
   map(_.toSeq.map(p ⇒ s&quot;${p.param.name} = ${p.value}&quot;)).
@@ -338,6 +343,11 @@ raster.tile.renderPng(clusterColors).write(&quot;target/scala-2.11/tut/ml/classi
 <ul>
   <li><a href="../ml/classification.html#classification" class="header">Classification</a>
   <ul>
+    <li><a href="../ml/classification.html#setup" class="header">Setup</a></li>
+    <li><a href="../ml/classification.html#loading-data" class="header">Loading Data</a></li>
+    <li><a href="../ml/classification.html#ml-pipeline" class="header">ML Pipeline</a></li>
+    <li><a href="../ml/classification.html#cross-validation" class="header">Cross Validation</a></li>
+    <li><a href="../ml/classification.html#model-evaluation" class="header">Model Evaluation</a></li>
     <li><a href="../ml/classification.html#visualizing-results" class="header">Visualizing Results</a></li>
   </ul></li>
 </ul>

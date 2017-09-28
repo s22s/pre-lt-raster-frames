@@ -45,7 +45,7 @@ gtag('config', 'UA-106630615-1');
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.5.2
+0.5.3*
 </div>
 </div>
 <div class="nav-toc">
@@ -97,7 +97,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.5.2
+0.5.3*
 </div>
 </div>
 <div class="nav-toc">
@@ -141,7 +141,8 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <div class="page-content row">
 <div class="small-12 large-9 column" id="docs">
 <h1><a href="#clustering" name="clustering" class="anchor"><span class="anchor-link"></span></a>Clustering</h1>
-<p>In this example we will do some simple cell clustering based on multiband imagery. </p>
+<p>In this example we will do some simple cell clustering based on multiband imagery.</p>
+<h2><a href="#setup" name="setup" class="anchor"><span class="anchor-link"></span></a>Setup</h2>
 <p>First some setup:</p>
 <pre class="prettyprint"><code class="language-scala">import astraea.spark.rasterframes._
 import astraea.spark.rasterframes.ml.TileExploder
@@ -162,6 +163,7 @@ spark.sparkContext.setLogLevel(&quot;ERROR&quot;)
 rfInit(spark.sqlContext)
 import spark.implicits._
 </code></pre>
+<h2><a href="#loading-data" name="loading-data" class="anchor"><span class="anchor-link"></span></a>Loading Data</h2>
 <p>The first step is to load multiple bands of imagery and construct a single RasterFrame from them.</p>
 <pre class="prettyprint"><code class="language-scala">val filenamePattern = &quot;L8-B%d-Elkton-VA.tiff&quot;
 val bandNumbers = 1 to 4
@@ -186,6 +188,7 @@ root
  |-- band_4: rf_tile (nullable = true)
 
 </code></pre>
+<h2><a href="#ml-pipeline" name="ml-pipeline" class="anchor"><span class="anchor-link"></span></a>ML Pipeline</h2>
 <p>SparkML requires that each observation be in its own row, and those observations be packed into a single <code>Vector</code>. The first step is to &ldquo;explode&rdquo; the tiles into a single row per cell/pixel.</p>
 <pre class="prettyprint"><code class="language-scala">val exploder = new TileExploder()
 </code></pre>
@@ -204,6 +207,7 @@ val pipeline = new Pipeline().setStages(Array(exploder, assembler, kmeans))
 // Compute clusters
 val model = pipeline.fit(joinedRF)
 </code></pre>
+<h2><a href="#model-evaluation" name="model-evaluation" class="anchor"><span class="anchor-link"></span></a>Model Evaluation</h2>
 <p>At this point the model can be saved off for later use, or used immediately on the same data we used to compute the model. First we run the data through the model to assign cluster IDs to each cell.</p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; val clustered = model.transform(joinedRF)
 clustered: org.apache.spark.sql.DataFrame = [spatial_key: struct&lt;col: int, row: int&gt;, column_index: int ... 7 more fields]
@@ -283,6 +287,10 @@ raster.tile.renderPng(clusterColors).write(&quot;target/scala-2.11/tut/ml/cluste
 <ul>
   <li><a href="../ml/clustering.html#clustering" class="header">Clustering</a>
   <ul>
+    <li><a href="../ml/clustering.html#setup" class="header">Setup</a></li>
+    <li><a href="../ml/clustering.html#loading-data" class="header">Loading Data</a></li>
+    <li><a href="../ml/clustering.html#ml-pipeline" class="header">ML Pipeline</a></li>
+    <li><a href="../ml/clustering.html#model-evaluation" class="header">Model Evaluation</a></li>
     <li><a href="../ml/clustering.html#visualizing-results" class="header">Visualizing Results</a></li>
   </ul></li>
 </ul>
