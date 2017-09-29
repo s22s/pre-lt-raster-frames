@@ -11,4 +11,4 @@ lazy val `raster-frames` = project
   .settings(docSettings: _*)
 
 lazy val bench = project
-  .dependsOn(`raster-frames` % "compile->test")
+  .dependsOn(`raster-frames`)
