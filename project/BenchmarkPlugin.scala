@@ -55,7 +55,7 @@ object BenchmarkPlugin extends AutoPlugin {
   import autoImport._
 
   override def projectSettings = Seq(
-    jmhOutputFormat := "csv",
+    jmhOutputFormat := "json",
     jmhOutputDir := target.value,
     jmhFileRegex := ".*Bench.*".r,
     jmhThreads := None,
