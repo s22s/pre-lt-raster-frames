@@ -150,15 +150,19 @@ package object rasterframes extends EncoderImplicits with ColumnFunctions {
       new ContextRDD(rdd, metadata)
   }
 
-  private[rasterframes] implicit class WithWiden[A, B](thing: Either[A, B]) {
+  private[rasterframes] implicit class WithWiden[A, B](left: Either[A, B]) {
     /** Returns the value as a LUB of the Left & Right items. */
     def widen[Out](implicit ev: Lub[A, B, Out]): Out =
-      thing.fold(identity, identity).asInstanceOf[Out]
+      left.fold(identity, identity).asInstanceOf[Out]
   }
 
   private[rasterframes] implicit class WithCombine[T](left: Option[T]) {
     def combine[A, R >: A](a: A)(f: (T, A) ⇒ R): R = left.map(f(_, a)).getOrElse(a)
     def tupleWith[R](right: Option[R]): Option[(T, R)] = left.flatMap(l ⇒ right.map((l, _)))
+  }
+
+  private[rasterframes] implicit class Conditionalize[T](left: T) {
+    def when(pred: T ⇒ Boolean): Option[T] = Option(left).filter(pred)
   }
 
   implicit class NamedColumn(col: Column) {
