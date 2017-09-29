@@ -22,7 +22,7 @@ RasterFrames™ is a new project under active development. Feedback and contribu
 
 ## Detailed Contents
 
-@@ toc { depth=3 }
+@@ toc { depth=2 }
 
 @@@
 
