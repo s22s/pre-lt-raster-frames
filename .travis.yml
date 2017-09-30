@@ -9,3 +9,9 @@ jdk:
   - oraclejdk8
 
 sbt_args: -no-colors
+
+script:
+  - sbt clean coverage test coverageReport
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
