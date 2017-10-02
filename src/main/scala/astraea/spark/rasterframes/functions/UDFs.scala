@@ -32,9 +32,9 @@ import scala.reflect.runtime.universe._
  */
 object UDFs {
 
-  private def safeEval[P, R](f: P ⇒ R): P ⇒ R =
+  private[rasterframes] def safeEval[P, R](f: P ⇒ R): P ⇒ R =
     (p) ⇒ if (p == null) null.asInstanceOf[R] else f(p)
-  private def safeEval[P1, P2, R](f: (P1, P2) ⇒ R): (P1, P2) ⇒ R =
+  private[rasterframes] def safeEval[P1, P2, R](f: (P1, P2) ⇒ R): (P1, P2) ⇒ R =
     (p1, p2) ⇒ if (p1 == null || p2 == null) null.asInstanceOf[R] else f(p1, p2)
 
   /** Flattens tile into an array. */

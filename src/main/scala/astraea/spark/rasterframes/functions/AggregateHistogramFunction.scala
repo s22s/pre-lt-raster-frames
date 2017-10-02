@@ -16,6 +16,7 @@
 
 package astraea.spark.rasterframes.functions
 
+import astraea.spark.rasterframes.functions.UDFs.safeEval
 import geotrellis.raster.Tile
 import geotrellis.raster.histogram.{Histogram, StreamingHistogram}
 import org.apache.spark.sql.Row
@@ -44,13 +45,13 @@ class AggregateHistogramFunction extends UserDefinedAggregateFunction {
   override def update(buffer: MutableAggregationBuffer, input: Row): Unit = {
     val hist = buffer.getAs[Histogram[Double]](0)
     val tile = input.getAs[Tile](0)
-    buffer(0) = if (tile == null) hist else hist.merge(StreamingHistogram.fromTile(tile))
+    buffer(0) = safeEval((h: Histogram[Double], t: Tile) ⇒ h.merge(StreamingHistogram.fromTile(t)))(hist, tile)
   }
 
   override def merge(buffer1: MutableAggregationBuffer, buffer2: Row): Unit = {
     val hist1 = buffer1.getAs[Histogram[Double]](0)
     val hist2 = buffer2.getAs[Histogram[Double]](0)
-    buffer1(0) = hist1 merge hist2
+    buffer1(0) = safeEval((h1: Histogram[Double], h2: Histogram[Double]) ⇒ h1 merge h2)(hist1, hist2)
   }
 
   override def evaluate(buffer: Row): Any = buffer.getAs[Histogram[Double]](0)

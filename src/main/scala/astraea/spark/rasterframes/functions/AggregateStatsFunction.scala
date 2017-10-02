@@ -32,5 +32,5 @@ class AggregateStatsFunction extends AggregateHistogramFunction {
   override def dataType: DataType = histogramStatsEncoder.schema
 
   override def evaluate(buffer: Row): Any =
-    buffer.getAs[Histogram[Double]](0).statistics().orNull
+    Option(buffer.getAs[Histogram[Double]](0)).flatMap(_.statistics()).orNull
 }
