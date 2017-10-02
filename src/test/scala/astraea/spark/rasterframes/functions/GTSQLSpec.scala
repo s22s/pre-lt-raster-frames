@@ -89,9 +89,9 @@ class GTSQLSpec extends TestEnvironment with TestData  {
       }
 
       withClue("subtract") {
-        val sub = ds.select(localSubtract($"left", $"right"))
+        val sub = ds.select(localSubtract($"left", $"right")).as[Tile].first()
         val expected = Subtract(byteArrayTile, byteConstantTile)
-        assert(sub.as[Tile].first() === expected)
+        assert(sub === expected)
 
         val sqlSub = sql("select rf_localSubtract(left, right) from tmp")
         assert(sqlSub.as[Tile].first() === expected)
