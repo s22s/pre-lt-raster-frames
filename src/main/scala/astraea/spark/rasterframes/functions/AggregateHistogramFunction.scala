@@ -44,7 +44,7 @@ class AggregateHistogramFunction extends UserDefinedAggregateFunction {
   override def update(buffer: MutableAggregationBuffer, input: Row): Unit = {
     val hist = buffer.getAs[Histogram[Double]](0)
     val tile = input.getAs[Tile](0)
-    buffer(0) = hist.merge(StreamingHistogram.fromTile(tile))
+    buffer(0) = if (tile == null) hist else hist.merge(StreamingHistogram.fromTile(tile))
   }
 
   override def merge(buffer1: MutableAggregationBuffer, buffer2: Row): Unit = {
