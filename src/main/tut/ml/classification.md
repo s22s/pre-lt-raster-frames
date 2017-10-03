@@ -4,6 +4,8 @@ In this example we will do some simple cell classification based on multiband im
 target/label raster. As a part of the process we'll explore the cross-validation support in
 SparkML.
 
+## Setup
+
 First some setup:
 
 ```tut:silent
@@ -29,6 +31,8 @@ import spark.implicits._
 // Utility for reading imagery from our test data set
 def readTiff(name: String): SinglebandGeoTiff = SinglebandGeoTiff(s"src/test/resources/$name")
 ```
+
+## Loading Data
 
 The first step is to load multiple bands of imagery and construct a single RasterFrame from them.
 To do this we:
@@ -84,6 +88,8 @@ val abt = joinedRF.spatialJoin(target)
 
 ```
 
+## ML Pipeline
+
 The data preparation modeling pipeline is next. SparkML requires that each observation be in 
 its own row, and those observations be packed into a single `Vector` type. The first step is 
 to "explode" the tiles into a single row per cell/pixel. Then we filter out any rows that
@@ -113,6 +119,8 @@ val pipeline = new Pipeline().
   setStages(Array(exploder, noDataFilter, assembler, classifier))
 ```
 
+## Cross Validation
+
 To extend the sophistication of the example we are going to use the SparkML support for 
 cross-validation and hyper-parameter tuning. The first step is to configure how we're 
 going to evaluate our model's performance. Then we define the hyperparmeter(s) we're going to 
@@ -140,6 +148,8 @@ Push the "go" button:
 ```tut
 val model = trainer.fit(abt)
 ```
+
+## Model Evaluation
 
 To view the model's performance we format the `paramGrid` settings used for each model and 
 render the parameter/performance association.

@@ -38,20 +38,20 @@ class EncodingSpec extends TestEnvironment with TestData  {
   describe("Dataframe encoding ops on GeoTrellis types") {
 
     it("should code RDD[(Int, Tile)]") {
-      val ds = Seq((1, byteArrayTile: Tile)).toDS
+      val ds = Seq((1, byteArrayTile: Tile), (2, null)).toDS
       write(ds)
       assert(ds.toDF.as[(Int, Tile)].collect().head === ((1, byteArrayTile)))
     }
 
     it("should code RDD[Tile]") {
-      val rdd = sc.makeRDD(Seq(byteArrayTile: Tile))
+      val rdd = sc.makeRDD(Seq(byteArrayTile: Tile, null))
       val ds = rdd.toDF("tile")
       write(ds)
       assert(ds.toDF.as[Tile].collect().head === byteArrayTile)
     }
 
     it("should code RDD[MultibandTile]") {
-      val rdd = sc.makeRDD(Seq(multibandTile))
+      val rdd = sc.makeRDD(Seq(multibandTile, null))
       val ds = rdd.toDS()
       write(ds)
       assert(ds.toDF.as[MultibandTile].collect().head === multibandTile)
@@ -84,7 +84,7 @@ class EncodingSpec extends TestEnvironment with TestData  {
 
     it("should code RDD[CellType]") {
       val ct = CellType.fromName("uint8")
-      val ds = localSeqToDatasetHolder(Seq(ct)).toDS()
+      val ds = Seq(ct).toDS()
       //ds.printSchema()
       //ds.show(false)
       write(ds)

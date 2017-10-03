@@ -36,7 +36,7 @@ object ProjectPlugin extends AutoPlugin {
   override def projectSettings = Seq(
     organization := "io.astraea",
     organizationName := "Astraea",
-    homepage := Some(url("https://github.com/s22s/raster-frames")),
+    homepage := Some(url("http://rasterframes.io")),
     scmInfo := Some(ScmInfo(url("https://github.com/s22s/raster-frames"), "git@github.com:s22s/raster-frames.git")),
     description := "RasterFrames brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer operations of GeoTrellis",
     startYear := Some(2017),
@@ -54,7 +54,7 @@ object ProjectPlugin extends AutoPlugin {
       spark("sql") % Provided,
       geotrellis("spark") % Provided,
       geotrellis("raster") % Provided,
-      geotrellis("spark-testkit") % Test excludeAll(
+      geotrellis("spark-testkit") % Test excludeAll (
         ExclusionRule(organization = "org.scalastic"),
         ExclusionRule(organization = "org.scalatest")
       ),
@@ -63,7 +63,21 @@ object ProjectPlugin extends AutoPlugin {
     publishArtifact in Test := false,
     fork in Test := true,
     javaOptions in Test := Seq("-Xmx2G"),
-    parallelExecution in Test := false
+    parallelExecution in Test := false,
+    developers := List(
+      Developer(
+        id = "metasim",
+        name = "Simeon H.K. Fitch",
+        email = "fitch@astraea.io",
+        url = url("http://www.astraea.io")
+      ),
+      Developer(
+        id = "mteldridge",
+        name = "Matt Eldridge",
+        email = "meldridge@astraea.io",
+        url = url("http://www.astraea.io")
+      )
+    )
   )
 
   object autoImport {

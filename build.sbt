@@ -9,3 +9,6 @@ lazy val `raster-frames` = project
   .settings(moduleName := "raster-frames")
   .settings(releaseSettings: _*)
   .settings(docSettings: _*)
+
+lazy val bench = project
+  .dependsOn(`raster-frames`)

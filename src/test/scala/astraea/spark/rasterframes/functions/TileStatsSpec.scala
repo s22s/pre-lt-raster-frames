@@ -82,14 +82,14 @@ class TileStatsSpec extends TestEnvironment with TestData  {
     }
 
     it("should compute tile statistics") {
-      val ds = Seq.fill[Tile](3)(randomTile(5, 5, "float32")).toDS()
-      val means1 = ds.select(tileStatsDouble($"value")).map(_.mean).collect
+      val ds = (Seq.fill[Tile](3)(randomTile(5, 5, "float32")) :+ null).toDS()
+      val means1 = ds.select(tileStatsDouble($"value")).map(s ⇒ Option(s).map(_.mean).getOrElse(0.0)).collect
       val means2 = ds.select(tileMeanDouble($"value")).collect
       assert(means1 === means2)
     }
 
     it("should compute per-tile histogram") {
-      val ds = Seq.fill[Tile](3)(randomTile(5, 5, "float32")).toDF("tiles")
+      val ds = (Seq.fill[Tile](3)(randomTile(5, 5, "float32")) :+ null).toDF("tiles")
       ds.createOrReplaceTempView("tmp")
 
       val r1 = ds.select(tileHistogram($"tiles").as[Histogram[Double]])
@@ -140,8 +140,8 @@ class TileStatsSpec extends TestEnvironment with TestData  {
     it("should compute aggregate local stats") {
       val ave = (nums: Array[Double]) ⇒ nums.sum / nums.length
 
-      val ds = Seq.fill[Tile](30)(randomTile(5, 5, "float32"))
-        .map(injectND(2)).toDF("tiles")
+      val ds = (Seq.fill[Tile](30)(randomTile(5, 5, "float32"))
+        .map(injectND(2)) :+ null).toDF("tiles")
       ds.createOrReplaceTempView("tmp")
 
       val agg = ds.select(localAggStats($"tiles") as "stats")
@@ -171,7 +171,7 @@ class TileStatsSpec extends TestEnvironment with TestData  {
     it("should compute accurate statistics") {
       val tile = squareIncrementingTile(4).convert(IntConstantNoDataCellType)
 
-      val ds = Seq.fill(20)(tile).toDF("tiles")
+      val ds = (Seq.fill(20)(tile) :+ null).toDF("tiles")
 
       //val stats = ds.select(localAggStats($"tiles") as "stats").select("stats.*")
       //printStatsRows(stats)
@@ -194,13 +194,13 @@ class TileStatsSpec extends TestEnvironment with TestData  {
       val tsize = 5
       val count = 20
       val nds = 2
-      val tiles = Seq.fill[Tile](count)(randomTile(tsize, tsize, "uint8ud255"))
-        .map(injectND(nds)).toDF("tiles")
+      val tiles = (Seq.fill[Tile](count)(randomTile(tsize, tsize, "uint8ud255"))
+        .map(injectND(nds)) :+ null).toDF("tiles")
 
       //tiles.select(tileStats($"tiles")).show(100)
-      val counts = tiles.select(nodataCells($"tiles")).collect()
+      val counts = tiles.select(nodataCells($"tiles")).collect().dropRight(1)
       forEvery(counts)(c ⇒ assert(c === nds))
-      val counts2 = tiles.select(dataCells($"tiles")).collect()
+      val counts2 = tiles.select(dataCells($"tiles")).collect().dropRight(1)
       forEvery(counts2)(c ⇒ assert(c === tsize * tsize - nds))
     }
   }

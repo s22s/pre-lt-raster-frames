@@ -1,6 +1,8 @@
 # Clustering
 
-In this example we will do some simple cell clustering based on multiband imagery. 
+In this example we will do some simple cell clustering based on multiband imagery.
+
+## Setup 
 
 First some setup:
 
@@ -25,6 +27,8 @@ rfInit(spark.sqlContext)
 import spark.implicits._
 ```
 
+## Loading Data
+
 The first step is to load multiple bands of imagery and construct a single RasterFrame from them.
 
 ```tut:silent
@@ -45,6 +49,8 @@ We should see a single `spatial_key` column along with 4 columns of tiles.
 ```tut
 joinedRF.printSchema()
 ```
+
+## ML Pipeline 
 
 SparkML requires that each observation be in its own row, and those
 observations be packed into a single `Vector`. The first step is to
@@ -74,6 +80,8 @@ val pipeline = new Pipeline().setStages(Array(exploder, assembler, kmeans))
 val model = pipeline.fit(joinedRF)
 ```
 
+## Model Evaluation
+
 At this point the model can be saved off for later use, or used immediately on the same
 data we used to compute the model. First we run the data through the model to assign 
 cluster IDs to each cell.
@@ -96,7 +104,6 @@ Compute sum of squared distances of points to their nearest center:
 val metric = clusterResults.computeCost(clustered)
 println("Within set sum of squared errors: " + metric)
 ```
-
 
 ## Visualizing Results
 

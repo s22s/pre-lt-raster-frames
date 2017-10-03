@@ -32,9 +32,9 @@ import scala.reflect.runtime.universe._
  */
 object UDFs {
 
-  private def safeEval[P, R](f: P ⇒ R): P ⇒ R =
+  private[rasterframes] def safeEval[P, R](f: P ⇒ R): P ⇒ R =
     (p) ⇒ if (p == null) null.asInstanceOf[R] else f(p)
-  private def safeEval[P1, P2, R](f: (P1, P2) ⇒ R): (P1, P2) ⇒ R =
+  private[rasterframes] def safeEval[P1, P2, R](f: (P1, P2) ⇒ R): (P1, P2) ⇒ R =
     (p1, p2) ⇒ if (p1 == null || p2 == null) null.asInstanceOf[R] else f(p1, p2)
 
   /** Flattens tile into an array. */
@@ -140,18 +140,18 @@ object UDFs {
   /** Count tile cells that have a data value. */
   // TODO: Do we need to `safeEval` here?
   // TODO: Should we get rid of the `var`?
-  private[rasterframes] val dataCells: (Tile) ⇒ Long = (t: Tile) ⇒ {
+  private[rasterframes] val dataCells: (Tile) ⇒ Long = safeEval((t: Tile) ⇒ {
     var count: Long = 0
     t.foreach(z ⇒ if(isData(z)) count = count + 1)
     count
-  }
+  })
 
   /** Count tile cells that have a no-data value. */
-  private[rasterframes] val nodataCells: (Tile) ⇒ Long = (t: Tile) ⇒ {
+  private[rasterframes] val nodataCells: (Tile) ⇒ Long = safeEval((t: Tile) ⇒ {
     var count: Long = 0
     t.foreach(z ⇒ if(isNoData(z)) count = count + 1)
     count
-  }
+  })
 
   /** Constructor for constant tiles */
   private[rasterframes] val makeConstantTile: (Number, Int, Int, String) ⇒ Tile = (value, cols, rows, cellTypeName) ⇒ {

@@ -1,0 +1,9 @@
+"Benchmark","Mode","Threads","Samples","Score","Score Error (99.9%)","Unit","Param: cellTypeName","Param: rasterSize","Param: tileSize"
+"astraea.spark.rasterframes.TileEncodeBench.encode","avgt",1,5,141.474495,75.110760,"ms/op",int32,2048,8
+"astraea.spark.rasterframes.TileEncodeBench.encode","avgt",1,5,96.360328,82.353118,"ms/op",int32,2048,64
+"astraea.spark.rasterframes.TileEncodeBench.encode","avgt",1,5,88.109983,26.829651,"ms/op",int32,2048,128
+"astraea.spark.rasterframes.TileEncodeBench.encode","avgt",1,5,76.376923,15.624635,"ms/op",int32,2048,256
+"astraea.spark.rasterframes.TileEncodeBench.encode","avgt",1,5,149.791717,30.961037,"ms/op",float32,2048,8
+"astraea.spark.rasterframes.TileEncodeBench.encode","avgt",1,5,102.866239,15.899213,"ms/op",float32,2048,64
+"astraea.spark.rasterframes.TileEncodeBench.encode","avgt",1,5,107.740923,30.942380,"ms/op",float32,2048,128
+"astraea.spark.rasterframes.TileEncodeBench.encode","avgt",1,5,112.994853,10.852236,"ms/op",float32,2048,256
