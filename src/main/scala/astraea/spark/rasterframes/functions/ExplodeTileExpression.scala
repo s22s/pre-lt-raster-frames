@@ -55,18 +55,22 @@ private[rasterframes] case class ExplodeTileExpression(sampleFraction: Double = 
     val tiles = for (child ← children)
       yield TileUDT.deserialize(child.eval(input).asInstanceOf[InternalRow])
 
-    require(
-      tiles.map(_.dimensions).distinct.size == 1,
-      "Multi-column explode requires equally sized tiles"
-    )
+    val dims = tiles.filter(_ != null).map(_.dimensions)
+    if(dims.isEmpty) Seq.empty[InternalRow]
+    else {
+      require(
+        dims.distinct.size == 1,
+        "Multi-column explode requires equally sized tiles. Found " + dims
+      )
 
-    val (cols, rows) = tiles.head.dimensions
+      val (cols, rows) = tiles.head.dimensions
 
-    for {
-      row ← 0 until rows
-      col ← 0 until cols
-      if keep()
-      contents = Seq[Any](col, row) ++ tiles.map(_.getDouble(col, row))
-    } yield InternalRow(contents: _*)
+      for {
+        row ← 0 until rows
+        col ← 0 until cols
+        if keep()
+        contents = Seq[Any](col, row) ++ tiles.map(_.getDouble(col, row))
+      } yield InternalRow(contents: _*)
+    }
   }
 }

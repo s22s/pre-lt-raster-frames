@@ -19,12 +19,10 @@
 package astraea.spark.rasterframes.functions
 
 import astraea.spark.rasterframes._
-import geotrellis.raster
-import geotrellis.raster.mapalgebra.local.{Add, Divide, Multiply, Subtract}
 import geotrellis.raster._
+import geotrellis.raster.mapalgebra.local.{Add, Divide, Multiply, Subtract}
 import org.apache.spark.sql._
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.gt._
 
 /**
  * Test rig for Spark UDTs and friends for GT.
@@ -64,8 +62,8 @@ class GTSQLSpec extends TestEnvironment with TestData  {
 
     it("should extract cell types") {
       val expected = allTileTypes.map(_.cellType).toSet
-      val df = allTileTypes.toDF("tile")
-      val types = df.select(cellType($"tile")).collect().map(CellType.fromName).toSet
+      val df = (allTileTypes :+ null).toDF("tile")
+      val types = df.select(cellType($"tile")).collect().filter(_ != null).map(CellType.fromName).toSet
       assert(types === expected)
     }
 

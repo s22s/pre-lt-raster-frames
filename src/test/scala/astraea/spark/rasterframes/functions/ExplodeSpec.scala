@@ -68,6 +68,12 @@ class ExplodeSpec extends TestEnvironment with TestData {
       assert(exploded.count() < 9)
     }
 
+    it("should handle null tiles.") {
+      val df = Seq[Tile](byteArrayTile, null, byteArrayTile).toDF("tile1")
+      val exploded = df.select(explodeTiles($"tile1"))
+      exploded.show(false)
+    }
+
     it("should reassemble exploded tile") {
       withClue("single tile") {
         val df = Seq[Tile](byteArrayTile).toDF("tile")
@@ -130,7 +136,7 @@ class ExplodeSpec extends TestEnvironment with TestData {
 
     it("should convert an array into a tile") {
       val tile = FloatConstantTile(1.1f, 10, 10, FloatCellType)
-      val df = Seq[Tile](tile).toDF("tile")
+      val df = Seq[Tile](tile, null).toDF("tile")
       val arrayDF = df.withColumn("tileArray", tileToArray[Float]($"tile"))
 
       val back = arrayDF.withColumn("backToTile", arrayToTile($"tileArray", 10, 10))
