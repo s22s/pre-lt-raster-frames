@@ -46,13 +46,14 @@ class TileUDT extends UserDefinedType[Tile] {
   override def serialize(obj: Tile): Any = {
     Option(obj)
       .map(tile ⇒ {
-        val converter = UnsafeProjection.create(sqlType.fields.map(_.dataType))
+        //val converter = UnsafeProjection.create(sqlType.fields.map(_.dataType))
         val intRow = InternalRow(
           UTF8String.fromString(tile.cellType.name),
           tile.cols.toShort,
           tile.rows.toShort,
           tile.toBytes)
-        converter.apply(intRow)
+        //converter.apply(intRow)
+        intRow
       })
       .orNull
   }
