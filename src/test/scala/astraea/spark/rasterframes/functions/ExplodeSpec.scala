@@ -74,6 +74,38 @@ class ExplodeSpec extends TestEnvironment with TestData {
       exploded.show(false)
     }
 
+    it("should convert tile into array") {
+      val query = sql(
+        """select rf_tileToArrayInt(
+          |  rf_makeConstantTile(1, 10, 10, 'int8raw')
+          |) as intArray
+          |""".stripMargin)
+      assert(query.as[Array[Int]].first.sum === 100)
+
+      val tile = FloatConstantTile(1.1f, 10, 10, FloatCellType)
+      val df = Seq[Tile](tile).toDF("tile")
+      val arrayDF = df.select(tileToArray[Float]($"tile").as[Array[Float]])
+      assert(arrayDF.first().sum === 110.0f +- 0.0001f)
+    }
+
+    it("should convert an array into a tile") {
+      val tile = FloatConstantTile(1.1f, 10, 10, FloatCellType)
+      val df = Seq[Tile](tile, null).toDF("tile")
+      val arrayDF = df.withColumn("tileArray", tileToArray[Float]($"tile"))
+
+      val back = arrayDF.withColumn("backToTile", arrayToTile($"tileArray", 10, 10))
+
+      val result = back.select($"backToTile".as[Tile]).first
+
+      assert(result.toArrayDouble() === tile.toArrayDouble())
+
+      val hasNoData = back.withColumn("withNoData", withNoData($"backToTile", 0))
+
+      val result2 = hasNoData.select($"withNoData".as[Tile]).first
+
+      assert(result2.cellType.asInstanceOf[UserDefinedNoData[_]].noDataValue === 0)
+    }
+
     it("should reassemble exploded tile") {
       withClue("single tile") {
         val df = Seq[Tile](byteArrayTile).toDF("tile")
@@ -118,38 +150,6 @@ class ExplodeSpec extends TestEnvironment with TestData {
 
         assert(image.tile.toArrayTile() === recovered.tile.toArrayTile())
       }
-    }
-
-    it("should convert tile into array") {
-      val query = sql(
-        """select rf_tileToArrayInt(
-          |  rf_makeConstantTile(1, 10, 10, 'int8raw')
-          |) as intArray
-          |""".stripMargin)
-      assert(query.as[Array[Int]].first.sum === 100)
-
-      val tile = FloatConstantTile(1.1f, 10, 10, FloatCellType)
-      val df = Seq[Tile](tile).toDF("tile")
-      val arrayDF = df.select(tileToArray[Float]($"tile").as[Array[Float]])
-      assert(arrayDF.first().sum === 110.0f +- 0.0001f)
-    }
-
-    it("should convert an array into a tile") {
-      val tile = FloatConstantTile(1.1f, 10, 10, FloatCellType)
-      val df = Seq[Tile](tile, null).toDF("tile")
-      val arrayDF = df.withColumn("tileArray", tileToArray[Float]($"tile"))
-
-      val back = arrayDF.withColumn("backToTile", arrayToTile($"tileArray", 10, 10))
-
-      val result = back.select($"backToTile".as[Tile]).first
-
-      assert(result.toArrayDouble() === tile.toArrayDouble())
-
-      val hasNoData = back.withColumn("withNoData", withNoData($"backToTile", 0))
-
-      val result2 = hasNoData.select($"withNoData".as[Tile]).first
-
-      assert(result2.cellType.asInstanceOf[UserDefinedNoData[_]].noDataValue === 0)
     }
   }
 

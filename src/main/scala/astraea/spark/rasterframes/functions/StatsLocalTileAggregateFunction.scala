@@ -33,7 +33,6 @@ import org.apache.spark.sql.types._
 class StatsLocalTileAggregateFunction() extends UserDefinedAggregateFunction {
 
   import StatsLocalTileAggregateFunction._
-  override def inputSchema: StructType = StructType(StructField("value", TileUDT) :: Nil)
 
   /*
     This is necessary to avoid this:
@@ -45,7 +44,9 @@ class StatsLocalTileAggregateFunction() extends UserDefinedAggregateFunction {
 	    at org.apache.spark.sql.types.StructType$.fromString(StructType.scala:419)
 	    ...
    */
-  protected val reafiableUDT = new TileUDT()
+  private val reafiableUDT = new TileUDT()
+
+  override def inputSchema: StructType = StructType(StructField("value", TileUDT) :: Nil)
 
   override def dataType: DataType =
     StructType(

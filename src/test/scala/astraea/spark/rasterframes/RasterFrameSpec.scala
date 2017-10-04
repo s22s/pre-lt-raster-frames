@@ -203,6 +203,30 @@ class RasterFrameSpec extends TestEnvironment with TestData {
       }
     }
 
+
+
+    it("should rasterize with a spatiotemporal key") {
+      val rf = TestData.randomSpatioTemporalTileLayerRDD(20, 20, 2, 2).toRF
+
+      val md = rf.schema.fields(0).metadata
+
+      println(rf.extract[TileLayerMetadata[SpaceTimeKey]](CONTEXT_METADATA_KEY)(md))
+
+      rf.toRaster($"tile", 128, 128)
+    }
+
+    it("should maintain metadata after all spatial join operations") {
+      val rf1 = TestData.randomSpatioTemporalTileLayerRDD(20, 20, 2, 2).toRF
+      val rf2 = TestData.randomSpatioTemporalTileLayerRDD(20, 20, 2, 2).toRF
+
+      val joinTypes = Seq("inner", "outer", "fullouter", "left_outer", "right_outer", "leftsemi")
+      forEvery(joinTypes) { jt ⇒
+        val joined = rf1.spatialJoin(rf2, jt)
+        println(joined.schema.json)
+        assert(joined.tileLayerMetadata.isRight)
+      }
+    }
+
     it("should restitch to raster") {
       // 774 × 500
       val praster: ProjectedRaster[Tile] = sampleGeoTiff.projectedRaster
@@ -226,7 +250,7 @@ class RasterFrameSpec extends TestEnvironment with TestData {
       assert(squished.raster.dimensions === (cols*5/4, rows*3/4))
     }
 
-    it("should restitch raster that's has derived tiles") {
+    it("shouldn't restitch raster that's has derived tiles") {
       val praster: ProjectedRaster[Tile] = sampleGeoTiff.projectedRaster
       val rf = praster.toRF(64, 64)
 
@@ -237,28 +261,6 @@ class RasterFrameSpec extends TestEnvironment with TestData {
       intercept[IllegalArgumentException] {
         // spatial_key is lost
         equalized.asRF.toRaster($"equalized", 128, 128)
-      }
-    }
-
-    it("should rasterize with a spatiotemporal key") {
-      val rf = TestData.randomSpatioTemporalTileLayerRDD(20, 20, 2, 2).toRF
-
-      val md = rf.schema.fields(0).metadata
-
-      println(rf.extract[TileLayerMetadata[SpaceTimeKey]](CONTEXT_METADATA_KEY)(md))
-
-      rf.toRaster($"tile", 128, 128)
-    }
-
-    it("should maintain metadata after all spatial join operations") {
-      val rf1 = TestData.randomSpatioTemporalTileLayerRDD(20, 20, 2, 2).toRF
-      val rf2 = TestData.randomSpatioTemporalTileLayerRDD(20, 20, 2, 2).toRF
-
-      val joinTypes = Seq("inner", "outer", "fullouter", "left_outer", "right_outer", "leftsemi")
-      forEvery(joinTypes) { jt ⇒
-        val joined = rf1.spatialJoin(rf2, jt)
-        println(joined.schema.json)
-        assert(joined.tileLayerMetadata.isRight)
       }
     }
   }
