@@ -22,6 +22,7 @@ package org.apache.spark.sql.gt.types
 import geotrellis.raster.{ArrayTile, BitArrayTile, BitCells, BitConstantTile, ByteArrayTile, ByteCells, ByteConstantTile, CellType, ConstantTile, DoubleArrayTile, DoubleCells, DoubleConstantTile, FloatArrayTile, FloatCells, FloatConstantTile, IntArrayTile, IntCells, IntConstantTile, ShortArrayTile, ShortCells, ShortConstantTile, Tile, UByteArrayTile, UByteCells, UByteConstantTile, UShortArrayTile, UShortCells, UShortConstantTile}
 import geotrellis.spark.io.avro.codecs.ConstantTileCodecs
 import org.apache.spark.sql.catalyst.InternalRow
+import org.apache.spark.sql.catalyst.expressions.{UnsafeProjection, UnsafeRow}
 import org.apache.spark.sql.types._
 import org.apache.spark.unsafe.types.UTF8String
 
@@ -43,18 +44,15 @@ class TileUDT extends UserDefinedType[Tile] {
   ))
 
   override def serialize(obj: Tile): Any = {
-    obj.cellType
-    obj.dimensions
-    obj.toBytes()
-
     Option(obj)
       .map(tile ⇒ {
-        println("inLength: " + tile.toBytes().length)
-        InternalRow(
+        val converter = UnsafeProjection.create(sqlType.fields.map(_.dataType))
+        val intRow = InternalRow(
           UTF8String.fromString(tile.cellType.name),
           tile.cols.toShort,
           tile.rows.toShort,
           tile.toBytes)
+        converter.apply(intRow)
       })
       .orNull
   }
@@ -67,8 +65,8 @@ class TileUDT extends UserDefinedType[Tile] {
         val rows = row.getShort(2)
         val data = row.getBinary(3)
         val cellType = CellType.fromName(ctName)
-        if(data.length == 1)
-
+        if(data.length < cols * rows && !cellType.isInstanceOf[BitCells])
+          TileUDT.constantTileFromBytes(data, cellType, cols, rows)
         else
           ArrayTile.fromBytes(data, cellType, cols, rows)
       }
@@ -76,13 +74,18 @@ class TileUDT extends UserDefinedType[Tile] {
   }
 
   def userClass: Class[Tile] = classOf[Tile]
+
+  private[sql] override def acceptsType(dataType: DataType) = dataType match {
+    case _: TileUDT ⇒ true
+    case _ ⇒ super.acceptsType(dataType)
+  }
 }
 
 case object TileUDT extends TileUDT {
   UDTRegistration.register(classOf[Tile].getName, classOf[TileUDT].getName)
 
-  // Temporary, until
-  private def fromBytes(bytes: Array[Byte], t: CellType, cols: Int, rows: Int): ConstantTile =
+  // Temporary, until GeoTrellis 1.2
+  private[TileUDT] def constantTileFromBytes(bytes: Array[Byte], t: CellType, cols: Int, rows: Int): ConstantTile =
     t match {
       case _: BitCells =>
         BitConstantTile(BitArrayTile.fromBytes(bytes, 1, 1).array(0), cols, rows)

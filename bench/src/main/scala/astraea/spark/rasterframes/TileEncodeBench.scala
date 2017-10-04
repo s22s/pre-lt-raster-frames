@@ -30,9 +30,11 @@ import org.openjdk.jmh.annotations._
 class TileEncodeBench {
 
   @transient
-  val spark = SparkSession.builder.master("local[2]")
+  val spark = SparkSession.builder.master("local[*]")
     .appName(getClass.getSimpleName)
-    .config("spark.ui.enabled", "false")
+    .config("spark.ui.enabled", false)
+//    .config("spark.memory.offHeap.enabled", true)
+//    .config("spark.memory.offHeap.size", "2g")
     .getOrCreate
 
   rfInit(spark.sqlContext)
