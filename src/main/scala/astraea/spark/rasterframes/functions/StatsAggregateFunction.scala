@@ -25,7 +25,7 @@ import org.apache.spark.sql.types.DataType
  * @author sfitch
  * @since 5/18/17
  */
-class AggregateStatsFunction extends AggregateHistogramFunction {
+class StatsAggregateFunction extends HistogramAggregateFunction {
 
   import astraea.spark.rasterframes._
 
