@@ -22,7 +22,7 @@ package astraea.spark.rasterframes.ml
 import astraea.spark.rasterframes
 import org.apache.spark.ml.Transformer
 import org.apache.spark.ml.param.ParamMap
-import org.apache.spark.ml.util.{DefaultParamsReadable, Identifiable}
+import org.apache.spark.ml.util.{DefaultParamsReadable, DefaultParamsWritable, Identifiable}
 import org.apache.spark.sql.Dataset
 import org.apache.spark.sql.functions.col
 import org.apache.spark.sql.gt.types.TileUDT
@@ -35,7 +35,7 @@ import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
  * @author sfitch
  * @since 9/21/17
  */
-class TileExploder(override val uid: String) extends Transformer {
+class TileExploder(override val uid: String) extends Transformer with DefaultParamsWritable {
 
   def this() = this(Identifiable.randomUID("tile-exploder"))
 

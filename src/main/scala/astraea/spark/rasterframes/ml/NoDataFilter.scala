@@ -22,7 +22,7 @@ package astraea.spark.rasterframes.ml
 import astraea.spark.rasterframes.ml.Parameters.HasInputCols
 import org.apache.spark.ml.Transformer
 import org.apache.spark.ml.param.ParamMap
-import org.apache.spark.ml.util.Identifiable
+import org.apache.spark.ml.util.{DefaultParamsWritable, Identifiable}
 import org.apache.spark.sql.Dataset
 import org.apache.spark.sql.types.StructType
 
@@ -34,7 +34,7 @@ import org.apache.spark.sql.types.StructType
  * @since 9/21/17
  */
 class NoDataFilter (override val uid: String) extends Transformer
-  with HasInputCols {
+  with HasInputCols with DefaultParamsWritable {
 
   def this() = this(Identifiable.randomUID("nodata-filter"))
   final def setInputCols(value: Array[String]) = set(inputCols, value)
