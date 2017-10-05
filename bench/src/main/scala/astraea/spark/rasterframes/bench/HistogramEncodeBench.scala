@@ -21,53 +21,56 @@ package astraea.spark.rasterframes.bench
 
 import java.util.concurrent.TimeUnit
 
-import astraea.spark.rasterframes._
-import geotrellis.raster.Tile
-import org.apache.spark.sql._
+import geotrellis.raster.histogram.{Histogram, StreamingHistogram}
+import org.apache.spark.sql.catalyst.InternalRow
+import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
+import org.apache.spark.sql.gt.types.HistogramUDT
 import org.openjdk.jmh.annotations._
 
-/**
- *
- * @author sfitch 
- * @since 10/4/17
- */
 @BenchmarkMode(Array(Mode.AverageTime))
 @State(Scope.Benchmark)
-@OutputTimeUnit(TimeUnit.MILLISECONDS)
-class StatsComputeBench extends SparkEnv {
-  import spark.implicits._
+@OutputTimeUnit(TimeUnit.MICROSECONDS)
+/**
+ * @author sfitch
+ * @since 9/29/17
+ */
+class HistogramEncodeBench extends SparkEnv {
 
-  @Param(Array("uint16ud255"))
+  val encoder: ExpressionEncoder[Histogram[Double]] = ExpressionEncoder()
+  val boundEncoder = encoder.resolveAndBind()
+
+  @Param(Array("float64"))
   var cellTypeName: String = _
 
-  @Param(Array("240"))
+  @Param(Array("128"))
   var tileSize: Int = _
 
   @Param(Array("400"))
   var numTiles: Int = _
 
   @transient
-  var tiles: Seq[Tile] = _
+  var histogram: Histogram[Double] = _
 
   @Setup(Level.Trial)
   def setupData(): Unit = {
-    tiles = Seq.fill(numTiles)(randomTile(tileSize, tileSize, cellTypeName))
+    // Creates what should hopefully be a representative structure
+    val tiles = Seq.fill(numTiles)(randomTile(tileSize, tileSize, cellTypeName))
+    histogram = tiles.foldLeft(StreamingHistogram(): Histogram[Double])(
+      (hist, tile) ⇒ hist.merge(StreamingHistogram.fromTile(tile))
+    )
+  }
+  @Benchmark
+  def serialize(): Any = {
+    HistogramUDT.serialize(histogram)
   }
 
   @Benchmark
-  def computeStats() = {
-    tiles.toDF("tile").repartition(10).agg(aggStats($"tile")).collect()
-  }
-
-  @Benchmark
-  def extractMean() = {
-    tiles.toDF("tile").repartition(10).agg(aggStats($"tile").getField("mean")).map(_.getDouble(0)).collect()
+  def encode(): InternalRow = {
+    boundEncoder.toRow(histogram)
   }
 
 //  @Benchmark
-//  def computeCounts() = {
-//    tiles.toDF("tile").select(dataCells($"tile") as "counts").agg(sum($"counts")).collect()
+//  def roundTrip(): Tile = {
 //  }
-
-
 }
+

@@ -78,7 +78,7 @@ object UDFs {
   private[rasterframes] val aggHistogram = new HistogramAggregateFunction()
 
   /** Computes the column aggregate statistics */
-  private[rasterframes] val aggStats = new StatsAggregateFunction()
+  private[rasterframes] val aggStats = new DoubleStatsAggregateFunction()
 
   /** Reports the dimensions of a tile. */
   private[rasterframes] val tileDimensions = safeEval[CellGrid, (Int, Int)](_.dimensions)

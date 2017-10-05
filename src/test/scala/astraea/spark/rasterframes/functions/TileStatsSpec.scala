@@ -117,6 +117,13 @@ class TileStatsSpec extends TestEnvironment with TestData  {
       assert(hist2.first.totalCount() === 250)
     }
 
+    it("should compute aggregate mean") {
+      val ds = Seq.fill[Tile](10)(randomTile(5, 5, "float32")).toDF("tiles")
+      val agg = ds.select(aggMean($"tiles"))
+      println(agg.first())
+
+    }
+
     it("should compute aggregate statistics") {
       val ds = Seq.fill[Tile](10)(randomTile(5, 5, "float32")).toDF("tiles")
       ds.createOrReplaceTempView("tmp")
@@ -126,16 +133,19 @@ class TileStatsSpec extends TestEnvironment with TestData  {
 
       val agg2 = sql("select stats.* from (select rf_stats(tiles) as stats from tmp)") .as[Statistics[Double]]
       assert(agg2.first().dataCells === 250)
+
+      val agg3 = ds.agg(aggStats($"tiles") as "stats").select($"stats.mean".as[Double])
+      assert(agg.first().mean === agg3.first())
     }
 
-    def printStatsRows(df: DataFrame): Unit = {
-      val tiles = df.collect().flatMap(_.toSeq).map(_.asInstanceOf[Tile])
-
-      // Render debugging form.
-      tiles.map(_.asciiDraw())
-        .zip(df.columns)
-        .foreach{case (img, label) ⇒ println(s"$label:\n$img")}
-    }
+//    def printStatsRows(df: DataFrame): Unit = {
+//      val tiles = df.collect().flatMap(_.toSeq).map(_.asInstanceOf[Tile])
+//
+//      // Render debugging form.
+//      tiles.map(_.asciiDraw())
+//        .zip(df.columns)
+//        .foreach{case (img, label) ⇒ println(s"$label:\n$img")}
+//    }
 
     it("should compute aggregate local stats") {
       val ave = (nums: Array[Double]) ⇒ nums.sum / nums.length

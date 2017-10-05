@@ -16,13 +16,14 @@
 
 package astraea.spark.rasterframes.functions
 
-import geotrellis.raster
 import geotrellis.raster.mapalgebra.local._
 import geotrellis.raster.{IntConstantNoDataCellType, Tile, isNoData}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.expressions.{MutableAggregationBuffer, UserDefinedAggregateFunction}
 import org.apache.spark.sql.gt.types.TileUDT
 import org.apache.spark.sql.types._
+import DataBiasedOp._
+
 
 /**
  * Aggregation function for computing multiple local (cell-wise) statistics across all tiles.
@@ -31,8 +32,6 @@ import org.apache.spark.sql.types._
  * @since 4/17/17
  */
 class StatsLocalTileAggregateFunction() extends UserDefinedAggregateFunction {
-
-  import StatsLocalTileAggregateFunction._
 
   /*
     This is necessary to avoid this:
@@ -135,40 +134,5 @@ class StatsLocalTileAggregateFunction() extends UserDefinedAggregateFunction {
       val variance = sumSqr / count - mean * mean
       Row(buffer(0), buffer(1), buffer(2), mean, variance)
     } else null
-  }
-}
-
-object StatsLocalTileAggregateFunction {
-
-  trait BiasedOp extends LocalTileBinaryOp {
-    def op(z1: Int, z2: Int): Int
-    def op(z1: Double, z2: Double): Double
-
-    def combine(z1: Int, z2: Int): Int =
-      if (isNoData(z1) && isNoData(z2)) raster.NODATA
-      else if (isNoData(z1)) z2
-      else if (isNoData(z2)) z1
-      else op(z1, z2)
-
-    def combine(z1: Double, z2: Double): Double =
-      if (isNoData(z1) && isNoData(z2)) raster.doubleNODATA
-      else if (isNoData(z1)) z2
-      else if (isNoData(z2)) z1
-      else op(z1, z2)
-  }
-
-  object BiasedMin extends BiasedOp {
-    def op(z1: Int, z2: Int) = math.min(z1, z2)
-    def op(z1: Double, z2: Double) = math.min(z1, z2)
-  }
-
-  object BiasedMax extends BiasedOp {
-    def op(z1: Int, z2: Int) = math.max(z1, z2)
-    def op(z1: Double, z2: Double) = math.max(z1, z2)
-  }
-
-  object BiasedAdd extends BiasedOp {
-    def op(z1: Int, z2: Int) = z1 + z2
-    def op(z1: Double, z2: Double) = z1 + z2
   }
 }

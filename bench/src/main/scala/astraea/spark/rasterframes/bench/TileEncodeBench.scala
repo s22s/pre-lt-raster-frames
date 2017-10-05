@@ -21,9 +21,7 @@ package astraea.spark.rasterframes.bench
 
 import java.util.concurrent.TimeUnit
 
-import astraea.spark.rasterframes.rfInit
 import geotrellis.raster.Tile
-import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 import org.openjdk.jmh.annotations._
@@ -31,15 +29,11 @@ import org.openjdk.jmh.annotations._
 @BenchmarkMode(Array(Mode.AverageTime))
 @State(Scope.Benchmark)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
-class TileEncodeBench {
-
-  @transient
-  val spark = SparkSession.builder.master("local[*]")
-    .appName(getClass.getSimpleName)
-    .config("spark.ui.enabled", false)
-    .getOrCreate
-
-  rfInit(spark.sqlContext)
+/**
+ * @author sfitch
+ * @since 9/29/17
+ */
+class TileEncodeBench extends SparkEnv {
 
   val tileEncoder: ExpressionEncoder[Tile] = ExpressionEncoder()
   val boundEncoder = tileEncoder.resolveAndBind()
@@ -67,11 +61,6 @@ class TileEncodeBench {
   def roundTrip(): Tile = {
     val row = tileEncoder.toRow(tile)
     boundEncoder.fromRow(row)
-  }
-
-  @TearDown(Level.Trial)
-  def shutdown(): Unit = {
-    spark.stop()
   }
 }
 

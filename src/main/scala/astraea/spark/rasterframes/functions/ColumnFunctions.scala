@@ -27,6 +27,7 @@ import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 import org.apache.spark.sql.functions._
 
 import org.apache.spark.sql.types._
+import org.apache.spark.sql.gt._
 import astraea.spark.rasterframes._
 import scala.reflect.runtime.universe._
 
@@ -108,6 +109,9 @@ trait ColumnFunctions {
   withAlias("stats", col)(
     UDFs.aggStats(col)
   ).as[Statistics[Double]]
+
+  /** Computes the colulmn aggregate mean. */
+  def aggMean(col: Column) = new CellMeanAggregateFunction(col.expr).toAggregateExpression().asColumn
 
   /** Compute TileHistogram of floating point Tile values. */
   @Experimental
