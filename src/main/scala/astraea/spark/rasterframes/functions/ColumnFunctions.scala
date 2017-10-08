@@ -110,8 +110,26 @@ trait ColumnFunctions {
     UDFs.aggStats(col)
   ).as[Statistics[Double]]
 
-  /** Computes the colulmn aggregate mean. */
-  def aggMean(col: Column) = new CellMeanAggregateFunction(col.expr).toAggregateExpression().asColumn.as[Double]
+  /** Computes the column aggregate mean. */
+  @Experimental
+  def aggMean(col: Column) =
+    CellMeanAggregateFunction(col.expr)
+      .toAggregateExpression().asColumn
+      .as[Double]
+
+  /** Computes the number of non-NoData cells in a column. */
+  @Experimental
+  def aggDataCells(col: Column) =
+    CellCountAggregateFunction(true, col.expr)
+    .toAggregateExpression().asColumn
+    .as[Long]
+
+  /** Computes the number of NoData cells in a column. */
+  @Experimental
+  def aggNoDataCells(col: Column) =
+    CellCountAggregateFunction(false, col.expr)
+      .toAggregateExpression().asColumn
+      .as[Long]
 
   /** Compute TileHistogram of floating point Tile values. */
   @Experimental
@@ -164,7 +182,7 @@ trait ColumnFunctions {
 
   /** Counts the number of NoData cells per Tile. */
   @Experimental
-  def nodataCells(tile: Column): TypedColumn[Any, Long] =
+  def noDataCells(tile: Column): TypedColumn[Any, Long] =
     withAlias("nodataCells", tile)(
       udf(UDFs.nodataCells).apply(tile)
     ).as[Long]
@@ -199,7 +217,14 @@ trait ColumnFunctions {
 
   /** Compute the cellwise/local count of non-NoData cells for all Tiles in a column. */
   @Experimental
-  def localAggCount(col: Column): TypedColumn[Any, Tile] =
+  def localAggDataCells(col: Column): TypedColumn[Any, Tile] =
+  withAlias("localCount", col)(
+    UDFs.localAggCount(col)
+  ).as[Tile]
+
+  /** Compute the cellwise/local count of NoData cells for all Tiles in a column. */
+  @Experimental
+  def localAggNoDataCells(col: Column): TypedColumn[Any, Tile] =
   withAlias("localCount", col)(
     UDFs.localAggCount(col)
   ).as[Tile]

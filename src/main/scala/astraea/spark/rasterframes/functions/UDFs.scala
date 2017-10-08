@@ -39,7 +39,7 @@ object UDFs {
 
   /** Flattens tile into an array. */
   // TODO: This is kinda jacked up. Too easy to specify a type that doesn't match undlerying type.
-  private[rasterframes] def tileToArray[T: HasCellType: TypeTag] = {
+  private[rasterframes] def tileToArray[T: HasCellType: TypeTag]: (Tile) ⇒ Array[T] = {
     def convert(tile: Tile) = {
       typeOf[T] match {
         case t if t =:= typeOf[Int] ⇒ tile.toArray()
@@ -67,6 +67,11 @@ object UDFs {
         case t: FloatArrayTile ⇒
           if (typeOf[T] =:= typeOf[Float]) t.array
           else convert(t)
+        case c: ConstantTile ⇒
+          // TODO: This isn't great, because the recursive nature
+          // ends up creating a large task
+          val rec = tileToArray[T]
+          rec(c.toArrayTile())
         case _: Tile ⇒
           throw new IllegalArgumentException("Unsupported tile type: " + tile.getClass)
       }
@@ -137,7 +142,7 @@ object UDFs {
   private[rasterframes] val localAggMean = new LocalMeanAggregateFunction()
 
   /** Compute the cell-wise count of non-NA across tiles. */
-  private[rasterframes] val localAggCount = new LocalCountAggregateFunction()
+  private[rasterframes] val localAggCount = new LocalCountAggregateFunction(true)
 
   /** Cell-wise addition between tiles. */
   private[rasterframes] val localAdd: (Tile, Tile) ⇒ Tile = safeEval(Add.apply)
@@ -159,14 +164,22 @@ object UDFs {
   // TODO: Should we get rid of the `var`?
   private[rasterframes] val dataCells: (Tile) ⇒ Long = safeEval((t: Tile) ⇒ {
     var count: Long = 0
-    t.foreach(z ⇒ if(isData(z)) count = count + 1)
+    t.dualForeach(
+      z ⇒ if(isData(z)) count = count + 1
+    ) (
+      z ⇒ if(isData(z)) count = count + 1
+    )
     count
   })
 
   /** Count tile cells that have a no-data value. */
   private[rasterframes] val nodataCells: (Tile) ⇒ Long = safeEval((t: Tile) ⇒ {
     var count: Long = 0
-    t.foreach(z ⇒ if(isNoData(z)) count = count + 1)
+    t.dualForeach(
+      z ⇒ if(isNoData(z)) count = count + 1
+    )(
+      z ⇒ if(isNoData(z)) count = count + 1
+    )
     count
   })
 

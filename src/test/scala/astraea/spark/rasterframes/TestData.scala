@@ -20,6 +20,7 @@ package astraea.spark.rasterframes
 
 import java.time.ZonedDateTime
 
+import astraea.spark.rasterframes.functions.UDFs
 import geotrellis.proj4.LatLng
 import geotrellis.raster
 import geotrellis.raster._
@@ -103,24 +104,34 @@ trait TestData {
 }
 
 object TestData extends TestData {
-  val rnd = new scala.util.Random(42)
+  val rnd =  new scala.util.Random(42)
 
   /** Construct a tile of given size and cell type populated with random values. */
   def randomTile(cols: Int, rows: Int, cellTypeName: String): Tile = {
     val cellType = CellType.fromName(cellTypeName)
     val tile = ArrayTile.alloc(cellType, cols, rows)
-    if(cellType.isFloatingPoint) {
-      tile.mapDouble(_ ⇒ rnd.nextGaussian())
-    }
-    else {
-      tile.map(_ ⇒ {
-        var c = NODATA
-        do {
-          c = rnd.nextInt(255)
-        } while(isNoData(c))
-        c
-      })
-    }
+
+    def possibleND(c: Int) =
+      c == NODATA || c == byteNODATA || c == ubyteNODATA || c == shortNODATA || c == ushortNODATA
+
+    // Initialize tile with some initial random values
+    var result = tile.dualMap(_ ⇒ rnd.nextInt())(_ ⇒ rnd.nextGaussian())
+
+    // Due to cell width narrowing and custom NoData values, we can end up randomly creating
+    // NoData values. While perhaps inefficient, the safest way to ensure a tile with no-NoData values
+    // with the current CellType API (GT 1.1), while still generating random data is to
+    // iteratively pass through all the cells and replace NoData values as we find them.
+    do {
+      result = result.dualMap(
+        z ⇒ if (isNoData(z)) rnd.nextInt() else z
+      ) (
+        z ⇒ if (isNoData(z)) rnd.nextGaussian() else z
+      )
+    } while (UDFs.nodataCells(result) != 0L)
+
+    assert(UDFs.nodataCells(result) == 0L,
+      s"Should not have any NoData cells for $cellTypeName:\n${result.asciiDraw()}")
+    result
   }
 
   /** Create a series of random tiles. */

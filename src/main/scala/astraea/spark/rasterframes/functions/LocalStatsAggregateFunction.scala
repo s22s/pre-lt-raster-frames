@@ -44,9 +44,9 @@ class LocalStatsAggregateFunction() extends UserDefinedAggregateFunction {
         StructField("min", reafiableUDT),
         StructField("max", reafiableUDT),
         StructField("mean", reafiableUDT),
-        StructField("variance", reafiableUDT),
-        StructField("sum", reafiableUDT),
-        StructField("sumSqr", reafiableUDT)
+        StructField("variance", reafiableUDT)//,
+//        StructField("sum", reafiableUDT),
+//        StructField("sumSqr", reafiableUDT)
       )
     )
 
@@ -70,7 +70,7 @@ class LocalStatsAggregateFunction() extends UserDefinedAggregateFunction {
   )
 
   private val updateFunctions = Seq(
-    safeBinaryOp((t1: Tile, t2: Tile) ⇒ Add(t1, Defined(t2))),
+    safeBinaryOp((t1: Tile, t2: Tile) ⇒ BiasedAdd(t1, Defined(t2))),
     safeBinaryOp((t1: Tile, t2: Tile) ⇒ BiasedMin(t1, t2)),
     safeBinaryOp((t1: Tile, t2: Tile) ⇒ BiasedMax(t1, t2)),
     safeBinaryOp((t1: Tile, t2: Tile) ⇒ BiasedAdd(t1, t2)),
@@ -124,7 +124,7 @@ class LocalStatsAggregateFunction() extends UserDefinedAggregateFunction {
       val sumSqr = buffer.getAs[Tile](4)
       val mean = sum / count
       val variance = (sumSqr / count) - (mean * mean)
-      Row(count, buffer(1), buffer(2), mean, variance, sum, sumSqr)
+      Row(count, buffer(1), buffer(2), mean, variance /*,sum, sumSqr*/)
     } else null
   }
 }

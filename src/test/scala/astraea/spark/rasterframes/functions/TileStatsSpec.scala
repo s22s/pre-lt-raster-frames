@@ -81,6 +81,15 @@ class TileStatsSpec extends TestEnvironment with TestData  {
       }
     }
 
+    it("should count data and no-data cells") {
+      val ds = (Seq.fill[Tile](10)(injectND(10)(randomTile(10, 10, "uint8"))) :+ null).toDF("tile")
+      val expectedNoData = 10 * 10
+      val expectedData = 10 * 10 * 10 - expectedNoData
+
+      assert(ds.select(aggDataCells($"tile")).first() === expectedData)
+      assert(ds.select(aggNoDataCells($"tile")).first() === expectedNoData)
+    }
+
     it("should compute tile statistics") {
       val ds = (Seq.fill[Tile](3)(randomTile(5, 5, "float32")) :+ null).toDS()
       val means1 = ds.select(tileStatsDouble($"value")).map(s ⇒ Option(s).map(_.mean).getOrElse(0.0)).collect
@@ -187,7 +196,7 @@ class TileStatsSpec extends TestEnvironment with TestData  {
       //printStatsRows(stats)
 
       // counted everything properly
-      val countTile = ds.select(localAggCount($"tiles")).first()
+      val countTile = ds.select(localAggDataCells($"tiles")).first()
       forAll(countTile.toArray())(i ⇒ assert(i === 20))
 
       val meanTile = ds.select(localAggMean($"tiles")).first()
@@ -208,10 +217,12 @@ class TileStatsSpec extends TestEnvironment with TestData  {
         .map(injectND(nds)) :+ null).toDF("tiles")
 
       //tiles.select(tileStats($"tiles")).show(100)
-      val counts = tiles.select(nodataCells($"tiles")).collect().dropRight(1)
+      val counts = tiles.select(noDataCells($"tiles")).collect().dropRight(1)
       forEvery(counts)(c ⇒ assert(c === nds))
       val counts2 = tiles.select(dataCells($"tiles")).collect().dropRight(1)
       forEvery(counts2)(c ⇒ assert(c === tsize * tsize - nds))
     }
   }
+
+  protected def withFixture(test: Any) = ???
 }
