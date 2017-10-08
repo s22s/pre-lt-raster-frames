@@ -38,24 +38,41 @@ object UDFs {
     (p1, p2) ⇒ if (p1 == null || p2 == null) null.asInstanceOf[R] else f(p1, p2)
 
   /** Flattens tile into an array. */
-  private[rasterframes] def tileToArray[T: HasCellType: TypeTag] =
+  // TODO: This is kinda jacked up. Too easy to specify a type that doesn't match undlerying type.
+  private[rasterframes] def tileToArray[T: HasCellType: TypeTag] = {
+    def convert(tile: Tile) = {
+      typeOf[T] match {
+        case t if t =:= typeOf[Int] ⇒ tile.toArray()
+        case t if t =:= typeOf[Double] ⇒ tile.toArrayDouble()
+        case t if t =:= typeOf[Byte] ⇒ tile.toArray().map(_.toByte)
+        case t if t =:= typeOf[Short] ⇒ tile.toArray().map(_.toShort)
+        case t if t =:= typeOf[Float] ⇒ tile.toArrayDouble().map(_.toFloat)
+      }
+    }
+
     safeEval[Tile, Array[T]] { tile ⇒
-      val asArray = tile match {
-        case t: IntArrayTile ⇒ t.array
-        case t: DoubleArrayTile ⇒ t.array
-        case t: ByteArrayTile ⇒ t.array
-        case t: ShortArrayTile ⇒ t.array
-        case t: FloatArrayTile ⇒ t.array
-        case o: Tile ⇒ typeOf[T] match {
-          case t if t =:= typeOf[Int] ⇒ o.toArray()
-          case t if t =:= typeOf[Double] ⇒ o.toArrayDouble()
-          case t if t =:= typeOf[Byte] ⇒ o.toArray().map(_.toByte)
-          case t if t =:= typeOf[Short] ⇒ o.toArray().map(_.toShort)
-          case t if t =:= typeOf[Float] ⇒ o.toArrayDouble().map(_.toFloat)
-        }
+      val asArray: Array[_] = tile match {
+        case t: IntArrayTile ⇒
+          if (typeOf[T] =:= typeOf[Int]) t.array
+          else convert(t)
+        case t: DoubleArrayTile ⇒
+          if (typeOf[T] =:= typeOf[Double]) t.array
+          else convert(t)
+        case t: ByteArrayTile ⇒
+          if (typeOf[T] =:= typeOf[Byte]) t.array
+          else convert(t)
+        case t: ShortArrayTile ⇒
+          if (typeOf[T] =:= typeOf[Short]) t.array
+          else convert(t)
+        case t: FloatArrayTile ⇒
+          if (typeOf[T] =:= typeOf[Float]) t.array
+          else convert(t)
+        case _: Tile ⇒
+          throw new IllegalArgumentException("Unsupported tile type: " + tile.getClass)
       }
       asArray.asInstanceOf[Array[T]]
     }
+  }
 
   /** Converts an array into a tile. */
   private[rasterframes] def arrayToTile(cols: Int, rows: Int) = {
@@ -108,7 +125,7 @@ object UDFs {
   private[rasterframes] val tileMean = safeEval[Tile, Double](_.statistics.map(_.mean).getOrElse(Double.NaN))
 
   /** Compute summary cell-wise statistics across tiles. */
-  private[rasterframes] val localAggStats = new StatsLocalTileAggregateFunction()
+  private[rasterframes] val localAggStats = new LocalStatsAggregateFunction()
 
   /** Compute the cell-wise max across tiles. */
   private[rasterframes] val localAggMax = new LocalTileOpAggregateFunction(Max)
@@ -151,6 +168,13 @@ object UDFs {
     var count: Long = 0
     t.foreach(z ⇒ if(isNoData(z)) count = count + 1)
     count
+  })
+
+  /** Add up all the cell values. */
+  private[rasterframes] val sumCells: (Tile) ⇒ Double = safeEval((t: Tile) ⇒ {
+    var sum: Double = 0.0
+    t.foreachDouble(z ⇒ if(isData(z)) sum = sum + z)
+    sum
   })
 
   /** Constructor for constant tiles */

@@ -111,7 +111,7 @@ trait ColumnFunctions {
   ).as[Statistics[Double]]
 
   /** Computes the colulmn aggregate mean. */
-  def aggMean(col: Column) = new CellMeanAggregateFunction(col.expr).toAggregateExpression().asColumn
+  def aggMean(col: Column) = new CellMeanAggregateFunction(col.expr).toAggregateExpression().asColumn.as[Double]
 
   /** Compute TileHistogram of floating point Tile values. */
   @Experimental

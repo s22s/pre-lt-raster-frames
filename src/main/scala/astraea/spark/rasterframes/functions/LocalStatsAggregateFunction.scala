@@ -17,7 +17,7 @@
 package astraea.spark.rasterframes.functions
 
 import geotrellis.raster.mapalgebra.local._
-import geotrellis.raster.{IntConstantNoDataCellType, Tile, isNoData}
+import geotrellis.raster.{DoubleConstantNoDataCellType, IntConstantNoDataCellType, Tile, isNoData}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.expressions.{MutableAggregationBuffer, UserDefinedAggregateFunction}
 import org.apache.spark.sql.gt.types.TileUDT
@@ -31,18 +31,8 @@ import DataBiasedOp._
  * @author sfitch
  * @since 4/17/17
  */
-class StatsLocalTileAggregateFunction() extends UserDefinedAggregateFunction {
+class LocalStatsAggregateFunction() extends UserDefinedAggregateFunction {
 
-  /*
-    This is necessary to avoid this:
-    "java.lang.IllegalArgumentException: Unsupported dataType" from
-      at org.apache.spark.sql.catalyst.parser.LegacyTypeStringParser$.parse(LegacyTypeStringParser.scala:90)
-	    at org.apache.spark.sql.types.StructType$$anonfun$7.apply(StructType.scala:419)
-	    at org.apache.spark.sql.types.StructType$$anonfun$7.apply(StructType.scala:419)
-	    at scala.util.Try.getOrElse(Try.scala:79)
-	    at org.apache.spark.sql.types.StructType$.fromString(StructType.scala:419)
-	    ...
-   */
   private val reafiableUDT = new TileUDT()
 
   override def inputSchema: StructType = StructType(StructField("value", TileUDT) :: Nil)
@@ -54,7 +44,9 @@ class StatsLocalTileAggregateFunction() extends UserDefinedAggregateFunction {
         StructField("min", reafiableUDT),
         StructField("max", reafiableUDT),
         StructField("mean", reafiableUDT),
-        StructField("variance", reafiableUDT)
+        StructField("variance", reafiableUDT),
+        StructField("sum", reafiableUDT),
+        StructField("sumSqr", reafiableUDT)
       )
     )
 
@@ -71,10 +63,10 @@ class StatsLocalTileAggregateFunction() extends UserDefinedAggregateFunction {
 
   private val initFunctions = Seq(
     (t: Tile) ⇒ Defined(t).convert(IntConstantNoDataCellType),
-    (t: Tile) ⇒ t.convert(IntConstantNoDataCellType),
-    (t: Tile) ⇒ t.convert(IntConstantNoDataCellType),
-    (t: Tile) ⇒ t.convert(IntConstantNoDataCellType),
-    (t: Tile) ⇒ Multiply(t, t)
+    (t: Tile) ⇒ t,
+    (t: Tile) ⇒ t,
+    (t: Tile) ⇒ t.convert(DoubleConstantNoDataCellType),
+    (t: Tile) ⇒ { val d = t.convert(DoubleConstantNoDataCellType); Multiply(d, d) }
   )
 
   private val updateFunctions = Seq(
@@ -131,8 +123,8 @@ class StatsLocalTileAggregateFunction() extends UserDefinedAggregateFunction {
       val sum = buffer.getAs[Tile](3)
       val sumSqr = buffer.getAs[Tile](4)
       val mean = sum / count
-      val variance = sumSqr / count - mean * mean
-      Row(buffer(0), buffer(1), buffer(2), mean, variance)
+      val variance = (sumSqr / count) - (mean * mean)
+      Row(count, buffer(1), buffer(2), mean, variance, sum, sumSqr)
     } else null
   }
 }

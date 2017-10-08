@@ -19,13 +19,58 @@
 
 package astraea.spark.rasterframes.functions
 
-import org.apache.spark.sql.catalyst.expressions.Expression
-import org.apache.spark.sql.catalyst.expressions.aggregate.Average
+import org.apache.spark.sql.catalyst.expressions.{AttributeReference, Expression}
+import org.apache.spark.sql.catalyst.expressions.aggregate.DeclarativeAggregate
+import org.apache.spark.sql.gt.types.TileUDT
+import org.apache.spark.sql.types.{DoubleType, LongType}
+import org.apache.spark.sql.catalyst.dsl.expressions._
+import org.apache.spark.sql.catalyst.expressions._
+import org.apache.spark.sql.functions._
+import org.apache.spark.sql.gt._
 
 /**
- *
+ * Cell mean aggregate function
+ * 
  * @author sfitch 
  * @since 10/5/17
  */
-class CellMeanAggregateFunction(child: Expression) extends Average(ExplodeTileExpression(1.0, Seq(child)))
+case class CellMeanAggregateFunction(child: Expression) extends DeclarativeAggregate {
+
+  override def prettyName: String = "agg_mean"
+
+  private lazy val sum = AttributeReference("sum", DoubleType)()
+  private lazy val count = AttributeReference("count", LongType)()
+  override lazy val aggBufferAttributes = Seq(sum, count)
+
+  val initialValues = Seq(
+    Literal(0.0),
+    Literal(0L)
+  )
+
+  private val dataCells = udf(UDFs.dataCells)
+  private val sumCells = udf(UDFs.sumCells)
+
+  val updateExpressions = Seq(
+    Add(sum, sumCells(child.asColumn).expr),
+    If(IsNull(child), count, Add(count, dataCells(child.asColumn).expr))
+  )
+
+  val mergeExpressions = Seq(
+    sum.left + sum.right,
+    count.left + count.right
+  )
+
+  val evaluateExpression = sum / Cast(count, DoubleType)
+
+  def inputTypes = Seq(TileUDT)
+
+  def nullable = true
+
+  def dataType = DoubleType
+
+  def children = Seq(child)
+
+}
+
+
 

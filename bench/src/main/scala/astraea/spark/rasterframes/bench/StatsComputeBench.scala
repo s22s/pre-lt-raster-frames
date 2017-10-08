@@ -47,21 +47,27 @@ class StatsComputeBench extends SparkEnv {
   var numTiles: Int = _
 
   @transient
-  var tiles: Seq[Tile] = _
+  var tiles: DataFrame = _
 
   @Setup(Level.Trial)
   def setupData(): Unit = {
     tiles = Seq.fill(numTiles)(randomTile(tileSize, tileSize, cellTypeName))
+      .toDF("tile").repartition(10)
   }
 
   @Benchmark
   def computeStats() = {
-    tiles.toDF("tile").repartition(10).agg(aggStats($"tile")).collect()
+    tiles.select(aggStats($"tile")).collect()
   }
 
   @Benchmark
   def extractMean() = {
-    tiles.toDF("tile").repartition(10).agg(aggStats($"tile").getField("mean")).map(_.getDouble(0)).collect()
+    tiles.select(aggStats($"tile").getField("mean")).map(_.getDouble(0)).collect()
+  }
+
+  @Benchmark
+  def directMean() = {
+    tiles.repartition(10).select(aggMean($"tile")).collect()
   }
 
 //  @Benchmark
