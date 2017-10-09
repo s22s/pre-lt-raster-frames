@@ -38,12 +38,9 @@ import scala.reflect.runtime.universe._
  * @since 4/3/17
  */
 trait ColumnFunctions {
-  private implicit val stringEnc: Encoder[String] = Encoders.STRING
-  private implicit val doubleEnc: Encoder[Double] = Encoders.scalaDouble
   private implicit val statsEnc: Encoder[Statistics[Int]] = Encoders.product[Statistics[Int]]
-  private implicit val longEnc: Encoder[Long] = Encoders.scalaLong
-  private implicit val intArray: Encoder[Array[Int]] = ExpressionEncoder()
-  private implicit val doubleArray: Encoder[Array[Double]] = ExpressionEncoder()
+  private implicit def arrayEnc[T: TypeTag]: Encoder[Array[T]] = ExpressionEncoder()
+  private implicit def genEnc[T: TypeTag]: Encoder[T] = ExpressionEncoder()
 
   // format: off
   /** Create a row for each cell in Tile. */
@@ -69,9 +66,9 @@ trait ColumnFunctions {
 
   /** Flattens Tile into an array. A numeric type parameter is required*/
   @Experimental
-  def tileToArray[T: HasCellType: TypeTag](col: Column): Column = withAlias("tileToArray", col)(
+  def tileToArray[T: HasCellType: TypeTag](col: Column): TypedColumn[Any, Array[T]] = withAlias("tileToArray", col)(
     udf[Array[T], Tile](UDFs.tileToArray).apply(col)
-  )
+  ).as[Array[T]]
 
   @Experimental
   /** Convert array in `arrayCol` into a Tile of dimensions `cols` and `rows`*/

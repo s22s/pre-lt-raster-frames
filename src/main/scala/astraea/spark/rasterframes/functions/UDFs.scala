@@ -50,7 +50,11 @@ object UDFs {
       }
     }
 
-    safeEval[Tile, Array[T]] { tile ⇒
+    safeEval[Tile, Array[T]] { t ⇒
+      val tile = t match {
+        case c: ConstantTile ⇒ c.toArrayTile()
+        case o ⇒ o
+      }
       val asArray: Array[_] = tile match {
         case t: IntArrayTile ⇒
           if (typeOf[T] =:= typeOf[Int]) t.array
@@ -67,11 +71,6 @@ object UDFs {
         case t: FloatArrayTile ⇒
           if (typeOf[T] =:= typeOf[Float]) t.array
           else convert(t)
-        case c: ConstantTile ⇒
-          // TODO: This isn't great, because the recursive nature
-          // ends up creating a large task
-          val rec = tileToArray[T]
-          rec(c.toArrayTile())
         case _: Tile ⇒
           throw new IllegalArgumentException("Unsupported tile type: " + tile.getClass)
       }
