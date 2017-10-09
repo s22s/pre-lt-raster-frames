@@ -16,6 +16,8 @@
 
 package astraea.spark.rasterframes.functions
 
+import java.lang.Double
+
 import geotrellis.raster.mapalgebra.local._
 import geotrellis.raster.{DoubleConstantNoDataCellType, IntConstantNoDataCellType, Tile, isNoData}
 import org.apache.spark.sql.Row
@@ -44,9 +46,7 @@ class LocalStatsAggregateFunction() extends UserDefinedAggregateFunction {
         StructField("min", reafiableUDT),
         StructField("max", reafiableUDT),
         StructField("mean", reafiableUDT),
-        StructField("variance", reafiableUDT)//,
-//        StructField("sum", reafiableUDT),
-//        StructField("sumSqr", reafiableUDT)
+        StructField("variance", reafiableUDT)
       )
     )
 
@@ -118,13 +118,14 @@ class LocalStatsAggregateFunction() extends UserDefinedAggregateFunction {
   }
 
   override def evaluate(buffer: Row): Any = {
-    val count = buffer.getAs[Tile](0)
-    if (count != null) {
+    val cnt = buffer.getAs[Tile](0)
+    if (cnt != null) {
+      val count = cnt.convert(DoubleConstantNoDataCellType)
       val sum = buffer.getAs[Tile](3)
       val sumSqr = buffer.getAs[Tile](4)
       val mean = sum / count
       val variance = (sumSqr / count) - (mean * mean)
-      Row(count, buffer(1), buffer(2), mean, variance /*,sum, sumSqr*/)
+      Row(cnt, buffer(1), buffer(2), mean, variance)
     } else null
   }
 }
