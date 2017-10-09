@@ -40,7 +40,6 @@ private[rasterframes] object Registrator {
     sqlContext.udf.register("rf_tileStats", UDFs.tileStats)
     sqlContext.udf.register("rf_dataCells", UDFs.dataCells)
     sqlContext.udf.register("rf_nodataCells", UDFs.dataCells)
-    sqlContext.udf.register("rf_tileMeanDouble", UDFs.tileMeanDouble)
     sqlContext.udf.register("rf_tileHistogramDouble", UDFs.tileHistogramDouble)
     sqlContext.udf.register("rf_tileStatsDouble", UDFs.tileStatsDouble)
     sqlContext.udf.register("rf_localAggStats", UDFs.localAggStats)

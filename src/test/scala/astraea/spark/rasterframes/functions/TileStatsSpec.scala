@@ -93,7 +93,7 @@ class TileStatsSpec extends TestEnvironment with TestData  {
     it("should compute tile statistics") {
       val ds = (Seq.fill[Tile](3)(randomTile(5, 5, "float32")) :+ null).toDS()
       val means1 = ds.select(tileStatsDouble($"value")).map(s ⇒ Option(s).map(_.mean).getOrElse(0.0)).collect
-      val means2 = ds.select(tileMeanDouble($"value")).collect
+      val means2 = ds.select(tileMean($"value")).collect
       assert(means1 === means2)
     }
 

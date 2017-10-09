@@ -116,9 +116,6 @@ object UDFs {
   /** Single floating point tile statistics. Convenience for `tileHistogram.statisticsDouble`. */
   private[rasterframes] val tileStatsDouble = safeEval[Tile, Statistics[Double]](_.statisticsDouble.orNull)
 
-  /** Single floating point tile mean. Convenience for `tileHistogram.statisticsDouble.mean`. */
-  private[rasterframes] val tileMeanDouble = safeEval[Tile, Double](_.statisticsDouble.map(_.mean).getOrElse(Double.NaN))
-
   /** Single tile histogram. */
   private[rasterframes] val tileHistogram = safeEval[Tile, Histogram[Int]](_.histogram)
 

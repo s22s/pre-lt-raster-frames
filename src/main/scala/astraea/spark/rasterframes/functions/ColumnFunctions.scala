@@ -144,13 +144,6 @@ trait ColumnFunctions {
 
   /** Compute the Tile-wise mean */
   @Experimental
-  def tileMeanDouble(col: Column): TypedColumn[Any, Double] =
-  withAlias("tileMeanDouble", col)(
-    udf[Double, Tile](UDFs.tileMeanDouble).apply(col)
-  ).as[Double]
-
-  /** Compute the Tile-wise mean */
-  @Experimental
   def tileMean(col: Column): TypedColumn[Any, Double] =
   withAlias("tileMean", col)(
     udf[Double, Tile](UDFs.tileMean).apply(col)
