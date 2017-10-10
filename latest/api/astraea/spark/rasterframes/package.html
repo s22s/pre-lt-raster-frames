@@ -126,7 +126,7 @@
       <p class="shortcomment cmt">Extension methods over <span class="extype" name="DataFrame">DataFrame</span>.</p><div class="fullcomment"><div class="comment cmt"><p>Extension methods over <span class="extype" name="DataFrame">DataFrame</span>.
 </p></div><dl class="attributes block"> <dt>Since</dt><dd><p>7/18/17</p></dd></dl></div>
     </li><li name="astraea.spark.rasterframes.HasCellType" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="HasCellType[T]extendsAnyRef"></a>
+      <a id="HasCellType[T]extendsSerializable"></a>
       <a id="HasCellType[T]:HasCellType[T]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -134,10 +134,10 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="package$$HasCellType.html"><span class="name">HasCellType</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
+        <a href="package$$HasCellType.html"><span class="name">HasCellType</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.package@HasCellType[T]extendsAnyRef" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.package@HasCellType[T]extendsSerializable" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -486,7 +486,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="package$$HasCellType$.html"><span class="name">HasCellType</span></a>
+        <a href="package$$HasCellType$.html"><span class="name">HasCellType</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#astraea.spark.rasterframes.package@HasCellType" title="Permalink" target="_top">
@@ -596,6 +596,26 @@
       </a>
     </span>
       
+    </li><li name="astraea.spark.rasterframes.functions.ColumnFunctions#aggDataCells" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="aggDataCells(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,Long]"></a>
+      <a id="aggDataCells(Column):TypedColumn[Any,Long]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">aggDataCells</span><span class="params">(<span name="col">col: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.TypedColumn" class="extype" target="_top">TypedColumn</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Long" class="extype" target="_top">Long</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#astraea.spark.rasterframes.package@aggDataCells(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,Long]" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Computes the number of non-NoData cells in a column.</p><div class="fullcomment"><div class="comment cmt"><p>Computes the number of non-NoData cells in a column.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="functions/ColumnFunctions.html" class="extype" name="astraea.spark.rasterframes.functions.ColumnFunctions">ColumnFunctions</a></dd><dt>Annotations</dt><dd>
+                <span class="name">@Experimental</span><span class="args">()</span>
+              
+        </dd></dl></div>
     </li><li name="astraea.spark.rasterframes.functions.ColumnFunctions#aggHistogram" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="aggHistogram(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.histogram.Histogram[Double]]"></a>
       <a id="aggHistogram(Column):TypedColumn[Any,Histogram[Double]]"></a>
@@ -616,19 +636,59 @@
                 <span class="name">@Experimental</span><span class="args">()</span>
               
         </dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.functions.ColumnFunctions#aggStats" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="aggStats(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.summary.Statistics[Double]]"></a>
-      <a id="aggStats(Column):TypedColumn[Any,Statistics[Double]]"></a>
+    </li><li name="astraea.spark.rasterframes.functions.ColumnFunctions#aggMean" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="aggMean(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,Double]"></a>
+      <a id="aggMean(Column):TypedColumn[Any,Double]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">aggStats</span><span class="params">(<span name="col">col: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.TypedColumn" class="extype" target="_top">TypedColumn</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a>, <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.summary.Statistics" class="extype" target="_top">Statistics</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a>]]</span>
+        <span class="name">aggMean</span><span class="params">(<span name="col">col: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.TypedColumn" class="extype" target="_top">TypedColumn</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.package@aggStats(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.summary.Statistics[Double]]" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.package@aggMean(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,Double]" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Computes the column aggregate mean.</p><div class="fullcomment"><div class="comment cmt"><p>Computes the column aggregate mean.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="functions/ColumnFunctions.html" class="extype" name="astraea.spark.rasterframes.functions.ColumnFunctions">ColumnFunctions</a></dd><dt>Annotations</dt><dd>
+                <span class="name">@Experimental</span><span class="args">()</span>
+              
+        </dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.functions.ColumnFunctions#aggNoDataCells" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="aggNoDataCells(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,Long]"></a>
+      <a id="aggNoDataCells(Column):TypedColumn[Any,Long]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">aggNoDataCells</span><span class="params">(<span name="col">col: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.TypedColumn" class="extype" target="_top">TypedColumn</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Long" class="extype" target="_top">Long</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#astraea.spark.rasterframes.package@aggNoDataCells(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,Long]" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Computes the number of NoData cells in a column.</p><div class="fullcomment"><div class="comment cmt"><p>Computes the number of NoData cells in a column.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="functions/ColumnFunctions.html" class="extype" name="astraea.spark.rasterframes.functions.ColumnFunctions">ColumnFunctions</a></dd><dt>Annotations</dt><dd>
+                <span class="name">@Experimental</span><span class="args">()</span>
+              
+        </dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.functions.ColumnFunctions#aggStats" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="aggStats(col:org.apache.spark.sql.Column):org.apache.spark.sql.Column"></a>
+      <a id="aggStats(Column):Column"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">aggStats</span><span class="params">(<span name="col">col: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#astraea.spark.rasterframes.package@aggStats(col:org.apache.spark.sql.Column):org.apache.spark.sql.Column" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -878,23 +938,6 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="encoders/Implicits.html" class="extype" name="astraea.spark.rasterframes.encoders.Implicits">Implicits</a></dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.encoders.Implicits#histogramStatsEncoder" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="histogramStatsEncoder:org.apache.spark.sql.Encoder[geotrellis.raster.summary.Statistics[Double]]"></a>
-      <a id="histogramStatsEncoder:Encoder[Statistics[Double]]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">histogramStatsEncoder</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Encoder" class="extype" target="_top">Encoder</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.summary.Statistics" class="extype" target="_top">Statistics</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a>]]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.package@histogramStatsEncoder:org.apache.spark.sql.Encoder[geotrellis.raster.summary.Statistics[Double]]" title="Permalink" target="_top">
-        <img src="../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="encoders/Implicits.html" class="extype" name="astraea.spark.rasterframes.encoders.Implicits">Implicits</a></dd></dl></div>
     </li><li name="astraea.spark.rasterframes.encoders.Implicits#layoutDefinitionEncoder" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="layoutDefinitionEncoder:org.apache.spark.sql.catalyst.encoders.ExpressionEncoder[geotrellis.spark.tiling.LayoutDefinition]"></a>
       <a id="layoutDefinitionEncoder:ExpressionEncoder[LayoutDefinition]"></a>
@@ -932,19 +975,19 @@
                 <span class="name">@Experimental</span><span class="args">()</span>
               
         </dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.functions.ColumnFunctions#localAggCount" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="localAggCount(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.Tile]"></a>
-      <a id="localAggCount(Column):TypedColumn[Any,Tile]"></a>
+    </li><li name="astraea.spark.rasterframes.functions.ColumnFunctions#localAggDataCells" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="localAggDataCells(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.Tile]"></a>
+      <a id="localAggDataCells(Column):TypedColumn[Any,Tile]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">localAggCount</span><span class="params">(<span name="col">col: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.TypedColumn" class="extype" target="_top">TypedColumn</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a>, <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.Tile" class="extype" target="_top">Tile</a>]</span>
+        <span class="name">localAggDataCells</span><span class="params">(<span name="col">col: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.TypedColumn" class="extype" target="_top">TypedColumn</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a>, <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.Tile" class="extype" target="_top">Tile</a>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.package@localAggCount(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.Tile]" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.package@localAggDataCells(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.Tile]" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1009,6 +1052,26 @@
       </a>
     </span>
       <p class="shortcomment cmt">Compute the cellwise/local min operation between Tiles in a column.</p><div class="fullcomment"><div class="comment cmt"><p>Compute the cellwise/local min operation between Tiles in a column.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="functions/ColumnFunctions.html" class="extype" name="astraea.spark.rasterframes.functions.ColumnFunctions">ColumnFunctions</a></dd><dt>Annotations</dt><dd>
+                <span class="name">@Experimental</span><span class="args">()</span>
+              
+        </dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.functions.ColumnFunctions#localAggNoDataCells" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="localAggNoDataCells(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.Tile]"></a>
+      <a id="localAggNoDataCells(Column):TypedColumn[Any,Tile]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">localAggNoDataCells</span><span class="params">(<span name="col">col: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.TypedColumn" class="extype" target="_top">TypedColumn</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a>, <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.Tile" class="extype" target="_top">Tile</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#astraea.spark.rasterframes.package@localAggNoDataCells(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.Tile]" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Compute the cellwise/local count of NoData cells for all Tiles in a column.</p><div class="fullcomment"><div class="comment cmt"><p>Compute the cellwise/local count of NoData cells for all Tiles in a column.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="functions/ColumnFunctions.html" class="extype" name="astraea.spark.rasterframes.functions.ColumnFunctions">ColumnFunctions</a></dd><dt>Annotations</dt><dd>
                 <span class="name">@Experimental</span><span class="args">()</span>
               
         </dd></dl></div>
@@ -1146,19 +1209,19 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="encoders/Implicits.html" class="extype" name="astraea.spark.rasterframes.encoders.Implicits">Implicits</a></dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.functions.ColumnFunctions#nodataCells" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="nodataCells(tile:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,Long]"></a>
-      <a id="nodataCells(Column):TypedColumn[Any,Long]"></a>
+    </li><li name="astraea.spark.rasterframes.functions.ColumnFunctions#noDataCells" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="noDataCells(tile:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,Long]"></a>
+      <a id="noDataCells(Column):TypedColumn[Any,Long]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">nodataCells</span><span class="params">(<span name="tile">tile: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.TypedColumn" class="extype" target="_top">TypedColumn</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Long" class="extype" target="_top">Long</a>]</span>
+        <span class="name">noDataCells</span><span class="params">(<span name="tile">tile: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.TypedColumn" class="extype" target="_top">TypedColumn</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Long" class="extype" target="_top">Long</a>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.package@nodataCells(tile:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,Long]" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.package@noDataCells(tile:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,Long]" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1273,6 +1336,23 @@ types are used.
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="encoders/Implicits.html" class="extype" name="astraea.spark.rasterframes.encoders.Implicits">Implicits</a></dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.encoders.Implicits#statsEncoder" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="statsEncoder:org.apache.spark.sql.Encoder[geotrellis.raster.summary.Statistics[Double]]"></a>
+      <a id="statsEncoder:Encoder[Statistics[Double]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">statsEncoder</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Encoder" class="extype" target="_top">Encoder</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.summary.Statistics" class="extype" target="_top">Statistics</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#astraea.spark.rasterframes.package@statsEncoder:org.apache.spark.sql.Encoder[geotrellis.raster.summary.Statistics[Double]]" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="encoders/Implicits.html" class="extype" name="astraea.spark.rasterframes.encoders.Implicits">Implicits</a></dd></dl></div>
     </li><li name="astraea.spark.rasterframes.encoders.Implicits#stkBoundsEncoder" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="stkBoundsEncoder:org.apache.spark.sql.catalyst.encoders.ExpressionEncoder[geotrellis.spark.KeyBounds[geotrellis.spark.SpaceTimeKey]]"></a>
       <a id="stkBoundsEncoder:ExpressionEncoder[KeyBounds[SpaceTimeKey]]"></a>
@@ -1345,42 +1425,22 @@ types are used.
               
         </dd></dl></div>
     </li><li name="astraea.spark.rasterframes.functions.ColumnFunctions#tileHistogram" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="tileHistogram(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.histogram.Histogram[Int]]"></a>
-      <a id="tileHistogram(Column):TypedColumn[Any,Histogram[Int]]"></a>
+      <a id="tileHistogram(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.histogram.Histogram[Double]]"></a>
+      <a id="tileHistogram(Column):TypedColumn[Any,Histogram[Double]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">tileHistogram</span><span class="params">(<span name="col">col: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.TypedColumn" class="extype" target="_top">TypedColumn</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a>, <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.histogram.Histogram" class="extype" target="_top">Histogram</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a>]]</span>
+        <span class="name">tileHistogram</span><span class="params">(<span name="col">col: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.TypedColumn" class="extype" target="_top">TypedColumn</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a>, <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.histogram.Histogram" class="extype" target="_top">Histogram</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a>]]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.package@tileHistogram(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.histogram.Histogram[Int]]" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.package@tileHistogram(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.histogram.Histogram[Double]]" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <p class="shortcomment cmt">Compute TileHistogram of Tile values.</p><div class="fullcomment"><div class="comment cmt"><p>Compute TileHistogram of Tile values.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="functions/ColumnFunctions.html" class="extype" name="astraea.spark.rasterframes.functions.ColumnFunctions">ColumnFunctions</a></dd><dt>Annotations</dt><dd>
-                <span class="name">@Experimental</span><span class="args">()</span>
-              
-        </dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.functions.ColumnFunctions#tileHistogramDouble" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="tileHistogramDouble(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.histogram.Histogram[Double]]"></a>
-      <a id="tileHistogramDouble(Column):TypedColumn[Any,Histogram[Double]]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">tileHistogramDouble</span><span class="params">(<span name="col">col: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.TypedColumn" class="extype" target="_top">TypedColumn</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a>, <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.histogram.Histogram" class="extype" target="_top">Histogram</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a>]]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.package@tileHistogramDouble(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.histogram.Histogram[Double]]" title="Permalink" target="_top">
-        <img src="../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Compute TileHistogram of floating point Tile values.</p><div class="fullcomment"><div class="comment cmt"><p>Compute TileHistogram of floating point Tile values.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="functions/ColumnFunctions.html" class="extype" name="astraea.spark.rasterframes.functions.ColumnFunctions">ColumnFunctions</a></dd><dt>Annotations</dt><dd>
                 <span class="name">@Experimental</span><span class="args">()</span>
               
         </dd></dl></div>
@@ -1401,6 +1461,26 @@ types are used.
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="encoders/Implicits.html" class="extype" name="astraea.spark.rasterframes.encoders.Implicits">Implicits</a></dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.functions.ColumnFunctions#tileMax" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="tileMax(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,Double]"></a>
+      <a id="tileMax(Column):TypedColumn[Any,Double]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">tileMax</span><span class="params">(<span name="col">col: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.TypedColumn" class="extype" target="_top">TypedColumn</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#astraea.spark.rasterframes.package@tileMax(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,Double]" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Compute the maximum cell value in tile.</p><div class="fullcomment"><div class="comment cmt"><p>Compute the maximum cell value in tile.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="functions/ColumnFunctions.html" class="extype" name="astraea.spark.rasterframes.functions.ColumnFunctions">ColumnFunctions</a></dd><dt>Annotations</dt><dd>
+                <span class="name">@Experimental</span><span class="args">()</span>
+              
+        </dd></dl></div>
     </li><li name="astraea.spark.rasterframes.functions.ColumnFunctions#tileMean" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="tileMean(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,Double]"></a>
       <a id="tileMean(Column):TypedColumn[Any,Double]"></a>
@@ -1421,39 +1501,39 @@ types are used.
                 <span class="name">@Experimental</span><span class="args">()</span>
               
         </dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.functions.ColumnFunctions#tileMeanDouble" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="tileMeanDouble(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,Double]"></a>
-      <a id="tileMeanDouble(Column):TypedColumn[Any,Double]"></a>
+    </li><li name="astraea.spark.rasterframes.functions.ColumnFunctions#tileMin" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="tileMin(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,Double]"></a>
+      <a id="tileMin(Column):TypedColumn[Any,Double]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">tileMeanDouble</span><span class="params">(<span name="col">col: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.TypedColumn" class="extype" target="_top">TypedColumn</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a>]</span>
+        <span class="name">tileMin</span><span class="params">(<span name="col">col: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.TypedColumn" class="extype" target="_top">TypedColumn</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.package@tileMeanDouble(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,Double]" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.package@tileMin(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,Double]" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Compute the Tile-wise mean</p><div class="fullcomment"><div class="comment cmt"><p>Compute the Tile-wise mean</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="functions/ColumnFunctions.html" class="extype" name="astraea.spark.rasterframes.functions.ColumnFunctions">ColumnFunctions</a></dd><dt>Annotations</dt><dd>
+      <p class="shortcomment cmt">Compute the minimum cell value in tile.</p><div class="fullcomment"><div class="comment cmt"><p>Compute the minimum cell value in tile.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="functions/ColumnFunctions.html" class="extype" name="astraea.spark.rasterframes.functions.ColumnFunctions">ColumnFunctions</a></dd><dt>Annotations</dt><dd>
                 <span class="name">@Experimental</span><span class="args">()</span>
               
         </dd></dl></div>
     </li><li name="astraea.spark.rasterframes.functions.ColumnFunctions#tileStats" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="tileStats(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.summary.Statistics[Int]]"></a>
-      <a id="tileStats(Column):TypedColumn[Any,Statistics[Int]]"></a>
+      <a id="tileStats(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.summary.Statistics[Double]]"></a>
+      <a id="tileStats(Column):TypedColumn[Any,Statistics[Double]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">tileStats</span><span class="params">(<span name="col">col: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.TypedColumn" class="extype" target="_top">TypedColumn</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a>, <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.summary.Statistics" class="extype" target="_top">Statistics</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a>]]</span>
+        <span class="name">tileStats</span><span class="params">(<span name="col">col: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.TypedColumn" class="extype" target="_top">TypedColumn</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a>, <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.summary.Statistics" class="extype" target="_top">Statistics</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a>]]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.package@tileStats(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.summary.Statistics[Int]]" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.package@tileStats(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.summary.Statistics[Double]]" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1461,39 +1541,39 @@ types are used.
                 <span class="name">@Experimental</span><span class="args">()</span>
               
         </dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.functions.ColumnFunctions#tileStatsDouble" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="tileStatsDouble(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.summary.Statistics[Double]]"></a>
-      <a id="tileStatsDouble(Column):TypedColumn[Any,Statistics[Double]]"></a>
+    </li><li name="astraea.spark.rasterframes.functions.ColumnFunctions#tileSum" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="tileSum(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,Double]"></a>
+      <a id="tileSum(Column):TypedColumn[Any,Double]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">tileStatsDouble</span><span class="params">(<span name="col">col: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.TypedColumn" class="extype" target="_top">TypedColumn</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a>, <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.summary.Statistics" class="extype" target="_top">Statistics</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a>]]</span>
+        <span class="name">tileSum</span><span class="params">(<span name="col">col: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.TypedColumn" class="extype" target="_top">TypedColumn</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.package@tileStatsDouble(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.summary.Statistics[Double]]" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.package@tileSum(col:org.apache.spark.sql.Column):org.apache.spark.sql.TypedColumn[Any,Double]" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Compute statistics of Tile values.</p><div class="fullcomment"><div class="comment cmt"><p>Compute statistics of Tile values.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="functions/ColumnFunctions.html" class="extype" name="astraea.spark.rasterframes.functions.ColumnFunctions">ColumnFunctions</a></dd><dt>Annotations</dt><dd>
+      <p class="shortcomment cmt">Compute the Tile-wise sum</p><div class="fullcomment"><div class="comment cmt"><p>Compute the Tile-wise sum</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="functions/ColumnFunctions.html" class="extype" name="astraea.spark.rasterframes.functions.ColumnFunctions">ColumnFunctions</a></dd><dt>Annotations</dt><dd>
                 <span class="name">@Experimental</span><span class="args">()</span>
               
         </dd></dl></div>
     </li><li name="astraea.spark.rasterframes.functions.ColumnFunctions#tileToArray" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="tileToArray[T](col:org.apache.spark.sql.Column)(implicitevidence$1:astraea.spark.rasterframes.HasCellType[T],implicitevidence$2:reflect.runtime.universe.TypeTag[T]):org.apache.spark.sql.Column"></a>
-      <a id="tileToArray[T](Column)(HasCellType[T],scala.reflect.api.JavaUniverse.TypeTag[T]):Column"></a>
+      <a id="tileToArray[T](col:org.apache.spark.sql.Column)(implicitevidence$3:astraea.spark.rasterframes.HasCellType[T],implicitevidence$4:reflect.runtime.universe.TypeTag[T]):org.apache.spark.sql.TypedColumn[Any,Array[T]]"></a>
+      <a id="tileToArray[T](Column)(HasCellType[T],scala.reflect.api.JavaUniverse.TypeTag[T]):TypedColumn[Any,Array[T]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">tileToArray</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="col">col: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="package$$HasCellType.html" class="extype" name="astraea.spark.rasterframes.HasCellType">HasCellType</a>[<span class="extype" name="astraea.spark.rasterframes.functions.ColumnFunctions.tileToArray.T">T</span>]</span>, <span name="arg1">arg1: <span class="extype" name="scala.reflect.api.TypeTags.TypeTag">scala.reflect.api.JavaUniverse.TypeTag</span>[<span class="extype" name="astraea.spark.rasterframes.functions.ColumnFunctions.tileToArray.T">T</span>]</span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>
+        <span class="name">tileToArray</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="col">col: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Column" class="extype" target="_top">Column</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="package$$HasCellType.html" class="extype" name="astraea.spark.rasterframes.HasCellType">HasCellType</a>[<span class="extype" name="astraea.spark.rasterframes.functions.ColumnFunctions.tileToArray.T">T</span>]</span>, <span name="arg1">arg1: <span class="extype" name="scala.reflect.api.TypeTags.TypeTag">scala.reflect.api.JavaUniverse.TypeTag</span>[<span class="extype" name="astraea.spark.rasterframes.functions.ColumnFunctions.tileToArray.T">T</span>]</span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.TypedColumn" class="extype" target="_top">TypedColumn</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Array" class="extype" target="_top">Array</a>[<span class="extype" name="astraea.spark.rasterframes.functions.ColumnFunctions.tileToArray.T">T</span>]]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.package@tileToArray[T](col:org.apache.spark.sql.Column)(implicitevidence$1:astraea.spark.rasterframes.HasCellType[T],implicitevidence$2:reflect.runtime.universe.TypeTag[T]):org.apache.spark.sql.Column" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.package@tileToArray[T](col:org.apache.spark.sql.Column)(implicitevidence$3:astraea.spark.rasterframes.HasCellType[T],implicitevidence$4:reflect.runtime.universe.TypeTag[T]):org.apache.spark.sql.TypedColumn[Any,Array[T]]" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>

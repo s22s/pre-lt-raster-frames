@@ -45,7 +45,7 @@ gtag('config', 'UA-106630615-1');
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.5.4
+0.5.5
 </div>
 </div>
 <div class="nav-toc">
@@ -97,7 +97,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.5.4
+0.5.5
 </div>
 </div>
 <div class="nav-toc">
@@ -159,7 +159,7 @@ only showing top 3 rows
 <h3><a href="#descriptive-statistics" name="descriptive-statistics" class="anchor"><span class="anchor-link"></span></a>Descriptive Statistics</h3>
 <h4><a href="#nodata-counts" name="nodata-counts" class="anchor"><span class="anchor-link"></span></a>NoData Counts</h4>
 <p>Count the numer of <code>NoData</code> and non-<code>NoData</code> cells in each tile.</p>
-<pre class="prettyprint"><code class="language-scala">scala&gt; rf.select(rf.spatialKeyColumn, nodataCells($&quot;tile&quot;), dataCells($&quot;tile&quot;)).show(3)
+<pre class="prettyprint"><code class="language-scala">scala&gt; rf.select(rf.spatialKeyColumn, noDataCells($&quot;tile&quot;), dataCells($&quot;tile&quot;)).show(3)
 +-----------+-----------------+---------------+
 |spatial_key|nodataCells(tile)|dataCells(tile)|
 +-----------+-----------------+---------------+
@@ -176,9 +176,9 @@ only showing top 3 rows
 +-----------+------------------+
 |spatial_key|    tileMean(tile)|
 +-----------+------------------+
-|      [0,0]| 10338.11999511721|
-|      [1,1]|10194.718322753917|
-|      [6,1]|10729.164062499996|
+|      [0,0]|10338.119995117188|
+|      [1,1]|10194.718322753906|
+|      [6,1]|     10729.1640625|
 +-----------+------------------+
 only showing top 3 rows
 
@@ -186,13 +186,13 @@ only showing top 3 rows
 <h4><a href="#tile-summary-statistics" name="tile-summary-statistics" class="anchor"><span class="anchor-link"></span></a>Tile Summary Statistics</h4>
 <p>Compute a suite of summary statistics for each tile. Use <code>tileStats</code> for integral cells types, and <code>tileStatsDouble</code> for floating point cell types.</p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; rf.withColumn(&quot;stats&quot;, tileStats($&quot;tile&quot;)).select(rf.spatialKeyColumn, $&quot;stats.*&quot;).show(3)
-+-----------+---------+------------------+------+----+------------------+----+-----+
-|spatial_key|dataCells|              mean|median|mode|            stddev|zmin| zmax|
-+-----------+---------+------------------+------+----+------------------+----+-----+
-|      [0,0]|    16384| 10338.11999511721| 10685|7737|1840.2361521578157|7291|23077|
-|      [1,1]|    16384|10194.718322753917|  9919|9782|2005.9484818489861|7412|28869|
-|      [6,1]|      768|10729.164062499996| 11094|9663|   861.51768587969|7952|12282|
-+-----------+---------+------------------+------+----+------------------+----+-----+
++-----------+---------+------------------+------------------+-----------------+------------------+------+-------+
+|spatial_key|dataCells|              mean|            median|             mode|            stddev|  zmin|   zmax|
++-----------+---------+------------------+------------------+-----------------+------------------+------+-------+
+|      [0,0]|    16380|10338.584737484738|10637.314862591527|7730.851035404142| 1839.879720286126|7291.0|23077.0|
+|      [1,1]|    16382| 10194.61164692956| 9811.613294170145|9299.878176382672|2004.6574431358638|7412.0|28869.0|
+|      [6,1]|      762| 10737.09186351706|11081.327461465871|11434.84782608696| 859.9593540785969|7952.0|12282.0|
++-----------+---------+------------------+------------------+-----------------+------------------+------+-------+
 only showing top 3 rows
 
 </code></pre>
@@ -200,26 +200,26 @@ only showing top 3 rows
 <p>The <code>tileHistogram</code> function computes a histogram over the data in each tile. See the <a href="https://geotrellis.github.io/scaladocs/latest/geotrellis/raster/histogram/Histogram.html">GeoTrellis <code>Histogram</code></a> documentation for details on what&rsquo;s available in the resulting data structure. Use this version for integral cell types, and <code>tileHistorgramDouble</code> for floating point cells types. </p>
 <p>In this example we compute quantile breaks.</p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; rf.select(tileHistogram($&quot;tile&quot;)).map(_.quantileBreaks(5)).show(5, false)
-+----------------------------------+
-|value                             |
-+----------------------------------+
-|[8155, 9931, 11126, 12042, 23077] |
-|[8670, 9524, 10303, 11212, 28869] |
-|[9708, 10744, 11235, 11455, 12282]|
-|[7987, 8503, 9260, 10875, 29722]  |
-|[9661, 10629, 11293, 11997, 23590]|
-+----------------------------------+
++----------------------------------------------------------------------------------------+
+|value                                                                                   |
++----------------------------------------------------------------------------------------+
+|[8103.110156129665, 9873.151789781845, 11079.687688811773, 11985.382194463962, 23077.0] |
+|[8554.14807969131, 9369.890387063984, 10185.2525523778, 11102.022063358472, 28869.0]    |
+|[9699.255528846154, 10777.7, 11225.815714285714, 11435.920391304351, 12282.0]           |
+|[7944.676606660357, 8410.849438923222, 9164.73866200972, 10779.847387671338, 29722.0]   |
+|[9605.314795780561, 10568.408943476315, 11241.848610999354, 11933.672857891852, 23590.0]|
++----------------------------------------------------------------------------------------+
 only showing top 5 rows
 
 </code></pre>
 <h2><a href="#aggregate-statistics" name="aggregate-statistics" class="anchor"><span class="anchor-link"></span></a>Aggregate Statistics</h2>
 <p>The <code>aggStats</code> function computes the same summary statistics as <code>tileStats</code>, but aggregates them over the whole RasterFrame.</p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; rf.select(aggStats($&quot;tile&quot;)).show()
-+---------+------------------+-----------------+------------------+------------------+-----------------+-------+
-|dataCells|              mean|           median|              mode|            stddev|             zmin|   zmax|
-+---------+------------------+-----------------+------------------+------------------+-----------------+-------+
-|   386941|10160.503048268341|9900.027479106197|10389.873462922193|1817.3730199562644|7397.635610766046|39158.0|
-+---------+------------------+-----------------+------------------+------------------+-----------------+-------+
++--------------------+
+|         stats(tile)|
++--------------------+
+|[387000,7209.0,39...|
++--------------------+
 
 </code></pre>
 <p>A more involved example: extract bin counts from a computed <code>Histogram</code>.</p>

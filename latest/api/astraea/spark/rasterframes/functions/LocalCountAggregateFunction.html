@@ -49,7 +49,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Catalyst aggregate function that counts non-<code>NoData</code> values in a cell-wise fashion.
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Catalyst aggregate function that counts <code>NoData</code> values in a cell-wise fashion.
 </p></div><dl class="attributes block"> <dt>Since</dt><dd><p>8/11/17</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.expressions.UserDefinedAggregateFunction" class="extype" target="_top">UserDefinedAggregateFunction</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.io.Serializable" class="extype" target="_top">Serializable</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></div>
@@ -89,8 +89,8 @@
         <div id="allMembers">
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
-              <ol><li name="astraea.spark.rasterframes.functions.LocalCountAggregateFunction#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;():astraea.spark.rasterframes.functions.LocalCountAggregateFunction"></a>
+              <ol><li name="astraea.spark.rasterframes.functions.LocalCountAggregateFunction#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="&lt;init&gt;(isData:Boolean):astraea.spark.rasterframes.functions.LocalCountAggregateFunction"></a>
       <a id="&lt;init&gt;:LocalCountAggregateFunction"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -98,14 +98,14 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">LocalCountAggregateFunction</span><span class="params">()</span>
+        <span class="name">LocalCountAggregateFunction</span><span class="params">(<span name="isData">isData: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@&lt;init&gt;():astraea.spark.rasterframes.functions.LocalCountAggregateFunction" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.LocalCountAggregateFunction@&lt;init&gt;(isData:Boolean):astraea.spark.rasterframes.functions.LocalCountAggregateFunction" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">isData</dt><dd class="cmt"><p>true if count should be of non-NoData values, false for NoData values.</p></dd></dl></div>
     </li></ol>
             </div>
 

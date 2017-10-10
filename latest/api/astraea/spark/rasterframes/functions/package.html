@@ -89,41 +89,61 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="astraea.spark.rasterframes.functions.AggregateHistogramFunction" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="AggregateHistogramFunctionextendsUserDefinedAggregateFunction"></a>
-      <a id="AggregateHistogramFunction:AggregateHistogramFunction"></a>
+              <ol><li name="astraea.spark.rasterframes.functions.CellCountAggregateFunction" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="CellCountAggregateFunctionextendsDeclarativeAggregatewithProductwithSerializable"></a>
+      <a id="CellCountAggregateFunction:CellCountAggregateFunction"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CellCountAggregateFunction.html"><span class="name">CellCountAggregateFunction</span></a><span class="params">(<span name="isData">isData: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>, <span name="child">child: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a></span>)</span><span class="result"> extends <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.aggregate.DeclarativeAggregate" class="extype" target="_top">DeclarativeAggregate</a> with <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.package@CellCountAggregateFunctionextendsDeclarativeAggregatewithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Cell count (data or NoData) aggregate function.</p><div class="fullcomment"><div class="comment cmt"><p>Cell count (data or NoData) aggregate function.
+</p></div><dl class="paramcmts block"><dt class="param">isData</dt><dd class="cmt"><p>true if count should be of non-NoData cells, false if count should be of NoData cells.</p></dd></dl><dl class="attributes block"> <dt>Since</dt><dd><p>10/5/17</p></dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.functions.CellMeanAggregateFunction" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="CellMeanAggregateFunctionextendsDeclarativeAggregatewithProductwithSerializable"></a>
+      <a id="CellMeanAggregateFunction:CellMeanAggregateFunction"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CellMeanAggregateFunction.html"><span class="name">CellMeanAggregateFunction</span></a><span class="params">(<span name="child">child: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a></span>)</span><span class="result"> extends <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.aggregate.DeclarativeAggregate" class="extype" target="_top">DeclarativeAggregate</a> with <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.package@CellMeanAggregateFunctionextendsDeclarativeAggregatewithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Cell mean aggregate function
+</p><div class="fullcomment"><div class="comment cmt"><p>Cell mean aggregate function
+</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>10/5/17</p></dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.functions.CellStatsAggregateFunction" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="CellStatsAggregateFunctionextendsUserDefinedAggregateFunction"></a>
+      <a id="CellStatsAggregateFunction:CellStatsAggregateFunction"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="AggregateHistogramFunction.html"><span class="name">AggregateHistogramFunction</span></a><span class="result"> extends <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.expressions.UserDefinedAggregateFunction" class="extype" target="_top">UserDefinedAggregateFunction</a></span>
+        <a href="CellStatsAggregateFunction.html"><span class="name">CellStatsAggregateFunction</span></a><span class="result"> extends <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.expressions.UserDefinedAggregateFunction" class="extype" target="_top">UserDefinedAggregateFunction</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.package@AggregateHistogramFunctionextendsUserDefinedAggregateFunction" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.package@CellStatsAggregateFunctionextendsUserDefinedAggregateFunction" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Histogram aggregation function for a full column of tiles.</p><div class="fullcomment"><div class="comment cmt"><p>Histogram aggregation function for a full column of tiles.
-</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>4/24/17</p></dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.functions.AggregateStatsFunction" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="AggregateStatsFunctionextendsAggregateHistogramFunction"></a>
-      <a id="AggregateStatsFunction:AggregateStatsFunction"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">class</span>
-      </span>
-      <span class="symbol">
-        <a href="AggregateStatsFunction.html"><span class="name">AggregateStatsFunction</span></a><span class="result"> extends <a href="AggregateHistogramFunction.html" class="extype" name="astraea.spark.rasterframes.functions.AggregateHistogramFunction">AggregateHistogramFunction</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.package@AggregateStatsFunctionextendsAggregateHistogramFunction" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Statistics aggregation function for a full column of tiles.</p><div class="fullcomment"><div class="comment cmt"><p>Statistics aggregation function for a full column of tiles.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>5/18/17</p></dd></dl></div>
+      <p class="shortcomment cmt">Statistics aggregation function for a full column of tiles.</p><div class="fullcomment"><div class="comment cmt"><p>Statistics aggregation function for a full column of tiles.
+</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>4/17/17</p></dd></dl></div>
     </li><li name="astraea.spark.rasterframes.functions.ColumnFunctions" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="ColumnFunctionsextendsAnyRef"></a>
       <a id="ColumnFunctions:ColumnFunctions"></a>
@@ -142,6 +162,41 @@
     </span>
       <p class="shortcomment cmt">UDFs for working with Tiles in Spark DataFrames.</p><div class="fullcomment"><div class="comment cmt"><p>UDFs for working with Tiles in Spark DataFrames.
 </p></div><dl class="attributes block"> <dt>Since</dt><dd><p>4/3/17</p></dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.functions.DataBiasedOp" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="DataBiasedOpextendsLocalTileBinaryOp"></a>
+      <a id="DataBiasedOp:DataBiasedOp"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="DataBiasedOp.html"><span class="name">DataBiasedOp</span></a><span class="result"> extends <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-raster_2.11/1.1.1/geotrellis-raster_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.raster.mapalgebra.local.LocalTileBinaryOp" class="extype" target="_top">LocalTileBinaryOp</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.package@DataBiasedOpextendsLocalTileBinaryOp" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="astraea.spark.rasterframes.functions.HistogramAggregateFunction" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="HistogramAggregateFunctionextendsUserDefinedAggregateFunction"></a>
+      <a id="HistogramAggregateFunction:HistogramAggregateFunction"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="HistogramAggregateFunction.html"><span class="name">HistogramAggregateFunction</span></a><span class="result"> extends <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.expressions.UserDefinedAggregateFunction" class="extype" target="_top">UserDefinedAggregateFunction</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.package@HistogramAggregateFunctionextendsUserDefinedAggregateFunction" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Histogram aggregation function for a full column of tiles.</p><div class="fullcomment"><div class="comment cmt"><p>Histogram aggregation function for a full column of tiles.
+</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>4/24/17</p></dd></dl></div>
     </li><li name="astraea.spark.rasterframes.functions.LocalCountAggregateFunction" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="LocalCountAggregateFunctionextendsUserDefinedAggregateFunction"></a>
       <a id="LocalCountAggregateFunction:LocalCountAggregateFunction"></a>
@@ -158,10 +213,10 @@
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Catalyst aggregate function that counts non-<code>NoData</code> values in a cell-wise fashion.</p><div class="fullcomment"><div class="comment cmt"><p>Catalyst aggregate function that counts non-<code>NoData</code> values in a cell-wise fashion.
+      <p class="shortcomment cmt">Catalyst aggregate function that counts <code>NoData</code> values in a cell-wise fashion.</p><div class="fullcomment"><div class="comment cmt"><p>Catalyst aggregate function that counts <code>NoData</code> values in a cell-wise fashion.
 </p></div><dl class="attributes block"> <dt>Since</dt><dd><p>8/11/17</p></dd></dl></div>
     </li><li name="astraea.spark.rasterframes.functions.LocalMeanAggregateFunction" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="LocalMeanAggregateFunctionextendsStatsLocalTileAggregateFunction"></a>
+      <a id="LocalMeanAggregateFunctionextendsLocalStatsAggregateFunction"></a>
       <a id="LocalMeanAggregateFunction:LocalMeanAggregateFunction"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -169,17 +224,35 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="LocalMeanAggregateFunction.html"><span class="name">LocalMeanAggregateFunction</span></a><span class="result"> extends <a href="StatsLocalTileAggregateFunction.html" class="extype" name="astraea.spark.rasterframes.functions.StatsLocalTileAggregateFunction">StatsLocalTileAggregateFunction</a></span>
+        <a href="LocalMeanAggregateFunction.html"><span class="name">LocalMeanAggregateFunction</span></a><span class="result"> extends <a href="LocalStatsAggregateFunction.html" class="extype" name="astraea.spark.rasterframes.functions.LocalStatsAggregateFunction">LocalStatsAggregateFunction</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.package@LocalMeanAggregateFunctionextendsStatsLocalTileAggregateFunction" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.package@LocalMeanAggregateFunctionextendsLocalStatsAggregateFunction" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <p class="shortcomment cmt">Aggregation function that only returns the average.</p><div class="fullcomment"><div class="comment cmt"><p>Aggregation function that only returns the average. Depends on
-<a href="StatsLocalTileAggregateFunction.html" class="extype" name="astraea.spark.rasterframes.functions.StatsLocalTileAggregateFunction">StatsLocalTileAggregateFunction</a> for computation and just
+<a href="LocalStatsAggregateFunction.html" class="extype" name="astraea.spark.rasterframes.functions.LocalStatsAggregateFunction">LocalStatsAggregateFunction</a> for computation and just
 selects the mean result tile.
 </p></div><dl class="attributes block"> <dt>Since</dt><dd><p>8/11/17</p></dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.functions.LocalStatsAggregateFunction" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="LocalStatsAggregateFunctionextendsUserDefinedAggregateFunction"></a>
+      <a id="LocalStatsAggregateFunction:LocalStatsAggregateFunction"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="LocalStatsAggregateFunction.html"><span class="name">LocalStatsAggregateFunction</span></a><span class="result"> extends <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.expressions.UserDefinedAggregateFunction" class="extype" target="_top">UserDefinedAggregateFunction</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.package@LocalStatsAggregateFunctionextendsUserDefinedAggregateFunction" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Aggregation function for computing multiple local (cell-wise) statistics across all tiles.</p><div class="fullcomment"><div class="comment cmt"><p>Aggregation function for computing multiple local (cell-wise) statistics across all tiles.
+</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>4/17/17</p></dd></dl></div>
     </li><li name="astraea.spark.rasterframes.functions.LocalTileOpAggregateFunction" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="LocalTileOpAggregateFunctionextendsUserDefinedAggregateFunction"></a>
       <a id="LocalTileOpAggregateFunction:LocalTileOpAggregateFunction"></a>
@@ -197,24 +270,6 @@ selects the mean result tile.
       </a>
     </span>
       <p class="shortcomment cmt">Aggregation function for applying a <span class="extype" name="LocalTileBinaryOp">LocalTileBinaryOp</span> pairwise across all tiles.</p><div class="fullcomment"><div class="comment cmt"><p>Aggregation function for applying a <span class="extype" name="LocalTileBinaryOp">LocalTileBinaryOp</span> pairwise across all tiles. Assumes Monoid algebra.
-</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>4/17/17</p></dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.functions.StatsLocalTileAggregateFunction" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="StatsLocalTileAggregateFunctionextendsUserDefinedAggregateFunction"></a>
-      <a id="StatsLocalTileAggregateFunction:StatsLocalTileAggregateFunction"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">class</span>
-      </span>
-      <span class="symbol">
-        <a href="StatsLocalTileAggregateFunction.html"><span class="name">StatsLocalTileAggregateFunction</span></a><span class="result"> extends <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.expressions.UserDefinedAggregateFunction" class="extype" target="_top">UserDefinedAggregateFunction</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.package@StatsLocalTileAggregateFunctionextendsUserDefinedAggregateFunction" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Aggregation function for computing multiple local (cell-wise) statistics across all tiles.</p><div class="fullcomment"><div class="comment cmt"><p>Aggregation function for computing multiple local (cell-wise) statistics across all tiles.
 </p></div><dl class="attributes block"> <dt>Since</dt><dd><p>4/17/17</p></dd></dl></div>
     </li><li name="astraea.spark.rasterframes.functions.TileAssemblerFunction" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="TileAssemblerFunctionextendsUserDefinedAggregateFunction"></a>
@@ -242,19 +297,55 @@ selects the mean result tile.
 
         <div id="values" class="values members">
               <h3>Value Members</h3>
-              <ol><li name="astraea.spark.rasterframes.functions.StatsLocalTileAggregateFunction" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="StatsLocalTileAggregateFunction"></a>
-      <a id="StatsLocalTileAggregateFunction:StatsLocalTileAggregateFunction"></a>
+              <ol><li name="astraea.spark.rasterframes.functions.CellStatsAggregateFunction" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CellStatsAggregateFunction"></a>
+      <a id="CellStatsAggregateFunction:CellStatsAggregateFunction"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="StatsLocalTileAggregateFunction$.html"><span class="name">StatsLocalTileAggregateFunction</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <a href="CellStatsAggregateFunction$.html"><span class="name">CellStatsAggregateFunction</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.package@StatsLocalTileAggregateFunction" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.package@CellStatsAggregateFunction" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="astraea.spark.rasterframes.functions.DataBiasedOp" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="DataBiasedOp"></a>
+      <a id="DataBiasedOp:DataBiasedOp"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="DataBiasedOp$.html"><span class="name">DataBiasedOp</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.package@DataBiasedOp" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Variations of the GeoTrellis local algebra operations, except that
+NoData combined with a value results in the value being returned.</p><div class="fullcomment"><div class="comment cmt"><p>Variations of the GeoTrellis local algebra operations, except that
+NoData combined with a value results in the value being returned.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>10/5/17</p></dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.functions.LocalStatsAggregateFunction" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LocalStatsAggregateFunction"></a>
+      <a id="LocalStatsAggregateFunction:LocalStatsAggregateFunction"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="LocalStatsAggregateFunction$.html"><span class="name">LocalStatsAggregateFunction</span></a><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.package@LocalStatsAggregateFunction" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>

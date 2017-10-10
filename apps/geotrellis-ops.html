@@ -45,7 +45,7 @@ gtag('config', 'UA-106630615-1');
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.5.4
+0.5.5
 </div>
 </div>
 <div class="nav-toc">
@@ -97,7 +97,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.5.4
+0.5.5
 </div>
 </div>
 <div class="nav-toc">
@@ -147,7 +147,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 import geotrellis.raster.equalization._
 
 scala&gt; val equalizer = udf((t: Tile) =&gt; t.equalize())
-equalizer: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(&lt;function1&gt;,org.apache.spark.sql.gt.types.TileUDT@1d72b571,Some(List(org.apache.spark.sql.gt.types.TileUDT@1d72b571)))
+equalizer: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(&lt;function1&gt;,org.apache.spark.sql.gt.types.TileUDT@22e80d0f,Some(List(org.apache.spark.sql.gt.types.TileUDT@22e80d0f)))
 
 scala&gt; val equalized = rf.select(equalizer($&quot;tile&quot;) as &quot;equalized&quot;)
 equalized: org.apache.spark.sql.DataFrame = [equalized: rf_tile]
@@ -156,18 +156,18 @@ scala&gt; equalized.select(tileMean($&quot;equalized&quot;) as &quot;equalizedMe
 +------------------+
 |equalizedMean     |
 +------------------+
-|32776.88976377951 |
-|32775.50851492398 |
-|30774.931392296898|
-|32777.86241836048 |
-|32775.866507965664|
+|32776.88976377953 |
+|32775.508514924004|
+|30774.931392296894|
+|32777.8624183605  |
+|32775.86650796558 |
 +------------------+
 only showing top 5 rows
 
 </code></pre>
 <p>Here&rsquo;s an example downsampling a tile and rendering each tile as a matrix of numerical values.</p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; val downsample = udf((t: Tile) =&gt; t.resample(4, 4))
-downsample: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(&lt;function1&gt;,org.apache.spark.sql.gt.types.TileUDT@1d72b571,Some(List(org.apache.spark.sql.gt.types.TileUDT@1d72b571)))
+downsample: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(&lt;function1&gt;,org.apache.spark.sql.gt.types.TileUDT@22e80d0f,Some(List(org.apache.spark.sql.gt.types.TileUDT@22e80d0f)))
 
 scala&gt; val downsampled = rf.select(renderAscii(downsample($&quot;tile&quot;)) as &quot;minime&quot;)
 downsampled: org.apache.spark.sql.DataFrame = [minime: string]
