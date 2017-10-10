@@ -102,10 +102,10 @@ trait ColumnFunctions {
 
   /** Compute the full column aggregate floating point statistics. */
   @Experimental
-  def aggStats(col: Column): TypedColumn[Any, Statistics[Double]] =
+  def aggStats(col: Column): Column =
   withAlias("stats", col)(
     UDFs.aggStats(col)
-  ).as[Statistics[Double]]
+  )
 
   /** Computes the column aggregate mean. */
   @Experimental
@@ -140,6 +140,20 @@ trait ColumnFunctions {
   def tileSum(col: Column): TypedColumn[Any, Double] =
   withAlias("tileSum", col)(
     udf[Double, Tile](UDFs.tileSum).apply(col)
+  ).as[Double]
+
+  /** Compute the minimum cell value in tile. */
+  @Experimental
+  def tileMin(col: Column): TypedColumn[Any, Double] =
+  withAlias("tileMin", col)(
+    udf[Double, Tile](UDFs.tileMin).apply(col)
+  ).as[Double]
+
+  /** Compute the maximum cell value in tile. */
+  @Experimental
+  def tileMax(col: Column): TypedColumn[Any, Double] =
+  withAlias("tileMax", col)(
+    udf[Double, Tile](UDFs.tileMax).apply(col)
   ).as[Double]
 
   /** Compute TileHistogram of Tile values. */

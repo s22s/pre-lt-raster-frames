@@ -126,7 +126,7 @@ object UDFs {
   private[rasterframes] val aggHistogram = new HistogramAggregateFunction()
 
   /** Computes the column aggregate statistics */
-  private[rasterframes] val aggStats = new DoubleStatsAggregateFunction()
+  private[rasterframes] val aggStats = new CellStatsAggregateFunction()
 
   /** Reports the dimensions of a tile. */
   private[rasterframes] val tileDimensions = safeEval[CellGrid, (Int, Int)](_.dimensions)
@@ -150,8 +150,26 @@ object UDFs {
     sum
   })
 
+  /** Find the minimum cell value. */
+  private[rasterframes] val tileMin: (Tile) ⇒ Double = safeEval((t: Tile) ⇒ {
+    var min: Double = Double.MaxValue
+    t.foreachDouble(z ⇒ if(isData(z)) min = math.min(min, z))
+    if (min == Double.MaxValue) Double.NaN
+    else min
+  })
+
+  /** Find the maximum cell value. */
+  private[rasterframes] val tileMax: (Tile) ⇒ Double = safeEval((t: Tile) ⇒ {
+    var max: Double = Double.MinValue
+    t.foreachDouble(z ⇒ if(isData(z)) max = math.max(max, z))
+    if (max == Double.MinValue) Double.NaN
+    else max
+  })
+
   /** Single tile mean. Convenience for `tileHistogram.statistics.mean`. */
-  private[rasterframes] val tileMean = safeEval[Tile, Double](tile ⇒ tileSum(tile)/dataCells(tile))
+  private[rasterframes] val tileMean: (Tile) ⇒ Double = safeEval((tile: Tile) ⇒
+    tileSum(tile)/dataCells(tile)
+  )
 
   /** Compute summary cell-wise statistics across tiles. */
   private[rasterframes] val localAggStats = new LocalStatsAggregateFunction()
@@ -182,8 +200,6 @@ object UDFs {
 
   /** Render tile as ASCII string. */
   private[rasterframes] val renderAscii: (Tile) ⇒ String = safeEval(_.asciiDraw)
-
-
 
   /** Constructor for constant tiles */
   private[rasterframes] val makeConstantTile: (Number, Int, Int, String) ⇒ Tile = (value, cols, rows, cellTypeName) ⇒ {

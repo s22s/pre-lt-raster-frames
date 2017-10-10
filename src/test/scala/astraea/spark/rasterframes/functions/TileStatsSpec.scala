@@ -23,7 +23,6 @@ import astraea.spark.rasterframes.TestData.randomTile
 import astraea.spark.rasterframes.{TestData, TestEnvironment, localAggMax, localAggMin, _}
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.{Max, Min}
-import geotrellis.raster.summary.Statistics
 import geotrellis.raster._
 import org.apache.spark.sql.functions._
 
@@ -142,16 +141,20 @@ class TileStatsSpec extends TestEnvironment with TestData  {
 
     it("should compute aggregate statistics") {
       val ds = Seq.fill[Tile](10)(randomTile(5, 5, "float32")).toDF("tiles")
+
+      val exploded = ds.select(explodeTiles($"tiles"))
+      val (mean, vrnc) = exploded.agg(avg($"tiles"), var_pop($"tiles")).as[(Double, Double)].first
+
       ds.createOrReplaceTempView("tmp")
-      val agg = ds.select(aggStats($"tiles"))
+      val agg = ds.select(aggStats($"tiles") as "stats").select($"stats.variance".as[Double])
 
-      assert(agg.first().stddev === 1.0 +- 0.3) // <-- playing with statistical fire :)
+      assert(vrnc === agg.first() +- 1e-6)
 
-      val agg2 = sql("select stats.* from (select rf_stats(tiles) as stats from tmp)") .as[Statistics[Double]]
-      assert(agg2.first().dataCells === 250)
+      val agg2 = sql("select stats.* from (select rf_stats(tiles) as stats from tmp)")
+      assert(agg2.first().getAs[Long]("dataCells") === 250L)
 
       val agg3 = ds.agg(aggStats($"tiles") as "stats").select($"stats.mean".as[Double])
-      assert(agg.first().mean === agg3.first())
+      assert(mean === agg3.first())
     }
 
     it("should compute aggregate local stats") {
