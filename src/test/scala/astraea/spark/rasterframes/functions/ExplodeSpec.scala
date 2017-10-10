@@ -128,7 +128,7 @@ class ExplodeSpec extends TestEnvironment with TestData {
 
         val exploded = tinyTiles.select(tinyTiles.spatialKeyColumn, explodeTiles(tinyTiles.tileColumns.head))
 
-        exploded.printSchema()
+        //exploded.printSchema()
 
         val assembled = exploded.groupBy(tinyTiles.spatialKeyColumn)
           .agg(assembleTile(

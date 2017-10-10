@@ -37,7 +37,7 @@ rf.select(rf.spatialKeyColumn, tileDimensions($"tile")).show(3)
 Count the numer of `NoData` and non-`NoData` cells in each tile.
 
 ```tut
-rf.select(rf.spatialKeyColumn, nodataCells($"tile"), dataCells($"tile")).show(3)
+rf.select(rf.spatialKeyColumn, noDataCells($"tile"), dataCells($"tile")).show(3)
 ```
 
 #### Tile Mean

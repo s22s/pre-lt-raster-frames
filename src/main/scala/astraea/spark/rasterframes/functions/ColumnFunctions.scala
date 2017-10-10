@@ -128,20 +128,6 @@ trait ColumnFunctions {
       .toAggregateExpression().asColumn
       .as[Long]
 
-  /** Compute TileHistogram of floating point Tile values. */
-  @Experimental
-  def tileHistogramDouble(col: Column): TypedColumn[Any, Histogram[Double]] =
-  withAlias("tileHistogramDouble", col)(
-    udf[Histogram[Double], Tile](UDFs.tileHistogramDouble).apply(col)
-  ).as[Histogram[Double]]
-
-  /** Compute statistics of Tile values. */
-  @Experimental
-  def tileStatsDouble(col: Column): TypedColumn[Any, Statistics[Double]] =
-  withAlias("tileStatsDouble", col)(
-    udf[Statistics[Double], Tile](UDFs.tileStatsDouble).apply(col)
-  ).as[Statistics[Double]]
-
   /** Compute the Tile-wise mean */
   @Experimental
   def tileMean(col: Column): TypedColumn[Any, Double] =
@@ -149,19 +135,26 @@ trait ColumnFunctions {
     udf[Double, Tile](UDFs.tileMean).apply(col)
   ).as[Double]
 
+  /** Compute the Tile-wise sum */
+  @Experimental
+  def tileSum(col: Column): TypedColumn[Any, Double] =
+  withAlias("tileSum", col)(
+    udf[Double, Tile](UDFs.tileSum).apply(col)
+  ).as[Double]
+
   /** Compute TileHistogram of Tile values. */
   @Experimental
-  def tileHistogram(col: Column): TypedColumn[Any, Histogram[Int]] =
+  def tileHistogram(col: Column): TypedColumn[Any, Histogram[Double]] =
   withAlias("tileHistogram", col)(
-    udf[Histogram[Int], Tile](UDFs.tileHistogram).apply(col)
-  ).as[Histogram[Int]]
+    udf[Histogram[Double], Tile](UDFs.tileHistogram).apply(col)
+  ).as[Histogram[Double]]
 
   /** Compute statistics of Tile values. */
   @Experimental
-  def tileStats(col: Column): TypedColumn[Any, Statistics[Int]] =
+  def tileStats(col: Column): TypedColumn[Any, Statistics[Double]] =
   withAlias("tileStats", col)(
-    udf[Statistics[Int], Tile](UDFs.tileStats).apply(col)
-  ).as[Statistics[Int]]
+    udf[Statistics[Double], Tile](UDFs.tileStats).apply(col)
+  ).as[Statistics[Double]]
 
   /** Counts the number of non-NoData cells per Tile. */
   @Experimental

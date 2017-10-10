@@ -37,13 +37,35 @@ object UDFs {
   private[rasterframes] def safeEval[P1, P2, R](f: (P1, P2) ⇒ R): (P1, P2) ⇒ R =
     (p1, p2) ⇒ if (p1 == null || p2 == null) null.asInstanceOf[R] else f(p1, p2)
 
+  /** Count tile cells that have a data value. */
+  private[rasterframes] val dataCells: (Tile) ⇒ Long = safeEval((t: Tile) ⇒ {
+    var count: Long = 0
+    t.dualForeach(
+      z ⇒ if(isData(z)) count = count + 1
+    ) (
+      z ⇒ if(isData(z)) count = count + 1
+    )
+    count
+  })
+
+  /** Count tile cells that have a no-data value. */
+  private[rasterframes] val nodataCells: (Tile) ⇒ Long = safeEval((t: Tile) ⇒ {
+    var count: Long = 0
+    t.dualForeach(
+      z ⇒ if(isNoData(z)) count = count + 1
+    )(
+      z ⇒ if(isNoData(z)) count = count + 1
+    )
+    count
+  })
+
   /** Flattens tile into an array. */
   private[rasterframes] def tileToArray[T: HasCellType: TypeTag]: (Tile) ⇒ Array[T] = {
     def convert(tile: Tile) = {
       typeOf[T] match {
         case t if t =:= typeOf[Int] ⇒ tile.toArray()
         case t if t =:= typeOf[Double] ⇒ tile.toArrayDouble()
-        case t if t =:= typeOf[Byte] ⇒ tile.toArray().map(_.toByte)          // TODO: Check NoData handling VVVVV
+        case t if t =:= typeOf[Byte] ⇒ tile.toArray().map(_.toByte)          // TODO: Check NoData handling. probably need to use dualForeach
         case t if t =:= typeOf[Short] ⇒ tile.toArray().map(_.toShort)
         case t if t =:= typeOf[Float] ⇒ tile.toArrayDouble().map(_.toFloat)
       }
@@ -115,20 +137,21 @@ object UDFs {
   /** Set the tile's no-data value. */
   private[rasterframes] def withNoData(nodata: Double) = safeEval[Tile, Tile](_.withNoData(Some(nodata)))
 
-  /** Single floating point tile histogram. */
-  private[rasterframes] val tileHistogramDouble = safeEval[Tile, Histogram[Double]](_.histogramDouble())
-
-  /** Single floating point tile statistics. Convenience for `tileHistogram.statisticsDouble`. */
-  private[rasterframes] val tileStatsDouble = safeEval[Tile, Statistics[Double]](_.statisticsDouble.orNull)
-
   /** Single tile histogram. */
-  private[rasterframes] val tileHistogram = safeEval[Tile, Histogram[Int]](_.histogram)
+  private[rasterframes] val tileHistogram = safeEval[Tile, Histogram[Double]](_.histogramDouble)
 
   /** Single tile statistics. Convenience for `tileHistogram.statistics`. */
-  private[rasterframes] val tileStats = safeEval[Tile, Statistics[Int]](_.statistics.orNull)
+  private[rasterframes] val tileStats = safeEval[Tile, Statistics[Double]](_.statisticsDouble.orNull)
+
+  /** Add up all the cell values. */
+  private[rasterframes] val tileSum: (Tile) ⇒ Double = safeEval((t: Tile) ⇒ {
+    var sum: Double = 0.0
+    t.foreachDouble(z ⇒ if(isData(z)) sum = sum + z)
+    sum
+  })
 
   /** Single tile mean. Convenience for `tileHistogram.statistics.mean`. */
-  private[rasterframes] val tileMean = safeEval[Tile, Double](_.statistics.map(_.mean).getOrElse(Double.NaN))
+  private[rasterframes] val tileMean = safeEval[Tile, Double](tile ⇒ tileSum(tile)/dataCells(tile))
 
   /** Compute summary cell-wise statistics across tiles. */
   private[rasterframes] val localAggStats = new LocalStatsAggregateFunction()
@@ -160,36 +183,7 @@ object UDFs {
   /** Render tile as ASCII string. */
   private[rasterframes] val renderAscii: (Tile) ⇒ String = safeEval(_.asciiDraw)
 
-  /** Count tile cells that have a data value. */
-  // TODO: Do we need to `safeEval` here?
-  // TODO: Should we get rid of the `var`?
-  private[rasterframes] val dataCells: (Tile) ⇒ Long = safeEval((t: Tile) ⇒ {
-    var count: Long = 0
-    t.dualForeach(
-      z ⇒ if(isData(z)) count = count + 1
-    ) (
-      z ⇒ if(isData(z)) count = count + 1
-    )
-    count
-  })
 
-  /** Count tile cells that have a no-data value. */
-  private[rasterframes] val nodataCells: (Tile) ⇒ Long = safeEval((t: Tile) ⇒ {
-    var count: Long = 0
-    t.dualForeach(
-      z ⇒ if(isNoData(z)) count = count + 1
-    )(
-      z ⇒ if(isNoData(z)) count = count + 1
-    )
-    count
-  })
-
-  /** Add up all the cell values. */
-  private[rasterframes] val sumCells: (Tile) ⇒ Double = safeEval((t: Tile) ⇒ {
-    var sum: Double = 0.0
-    t.foreachDouble(z ⇒ if(isData(z)) sum = sum + z)
-    sum
-  })
 
   /** Constructor for constant tiles */
   private[rasterframes] val makeConstantTile: (Number, Int, Int, String) ⇒ Tile = (value, cols, rows, cellTypeName) ⇒ {

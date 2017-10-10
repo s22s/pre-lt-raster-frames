@@ -20,12 +20,11 @@
 package astraea.spark.rasterframes.functions
 
 import astraea.spark.rasterframes.TestData.randomTile
-import astraea.spark.rasterframes.{TestData, TestEnvironment, localAggMax, localAggMin, tileStatsDouble, _}
+import astraea.spark.rasterframes.{TestData, TestEnvironment, localAggMax, localAggMin, _}
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.{Max, Min}
 import geotrellis.raster.summary.Statistics
 import geotrellis.raster._
-import org.apache.spark.sql._
 import org.apache.spark.sql.functions._
 
 /**
@@ -96,9 +95,13 @@ class TileStatsSpec extends TestEnvironment with TestData  {
 
     it("should compute tile statistics") {
       val ds = (Seq.fill[Tile](3)(randomTile(5, 5, "float32")) :+ null).toDS()
-      val means1 = ds.select(tileStatsDouble($"value")).map(s ⇒ Option(s).map(_.mean).getOrElse(0.0)).collect
+      val means1 = ds.select(tileStats($"value")).map(s ⇒ Option(s).map(_.mean).getOrElse(0.0)).collect
       val means2 = ds.select(tileMean($"value")).collect
-      assert(means1 === means2)
+      // Compute the mean manually, knowing we're not dealing with no-data values.
+      val means = ds.select(tileToArray[Float]($"value")).map(a ⇒ if (a == null) 0.0 else a.sum/a.length).collect
+
+      forAll(means.zip(means1)) { case (l, r) ⇒ assert(l === r +- 1e-6) }
+      forAll(means.zip(means2)) { case (l, r) ⇒ assert(l === r +- 1e-6) }
     }
 
     it("should compute per-tile histogram") {
@@ -151,15 +154,6 @@ class TileStatsSpec extends TestEnvironment with TestData  {
       assert(agg.first().mean === agg3.first())
     }
 
-//    def printStatsRows(df: DataFrame): Unit = {
-//      val tiles = df.collect().flatMap(_.toSeq).map(_.asInstanceOf[Tile])
-//
-//      // Render debugging form.
-//      tiles.map(_.asciiDraw())
-//        .zip(df.columns)
-//        .foreach{case (img, label) ⇒ println(s"$label:\n$img")}
-//    }
-
     it("should compute aggregate local stats") {
       val ave = (nums: Array[Double]) ⇒ nums.sum / nums.length
 
@@ -196,9 +190,6 @@ class TileStatsSpec extends TestEnvironment with TestData  {
 
       val ds = (Seq.fill(20)(tile) :+ null).toDF("tiles")
 
-      //val stats = ds.select(localAggStats($"tiles") as "stats").select("stats.*")
-      //printStatsRows(stats)
-
       // counted everything properly
       val countTile = ds.select(localAggDataCells($"tiles")).first()
       forAll(countTile.toArray())(i ⇒ assert(i === 20))
@@ -225,17 +216,6 @@ class TileStatsSpec extends TestEnvironment with TestData  {
       forEvery(counts)(c ⇒ assert(c === nds))
       val counts2 = tiles.select(dataCells($"tiles")).collect().dropRight(1)
       forEvery(counts2)(c ⇒ assert(c === tsize * tsize - nds))
-    }
-
-    it("should coerce tile type") {
-      val intTile = IntArrayTile(Array(0), 1, 1)
-      val doubleTile = DoubleArrayTile(Array(1), 1, 1)
-
-      val intOverDouble = intTile / doubleTile
-      val doubleOverInt = doubleTile / intTile
-
-      println(intOverDouble.asciiDrawDouble())
-      println(doubleOverInt.asciiDrawDouble())
     }
   }
 

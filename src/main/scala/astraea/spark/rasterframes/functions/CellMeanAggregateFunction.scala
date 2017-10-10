@@ -48,7 +48,7 @@ case class CellMeanAggregateFunction(child: Expression) extends DeclarativeAggre
   )
 
   private val dataCells = udf(UDFs.dataCells)
-  private val sumCells = udf(UDFs.sumCells)
+  private val sumCells = udf(UDFs.tileSum)
 
   val updateExpressions = Seq(
     Add(sum, sumCells(child.asColumn).expr),

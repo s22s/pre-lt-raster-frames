@@ -124,14 +124,15 @@ object ProjectPlugin extends AutoPlugin {
       scalacOptions in (Compile, doc) ++= Seq(
         "-no-link-warnings"
       ),
-      fork in tut := true,
-      javaOptions in tut := Seq("-Xmx2G"),
       libraryDependencies ++= Seq(
         spark("mllib") % Tut,
         spark("sql") % Tut,
         geotrellis("spark") % Tut,
         geotrellis("raster") % Tut
-      )
+      ),
+      // NB: These don't seem to work. Still trying to figure Tut's run model.
+      fork in (Tut, run) := true,
+      javaOptions in (Tut, run) := Seq("-Xmx6G")
     )
   }
 }
