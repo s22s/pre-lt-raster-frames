@@ -71,7 +71,7 @@ class ExplodeSpec extends TestEnvironment with TestData {
     it("should handle null tiles.") {
       val df = Seq[Tile](byteArrayTile, null, byteArrayTile).toDF("tile1")
       val exploded = df.select(explodeTiles($"tile1"))
-      exploded.show(false)
+      assert(exploded.count === byteArrayTile.size * 2)
     }
 
     it("should convert tile into array") {

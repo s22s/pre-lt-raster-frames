@@ -18,9 +18,8 @@ package org.apache.spark.sql
 
 import org.apache.spark.annotation.Experimental
 import org.apache.spark.sql.catalyst.InternalRow
-import org.apache.spark.sql.catalyst.analysis.UnresolvedAttribute
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
-import org.apache.spark.sql.catalyst.expressions.{Alias, AttributeReference}
+import org.apache.spark.sql.catalyst.expressions.Expression
 
 /**
  * Module providing support for using GeoTrellis native types in Spark SQL.
@@ -29,6 +28,10 @@ import org.apache.spark.sql.catalyst.expressions.{Alias, AttributeReference}
  * @since 3/30/17
  */
 package object gt {
+  implicit class CanBeColumn(expression: Expression) {
+    def asColumn: Column = Column(expression)
+  }
+
   @Experimental
   def gtRegister(sqlContext: SQLContext): Unit = {
     gt.types.Registrator.register()

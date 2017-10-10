@@ -99,7 +99,7 @@ package object rasterframes extends Implicits with ColumnFunctions {
     type get[M] = GetComponent[M, Bounds[K]]
   }
 
-  trait HasCellType[T]
+  trait HasCellType[T] extends Serializable
   object HasCellType {
     implicit val intHasCellType = new HasCellType[Int] {}
     implicit val doubleHasCellType = new HasCellType[Double] {}

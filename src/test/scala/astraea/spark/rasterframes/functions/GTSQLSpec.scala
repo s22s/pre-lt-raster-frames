@@ -117,7 +117,7 @@ class GTSQLSpec extends TestEnvironment with TestData  {
     }
 
     it("aggregate functions should handle null tiles") {
-      val aggs = Seq(localAggMax _, localAggMin _, localAggCount _)
+      val aggs = Seq(localAggMax _, localAggMin _, localAggDataCells _)
 
       val datasets = Seq(
         {

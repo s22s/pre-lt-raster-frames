@@ -27,6 +27,7 @@ import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 import org.apache.spark.sql.functions._
 
 import org.apache.spark.sql.types._
+import org.apache.spark.sql.gt._
 import astraea.spark.rasterframes._
 import scala.reflect.runtime.universe._
 
@@ -37,12 +38,9 @@ import scala.reflect.runtime.universe._
  * @since 4/3/17
  */
 trait ColumnFunctions {
-  private implicit val stringEnc: Encoder[String] = Encoders.STRING
-  private implicit val doubleEnc: Encoder[Double] = Encoders.scalaDouble
   private implicit val statsEnc: Encoder[Statistics[Int]] = Encoders.product[Statistics[Int]]
-  private implicit val longEnc: Encoder[Long] = Encoders.scalaLong
-  private implicit val intArray: Encoder[Array[Int]] = ExpressionEncoder()
-  private implicit val doubleArray: Encoder[Array[Double]] = ExpressionEncoder()
+  private implicit def arrayEnc[T: TypeTag]: Encoder[Array[T]] = ExpressionEncoder()
+  private implicit def genEnc[T: TypeTag]: Encoder[T] = ExpressionEncoder()
 
   // format: off
   /** Create a row for each cell in Tile. */
@@ -68,9 +66,9 @@ trait ColumnFunctions {
 
   /** Flattens Tile into an array. A numeric type parameter is required*/
   @Experimental
-  def tileToArray[T: HasCellType: TypeTag](col: Column): Column = withAlias("tileToArray", col)(
+  def tileToArray[T: HasCellType: TypeTag](col: Column): TypedColumn[Any, Array[T]] = withAlias("tileToArray", col)(
     udf[Array[T], Tile](UDFs.tileToArray).apply(col)
-  )
+  ).as[Array[T]]
 
   @Experimental
   /** Convert array in `arrayCol` into a Tile of dimensions `cols` and `rows`*/
@@ -109,6 +107,27 @@ trait ColumnFunctions {
     UDFs.aggStats(col)
   ).as[Statistics[Double]]
 
+  /** Computes the column aggregate mean. */
+  @Experimental
+  def aggMean(col: Column) =
+    CellMeanAggregateFunction(col.expr)
+      .toAggregateExpression().asColumn
+      .as[Double]
+
+  /** Computes the number of non-NoData cells in a column. */
+  @Experimental
+  def aggDataCells(col: Column) =
+    CellCountAggregateFunction(true, col.expr)
+    .toAggregateExpression().asColumn
+    .as[Long]
+
+  /** Computes the number of NoData cells in a column. */
+  @Experimental
+  def aggNoDataCells(col: Column) =
+    CellCountAggregateFunction(false, col.expr)
+      .toAggregateExpression().asColumn
+      .as[Long]
+
   /** Compute TileHistogram of floating point Tile values. */
   @Experimental
   def tileHistogramDouble(col: Column): TypedColumn[Any, Histogram[Double]] =
@@ -122,13 +141,6 @@ trait ColumnFunctions {
   withAlias("tileStatsDouble", col)(
     udf[Statistics[Double], Tile](UDFs.tileStatsDouble).apply(col)
   ).as[Statistics[Double]]
-
-  /** Compute the Tile-wise mean */
-  @Experimental
-  def tileMeanDouble(col: Column): TypedColumn[Any, Double] =
-  withAlias("tileMeanDouble", col)(
-    udf[Double, Tile](UDFs.tileMeanDouble).apply(col)
-  ).as[Double]
 
   /** Compute the Tile-wise mean */
   @Experimental
@@ -160,7 +172,7 @@ trait ColumnFunctions {
 
   /** Counts the number of NoData cells per Tile. */
   @Experimental
-  def nodataCells(tile: Column): TypedColumn[Any, Long] =
+  def noDataCells(tile: Column): TypedColumn[Any, Long] =
     withAlias("nodataCells", tile)(
       udf(UDFs.nodataCells).apply(tile)
     ).as[Long]
@@ -195,7 +207,14 @@ trait ColumnFunctions {
 
   /** Compute the cellwise/local count of non-NoData cells for all Tiles in a column. */
   @Experimental
-  def localAggCount(col: Column): TypedColumn[Any, Tile] =
+  def localAggDataCells(col: Column): TypedColumn[Any, Tile] =
+  withAlias("localCount", col)(
+    UDFs.localAggCount(col)
+  ).as[Tile]
+
+  /** Compute the cellwise/local count of NoData cells for all Tiles in a column. */
+  @Experimental
+  def localAggNoDataCells(col: Column): TypedColumn[Any, Tile] =
   withAlias("localCount", col)(
     UDFs.localAggCount(col)
   ).as[Tile]

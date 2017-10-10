@@ -23,9 +23,7 @@ import java.util.concurrent.TimeUnit
 
 import astraea.spark.rasterframes._
 import geotrellis.raster.Tile
-import geotrellis.raster.summary.Statistics
 import org.apache.spark.sql._
-import org.apache.spark.sql.functions._
 import org.openjdk.jmh.annotations._
 
 /**
@@ -36,18 +34,8 @@ import org.openjdk.jmh.annotations._
 @BenchmarkMode(Array(Mode.AverageTime))
 @State(Scope.Benchmark)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
-class StatsComputeBench {
-  @transient
-  val spark = SparkSession.builder.master("local[*]")
-    .appName(getClass.getSimpleName)
-    .config("spark.ui.enabled", false)
-    .config("spark.ui.showConsoleProgress", false)
-    .getOrCreate
-  spark.sparkContext.setLogLevel("ERROR")
-
-  rfInit(spark.sqlContext)
+class StatsComputeBench extends SparkEnv {
   import spark.implicits._
-
 
   @Param(Array("uint16ud255"))
   var cellTypeName: String = _
@@ -55,22 +43,31 @@ class StatsComputeBench {
   @Param(Array("240"))
   var tileSize: Int = _
 
+  @Param(Array("400"))
+  var numTiles: Int = _
+
   @transient
-  var tiles: Seq[Tile] = _
+  var tiles: DataFrame = _
 
   @Setup(Level.Trial)
   def setupData(): Unit = {
-    tiles = Seq.fill(100)(randomTile(tileSize, tileSize, cellTypeName))
+    tiles = Seq.fill(numTiles)(randomTile(tileSize, tileSize, cellTypeName))
+      .toDF("tile").repartition(10)
   }
 
   @Benchmark
   def computeStats() = {
-    tiles.toDF("tile").agg(aggStats($"tile")).collect()
+    tiles.select(aggStats($"tile")).collect()
   }
 
   @Benchmark
   def extractMean() = {
-    tiles.toDF("tile").agg(aggStats($"tile").getField("mean")).map(_.getDouble(0)).collect()
+    tiles.select(aggStats($"tile").getField("mean")).map(_.getDouble(0)).collect()
+  }
+
+  @Benchmark
+  def directMean() = {
+    tiles.repartition(10).select(aggMean($"tile")).collect()
   }
 
 //  @Benchmark
@@ -78,6 +75,5 @@ class StatsComputeBench {
 //    tiles.toDF("tile").select(dataCells($"tile") as "counts").agg(sum($"counts")).collect()
 //  }
 
-  @TearDown(Level.Trial)
-  def shutdown(): Unit =  spark.stop()
+
 }

@@ -21,9 +21,10 @@ package astraea.spark.rasterframes.bench
 
 import java.util.concurrent.TimeUnit
 
-import geotrellis.raster.Tile
+import geotrellis.raster.histogram.{Histogram, StreamingHistogram}
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
+import org.apache.spark.sql.gt.types.HistogramUDT
 import org.openjdk.jmh.annotations._
 
 @BenchmarkMode(Array(Mode.AverageTime))
@@ -33,34 +34,43 @@ import org.openjdk.jmh.annotations._
  * @author sfitch
  * @since 9/29/17
  */
-class TileEncodeBench extends SparkEnv {
+class HistogramEncodeBench extends SparkEnv {
 
-  val tileEncoder: ExpressionEncoder[Tile] = ExpressionEncoder()
-  val boundEncoder = tileEncoder.resolveAndBind()
+  val encoder: ExpressionEncoder[Histogram[Double]] = ExpressionEncoder()
+  val boundEncoder = encoder.resolveAndBind()
 
-  @Param(Array("uint8", "int32", "float32", "float64"))
+  @Param(Array("float64"))
   var cellTypeName: String = _
 
-  @Param(Array("128", "256", "512"))
+  @Param(Array("128"))
   var tileSize: Int = _
 
+  @Param(Array("400"))
+  var numTiles: Int = _
+
   @transient
-  var tile: Tile = _
+  var histogram: Histogram[Double] = _
 
   @Setup(Level.Trial)
   def setupData(): Unit = {
-    tile = randomTile(tileSize, tileSize, cellTypeName)
+    // Creates what should hopefully be a representative structure
+    val tiles = Seq.fill(numTiles)(randomTile(tileSize, tileSize, cellTypeName))
+    histogram = tiles.foldLeft(StreamingHistogram(): Histogram[Double])(
+      (hist, tile) ⇒ hist.merge(StreamingHistogram.fromTile(tile))
+    )
+  }
+  @Benchmark
+  def serialize(): Any = {
+    HistogramUDT.serialize(histogram)
   }
 
   @Benchmark
   def encode(): InternalRow = {
-    tileEncoder.toRow(tile)
+    boundEncoder.toRow(histogram)
   }
 
-  @Benchmark
-  def roundTrip(): Tile = {
-    val row = tileEncoder.toRow(tile)
-    boundEncoder.fromRow(row)
-  }
+//  @Benchmark
+//  def roundTrip(): Tile = {
+//  }
 }
 
