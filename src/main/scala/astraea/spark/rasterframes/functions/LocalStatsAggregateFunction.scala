@@ -16,10 +16,8 @@
 
 package astraea.spark.rasterframes.functions
 
-import java.lang.Double
-
 import geotrellis.raster.mapalgebra.local._
-import geotrellis.raster.{DoubleConstantNoDataCellType, IntConstantNoDataCellType, Tile, isNoData}
+import geotrellis.raster.{DoubleConstantNoDataCellType, IntConstantNoDataCellType, IntUserDefinedNoDataCellType, Tile, isNoData}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.expressions.{MutableAggregationBuffer, UserDefinedAggregateFunction}
 import org.apache.spark.sql.gt.types.TileUDT
@@ -34,7 +32,7 @@ import DataBiasedOp._
  * @since 4/17/17
  */
 class LocalStatsAggregateFunction() extends UserDefinedAggregateFunction {
-
+  import LocalStatsAggregateFunction.C
   private val reafiableUDT = new TileUDT()
 
   override def inputSchema: StructType = StructType(StructField("value", TileUDT) :: Nil)
@@ -70,19 +68,22 @@ class LocalStatsAggregateFunction() extends UserDefinedAggregateFunction {
   )
 
   private val updateFunctions = Seq(
-    safeBinaryOp((t1: Tile, t2: Tile) ⇒ BiasedAdd(t1, Defined(t2))),
-    safeBinaryOp((t1: Tile, t2: Tile) ⇒ BiasedMin(t1, t2)),
-    safeBinaryOp((t1: Tile, t2: Tile) ⇒ BiasedMax(t1, t2)),
-    safeBinaryOp((t1: Tile, t2: Tile) ⇒ BiasedAdd(t1, t2)),
-    safeBinaryOp((t1: Tile, t2: Tile) ⇒ BiasedAdd(t1, Multiply(t2, t2)))
+    safeBinaryOp((agg: Tile, t: Tile) ⇒ BiasedAdd(agg, Defined(t))),
+    safeBinaryOp((agg: Tile, t: Tile) ⇒ BiasedMin(agg, t)),
+    safeBinaryOp((agg: Tile, t: Tile) ⇒ BiasedMax(agg, t)),
+    safeBinaryOp((agg: Tile, t: Tile) ⇒ BiasedAdd(agg, t)),
+    safeBinaryOp((agg: Tile, t: Tile) ⇒ {
+      val d = t.convert(DoubleConstantNoDataCellType)
+      BiasedAdd(agg, Multiply(d, d))
+    })
   )
 
   private val mergeFunctions = Seq(
-    safeBinaryOp((t1: Tile, t2: Tile) ⇒ Add(t1, t2)),
-    updateFunctions(1),
-    updateFunctions(2),
-    updateFunctions(3),
-    safeBinaryOp((t1: Tile, t2: Tile) ⇒ Add(t1, t2))
+    safeBinaryOp((t1: Tile, t2: Tile) ⇒ BiasedAdd(t1, t2)),
+    updateFunctions(C.MIN),
+    updateFunctions(C.MAX),
+    updateFunctions(C.SUM),
+    safeBinaryOp((t1: Tile, t2: Tile) ⇒ BiasedAdd(t1, t2))
   )
 
   override def deterministic: Boolean = true
@@ -96,12 +97,11 @@ class LocalStatsAggregateFunction() extends UserDefinedAggregateFunction {
   override def update(buffer: MutableAggregationBuffer, input: Row): Unit = {
     val right = input.getAs[Tile](0)
     if (right != null) {
-      if (buffer(0) == null) {
-        for (i ← initFunctions.indices) {
+      for (i ← initFunctions.indices) {
+        if (buffer.isNullAt(i)) {
           buffer(i) = initFunctions(i)(right)
         }
-      } else {
-        for (i ← updateFunctions.indices) {
+        else {
           val left = buffer.getAs[Tile](i)
           buffer(i) = updateFunctions(i)(left, right)
         }
@@ -113,19 +113,33 @@ class LocalStatsAggregateFunction() extends UserDefinedAggregateFunction {
     for (i ← mergeFunctions.indices) {
       val left = buffer1.getAs[Tile](i)
       val right = buffer2.getAs[Tile](i)
-      buffer1(i) = mergeFunctions(i)(left, right)
+      val merged = mergeFunctions(i)(left, right)
+      buffer1(i) = merged
     }
   }
 
   override def evaluate(buffer: Row): Any = {
-    val cnt = buffer.getAs[Tile](0)
+    val cnt = buffer.getAs[Tile](C.COUNT)
     if (cnt != null) {
-      val count = cnt.convert(DoubleConstantNoDataCellType)
-      val sum = buffer.getAs[Tile](3)
-      val sumSqr = buffer.getAs[Tile](4)
+      val count = cnt.interpretAs(IntUserDefinedNoDataCellType(0))
+      val sum = buffer.getAs[Tile](C.SUM)
+      val sumSqr = buffer.getAs[Tile](C.SUM_SQRS)
       val mean = sum / count
-      val variance = (sumSqr / count) - (mean * mean)
-      Row(cnt, buffer(1), buffer(2), mean, variance)
+      val meanSqr = mean * mean
+      val variance = (sumSqr / count) - meanSqr
+      Row(count, buffer(C.MIN), buffer(C.MAX), mean, variance)
     } else null
   }
 }
+
+object LocalStatsAggregateFunction {
+  /**  Column index values. */
+  private object C {
+    val COUNT = 0
+    val MIN = 1
+    val MAX = 2
+    val SUM = 3
+    val SUM_SQRS = 4
+  }
+}
+

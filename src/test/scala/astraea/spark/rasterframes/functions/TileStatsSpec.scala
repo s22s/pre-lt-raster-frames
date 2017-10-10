@@ -20,12 +20,13 @@
 package astraea.spark.rasterframes.functions
 
 import astraea.spark.rasterframes.TestData.randomTile
-import astraea.spark.rasterframes.{TestData, TestEnvironment, localAggMax, localAggMin, tileMeanDouble, tileStatsDouble, _}
+import astraea.spark.rasterframes.{TestData, TestEnvironment, localAggMax, localAggMin, tileStatsDouble, _}
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.{Max, Min}
 import geotrellis.raster.summary.Statistics
-import geotrellis.raster.{IntConstantNoDataCellType, Tile}
+import geotrellis.raster._
 import org.apache.spark.sql._
+import org.apache.spark.sql.functions._
 
 /**
  * Test rig associated with computing statistics and other descriptive
@@ -85,6 +86,9 @@ class TileStatsSpec extends TestEnvironment with TestData  {
       val ds = (Seq.fill[Tile](10)(injectND(10)(randomTile(10, 10, "uint8"))) :+ null).toDF("tile")
       val expectedNoData = 10 * 10
       val expectedData = 10 * 10 * 10 - expectedNoData
+
+      assert(ds.select(dataCells($"tile") as "cells").agg(sum("cells")).as[Long].first() === expectedData)
+      assert(ds.select(noDataCells($"tile") as "cells").agg(sum("cells")).as[Long].first() === expectedNoData)
 
       assert(ds.select(aggDataCells($"tile")).first() === expectedData)
       assert(ds.select(aggNoDataCells($"tile")).first() === expectedNoData)
@@ -221,6 +225,17 @@ class TileStatsSpec extends TestEnvironment with TestData  {
       forEvery(counts)(c ⇒ assert(c === nds))
       val counts2 = tiles.select(dataCells($"tiles")).collect().dropRight(1)
       forEvery(counts2)(c ⇒ assert(c === tsize * tsize - nds))
+    }
+
+    it("should coerce tile type") {
+      val intTile = IntArrayTile(Array(0), 1, 1)
+      val doubleTile = DoubleArrayTile(Array(1), 1, 1)
+
+      val intOverDouble = intTile / doubleTile
+      val doubleOverInt = doubleTile / intTile
+
+      println(intOverDouble.asciiDrawDouble())
+      println(doubleOverInt.asciiDrawDouble())
     }
   }
 

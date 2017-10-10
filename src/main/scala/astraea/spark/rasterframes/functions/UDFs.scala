@@ -38,13 +38,12 @@ object UDFs {
     (p1, p2) ⇒ if (p1 == null || p2 == null) null.asInstanceOf[R] else f(p1, p2)
 
   /** Flattens tile into an array. */
-  // TODO: This is kinda jacked up. Too easy to specify a type that doesn't match undlerying type.
   private[rasterframes] def tileToArray[T: HasCellType: TypeTag]: (Tile) ⇒ Array[T] = {
     def convert(tile: Tile) = {
       typeOf[T] match {
         case t if t =:= typeOf[Int] ⇒ tile.toArray()
         case t if t =:= typeOf[Double] ⇒ tile.toArrayDouble()
-        case t if t =:= typeOf[Byte] ⇒ tile.toArray().map(_.toByte)
+        case t if t =:= typeOf[Byte] ⇒ tile.toArray().map(_.toByte)          // TODO: Check NoData handling VVVVV
         case t if t =:= typeOf[Short] ⇒ tile.toArray().map(_.toShort)
         case t if t =:= typeOf[Float] ⇒ tile.toArrayDouble().map(_.toFloat)
       }
@@ -65,7 +64,13 @@ object UDFs {
         case t: ByteArrayTile ⇒
           if (typeOf[T] =:= typeOf[Byte]) t.array
           else convert(t)
+        case t: UByteArrayTile ⇒
+          if (typeOf[T] =:= typeOf[Byte]) t.array
+          else convert(t)
         case t: ShortArrayTile ⇒
+          if (typeOf[T] =:= typeOf[Short]) t.array
+          else convert(t)
+        case t: UShortArrayTile ⇒
           if (typeOf[T] =:= typeOf[Short]) t.array
           else convert(t)
         case t: FloatArrayTile ⇒
