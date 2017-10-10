@@ -12,7 +12,7 @@ gtag('js', new Date());
 gtag('config', 'UA-106630615-1');
 </script>
 
-<title>Reference · RasterFrames</title>
+<title>Release Notes · RasterFrames</title>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="description" content='RasterFrames brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer operations of GeoTrellis'/>
@@ -64,8 +64,8 @@ gtag('config', 'UA-106630615-1');
     <li><a href="ml/classification.html" class="page">Classification</a></li>
   </ul></li>
   <li><a href="exporting-rasterframes.html" class="page">Exporting RasterFrames</a></li>
-  <li><a href="reference.html" class="active page">Reference</a></li>
-  <li><a href="release-notes.html" class="page">Release Notes</a></li>
+  <li><a href="reference.html" class="page">Reference</a></li>
+  <li><a href="release-notes.html" class="active page">Release Notes</a></li>
 </ul>
 </div>
 
@@ -117,8 +117,8 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
     <li><a href="ml/classification.html" class="page">Classification</a></li>
   </ul></li>
   <li><a href="exporting-rasterframes.html" class="page">Exporting RasterFrames</a></li>
-  <li><a href="reference.html" class="active page">Reference</a></li>
-  <li><a href="release-notes.html" class="page">Release Notes</a></li>
+  <li><a href="reference.html" class="page">Reference</a></li>
+  <li><a href="release-notes.html" class="active page">Release Notes</a></li>
 </ul>
 </div>
 
@@ -133,7 +133,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <div class="nav-breadcrumbs">
 <ul>
   <li><a href="index.html">RasterFrames</a></li>
-  <li>Reference</li>
+  <li>Release Notes</li>
 </ul>
 </div>
 </div>
@@ -141,15 +141,36 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 
 <div class="page-content row">
 <div class="small-12 large-9 column" id="docs">
-<h1><a href="#reference" name="reference" class="anchor"><span class="anchor-link"></span></a>Reference</h1>
-<p>For the most up to date list of UDFs, look at API documentation for <a href="http://rasterframes.io/latest/api/astraea/spark/rasterframes/functions/ColumnFunctions.html"><code>ColumnFunctions</code></a>. These UDFs are also registered with the SQL engine under the same name but with a <code>rf_</code> prefix (e.g. <code>dataCells</code> becomes <code>rf_dataCells</code>). </p><div class="callout note "><div class="callout-title">Note</div>
-<p>Please <a href="https://github.com/s22s/raster-frames/issues">submit an issue</a> if there&rsquo;s a particular function you think should be included.</p></div>
-<p>The full API documentation can be found <a href="latest/api/index.html">here</a>.</p>
-<div class="nav-next">
-<p><strong>Next:</strong> <a href="release-notes.html">Release Notes</a></p>
-</div>
+<h1><a href="#release-notes" name="release-notes" class="anchor"><span class="anchor-link"></span></a>Release Notes</h1>
+<h2><a href="#0-5-6" name="0-5-6" class="anchor"><span class="anchor-link"></span></a>0.5.6</h2>
+<ul>
+  <li><code>TileUDF</code>s are encoded using directly into Catalyst&ndash;without Kryo&ndash;resulting in an insane  decrease in serialization time for small tiles (<code>int8</code>, &lt;= 128²), and pretty awesome speedup for  all other cell types other than <code>float32</code> (marginal slowing). While not measured, memory  footprint is expected to have gone down.</li>
+</ul>
+<h2><a href="#0-5-5" name="0-5-5" class="anchor"><span class="anchor-link"></span></a>0.5.5</h2>
+<ul>
+  <li><code>aggStats</code> and <code>tileMean</code> functions rewritten to compute simple statistics directly rather than using <code>StreamingHistogram</code>.</li>
+  <li><code>tileHistogramDouble</code> and <code>tileStatsDouble</code> were replaced by <code>tileHistogram</code> and <code>tileStats</code>.</li>
+  <li>Added <code>tileSum</code>, <code>tileMin</code> and <code>tileMax</code> functions.</li>
+  <li>Added <code>aggMean</code>, <code>aggDataCells</code> and <code>aggNoDataCells</code> aggregate functions.</li>
+  <li>Added <code>localAggDataCells</code> and <code>localAggNoDataCells</code> cell-local (tile generating) fuctions</li>
+  <li>Overflow fix in <code>LocalStatsAggregateFunction</code>.</li>
+</ul>
 </div>
 <div class="large-3 show-for-large column" data-sticky-container>
+<nav class="sidebar sticky" data-sticky data-anchor="docs" data-sticky-on="large">
+<div class="page-nav">
+<div class="nav-title">On this page:</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="release-notes.html#release-notes" class="header">Release Notes</a>
+  <ul>
+    <li><a href="release-notes.html#0-5-6" class="header">0.5.6</a></li>
+    <li><a href="release-notes.html#0-5-5" class="header">0.5.5</a></li>
+  </ul></li>
+</ul>
+</div>
+</div>
+</nav>
 </div>
 </div>
 
