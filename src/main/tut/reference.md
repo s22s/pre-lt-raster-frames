@@ -17,9 +17,6 @@ Please [submit an issue](https://github.com/s22s/raster-frames/issues) if there'
 * @scaladoc[`tileDimensions`][tileDimensions] - Query the number of (cols, rows) in a tile.
 * @scaladoc[`aggHistogram`][aggHistogram] - Compute the full column aggregate floating point histogram. 
 * @scaladoc[`aggStats`][aggStats] - Compute the full column aggregate floating point statistics. 
-* @scaladoc[`tileHistogramDouble`][tileHistogramDouble] - Compute tileHistogram of floating point tile values.
-* @scaladoc[`tileStatsDouble`][tileStatsDouble] - Compute statistics of tile values. 
-* @scaladoc[`tileMeanDouble`][tileMeanDouble] - Compute the tile-wise mean 
 * @scaladoc[`tileMean`][tileMean] - Compute the tile-wise mean 
 * @scaladoc[`tileHistogram`][tileHistogram] - Compute tileHistogram of tile values. 
 * @scaladoc[`tileStats`][tileStats] - Compute statistics of tile values.
@@ -42,9 +39,6 @@ Please [submit an issue](https://github.com/s22s/raster-frames/issues) if there'
 <!-- TODO: Fix these -->
 [aggHistogram]:  astraea.spark.rasterframes.functions.ColumnFunctions#aggHistogram
 [aggStats]: astraea.spark.rasterframes.functions.ColumnFunctions#aggStats
-[tileHistogramDouble]: astraea.spark.rasterframes.functions.ColumnFunctions#tileHistogramDouble
-[tileStatsDouble]: astraea.spark.rasterframes.functions.ColumnFunctions#tileStatsDouble
-[tileMeanDouble]: astraea.spark.rasterframes.functions.ColumnFunctions#tileMeanDouble 
 [tileMean]: astraea.spark.rasterframes.functions.ColumnFunctions#tileMean
 [tileHistogram]: astraea.spark.rasterframes.functions.ColumnFunctions#tileHistogram
 [tileStats]: astraea.spark.rasterframes.functions.ColumnFunctions#tileStats

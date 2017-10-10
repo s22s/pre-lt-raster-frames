@@ -210,7 +210,7 @@ class RasterFrameSpec extends TestEnvironment with TestData {
 
       val md = rf.schema.fields(0).metadata
 
-      println(rf.extract[TileLayerMetadata[SpaceTimeKey]](CONTEXT_METADATA_KEY)(md))
+      //println(rf.extract[TileLayerMetadata[SpaceTimeKey]](CONTEXT_METADATA_KEY)(md))
 
       rf.toRaster($"tile", 128, 128)
     }
@@ -222,7 +222,7 @@ class RasterFrameSpec extends TestEnvironment with TestData {
       val joinTypes = Seq("inner", "outer", "fullouter", "left_outer", "right_outer", "leftsemi")
       forEvery(joinTypes) { jt ⇒
         val joined = rf1.spatialJoin(rf2, jt)
-        println(joined.schema.json)
+        //println(joined.schema.json)
         assert(joined.tileLayerMetadata.isRight)
       }
     }

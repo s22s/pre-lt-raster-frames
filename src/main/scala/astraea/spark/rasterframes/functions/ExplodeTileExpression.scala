@@ -17,6 +17,7 @@
 package astraea.spark.rasterframes.functions
 
 import astraea.spark.rasterframes
+import geotrellis.raster.{NODATA, Tile}
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.expressions.codegen.CodegenFallback
 import org.apache.spark.sql.catalyst.expressions.{Expression, Generator}
@@ -63,13 +64,17 @@ private[rasterframes] case class ExplodeTileExpression(sampleFraction: Double = 
         "Multi-column explode requires equally sized tiles. Found " + dims
       )
 
+      def safeGet(tile: Tile, col: Int, row: Int): Double =
+        if (tile == null) NODATA else tile.getDouble(col, row)
+
+
       val (cols, rows) = tiles.head.dimensions
 
       for {
         row ← 0 until rows
         col ← 0 until cols
         if keep()
-        contents = Seq[Any](col, row) ++ tiles.map(_.getDouble(col, row))
+        contents = Seq[Any](col, row) ++ tiles.map(safeGet(_, col, row))
       } yield InternalRow(contents: _*)
     }
   }

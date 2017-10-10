@@ -21,7 +21,6 @@ package astraea.spark.rasterframes.functions
 
 import astraea.spark.rasterframes._
 import geotrellis.raster._
-import geotrellis.raster.io.geotiff.GeoTiff
 import geotrellis.raster.resample.NearestNeighbor
 import org.apache.spark.sql.functions._
 
@@ -71,7 +70,7 @@ class ExplodeSpec extends TestEnvironment with TestData {
     it("should handle null tiles.") {
       val df = Seq[Tile](byteArrayTile, null, byteArrayTile).toDF("tile1")
       val exploded = df.select(explodeTiles($"tile1"))
-      exploded.show(false)
+      assert(exploded.count === byteArrayTile.size * 2)
     }
 
     it("should convert tile into array") {
@@ -128,7 +127,7 @@ class ExplodeSpec extends TestEnvironment with TestData {
 
         val exploded = tinyTiles.select(tinyTiles.spatialKeyColumn, explodeTiles(tinyTiles.tileColumns.head))
 
-        exploded.printSchema()
+        //exploded.printSchema()
 
         val assembled = exploded.groupBy(tinyTiles.spatialKeyColumn)
           .agg(assembleTile(

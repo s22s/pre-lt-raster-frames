@@ -40,7 +40,7 @@ trait Implicits {
   implicit def temporalProjectedExtentEncoder = TemporalProjectedExtentEncoder()
   implicit def histogramDoubleEncoder: Encoder[Histogram[Double]] = ExpressionEncoder()
   implicit def histogramIntEncoder: Encoder[Histogram[Int]] = ExpressionEncoder()
-  implicit def histogramStatsEncoder: Encoder[Statistics[Double]] = ExpressionEncoder()
+  implicit def statsEncoder: Encoder[Statistics[Double]] = ExpressionEncoder()
   implicit def tileLayerMetadataEncoder[K: TypeTag]: Encoder[TileLayerMetadata[K]] = TileLayerMetadataEncoder[K]()
   implicit def layoutDefinitionEncoder: ExpressionEncoder[LayoutDefinition] = ExpressionEncoder()
   implicit def stkBoundsEncoder: ExpressionEncoder[KeyBounds[SpaceTimeKey]] = ExpressionEncoder()

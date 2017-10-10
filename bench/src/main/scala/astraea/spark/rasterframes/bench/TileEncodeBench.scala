@@ -1,7 +1,7 @@
 /*
  * This software is licensed under the Apache 2 license, quoted below.
  *
- * Copyright 2017 Astraea
+ * Copyright 2017 Astraea, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -17,27 +17,23 @@
  *
  */
 
-package astraea.spark.rasterframes
+package astraea.spark.rasterframes.bench
 
-import geotrellis.raster.{ArrayTile, CellType, NODATA, Tile, isNoData}
-import org.apache.spark.sql.SparkSession
+import java.util.concurrent.TimeUnit
+
+import geotrellis.raster.Tile
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 import org.openjdk.jmh.annotations._
 
 @BenchmarkMode(Array(Mode.AverageTime))
 @State(Scope.Benchmark)
-class TileEncodeBench {
-
-  @transient
-  val spark = SparkSession.builder.master("local[*]")
-    .appName(getClass.getSimpleName)
-    .config("spark.ui.enabled", false)
-//    .config("spark.memory.offHeap.enabled", true)
-//    .config("spark.memory.offHeap.size", "2g")
-    .getOrCreate
-
-  rfInit(spark.sqlContext)
+@OutputTimeUnit(TimeUnit.MICROSECONDS)
+/**
+ * @author sfitch
+ * @since 9/29/17
+ */
+class TileEncodeBench extends SparkEnv {
 
   val tileEncoder: ExpressionEncoder[Tile] = ExpressionEncoder()
   val boundEncoder = tileEncoder.resolveAndBind()
@@ -53,7 +49,7 @@ class TileEncodeBench {
 
   @Setup(Level.Trial)
   def setupData(): Unit = {
-    tile = TileEncodeBench.randomTile(tileSize, tileSize, cellTypeName)
+    tile = randomTile(tileSize, tileSize, cellTypeName)
   }
 
   @Benchmark
@@ -66,31 +62,5 @@ class TileEncodeBench {
     val row = tileEncoder.toRow(tile)
     boundEncoder.fromRow(row)
   }
-
-  @TearDown(Level.Trial)
-  def shutdown(): Unit = {
-    spark.stop()
-  }
 }
 
-object TileEncodeBench {
-  val rnd = new scala.util.Random(42)
-
-  /** Construct a tile of given size and cell type populated with random values. */
-  def randomTile(cols: Int, rows: Int, cellTypeName: String): Tile = {
-    val cellType = CellType.fromName(cellTypeName)
-    val tile = ArrayTile.alloc(cellType, cols, rows)
-    if(cellType.isFloatingPoint) {
-      tile.mapDouble(_ ⇒ rnd.nextGaussian())
-    }
-    else {
-      tile.map(_ ⇒ {
-        var c = NODATA
-        do {
-          c = rnd.nextInt(255)
-        } while(isNoData(c))
-        c
-      })
-    }
-  }
-}

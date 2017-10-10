@@ -20,12 +20,11 @@
 package astraea.spark.rasterframes.functions
 
 import astraea.spark.rasterframes.TestData.randomTile
-import astraea.spark.rasterframes.{TestData, TestEnvironment, localAggMax, localAggMin, tileMeanDouble, tileStatsDouble, _}
+import astraea.spark.rasterframes.{TestData, TestEnvironment, localAggMax, localAggMin, _}
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.{Max, Min}
-import geotrellis.raster.summary.Statistics
-import geotrellis.raster.{IntConstantNoDataCellType, Tile}
-import org.apache.spark.sql._
+import geotrellis.raster._
+import org.apache.spark.sql.functions._
 
 /**
  * Test rig associated with computing statistics and other descriptive
@@ -81,11 +80,27 @@ class TileStatsSpec extends TestEnvironment with TestData  {
       }
     }
 
+    it("should count data and no-data cells") {
+      val ds = (Seq.fill[Tile](10)(injectND(10)(randomTile(10, 10, "uint8"))) :+ null).toDF("tile")
+      val expectedNoData = 10 * 10
+      val expectedData = 10 * 10 * 10 - expectedNoData
+
+      assert(ds.select(dataCells($"tile") as "cells").agg(sum("cells")).as[Long].first() === expectedData)
+      assert(ds.select(noDataCells($"tile") as "cells").agg(sum("cells")).as[Long].first() === expectedNoData)
+
+      assert(ds.select(aggDataCells($"tile")).first() === expectedData)
+      assert(ds.select(aggNoDataCells($"tile")).first() === expectedNoData)
+    }
+
     it("should compute tile statistics") {
       val ds = (Seq.fill[Tile](3)(randomTile(5, 5, "float32")) :+ null).toDS()
-      val means1 = ds.select(tileStatsDouble($"value")).map(s ⇒ Option(s).map(_.mean).getOrElse(0.0)).collect
-      val means2 = ds.select(tileMeanDouble($"value")).collect
-      assert(means1 === means2)
+      val means1 = ds.select(tileStats($"value")).map(s ⇒ Option(s).map(_.mean).getOrElse(0.0)).collect
+      val means2 = ds.select(tileMean($"value")).collect
+      // Compute the mean manually, knowing we're not dealing with no-data values.
+      val means = ds.select(tileToArray[Float]($"value")).map(a ⇒ if (a == null) 0.0 else a.sum/a.length).collect
+
+      forAll(means.zip(means1)) { case (l, r) ⇒ assert(l === r +- 1e-6) }
+      forAll(means.zip(means2)) { case (l, r) ⇒ assert(l === r +- 1e-6) }
     }
 
     it("should compute per-tile histogram") {
@@ -117,24 +132,29 @@ class TileStatsSpec extends TestEnvironment with TestData  {
       assert(hist2.first.totalCount() === 250)
     }
 
-    it("should compute aggregate statistics") {
+    it("should compute aggregate mean") {
       val ds = Seq.fill[Tile](10)(randomTile(5, 5, "float32")).toDF("tiles")
-      ds.createOrReplaceTempView("tmp")
-      val agg = ds.select(aggStats($"tiles"))
-
-      assert(agg.first().stddev === 1.0 +- 0.3) // <-- playing with statistical fire :)
-
-      val agg2 = sql("select stats.* from (select rf_stats(tiles) as stats from tmp)") .as[Statistics[Double]]
-      assert(agg2.first().dataCells === 250)
+      val agg = ds.select(aggMean($"tiles"))
+      val stats = ds.select(aggStats($"tiles") as "stats").select($"stats.mean".as[Double])
+      assert(agg.first() === stats.first())
     }
 
-    def printStatsRows(df: DataFrame): Unit = {
-      val tiles = df.collect().flatMap(_.toSeq).map(_.asInstanceOf[Tile])
+    it("should compute aggregate statistics") {
+      val ds = Seq.fill[Tile](10)(randomTile(5, 5, "float32")).toDF("tiles")
 
-      // Render debugging form.
-      tiles.map(_.asciiDraw())
-        .zip(df.columns)
-        .foreach{case (img, label) ⇒ println(s"$label:\n$img")}
+      val exploded = ds.select(explodeTiles($"tiles"))
+      val (mean, vrnc) = exploded.agg(avg($"tiles"), var_pop($"tiles")).as[(Double, Double)].first
+
+      ds.createOrReplaceTempView("tmp")
+      val agg = ds.select(aggStats($"tiles") as "stats").select($"stats.variance".as[Double])
+
+      assert(vrnc === agg.first() +- 1e-6)
+
+      val agg2 = sql("select stats.* from (select rf_stats(tiles) as stats from tmp)")
+      assert(agg2.first().getAs[Long]("dataCells") === 250L)
+
+      val agg3 = ds.agg(aggStats($"tiles") as "stats").select($"stats.mean".as[Double])
+      assert(mean === agg3.first())
     }
 
     it("should compute aggregate local stats") {
@@ -173,11 +193,8 @@ class TileStatsSpec extends TestEnvironment with TestData  {
 
       val ds = (Seq.fill(20)(tile) :+ null).toDF("tiles")
 
-      //val stats = ds.select(localAggStats($"tiles") as "stats").select("stats.*")
-      //printStatsRows(stats)
-
       // counted everything properly
-      val countTile = ds.select(localAggCount($"tiles")).first()
+      val countTile = ds.select(localAggDataCells($"tiles")).first()
       forAll(countTile.toArray())(i ⇒ assert(i === 20))
 
       val meanTile = ds.select(localAggMean($"tiles")).first()
@@ -198,10 +215,12 @@ class TileStatsSpec extends TestEnvironment with TestData  {
         .map(injectND(nds)) :+ null).toDF("tiles")
 
       //tiles.select(tileStats($"tiles")).show(100)
-      val counts = tiles.select(nodataCells($"tiles")).collect().dropRight(1)
+      val counts = tiles.select(noDataCells($"tiles")).collect().dropRight(1)
       forEvery(counts)(c ⇒ assert(c === nds))
       val counts2 = tiles.select(dataCells($"tiles")).collect().dropRight(1)
       forEvery(counts2)(c ⇒ assert(c === tsize * tsize - nds))
     }
   }
+
+  protected def withFixture(test: Any) = ???
 }

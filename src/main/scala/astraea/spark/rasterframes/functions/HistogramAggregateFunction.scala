@@ -30,7 +30,7 @@ import org.apache.spark.sql.types.{DataType, StructField, StructType}
  * @author sfitch
  * @since 4/24/17
  */
-class AggregateHistogramFunction extends UserDefinedAggregateFunction {
+class HistogramAggregateFunction extends UserDefinedAggregateFunction {
   override def inputSchema: StructType = StructType(StructField("value", TileUDT) :: Nil)
 
   override def bufferSchema: StructType = StructType(StructField("buffer", HistogramUDT) :: Nil)

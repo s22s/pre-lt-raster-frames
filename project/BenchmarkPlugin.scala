@@ -62,7 +62,7 @@ object BenchmarkPlugin extends AutoPlugin {
     jmhFork := Some(1),
     jmhIterations := Some(10),
     jmhWarmupIterations := Some(math.max(jmhIterations.value.getOrElse(0)/2, 5)),
-    jmhTimeUnit := Some("ms"),
+    jmhTimeUnit := None,
     jmhExtraOptions := None,
     cancelable in Global := true,
     bench := Def.taskDyn { jmhRun(jmhFileRegex.value) }.value,
