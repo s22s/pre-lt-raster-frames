@@ -15,4 +15,5 @@
 * Added `tileSum`, `tileMin` and `tileMax` functions. 
 * Added `aggMean`, `aggDataCells` and `aggNoDataCells` aggregate functions.
 * Added `localAggDataCells` and `localAggNoDataCells` cell-local (tile generating) fuctions
+* Added `tileToArray` and `arrayToTile`
 * Overflow fix in `LocalStatsAggregateFunction`.

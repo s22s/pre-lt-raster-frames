@@ -32,7 +32,7 @@ import org.apache.spark.unsafe.types.UTF8String
  * @since 5/11/17
  */
 class TileUDT extends UserDefinedType[Tile] {
-
+  import TileUDT._
   override def typeName = "rf_tile"
 
   def sqlType = StructType(Seq(
@@ -57,13 +57,14 @@ class TileUDT extends UserDefinedType[Tile] {
   override def deserialize(datum: Any): Tile = {
     Option(datum)
       .collect { case row: InternalRow ⇒
-        val ctName = row.getString(0)
-        val cols = row.getShort(1)
-        val rows = row.getShort(2)
-        val data = row.getBinary(3)
+        val ctName = row.getString(C.CELL_TYPE)
+        val cols = row.getShort(C.COLS)
+        val rows = row.getShort(C.ROWS)
+        val data = row.getBinary(C.DATA)
         val cellType = CellType.fromName(ctName)
+        // This is likely a time bomb, but short of adding a flag, not sure how else to do this.
         if(data.length < cols * rows && !cellType.isInstanceOf[BitCells])
-          TileUDT.constantTileFromBytes(data, cellType, cols, rows)
+          constantTileFromBytes(data, cellType, cols, rows)
         else
           ArrayTile.fromBytes(data, cellType, cols, rows)
       }
@@ -102,4 +103,11 @@ case object TileUDT extends TileUDT {
       case ct: DoubleCells =>
         DoubleConstantTile(DoubleArrayTile.fromBytes(bytes, 1, 1, ct).array(0), cols, rows, ct)
     }
+
+  private[TileUDT] object C {
+    val CELL_TYPE = 0
+    val COLS = 1
+    val ROWS = 2
+    val DATA = 3
+  }
 }
