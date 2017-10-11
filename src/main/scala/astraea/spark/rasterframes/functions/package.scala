@@ -136,9 +136,6 @@ package object functions {
   /** Reports the dimensions of a tile. */
   private[rasterframes] val tileDimensions = safeEval[CellGrid, (Int, Int)](_.dimensions)
 
-  /** Get the tile's cell type*/
-  private[rasterframes] val cellType = safeEval[Tile, String](_.cellType.name)
-
   /** Set the tile's no-data value. */
   private[rasterframes] def withNoData(nodata: Double) = safeEval[Tile, Tile](_.withNoData(Some(nodata)))
 

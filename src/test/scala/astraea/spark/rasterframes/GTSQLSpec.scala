@@ -62,7 +62,7 @@ class GTSQLSpec extends TestEnvironment with TestData  {
 
     it("should extract cell types") {
       val expected = allTileTypes.map(_.cellType).toSet
-      val df = (allTileTypes :+ null).toDF("tile")
+      val df = (allTileTypes :+ null).toDF("tile").repartition(4)
       val types = df.select(cellType($"tile")).collect().filter(_ != null).map(CellType.fromName).toSet
       assert(types === expected)
     }

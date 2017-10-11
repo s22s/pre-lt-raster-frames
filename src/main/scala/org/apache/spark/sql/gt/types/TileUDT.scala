@@ -104,7 +104,7 @@ case object TileUDT extends TileUDT {
         DoubleConstantTile(DoubleArrayTile.fromBytes(bytes, 1, 1, ct).array(0), cols, rows, ct)
     }
 
-  private[TileUDT] object C {
+  object C {
     val CELL_TYPE = 0
     val COLS = 1
     val ROWS = 2

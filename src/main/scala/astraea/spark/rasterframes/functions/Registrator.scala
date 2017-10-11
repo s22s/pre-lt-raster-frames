@@ -30,7 +30,7 @@ private[rasterframes] object Registrator {
   def register(sqlContext: SQLContext): Unit = {
     sqlContext.udf.register("rf_makeConstantTile", makeConstantTile)
     sqlContext.udf.register("rf_tileDimensions", tileDimensions)
-    sqlContext.udf.register("rf_cellType", cellType)
+    //sqlContext.udf.register("rf_cellType", cellType)
     sqlContext.udf.register("rf_tileToArrayInt", tileToArray[Int])
     sqlContext.udf.register("rf_tileToArrayDouble", tileToArray[Double])
     sqlContext.udf.register("rf_histogram", aggHistogram)

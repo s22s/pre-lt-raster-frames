@@ -19,7 +19,6 @@
 
 package astraea.spark.rasterframes
 
-import astraea.spark.rasterframes.{functions ⇒ F}
 import geotrellis.raster.{CellType, MultibandTile, Tile, TileFeature}
 import geotrellis.spark.{SpaceTimeKey, SpatialKey, TemporalProjectedExtent, TileLayerMetadata}
 import geotrellis.vector.{Extent, ProjectedExtent}
@@ -101,12 +100,11 @@ class EncodingSpec extends TestEnvironment with TestData  {
     }
 
     it("should code RDD[SpatialKey]") {
-
       val ds = Seq((sk, stk)).toDS
 
       assert(ds.toDF.as[(SpatialKey, SpaceTimeKey)].first === (sk, stk))
 
-      //    This stinks: vvvvvvvv   Encoders don't seem to work with UDFs.
+      // This stinks: vvvvvvvv   Encoders don't seem to work with UDFs.
       val key2col = udf((row: Row) ⇒ row.getInt(0))
 
       val colNum = ds.select(key2col(ds(ds.columns.head))).as[Int].first()

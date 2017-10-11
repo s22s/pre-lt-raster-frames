@@ -84,10 +84,10 @@ trait ColumnFunctions {
     F.assembleTile(cols, rows, ct)(columnIndex, rowIndex, cellData)
   }.as(cellData.columnName).as[Tile]
 
-  /** Get the Tile's cell type*/
+  /** Extract the Tile's cell type */
   @Experimental
   def cellType(col: Column): TypedColumn[Any, String] = withAlias("cellType", col)(
-    udf[String, Tile](F.cellType).apply(col)
+    expressions.CellType(col.expr).asColumn
   ).as[String]
 
   /** Assign a `NoData` value to the Tiles. */
