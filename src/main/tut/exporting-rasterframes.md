@@ -155,5 +155,5 @@ spark.stop()
 [rfInit]: astraea.spark.rasterframes.package#rfInit%28SQLContext%29:Unit
 [rdd]: org.apache.spark.sql.Dataset#frdd:org.apache.spark.rdd.RDD[T]
 [toTileLayerRDD]: astraea.spark.rasterframes.RasterFrameMethods#toTileLayerRDD%28tileCol:RasterFrameMethods.this.TileColumn%29:Either[geotrellis.spark.TileLayerRDD[geotrellis.spark.SpatialKey],geotrellis.spark.TileLayerRDD[geotrellis.spark.SpaceTimeKey]]
-[tileToArray]: astraea.spark.rasterframes.functions.ColumnFunctions#tileToArray
+[tileToArray]: astraea.spark.rasterframes.ColumnFunctions#tileToArray
 

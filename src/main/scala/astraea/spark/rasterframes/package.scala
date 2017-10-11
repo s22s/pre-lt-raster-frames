@@ -16,22 +16,20 @@
 
 package astraea.spark
 
-import astraea.spark.rasterframes.encoders.Implicits
+import astraea.spark.rasterframes.encoders.EncoderImplicits
 import geotrellis.raster.{ProjectedRaster, Tile, TileFeature}
 import geotrellis.spark.{Bounds, ContextRDD, Metadata, SpaceTimeKey, SpatialComponent, TileLayerMetadata}
 import geotrellis.util.GetComponent
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql._
-import astraea.spark.rasterframes.functions.ColumnFunctions
 import org.apache.spark.sql.catalyst.analysis.UnresolvedAttribute
 import org.apache.spark.sql.catalyst.expressions.{Alias, AttributeReference}
+import shapeless.tag.@@
+import shapeless.{Lub, tag}
 import spray.json.JsonFormat
 
-import scala.reflect.runtime.universe._
-import shapeless.{Lub, tag}
-import shapeless.tag.@@
-
 import scala.reflect.ClassTag
+import scala.reflect.runtime.universe._
 
 /**
  *  Module providing support for RasterFrames.
@@ -40,7 +38,7 @@ import scala.reflect.ClassTag
  * @author sfitch
  * @since 7/18/17
  */
-package object rasterframes extends Implicits with ColumnFunctions {
+package object rasterframes extends EncoderImplicits with ColumnFunctions {
 
   /**
    * Initialization injection point. Must be called before any RasterFrame

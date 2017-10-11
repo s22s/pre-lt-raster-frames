@@ -10,5 +10,5 @@ Please [submit an issue](https://github.com/s22s/raster-frames/issues) if there'
 
 The full API documentation can be found [here][scaladoc].
 
-[ColumnFunctions]: astraea.spark.rasterframes.functions.ColumnFunctions
+[ColumnFunctions]: astraea.spark.rasterframes.ColumnFunctions
 [scaladoc]: latest/api/index.html

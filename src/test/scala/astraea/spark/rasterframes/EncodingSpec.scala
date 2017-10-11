@@ -17,14 +17,15 @@
  *
  */
 
-package astraea.spark.rasterframes.functions
+package astraea.spark.rasterframes
 
-import astraea.spark.rasterframes._
+import astraea.spark.rasterframes.{functions ⇒ F}
 import geotrellis.raster.{CellType, MultibandTile, Tile, TileFeature}
 import geotrellis.spark.{SpaceTimeKey, SpatialKey, TemporalProjectedExtent, TileLayerMetadata}
 import geotrellis.vector.{Extent, ProjectedExtent}
-import org.apache.spark.sql.{Dataset, Encoders, Row}
+import org.apache.spark.sql.Row
 import org.apache.spark.sql.functions._
+
 /**
  * Test rig for encoding GT types into Catalyst types.
  *
@@ -112,5 +113,7 @@ class EncodingSpec extends TestEnvironment with TestData  {
       assert(colNum === 37)
     }
   }
+
+  protected def withFixture(test: Any) = ???
 }
 

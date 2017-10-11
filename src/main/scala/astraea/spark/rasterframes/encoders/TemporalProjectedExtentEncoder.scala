@@ -36,8 +36,8 @@ object TemporalProjectedExtentEncoder extends DelegatingSubfieldEncoder {
   def apply(): ExpressionEncoder[TemporalProjectedExtent] = {
     create(
       Seq(
-        "extent" -> Implicits.extentEncoder,
-        "crs" -> Implicits.crsEncoder,
+        "extent" -> EncoderImplicits.extentEncoder,
+        "crs" -> EncoderImplicits.crsEncoder,
         "instant" -> Encoders.scalaLong.asInstanceOf[ExpressionEncoder[Long]]
       )
     )

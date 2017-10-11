@@ -16,7 +16,6 @@
 
 package astraea.spark.rasterframes.functions
 
-import astraea.spark.rasterframes.functions.UDFs.safeEval
 import geotrellis.raster.Tile
 import geotrellis.raster.histogram.{Histogram, StreamingHistogram}
 import org.apache.spark.sql.Row

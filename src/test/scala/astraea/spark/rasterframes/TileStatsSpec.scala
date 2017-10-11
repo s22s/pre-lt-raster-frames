@@ -17,13 +17,12 @@
  *
  */
 
-package astraea.spark.rasterframes.functions
+package astraea.spark.rasterframes
 
 import astraea.spark.rasterframes.TestData.randomTile
-import astraea.spark.rasterframes.{TestData, TestEnvironment, localAggMax, localAggMin, _}
+import geotrellis.raster._
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.{Max, Min}
-import geotrellis.raster._
 import org.apache.spark.sql.functions._
 
 /**
