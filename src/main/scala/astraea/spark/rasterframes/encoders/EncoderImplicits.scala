@@ -35,21 +35,21 @@ import scala.reflect.runtime.universe._
  * Implicit encoder for RasterFrame types.
  */
 trait EncoderImplicits {
-  implicit val singlebandTileEncoder: ExpressionEncoder[Tile] = ExpressionEncoder()
-  implicit val multibandTileEncoder: Encoder[MultibandTile] = ExpressionEncoder()
-  implicit val crsEncoder: ExpressionEncoder[CRS] = CRSEncoder()
-  implicit val extentEncoder: ExpressionEncoder[Extent] = ExpressionEncoder()
+  implicit def singlebandTileEncoder = ExpressionEncoder[Tile]()
+  implicit def multibandTileEncoder = ExpressionEncoder[MultibandTile]()
+  implicit val crsEncoder = CRSEncoder(): ExpressionEncoder[CRS]
+  implicit val extentEncoder = ExpressionEncoder[Extent]()
   implicit val projectedExtentEncoder = ProjectedExtentEncoder()
   implicit val temporalProjectedExtentEncoder = TemporalProjectedExtentEncoder()
-  implicit val histogramDoubleEncoder: Encoder[Histogram[Double]] = ExpressionEncoder()
-  implicit val histogramIntEncoder: Encoder[Histogram[Int]] = ExpressionEncoder()
-  implicit val statsEncoder: Encoder[Statistics[Double]] = ExpressionEncoder()
+  implicit def histogramDoubleEncoder = ExpressionEncoder[Histogram[Double]]()
+  implicit def histogramIntEncoder = ExpressionEncoder[Histogram[Int]] ()
+  implicit val statsEncoder = ExpressionEncoder[Statistics[Double]]()
   implicit def tileLayerMetadataEncoder[K: TypeTag]: Encoder[TileLayerMetadata[K]] = TileLayerMetadataEncoder[K]()
-  implicit val layoutDefinitionEncoder: ExpressionEncoder[LayoutDefinition] = ExpressionEncoder()
-  implicit val stkBoundsEncoder: ExpressionEncoder[KeyBounds[SpaceTimeKey]] = ExpressionEncoder()
-  implicit val cellTypeEncoder: ExpressionEncoder[CellType] = CellTypeEncoder()
-  implicit val spatialKeyEncoder: ExpressionEncoder[SpatialKey] = ExpressionEncoder()
-  implicit val temporalKeyEncoder: ExpressionEncoder[TemporalKey] = ExpressionEncoder()
-  implicit val spaceTimeKeyEncoder: ExpressionEncoder[SpaceTimeKey] = ExpressionEncoder()
+  implicit val layoutDefinitionEncoder = ExpressionEncoder[LayoutDefinition]()
+  implicit val stkBoundsEncoder = ExpressionEncoder[KeyBounds[SpaceTimeKey]]()
+  implicit val cellTypeEncoder = CellTypeEncoder(): ExpressionEncoder[CellType]
+  implicit val spatialKeyEncoder = ExpressionEncoder[SpatialKey]()
+  implicit val temporalKeyEncoder = ExpressionEncoder[TemporalKey]()
+  implicit val spaceTimeKeyEncoder = ExpressionEncoder[SpaceTimeKey]()
 }
-object EncoderImplicits extends EncoderImplicits
+
