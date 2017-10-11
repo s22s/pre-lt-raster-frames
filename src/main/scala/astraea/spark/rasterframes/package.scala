@@ -48,6 +48,7 @@ package object rasterframes extends EncoderImplicits with ColumnFunctions {
     // TODO: Can this be automatically done via some SPI-like construct in Spark?
     gt.gtRegister(sqlContext)
     functions.Registrator.register(sqlContext)
+    astraea.spark.rasterframes.expressions.Registrator.register(sqlContext)
   }
 
   /** Default RasterFrame spatial column name. */

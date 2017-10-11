@@ -18,6 +18,7 @@ package org.apache.spark.sql
 
 import org.apache.spark.annotation.Experimental
 import org.apache.spark.sql.catalyst.InternalRow
+import org.apache.spark.sql.catalyst.analysis.FunctionRegistry
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 import org.apache.spark.sql.catalyst.expressions.Expression
 
@@ -35,6 +36,10 @@ package object gt {
   @Experimental
   def gtRegister(sqlContext: SQLContext): Unit = {
     gt.types.Registrator.register()
+  }
+
+  def registry(sqlContext: SQLContext): FunctionRegistry = {
+    sqlContext.sessionState.functionRegistry
   }
 
   implicit class WithDecoder[T](enc: ExpressionEncoder[T]) {

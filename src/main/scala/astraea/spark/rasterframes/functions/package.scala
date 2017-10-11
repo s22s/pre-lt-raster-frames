@@ -133,9 +133,6 @@ package object functions {
   /** Computes the column aggregate statistics */
   private[rasterframes] val aggStats = new CellStatsAggregateFunction()
 
-  /** Reports the dimensions of a tile. */
-  private[rasterframes] val tileDimensions = safeEval[CellGrid, (Int, Int)](_.dimensions)
-
   /** Set the tile's no-data value. */
   private[rasterframes] def withNoData(nodata: Double) = safeEval[Tile, Tile](_.withNoData(Some(nodata)))
 

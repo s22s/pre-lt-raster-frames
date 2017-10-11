@@ -36,7 +36,15 @@ class TileStatsSpec extends TestEnvironment with TestData  {
   import TestData.injectND
   import sqlContext.implicits._
   describe("computing statistics over tiles") {
+    //import org.apache.spark.sql.execution.debug._
     it("should report dimensions") {
+      val df = Seq[(Tile, Tile)]((byteArrayTile, byteArrayTile)).toDF("tile1", "tile2")
+
+      val dims = df.select(tileDimensions($"tile1") as "dims").select("dims.*")
+
+      assert(dims.as[(Int, Int)].first() === (3, 3))
+      assert(dims.schema.head.name === "cols")
+
       val query = sql(
         """|select dims.* from (
            |select rf_tileDimensions(tiles) as dims from (
@@ -45,12 +53,9 @@ class TileStatsSpec extends TestEnvironment with TestData  {
       write(query)
       assert(query.as[(Int, Int)].first() === (10, 10))
 
-      val df = Seq[(Tile, Tile)]((byteArrayTile, byteArrayTile)).toDF("tile1", "tile2")
-      val dims = df.select(tileDimensions($"tile1") as "dims").select("dims.*")
-      //dims.printSchema()
-      //dims.show()
-      assert(dims.as[(Int, Int)].first() === (3, 3))
-      assert(dims.schema.head.name === "cols")
+      df.repartition(4).createOrReplaceTempView("tmp")
+      assert(sql("select dims.* from (select rf_tileDimensions(tile2) as dims from tmp)")
+        .as[(Int, Int)].first() === (3, 3))
     }
 
     it("should support local min/max") {

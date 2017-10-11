@@ -19,6 +19,7 @@
 
 package astraea.spark.rasterframes
 
+import astraea.spark.rasterframes.expressions.ExplodeTileExpression
 import astraea.spark.rasterframes.{functions ⇒ F}
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.LocalTileBinaryOp
@@ -52,19 +53,16 @@ trait ColumnFunctions {
   /** Create a row for each cell in Tile with random sampling. */
   @Experimental
   def explodeTileSample(sampleFraction: Double, cols: Column*): Column = {
-    val exploder = F.ExplodeTileExpression(sampleFraction, cols.map(_.expr))
+    val exploder = ExplodeTileExpression(sampleFraction, cols.map(_.expr))
     // Hack to grab the first two non-cell columns, containing the column and row indexes
     val metaNames = exploder.elementSchema.fieldNames.take(2)
     val colNames = cols.map(_.columnName)
     new Column(exploder).as(metaNames ++ colNames)
   }
 
-
   /** Query the number of (cols, rows) in a Tile. */
   @Experimental
-  def tileDimensions(col: Column): Column = withAlias("tileDimensions", col)(
-    udf[(Int, Int), Tile](F.tileDimensions).apply(col)
-  ).cast(StructType(Seq(StructField("cols", IntegerType), StructField("rows", IntegerType))))
+  def tileDimensions(col: Column): Column = expressions.Dimensions(col.expr).asColumn
 
   /** Flattens Tile into an array. A numeric type parameter is required*/
   @Experimental
@@ -86,9 +84,8 @@ trait ColumnFunctions {
 
   /** Extract the Tile's cell type */
   @Experimental
-  def cellType(col: Column): TypedColumn[Any, String] = withAlias("cellType", col)(
-    expressions.CellType(col.expr).asColumn
-  ).as[String]
+  def cellType(col: Column): TypedColumn[Any, String] =
+    expressions.CellType(col.expr).asColumn.as[String]
 
   /** Assign a `NoData` value to the Tiles. */
   def withNoData(col: Column, nodata: Double) = withAlias("withNoData", col)(

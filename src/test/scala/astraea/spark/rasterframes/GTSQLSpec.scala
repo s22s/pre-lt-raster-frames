@@ -62,9 +62,19 @@ class GTSQLSpec extends TestEnvironment with TestData  {
 
     it("should extract cell types") {
       val expected = allTileTypes.map(_.cellType).toSet
-      val df = (allTileTypes :+ null).toDF("tile").repartition(4)
-      val types = df.select(cellType($"tile")).collect().filter(_ != null).map(CellType.fromName).toSet
-      assert(types === expected)
+      val df = (allTileTypes :+ null).toDF("tile")
+      val types = df.select(cellType($"tile"))
+
+      df.repartition(4).createOrReplaceTempView("tmp")
+      sql("select rf_cellType(tile) from tmp").show
+
+      val typeValues = types.collect().filter(_ != null).map(CellType.fromName).toSet
+      assert(typeValues === expected)
+
+      intercept[org.apache.spark.sql.AnalysisException] {
+        val notTiles = Seq("one", "two", "three").toDF("not_tiles")
+        notTiles.select(cellType($"not_tiles")).collect
+      }
     }
 
     it("should list supported cell types") {
@@ -143,4 +153,6 @@ class GTSQLSpec extends TestEnvironment with TestData  {
       }
     }
   }
+
+  protected def withFixture(test: Any) = ???
 }

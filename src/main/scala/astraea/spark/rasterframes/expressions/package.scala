@@ -25,7 +25,7 @@ import org.apache.spark.sql.catalyst.analysis.TypeCheckResult.{TypeCheckFailure,
 import org.apache.spark.sql.catalyst.expressions._
 import org.apache.spark.sql.catalyst.expressions.codegen.{CodegenContext, ExprCode}
 import org.apache.spark.sql.gt.types.TileUDT
-import org.apache.spark.sql.types.{DataType, StringType}
+import org.apache.spark.sql.types._
 
 /**
  * Module of Catalyst expressions for efficiently working with tiles.
@@ -34,21 +34,57 @@ import org.apache.spark.sql.types.{DataType, StringType}
  * @since 10/10/17
  */
 package object expressions {
-  case class CellType(child: Expression) extends UnaryExpression {
+  private def row(input: Any) = input.asInstanceOf[InternalRow]
 
-    def dataType: DataType = StringType
-
-    override def checkInputDataTypes(): TypeCheckResult = {
+  protected trait RequiresTile { self: UnaryExpression ⇒
+    abstract override def checkInputDataTypes(): TypeCheckResult = {
       if(child.dataType.isInstanceOf[TileUDT]) TypeCheckSuccess
       else TypeCheckFailure(
         s"Expected '${TileUDT.typeName}' but received '${child.dataType.simpleString}'"
       )
     }
+  }
+
+  /** Extract a Tile's cell type */
+  case class CellType(child: Expression) extends UnaryExpression with RequiresTile {
+
+    def dataType: DataType = StringType
 
     override protected def nullSafeEval(input: Any): Any =
-      input.asInstanceOf[InternalRow].getUTF8String(TileUDT.C.CELL_TYPE)
+      row(input).getUTF8String(TileUDT.C.CELL_TYPE)
 
     protected def doGenCode(ctx: CodegenContext, ev: ExprCode): ExprCode =
-      defineCodeGen(ctx, ev, c ⇒ s"$c.getUTF8String(${TileUDT.C.CELL_TYPE})")
+      defineCodeGen(ctx, ev, c ⇒ s"$c.getUTF8String(${TileUDT.C.CELL_TYPE});")
+   }
+
+  /** Extract a Tile's dimensions */
+  case class Dimensions(child: Expression) extends UnaryExpression with RequiresTile {
+    def dataType = StructType(Seq(
+      StructField("cols", ShortType),
+      StructField("rows", ShortType)
+    ))
+
+    override protected def nullSafeEval(input: Any): Any = {
+      val r = row(input)
+      val cols = r.getShort(TileUDT.C.COLS)
+      val rows = r.getShort(TileUDT.C.ROWS)
+      InternalRow(cols, rows)
+    }
+
+    protected def doGenCode(ctx: CodegenContext, ev: ExprCode): ExprCode = {
+      val cols = ctx.freshName("cols")
+      val rows = ctx.freshName("rows")
+      nullSafeCodeGen(ctx, ev, eval ⇒
+        s"""
+           final short $cols = $eval.getShort(${TileUDT.C.COLS});
+           final short $rows = $eval.getShort(${TileUDT.C.ROWS});
+           ${ev.value} = new GenericInternalRow(new Object[] { $cols, $rows });
+           //${ctx.setColumn(ev.value, ShortType, 0, cols)};
+           //${ctx.setColumn(ev.value, ShortType, 1, rows)};
+         """
+      )
+    }
+
+      //defineCodeGen(ctx, ev, c ⇒ s"$c.getUTF8String(${TileUDT.C.CELL_TYPE})")
   }
 }

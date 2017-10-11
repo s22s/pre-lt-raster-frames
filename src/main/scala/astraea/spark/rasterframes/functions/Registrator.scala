@@ -16,6 +16,7 @@
 
 package astraea.spark.rasterframes.functions
 
+import astraea.spark.rasterframes.expressions.{CellType, ExplodeTileExpression}
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.sql.catalyst.analysis.FunctionRegistry
 import org.apache.spark.sql.gt.types
@@ -29,8 +30,6 @@ import org.apache.spark.sql.gt.types
 private[rasterframes] object Registrator {
   def register(sqlContext: SQLContext): Unit = {
     sqlContext.udf.register("rf_makeConstantTile", makeConstantTile)
-    sqlContext.udf.register("rf_tileDimensions", tileDimensions)
-    //sqlContext.udf.register("rf_cellType", cellType)
     sqlContext.udf.register("rf_tileToArrayInt", tileToArray[Int])
     sqlContext.udf.register("rf_tileToArrayDouble", tileToArray[Double])
     sqlContext.udf.register("rf_histogram", aggHistogram)
@@ -52,7 +51,4 @@ private[rasterframes] object Registrator {
     sqlContext.udf.register("rf_cellTypes", types.cellTypes)
     sqlContext.udf.register("rf_renderAscii", renderAscii)
   }
-  // Expression-oriented functions have a different registration scheme
-  // Currently have to register with the `builtin` registry due to Spark data hiding.
-  FunctionRegistry.builtin.registerFunction("rf_explodeTiles", ExplodeTileExpression.apply(1.0, _))
 }

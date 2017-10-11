@@ -1,20 +1,23 @@
 /*
+ * This software is licensed under the Apache 2 license, quoted below.
+ *
  * Copyright 2017 Astraea, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     [http://www.apache.org/licenses/LICENSE-2.0]
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *
  */
 
-package astraea.spark.rasterframes.functions
+package astraea.spark.rasterframes.expressions
 
 import astraea.spark.rasterframes
 import geotrellis.raster.{NODATA, Tile}
@@ -22,7 +25,7 @@ import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.expressions.codegen.CodegenFallback
 import org.apache.spark.sql.catalyst.expressions.{Expression, Generator}
 import org.apache.spark.sql.gt.types.TileUDT
-import org.apache.spark.sql.types.{DoubleType, IntegerType, StructField, StructType}
+import org.apache.spark.sql.types._
 
 /**
  * Catalyst expression for converting a tile column into a pixel column, with each tile pixel occupying a separate row.
@@ -30,8 +33,8 @@ import org.apache.spark.sql.types.{DoubleType, IntegerType, StructField, StructT
  * @author sfitch
  * @since 4/12/17
  */
-private[rasterframes] case class ExplodeTileExpression(sampleFraction: Double = 1.0,
-                                                       override val children: Seq[Expression])
+private[rasterframes] case class ExplodeTileExpression(
+  sampleFraction: Double = 1.0, override val children: Seq[Expression])
     extends Expression with Generator with CodegenFallback {
 
   override def elementSchema: StructType = {
@@ -66,7 +69,6 @@ private[rasterframes] case class ExplodeTileExpression(sampleFraction: Double = 
 
       def safeGet(tile: Tile, col: Int, row: Int): Double =
         if (tile == null) NODATA else tile.getDouble(col, row)
-
 
       val (cols, rows) = tiles.head.dimensions
 
