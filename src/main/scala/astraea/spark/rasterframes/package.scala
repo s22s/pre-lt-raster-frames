@@ -39,6 +39,7 @@ import scala.reflect.runtime.universe._
  * @since 7/18/17
  */
 package object rasterframes extends EncoderImplicits with ColumnFunctions {
+  type Statistics = astraea.spark.rasterframes.functions.CellStatsAggregateFunction.Statistics
 
   /**
    * Initialization injection point. Must be called before any RasterFrame

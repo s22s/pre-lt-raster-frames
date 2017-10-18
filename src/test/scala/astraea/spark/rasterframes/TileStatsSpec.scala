@@ -149,11 +149,14 @@ class TileStatsSpec extends TestEnvironment with TestData  {
       val exploded = ds.select(explodeTiles($"tiles"))
       val (mean, vrnc) = exploded.agg(avg($"tiles"), var_pop($"tiles")).as[(Double, Double)].first
 
-      ds.createOrReplaceTempView("tmp")
-      val agg = ds.select(aggStats($"tiles") as "stats").select($"stats.variance".as[Double])
+      val stats = ds.select(aggStats($"tiles") as "stats")///.as[(Long, Double, Double, Double, Double)]
+      ds.select(aggStats($"tiles")).show(false)
+
+      val agg = stats.select($"stats.variance".as[Double])
 
       assert(vrnc === agg.first() +- 1e-6)
 
+      ds.createOrReplaceTempView("tmp")
       val agg2 = sql("select stats.* from (select rf_stats(tiles) as stats from tmp)")
       assert(agg2.first().getAs[Long]("dataCells") === 250L)
 

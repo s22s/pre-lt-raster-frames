@@ -15,10 +15,12 @@
  */
 package astraea.spark.rasterframes
 
+import astraea.spark.rasterframes.functions.CellStatsAggregateFunction.Statistics
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local._
-import geotrellis.raster.summary.Statistics
 import geotrellis.raster._
+import org.apache.spark.sql.Column
+
 import scala.reflect.runtime.universe._
 
 /**
@@ -125,13 +127,13 @@ package object functions {
     }
   }
 
-  private[rasterframes] def assembleTile(cols: Int, rows: Int, ct: CellType) = new TileAssemblerFunction(cols, rows, ct)
+  private[rasterframes] def assembleTile(cols: Int, rows: Int, ct: CellType) = TileAssemblerFunction(cols, rows, ct)
 
   /** Computes the column aggregate histogram */
-  private[rasterframes] val aggHistogram = new HistogramAggregateFunction()
+  private[rasterframes] val aggHistogram = HistogramAggregateFunction()
 
   /** Computes the column aggregate statistics */
-  private[rasterframes] val aggStats = new CellStatsAggregateFunction()
+  private[rasterframes] val aggStats = CellStatsAggregateFunction()
 
   /** Set the tile's no-data value. */
   private[rasterframes] def withNoData(nodata: Double) = safeEval[Tile, Tile](_.withNoData(Some(nodata)))
@@ -140,7 +142,9 @@ package object functions {
   private[rasterframes] val tileHistogram = safeEval[Tile, Histogram[Double]](_.histogramDouble)
 
   /** Single tile statistics. Convenience for `tileHistogram.statistics`. */
-  private[rasterframes] val tileStats = safeEval[Tile, Statistics[Double]](_.statisticsDouble.orNull)
+  private[rasterframes] val tileStats = safeEval[Tile, Statistics]((t: Tile) ⇒
+    t.statisticsDouble.map(Statistics.apply).orNull
+  )
 
   /** Add up all the cell values. */
   private[rasterframes] val tileSum: (Tile) ⇒ Double = safeEval((t: Tile) ⇒ {
@@ -166,9 +170,16 @@ package object functions {
   })
 
   /** Single tile mean. Convenience for `tileHistogram.statistics.mean`. */
-  private[rasterframes] val tileMean: (Tile) ⇒ Double = safeEval((tile: Tile) ⇒
-    tileSum(tile)/dataCells(tile)
-  )
+  private[rasterframes] val tileMean: (Tile) ⇒ Double = safeEval((t: Tile) ⇒ {
+    var sum: Double = 0.0
+    var count: Long = 0
+    t.dualForeach(
+      z ⇒ if(isData(z)) { count = count + 1; sum = sum + z }
+    ) (
+      z ⇒ if(isData(z)) { count = count + 1; sum = sum + z }
+    )
+    sum/count
+  })
 
   /** Compute summary cell-wise statistics across tiles. */
   private[rasterframes] val localAggStats = new LocalStatsAggregateFunction()

@@ -20,16 +20,15 @@
 package astraea.spark.rasterframes
 
 import astraea.spark.rasterframes.expressions.ExplodeTileExpression
+import astraea.spark.rasterframes.functions.{CellCountAggregateFunction, CellMeanAggregateFunction, CellStatsAggregateFunction}
 import astraea.spark.rasterframes.{functions ⇒ F}
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.LocalTileBinaryOp
-import geotrellis.raster.summary.Statistics
 import geotrellis.raster.{CellType, Tile}
 import org.apache.spark.annotation.Experimental
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 import org.apache.spark.sql.functions.udf
 import org.apache.spark.sql.gt._
-import org.apache.spark.sql.types.{IntegerType, StructField, StructType}
 import org.apache.spark.sql._
 
 import scala.reflect.runtime.universe._
@@ -41,7 +40,6 @@ import scala.reflect.runtime.universe._
  * @since 4/3/17
  */
 trait ColumnFunctions {
-  private implicit val statsEnc: Encoder[Statistics[Int]] = Encoders.product[Statistics[Int]]
   private implicit def arrayEnc[T: TypeTag]: Encoder[Array[T]] = ExpressionEncoder()
   private implicit def genEnc[T: TypeTag]: Encoder[T] = ExpressionEncoder()
 
@@ -101,31 +99,27 @@ trait ColumnFunctions {
 
   /** Compute the full column aggregate floating point statistics. */
   @Experimental
-  def aggStats(col: Column): Column =
-  withAlias("stats", col)(
+  def aggStats(col: Column): TypedColumn[Any, Statistics] = withAlias("aggStats", col)(
     F.aggStats(col)
-  )
+  ).as[Statistics]
 
   /** Computes the column aggregate mean. */
   @Experimental
-  def aggMean(col: Column) =
-    F.CellMeanAggregateFunction(col.expr)
-      .toAggregateExpression().asColumn
-      .as[Double]
+  def aggMean(col: Column) = CellMeanAggregateFunction(col.expr)
+    .toAggregateExpression().asColumn
+    .as[Double]
 
   /** Computes the number of non-NoData cells in a column. */
   @Experimental
-  def aggDataCells(col: Column) =
-    F.CellCountAggregateFunction(true, col.expr)
-      .toAggregateExpression().asColumn
-      .as[Long]
+  def aggDataCells(col: Column) = CellCountAggregateFunction(true, col.expr)
+    .toAggregateExpression().asColumn
+    .as[Long]
 
   /** Computes the number of NoData cells in a column. */
   @Experimental
-  def aggNoDataCells(col: Column) =
-    F.CellCountAggregateFunction(false, col.expr)
-      .toAggregateExpression().asColumn
-      .as[Long]
+  def aggNoDataCells(col: Column) = CellCountAggregateFunction(false, col.expr)
+    .toAggregateExpression().asColumn
+    .as[Long]
 
   /** Compute the Tile-wise mean */
   @Experimental
@@ -164,10 +158,10 @@ trait ColumnFunctions {
 
   /** Compute statistics of Tile values. */
   @Experimental
-  def tileStats(col: Column): TypedColumn[Any, Statistics[Double]] =
+  def tileStats(col: Column): TypedColumn[Any, Statistics] =
   withAlias("tileStats", col)(
-    udf[Statistics[Double], Tile](F.tileStats).apply(col)
-  ).as[Statistics[Double]]
+    udf[Statistics, Tile](F.tileStats).apply(col)
+  ).as[Statistics]
 
   /** Counts the number of non-NoData cells per Tile. */
   @Experimental
