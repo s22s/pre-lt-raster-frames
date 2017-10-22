@@ -19,7 +19,7 @@
 
 package astraea.spark.rasterframes.ml
 
-import org.apache.spark.ml.param.{Param, Params}
+import org.apache.spark.ml.param.{Params, StringArrayParam}
 
 /**
  * Mix-ins for common SparkML transformer parameters
@@ -29,7 +29,7 @@ import org.apache.spark.ml.param.{Param, Params}
  */
 object Parameters {
   trait HasInputCols { self: Params ⇒
-    final val inputCols = new Param[Array[String]](this, "inputCols", "array of input column names")
+    final val inputCols = new StringArrayParam(this, "inputCols", "array of input column names")
     final def getInputCols: Array[String] = $(inputCols)
   }
 }
