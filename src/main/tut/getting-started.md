@@ -10,7 +10,7 @@ Most of the examples are shown using the Spark DataFrames API. However, many cou
 
 @@dependency[sbt,Maven,Gradle] {
   group="io.astraea"
-  artifact="raster-frames"
+  artifact="raster-frames_2.11"
   version="x.y.z"
 }
 

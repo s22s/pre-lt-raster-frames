@@ -26,3 +26,5 @@ addSbtPlugin("com.lightbend.paradox" % "sbt-paradox" % "0.3.1")
 addSbtPlugin("pl.project13.scala" % "sbt-jmh" % "0.2.27")
 
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.3.5")
+
+addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8" % "0.9.0")
