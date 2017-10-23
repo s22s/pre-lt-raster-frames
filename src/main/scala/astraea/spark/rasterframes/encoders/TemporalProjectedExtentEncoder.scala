@@ -21,6 +21,7 @@ package astraea.spark.rasterframes.encoders
 
 import java.time.ZonedDateTime
 
+import astraea.spark.rasterframes._
 import geotrellis.spark.TemporalProjectedExtent
 import geotrellis.vector.ProjectedExtent
 import org.apache.spark.sql.Encoders
@@ -36,8 +37,8 @@ object TemporalProjectedExtentEncoder extends DelegatingSubfieldEncoder {
   def apply(): ExpressionEncoder[TemporalProjectedExtent] = {
     create(
       Seq(
-        "extent" -> Implicits.extentEncoder,
-        "crs" -> Implicits.crsEncoder,
+        "extent" -> extentEncoder,
+        "crs" -> crsEncoder,
         "instant" -> Encoders.scalaLong.asInstanceOf[ExpressionEncoder[Long]]
       )
     )

@@ -61,6 +61,4 @@ class TileExploder(override val uid: String) extends Transformer with DefaultPar
 }
 
 
-object TileExploder extends DefaultParamsReadable[TileExploder] {
-  override def load(path: String): TileExploder = super.load(path)
-}
+object TileExploder extends DefaultParamsReadable[TileExploder]

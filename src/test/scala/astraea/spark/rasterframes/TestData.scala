@@ -20,7 +20,7 @@ package astraea.spark.rasterframes
 
 import java.time.ZonedDateTime
 
-import astraea.spark.rasterframes.functions.UDFs
+import astraea.spark.rasterframes.{functions ⇒ F}
 import geotrellis.proj4.LatLng
 import geotrellis.raster
 import geotrellis.raster._
@@ -127,9 +127,9 @@ object TestData extends TestData {
       ) (
         z ⇒ if (isNoData(z)) rnd.nextGaussian() else z
       )
-    } while (UDFs.nodataCells(result) != 0L)
+    } while (F.nodataCells(result) != 0L)
 
-    assert(UDFs.nodataCells(result) == 0L,
+    assert(F.nodataCells(result) == 0L,
       s"Should not have any NoData cells for $cellTypeName:\n${result.asciiDraw()}")
     result
   }

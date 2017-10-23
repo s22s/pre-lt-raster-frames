@@ -17,12 +17,12 @@
  *
  */
 
-package astraea.spark.rasterframes.functions
+package astraea.spark.rasterframes
 
-import astraea.spark.rasterframes._
 import geotrellis.raster._
 import geotrellis.raster.resample.NearestNeighbor
 import org.apache.spark.sql.functions._
+
 
 /**
  * Test rig for Tile operations associated with converting to/from

@@ -17,13 +17,12 @@
  *
  */
 
-package astraea.spark.rasterframes.functions
+package astraea.spark.rasterframes
 
 import astraea.spark.rasterframes.TestData.randomTile
-import astraea.spark.rasterframes.{TestData, TestEnvironment, localAggMax, localAggMin, _}
+import geotrellis.raster._
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.{Max, Min}
-import geotrellis.raster._
 import org.apache.spark.sql.functions._
 
 /**
@@ -37,7 +36,15 @@ class TileStatsSpec extends TestEnvironment with TestData  {
   import TestData.injectND
   import sqlContext.implicits._
   describe("computing statistics over tiles") {
+    //import org.apache.spark.sql.execution.debug._
     it("should report dimensions") {
+      val df = Seq[(Tile, Tile)]((byteArrayTile, byteArrayTile)).toDF("tile1", "tile2")
+
+      val dims = df.select(tileDimensions($"tile1") as "dims").select("dims.*")
+
+      assert(dims.as[(Int, Int)].first() === (3, 3))
+      assert(dims.schema.head.name === "cols")
+
       val query = sql(
         """|select dims.* from (
            |select rf_tileDimensions(tiles) as dims from (
@@ -46,12 +53,9 @@ class TileStatsSpec extends TestEnvironment with TestData  {
       write(query)
       assert(query.as[(Int, Int)].first() === (10, 10))
 
-      val df = Seq[(Tile, Tile)]((byteArrayTile, byteArrayTile)).toDF("tile1", "tile2")
-      val dims = df.select(tileDimensions($"tile1") as "dims").select("dims.*")
-      //dims.printSchema()
-      //dims.show()
-      assert(dims.as[(Int, Int)].first() === (3, 3))
-      assert(dims.schema.head.name === "cols")
+      df.repartition(4).createOrReplaceTempView("tmp")
+      assert(sql("select dims.* from (select rf_tileDimensions(tile2) as dims from tmp)")
+        .as[(Int, Int)].first() === (3, 3))
     }
 
     it("should support local min/max") {
@@ -145,11 +149,14 @@ class TileStatsSpec extends TestEnvironment with TestData  {
       val exploded = ds.select(explodeTiles($"tiles"))
       val (mean, vrnc) = exploded.agg(avg($"tiles"), var_pop($"tiles")).as[(Double, Double)].first
 
-      ds.createOrReplaceTempView("tmp")
-      val agg = ds.select(aggStats($"tiles") as "stats").select($"stats.variance".as[Double])
+      val stats = ds.select(aggStats($"tiles") as "stats")///.as[(Long, Double, Double, Double, Double)]
+      ds.select(aggStats($"tiles")).show(false)
+
+      val agg = stats.select($"stats.variance".as[Double])
 
       assert(vrnc === agg.first() +- 1e-6)
 
+      ds.createOrReplaceTempView("tmp")
       val agg2 = sql("select stats.* from (select rf_stats(tiles) as stats from tmp)")
       assert(agg2.first().getAs[Long]("dataCells") === 250L)
 

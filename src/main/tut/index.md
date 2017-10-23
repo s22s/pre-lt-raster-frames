@@ -52,5 +52,6 @@ RasterFrames™ is a new project under active development. Feedback and contribu
 * [Machine Learning](ml/index.md)
 * [Exporting Rasterframes](exporting-rasterframes.md)
 * [UDF Reference](reference.md)
+* [Release Notes](release-notes.md)
 @@@
 

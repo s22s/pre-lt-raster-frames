@@ -19,6 +19,7 @@
 
 package astraea.spark.rasterframes.encoders
 
+import astraea.spark.rasterframes._
 import geotrellis.vector.ProjectedExtent
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 
@@ -30,6 +31,6 @@ import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
  */
 object ProjectedExtentEncoder extends DelegatingSubfieldEncoder {
   def apply(): ExpressionEncoder[ProjectedExtent] = {
-    create(Seq("extent" -> Implicits.extentEncoder, "crs" -> Implicits.crsEncoder))
+    create(Seq("extent" -> extentEncoder, "crs" -> crsEncoder))
   }
 }

@@ -28,8 +28,9 @@ import org.apache.spark.sql.types.{DataType, _}
  * @author sfitch
  * @since 4/17/17
  */
-class CellStatsAggregateFunction() extends UserDefinedAggregateFunction {
+case class CellStatsAggregateFunction() extends UserDefinedAggregateFunction {
   import CellStatsAggregateFunction.C
+
   override def inputSchema: StructType = StructType(StructField("value", TileUDT) :: Nil)
 
   override def dataType: DataType =
@@ -108,6 +109,13 @@ class CellStatsAggregateFunction() extends UserDefinedAggregateFunction {
 }
 
 object CellStatsAggregateFunction {
+  case class Statistics(dataCells: Long, min: Double, max: Double, mean: Double, variance: Double)
+  object Statistics {
+    // Convert GeoTrellis stats object into our simplified one.
+    def apply(stats: geotrellis.raster.summary.Statistics[Double]) =
+      new Statistics(stats.dataCells, stats.zmin, stats.zmax, stats.mean, stats.stddev * stats.stddev)
+  }
+
   /**  Column index values. */
   private object C {
     val COUNT = 0

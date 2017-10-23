@@ -47,12 +47,12 @@ case class CellMeanAggregateFunction(child: Expression) extends DeclarativeAggre
     Literal(0L)
   )
 
-  private val dataCells = udf(UDFs.dataCells)
-  private val sumCells = udf(UDFs.tileSum)
+  private val dataCellCounts = udf(dataCells)
+  private val sumCells = udf(tileSum)
 
   val updateExpressions = Seq(
     Add(sum, sumCells(child.asColumn).expr),
-    If(IsNull(child), count, Add(count, dataCells(child.asColumn).expr))
+    If(IsNull(child), count, Add(count, dataCellCounts(child.asColumn).expr))
   )
 
   val mergeExpressions = Seq(

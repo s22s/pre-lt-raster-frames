@@ -17,19 +17,32 @@
  *
  */
 
-package astraea.spark.rasterframes.ml
+package examples
 
-import org.apache.spark.ml.param.{Params, StringArrayParam}
+import astraea.spark.rasterframes._
+import geotrellis.raster.io.geotiff.SinglebandGeoTiff
+import org.apache.spark.sql.SparkSession
 
 /**
- * Mix-ins for common SparkML transformer parameters
+ * Compute the cell mean value of an image.
  *
- * @author sfitch
- * @since 9/21/17
+ * @author sfitch 
+ * @since 10/23/17
  */
-object Parameters {
-  trait HasInputCols { self: Params ⇒
-    final val inputCols = new StringArrayParam(this, "inputCols", "array of input column names")
-    final def getInputCols: Array[String] = $(inputCols)
-  }
+object MeanValue extends App {
+
+  implicit val spark = SparkSession.builder()
+    .master("local[*]")
+    .appName(getClass.getName)
+    .getOrCreate()
+
+  rfInit(spark.sqlContext)
+
+  val scene = SinglebandGeoTiff("src/test/resources/L8-B8-Robinson-IL.tiff")
+
+  val rf = scene.projectedRaster.toRF(128, 128) // <-- tile size
+
+  rf.select(aggMean(rf("tile"))).show(false)
+
+  spark.stop()
 }
