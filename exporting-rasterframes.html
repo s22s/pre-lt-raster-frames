@@ -45,7 +45,7 @@ gtag('config', 'UA-106630615-1');
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.5.7*
+0.5.7
 </div>
 </div>
 <div class="nav-toc">
@@ -98,7 +98,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.5.7*
+0.5.7
 </div>
 </div>
 <div class="nav-toc">
@@ -145,7 +145,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <p>While the goal of RasterFrames is to make it as easy as possible to do your geospatial analysis with a single construct, it is helpful to be able to transform it into other representations for various use cases.</p>
 <h2><a href="#converting-to-array" name="converting-to-array" class="anchor"><span class="anchor-link"></span></a>Converting to Array</h2>
 <p>The cell values within a <code>Tile</code> are encoded internally as an array. There may be use cases where the additional context provided by the <code>Tile</code> construct is no longer needed and one would prefer to work with the underlying array data.</p>
-<p>The <a href="http://rasterframes.io/latest/api/astraea/spark/rasterframes/functions/ColumnFunctions.html#tileToArray"><code>tileToArray</code></a> column function requires a type parameter to indicate the array element type you would like used. The following types may be used: <code>Int</code>, <code>Double</code>, <code>Byte</code>, <code>Short</code>, <code>Float</code></p>
+<p>The <a href="http://rasterframes.io/latest/api/astraea/spark/rasterframes/ColumnFunctions.html#tileToArray"><code>tileToArray</code></a> column function requires a type parameter to indicate the array element type you would like used. The following types may be used: <code>Int</code>, <code>Double</code>, <code>Byte</code>, <code>Short</code>, <code>Float</code></p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; val withArrays = rf.withColumn(&quot;tileData&quot;, tileToArray[Short]($&quot;tile&quot;)).drop(&quot;tile&quot;)
 withArrays: org.apache.spark.sql.DataFrame = [spatial_key: struct&lt;col: int, row: int&gt;, tileData: array&lt;smallint&gt;]
 
@@ -170,11 +170,11 @@ scala&gt; tileBack.drop(&quot;tileData&quot;).show(5, 40)
 +-----------+--------------------------------------+
 |spatial_key|                             tileAgain|
 +-----------+--------------------------------------+
-|      [6,3]|ShortRawArrayTile([S@2c463a89,128,128)|
-|      [4,0]|ShortRawArrayTile([S@7db8461f,128,128)|
-|      [0,0]|ShortRawArrayTile([S@280c28ff,128,128)|
-|      [4,2]|ShortRawArrayTile([S@72864946,128,128)|
-|      [0,2]|ShortRawArrayTile([S@6f09b7ed,128,128)|
+|      [6,3]|ShortRawArrayTile([S@2ed2826d,128,128)|
+|      [4,0]|ShortRawArrayTile([S@361f6cf5,128,128)|
+|      [0,0]| ShortRawArrayTile([S@a49348c,128,128)|
+|      [4,2]|ShortRawArrayTile([S@6b3c5ae7,128,128)|
+|      [0,2]|ShortRawArrayTile([S@51c76c07,128,128)|
 +-----------+--------------------------------------+
 only showing top 5 rows
 
@@ -187,11 +187,11 @@ scala&gt; tileBackAgain.drop(&quot;tileData&quot;).show(5, 50)
 +-----------+--------------------------------------------------+
 |spatial_key|                                         tileAgain|
 +-----------+--------------------------------------------------+
-|      [6,3]|ShortUserDefinedNoDataArrayTile([S@1c80b79b,128...|
-|      [4,0]|ShortUserDefinedNoDataArrayTile([S@31d4c7a4,128...|
-|      [0,0]|ShortUserDefinedNoDataArrayTile([S@47482513,128...|
-|      [4,2]|ShortUserDefinedNoDataArrayTile([S@643641b4,128...|
-|      [0,2]|ShortUserDefinedNoDataArrayTile([S@409b5cea,128...|
+|      [6,3]|ShortUserDefinedNoDataArrayTile([S@3e0713de,128...|
+|      [4,0]|ShortUserDefinedNoDataArrayTile([S@4d47c979,128...|
+|      [0,0]|ShortUserDefinedNoDataArrayTile([S@5845fd65,128...|
+|      [4,2]|ShortUserDefinedNoDataArrayTile([S@4356e42a,128...|
+|      [0,2]|ShortUserDefinedNoDataArrayTile([S@4549967d,128...|
 +-----------+--------------------------------------------------+
 only showing top 5 rows
 
@@ -213,19 +213,19 @@ root
 
 
 scala&gt; equalized.select(aggStats($&quot;tile&quot;)).show(false)
-+---------+------------------+-----------------+-----------------+------------------+------------------+-------+
-|dataCells|mean              |median           |mode             |stddev            |zmin              |zmax   |
-+---------+------------------+-----------------+-----------------+------------------+------------------+-------+
-|386941   |10160.503048268341|9873.156065074512|7905.780878889613|1816.8022725254104|7351.1446153846155|39158.0|
-+---------+------------------+-----------------+-----------------+------------------+------------------+-------+
++---------+------+-------+-----------------+------------------+
+|dataCells|min   |max    |mean             |variance          |
++---------+------+-------+-----------------+------------------+
+|387000   |7209.0|39217.0|10160.48549870801|3315238.5311127007|
++---------+------+-------+-----------------+------------------+
 
 
 scala&gt; equalized.select(aggStats($&quot;equalized&quot;)).show(false)
-+---------+-----------------+------------------+------------------+------------------+-----------------+------------------+
-|dataCells|mean             |median            |mode              |stddev            |zmin             |zmax              |
-+---------+-----------------+------------------+------------------+------------------+-----------------+------------------+
-|458660   |32764.27312170235|32108.424555018057|32403.880728168628|17389.278107855902|333.3304157549235|65296.486725663715|
-+---------+-----------------+------------------+------------------+------------------+-----------------+------------------+
++---------+---+-------+------------------+-------------------+
+|dataCells|min|max    |mean              |variance           |
++---------+---+-------+------------------+-------------------+
+|458724   |4.0|65535.0|32763.474431248418|3.025128587936561E8|
++---------+---+-------+------------------+-------------------+
 
 </code></pre>
 <p>We write it out just like any other DataFrame, including the ability to specify partitioning:</p>
@@ -254,19 +254,19 @@ root
 
 
 scala&gt; equalized.select(aggStats($&quot;tile&quot;)).show(false)
-+---------+------------------+-----------------+-----------------+------------------+------------------+-------+
-|dataCells|mean              |median           |mode             |stddev            |zmin              |zmax   |
-+---------+------------------+-----------------+-----------------+------------------+------------------+-------+
-|386941   |10160.503048268341|9873.156065074512|7905.780878889613|1816.8022725254104|7351.1446153846155|39158.0|
-+---------+------------------+-----------------+-----------------+------------------+------------------+-------+
++---------+------+-------+-----------------+------------------+
+|dataCells|min   |max    |mean             |variance          |
++---------+------+-------+-----------------+------------------+
+|387000   |7209.0|39217.0|10160.48549870801|3315238.5311127007|
++---------+------+-------+-----------------+------------------+
 
 
 scala&gt; equalized.select(aggStats($&quot;equalized&quot;)).show(false)
-+---------+-----------------+------------------+------------------+------------------+-----------------+------------------+
-|dataCells|mean             |median            |mode              |stddev            |zmin             |zmax              |
-+---------+-----------------+------------------+------------------+------------------+-----------------+------------------+
-|458660   |32764.27312170235|32108.424555018057|32403.880728168628|17389.278107855902|333.3304157549235|65296.486725663715|
-+---------+-----------------+------------------+------------------+------------------+-----------------+------------------+
++---------+---+-------+------------------+-------------------+
+|dataCells|min|max    |mean              |variance           |
++---------+---+-------+------------------+-------------------+
+|458724   |4.0|65535.0|32763.474431248418|3.025128587936561E8|
++---------+---+-------+------------------+-------------------+
 
 </code></pre>
 <h2><a href="#converting-to-rdd-and-tilelayerrdd" name="converting-to-rdd-and-tilelayerrdd" class="anchor"><span class="anchor-link"></span></a>Converting to <code>RDD</code> and <code>TileLayerRDD</code></h2>

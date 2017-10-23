@@ -1,9 +1,9 @@
 <!DOCTYPE html >
 <html>
         <head>
-          <title>TileLayerMetadataEncoder - astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder</title>
-          <meta name="description" content="TileLayerMetadataEncoder - astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder" />
-          <meta name="keywords" content="TileLayerMetadataEncoder astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder" />
+          <title>Statistics - astraea.spark.rasterframes.functions.CellStatsAggregateFunction.Statistics</title>
+          <meta name="description" content="Statistics - astraea.spark.rasterframes.functions.CellStatsAggregateFunction.Statistics" />
+          <meta name="keywords" content="Statistics astraea.spark.rasterframes.functions.CellStatsAggregateFunction.Statistics" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
       <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
@@ -16,7 +16,7 @@
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../index.html';
-            var hash = 'astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder$';
+            var hash = 'astraea.spark.rasterframes.functions.CellStatsAggregateFunction$$Statistics';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -26,14 +26,16 @@
    	  </script>
     
         </head>
-        <body class="value">
+        <body class="type">
       <div id="definition">
-        <img alt="Object" src="../../../../lib/object_big.png" />
-        <p id="owner"><a href="../../../package.html" class="extype" name="astraea">astraea</a>.<a href="../../package.html" class="extype" name="astraea.spark">spark</a>.<a href="../package.html" class="extype" name="astraea.spark.rasterframes">rasterframes</a>.<a href="package.html" class="extype" name="astraea.spark.rasterframes.encoders">encoders</a></p>
-        <h1>TileLayerMetadataEncoder</h1><h3><span class="morelinks"><div>Related Doc:
-            <a href="package.html" class="extype" name="astraea.spark.rasterframes.encoders">package encoders</a>
+        <a href="CellStatsAggregateFunction$$Statistics$.html" title="See companion object"><img alt="Class/Object" src="../../../../lib/class_to_object_big.png" /></a>
+        <p id="owner"><a href="../../../package.html" class="extype" name="astraea">astraea</a>.<a href="../../package.html" class="extype" name="astraea.spark">spark</a>.<a href="../package.html" class="extype" name="astraea.spark.rasterframes">rasterframes</a>.<a href="package.html" class="extype" name="astraea.spark.rasterframes.functions">functions</a>.<a href="CellStatsAggregateFunction$.html" class="extype" name="astraea.spark.rasterframes.functions.CellStatsAggregateFunction">CellStatsAggregateFunction</a></p>
+        <h1><a href="CellStatsAggregateFunction$$Statistics$.html" title="See companion object">Statistics</a></h1><h3><span class="morelinks"><div>
+            Related Docs:
+            <a href="CellStatsAggregateFunction$$Statistics$.html" title="See companion object">object Statistics</a>
+            | <a href="CellStatsAggregateFunction$.html" class="extype" name="astraea.spark.rasterframes.functions.CellStatsAggregateFunction">package CellStatsAggregateFunction</a>
           </div></span></h3><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder$" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellStatsAggregateFunction$$Statistics" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -42,18 +44,16 @@
       <h4 id="signature" class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">object</span>
+        <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">TileLayerMetadataEncoder</span><span class="result"> extends <a href="DelegatingSubfieldEncoder.html" class="extype" name="astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder">DelegatingSubfieldEncoder</a></span>
+        <span class="name">Statistics</span><span class="params">(<span name="dataCells">dataCells: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Long" class="extype" target="_top">Long</a></span>, <span name="min">min: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a></span>, <span name="max">max: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a></span>, <span name="mean">mean: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a></span>, <span name="variance">variance: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a></span>)</span><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Specialized encoder for <span class="extype" name="TileLayerMetadata">TileLayerMetadata</span>, necessary to be able to delegate to the
-speciallized cell type and crs encoders.
-</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>7/21/17</p></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="DelegatingSubfieldEncoder.html" class="extype" name="astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder">DelegatingSubfieldEncoder</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></div>
+          <div class="superTypes hiddenContent"><a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.io.Serializable" class="extype" target="_top">Serializable</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Product" class="extype" target="_top">Product</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Equals" class="extype" target="_top">Equals</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
         
 
@@ -71,7 +71,7 @@ speciallized cell type and crs encoders.
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder"><span>TileLayerMetadataEncoder</span></li><li class="in" name="astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder"><span>DelegatingSubfieldEncoder</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="astraea.spark.rasterframes.functions.CellStatsAggregateFunction.Statistics"><span>Statistics</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -88,7 +88,27 @@ speciallized cell type and crs encoders.
 
       <div id="template">
         <div id="allMembers">
-        
+        <div id="constructors" class="members">
+              <h3>Instance Constructors</h3>
+              <ol><li name="astraea.spark.rasterframes.functions.CellStatsAggregateFunction.Statistics#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="&lt;init&gt;(dataCells:Long,min:Double,max:Double,mean:Double,variance:Double):astraea.spark.rasterframes.functions.CellStatsAggregateFunction.Statistics"></a>
+      <a id="&lt;init&gt;:Statistics"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">new</span>
+      </span>
+      <span class="symbol">
+        <span class="name">Statistics</span><span class="params">(<span name="dataCells">dataCells: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Long" class="extype" target="_top">Long</a></span>, <span name="min">min: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a></span>, <span name="max">max: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a></span>, <span name="mean">mean: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a></span>, <span name="variance">variance: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a></span>)</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellStatsAggregateFunction$$Statistics@&lt;init&gt;(dataCells:Long,min:Double,max:Double,mean:Double,variance:Double):astraea.spark.rasterframes.functions.CellStatsAggregateFunction.Statistics" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li></ol>
+            </div>
 
         
 
@@ -108,7 +128,7 @@ speciallized cell type and crs encoders.
         <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder$@!=(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellStatsAggregateFunction$$Statistics@!=(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -125,7 +145,7 @@ speciallized cell type and crs encoders.
         <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder$@##():Int" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellStatsAggregateFunction$$Statistics@##():Int" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -142,28 +162,11 @@ speciallized cell type and crs encoders.
         <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder$@==(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellStatsAggregateFunction$$Statistics@==(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder#apply" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="apply[K]()(implicitevidence$1:reflect.runtime.universe.TypeTag[K]):org.apache.spark.sql.Encoder[geotrellis.spark.TileLayerMetadata[K]]"></a>
-      <a id="apply[K]()(scala.reflect.api.JavaUniverse.TypeTag[K]):Encoder[TileLayerMetadata[K]]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="K">K</span>]</span><span class="params">()</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.api.TypeTags.TypeTag">scala.reflect.api.JavaUniverse.TypeTag</span>[<span class="extype" name="astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder.apply.K">K</span>]</span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.Encoder" class="extype" target="_top">Encoder</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.TileLayerMetadata" class="extype" target="_top">TileLayerMetadata</a>[<span class="extype" name="astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder.apply.K">K</span>]]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder$@apply[K]()(implicitevidence$1:reflect.runtime.universe.TypeTag[K]):org.apache.spark.sql.Encoder[geotrellis.spark.TileLayerMetadata[K]]" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -176,7 +179,7 @@ speciallized cell type and crs encoders.
         <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder$@asInstanceOf[T0]:T0" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellStatsAggregateFunction$$Statistics@asInstanceOf[T0]:T0" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -193,7 +196,7 @@ speciallized cell type and crs encoders.
         <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder$@clone():Object" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellStatsAggregateFunction$$Statistics@clone():Object" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -204,23 +207,23 @@ speciallized cell type and crs encoders.
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder#create" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="create[T](fieldEncoders:Seq[(String,org.apache.spark.sql.catalyst.encoders.ExpressionEncoder[_])])(implicitevidence$1:reflect.runtime.universe.TypeTag[T]):org.apache.spark.sql.catalyst.encoders.ExpressionEncoder[T]"></a>
-      <a id="create[T](Seq[(String,ExpressionEncoder[_])])(scala.reflect.api.JavaUniverse.TypeTag[T]):ExpressionEncoder[T]"></a>
+    </li><li name="astraea.spark.rasterframes.functions.CellStatsAggregateFunction.Statistics#dataCells" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="dataCells:Long"></a>
+      <a id="dataCells:Long"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">def</span>
+        <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">create</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="fieldEncoders">fieldEncoders: <span class="extype" name="scala.Seq">Seq</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="org.apache.spark.sql.catalyst.encoders.ExpressionEncoder">ExpressionEncoder</span>[_])]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.api.TypeTags.TypeTag">scala.reflect.api.JavaUniverse.TypeTag</span>[<span class="extype" name="astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder.create.T">T</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.sql.catalyst.encoders.ExpressionEncoder">ExpressionEncoder</span>[<span class="extype" name="astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder.create.T">T</span>]</span>
+        <span class="name">dataCells</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Long" class="extype" target="_top">Long</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder$@create[T](fieldEncoders:Seq[(String,org.apache.spark.sql.catalyst.encoders.ExpressionEncoder[_])])(implicitevidence$1:reflect.runtime.universe.TypeTag[T]):org.apache.spark.sql.catalyst.encoders.ExpressionEncoder[T]" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellStatsAggregateFunction$$Statistics@dataCells:Long" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="DelegatingSubfieldEncoder.html" class="extype" name="astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder">DelegatingSubfieldEncoder</a></dd></dl></div>
+      
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -233,28 +236,11 @@ speciallized cell type and crs encoders.
         <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder$@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellStatsAggregateFunction$$Statistics@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.AnyRef#equals" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="equals(x$1:Any):Boolean"></a>
-      <a id="equals(Any):Boolean"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder$@equals(x$1:Any):Boolean" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <a id="finalize():Unit"></a>
@@ -267,7 +253,7 @@ speciallized cell type and crs encoders.
         <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder$@finalize():Unit" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellStatsAggregateFunction$$Statistics@finalize():Unit" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -290,24 +276,7 @@ speciallized cell type and crs encoders.
         <span class="name">getClass</span><span class="params">()</span><span class="result">: <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.lang.Class" class="extype" target="_top">Class</a>[_]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder$@getClass():Class[_]" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="scala.AnyRef#hashCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="hashCode():Int"></a>
-      <a id="hashCode():Int"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder$@hashCode():Int" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellStatsAggregateFunction$$Statistics@getClass():Class[_]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -324,11 +293,62 @@ speciallized cell type and crs encoders.
         <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder$@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellStatsAggregateFunction$$Statistics@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.functions.CellStatsAggregateFunction.Statistics#max" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="max:Double"></a>
+      <a id="max:Double"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">max</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellStatsAggregateFunction$$Statistics@max:Double" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="astraea.spark.rasterframes.functions.CellStatsAggregateFunction.Statistics#mean" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="mean:Double"></a>
+      <a id="mean:Double"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">mean</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellStatsAggregateFunction$$Statistics@mean:Double" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="astraea.spark.rasterframes.functions.CellStatsAggregateFunction.Statistics#min" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="min:Double"></a>
+      <a id="min:Double"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">min</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellStatsAggregateFunction$$Statistics@min:Double" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -341,7 +361,7 @@ speciallized cell type and crs encoders.
         <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder$@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellStatsAggregateFunction$$Statistics@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -358,7 +378,7 @@ speciallized cell type and crs encoders.
         <span class="name">notify</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder$@notify():Unit" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellStatsAggregateFunction$$Statistics@notify():Unit" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -375,7 +395,7 @@ speciallized cell type and crs encoders.
         <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder$@notifyAll():Unit" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellStatsAggregateFunction$$Statistics@notifyAll():Unit" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -392,28 +412,28 @@ speciallized cell type and crs encoders.
         <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder$@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellStatsAggregateFunction$$Statistics@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="toString():String"></a>
-      <a id="toString():String"></a>
+    </li><li name="astraea.spark.rasterframes.functions.CellStatsAggregateFunction.Statistics#variance" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="variance:Double"></a>
+      <a id="variance:Double"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">def</span>
+        <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">toString</span><span class="params">()</span><span class="result">: <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.lang.String" class="extype" target="_top">String</a></span>
+        <span class="name">variance</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Double" class="extype" target="_top">Double</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder$@toString():String" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellStatsAggregateFunction$$Statistics@variance:Double" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+      
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>
@@ -426,7 +446,7 @@ speciallized cell type and crs encoders.
         <span class="name">wait</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder$@wait():Unit" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellStatsAggregateFunction$$Statistics@wait():Unit" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -449,7 +469,7 @@ speciallized cell type and crs encoders.
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Long" class="extype" target="_top">Long</a></span>, <span name="arg1">arg1: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder$@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellStatsAggregateFunction$$Statistics@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -472,7 +492,7 @@ speciallized cell type and crs encoders.
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Long" class="extype" target="_top">Long</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder$@wait(x$1:Long):Unit" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellStatsAggregateFunction$$Statistics@wait(x$1:Long):Unit" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -492,8 +512,14 @@ speciallized cell type and crs encoders.
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder">
-              <h3>Inherited from <a href="DelegatingSubfieldEncoder.html" class="extype" name="astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder">DelegatingSubfieldEncoder</a></h3>
+        <div class="parent" name="scala.Serializable">
+              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></h3>
+            </div><div class="parent" name="java.io.Serializable">
+              <h3>Inherited from <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.io.Serializable" class="extype" target="_top">Serializable</a></h3>
+            </div><div class="parent" name="scala.Product">
+              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Product" class="extype" target="_top">Product</a></h3>
+            </div><div class="parent" name="scala.Equals">
+              <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Equals" class="extype" target="_top">Equals</a></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">

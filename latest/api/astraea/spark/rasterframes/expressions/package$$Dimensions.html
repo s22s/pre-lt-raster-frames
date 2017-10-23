@@ -1,9 +1,9 @@
 <!DOCTYPE html >
 <html>
         <head>
-          <title>CellMeanAggregateFunction - astraea.spark.rasterframes.functions.CellMeanAggregateFunction</title>
-          <meta name="description" content="CellMeanAggregateFunction - astraea.spark.rasterframes.functions.CellMeanAggregateFunction" />
-          <meta name="keywords" content="CellMeanAggregateFunction astraea.spark.rasterframes.functions.CellMeanAggregateFunction" />
+          <title>Dimensions - astraea.spark.rasterframes.expressions.Dimensions</title>
+          <meta name="description" content="Dimensions - astraea.spark.rasterframes.expressions.Dimensions" />
+          <meta name="keywords" content="Dimensions astraea.spark.rasterframes.expressions.Dimensions" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
       <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
@@ -16,7 +16,7 @@
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../index.html';
-            var hash = 'astraea.spark.rasterframes.functions.CellMeanAggregateFunction';
+            var hash = 'astraea.spark.rasterframes.expressions.package$$Dimensions';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -29,11 +29,11 @@
         <body class="type">
       <div id="definition">
         <img alt="Class" src="../../../../lib/class_big.png" />
-        <p id="owner"><a href="../../../package.html" class="extype" name="astraea">astraea</a>.<a href="../../package.html" class="extype" name="astraea.spark">spark</a>.<a href="../package.html" class="extype" name="astraea.spark.rasterframes">rasterframes</a>.<a href="package.html" class="extype" name="astraea.spark.rasterframes.functions">functions</a></p>
-        <h1>CellMeanAggregateFunction</h1><h3><span class="morelinks"><div>Related Doc:
-            <a href="package.html" class="extype" name="astraea.spark.rasterframes.functions">package functions</a>
+        <p id="owner"><a href="../../../package.html" class="extype" name="astraea">astraea</a>.<a href="../../package.html" class="extype" name="astraea.spark">spark</a>.<a href="../package.html" class="extype" name="astraea.spark.rasterframes">rasterframes</a>.<a href="package.html" class="extype" name="astraea.spark.rasterframes.expressions">expressions</a></p>
+        <h1>Dimensions</h1><h3><span class="morelinks"><div>Related Doc:
+            <a href="package.html" class="extype" name="astraea.spark.rasterframes.expressions">package expressions</a>
           </div></span></h3><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -45,14 +45,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">CellMeanAggregateFunction</span><span class="params">(<span name="child">child: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a></span>)</span><span class="result"> extends <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.aggregate.DeclarativeAggregate" class="extype" target="_top">DeclarativeAggregate</a> with <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <span class="name">Dimensions</span><span class="params">(<span name="child">child: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a></span>)</span><span class="result"> extends <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.UnaryExpression" class="extype" target="_top">UnaryExpression</a> with <a href="package$$RequiresTile.html" class="extype" name="astraea.spark.rasterframes.expressions.RequiresTile">RequiresTile</a> with <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Cell mean aggregate function
-</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>10/5/17</p></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Extract a Tile's dimensions</p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.aggregate.DeclarativeAggregate" class="extype" target="_top">DeclarativeAggregate</a>, <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Unevaluable" class="extype" target="_top">Unevaluable</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.io.Serializable" class="extype" target="_top">Serializable</a>, <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.aggregate.AggregateFunction" class="extype" target="_top">AggregateFunction</a>, <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.ImplicitCastInputTypes" class="extype" target="_top">ImplicitCastInputTypes</a>, <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.ExpectsInputTypes" class="extype" target="_top">ExpectsInputTypes</a>, <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a>, <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.trees.TreeNode" class="extype" target="_top">TreeNode</a>[<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a>], <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Product" class="extype" target="_top">Product</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Equals" class="extype" target="_top">Equals</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></div>
+          <div class="superTypes hiddenContent"><a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.io.Serializable" class="extype" target="_top">Serializable</a>, <a href="package$$RequiresTile.html" class="extype" name="astraea.spark.rasterframes.expressions.RequiresTile">RequiresTile</a>, <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.UnaryExpression" class="extype" target="_top">UnaryExpression</a>, <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a>, <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.trees.TreeNode" class="extype" target="_top">TreeNode</a>[<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a>], <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Product" class="extype" target="_top">Product</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Equals" class="extype" target="_top">Equals</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
         
 
@@ -70,7 +69,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="astraea.spark.rasterframes.functions.CellMeanAggregateFunction"><span>CellMeanAggregateFunction</span></li><li class="in" name="org.apache.spark.sql.catalyst.expressions.aggregate.DeclarativeAggregate"><span>DeclarativeAggregate</span></li><li class="in" name="org.apache.spark.sql.catalyst.expressions.Unevaluable"><span>Unevaluable</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="org.apache.spark.sql.catalyst.expressions.aggregate.AggregateFunction"><span>AggregateFunction</span></li><li class="in" name="org.apache.spark.sql.catalyst.expressions.ImplicitCastInputTypes"><span>ImplicitCastInputTypes</span></li><li class="in" name="org.apache.spark.sql.catalyst.expressions.ExpectsInputTypes"><span>ExpectsInputTypes</span></li><li class="in" name="org.apache.spark.sql.catalyst.expressions.Expression"><span>Expression</span></li><li class="in" name="org.apache.spark.sql.catalyst.trees.TreeNode"><span>TreeNode</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="astraea.spark.rasterframes.expressions.Dimensions"><span>Dimensions</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="astraea.spark.rasterframes.expressions.RequiresTile"><span>RequiresTile</span></li><li class="in" name="org.apache.spark.sql.catalyst.expressions.UnaryExpression"><span>UnaryExpression</span></li><li class="in" name="org.apache.spark.sql.catalyst.expressions.Expression"><span>Expression</span></li><li class="in" name="org.apache.spark.sql.catalyst.trees.TreeNode"><span>TreeNode</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -89,19 +88,19 @@
         <div id="allMembers">
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
-              <ol><li name="astraea.spark.rasterframes.functions.CellMeanAggregateFunction#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(child:org.apache.spark.sql.catalyst.expressions.Expression):astraea.spark.rasterframes.functions.CellMeanAggregateFunction"></a>
-      <a id="&lt;init&gt;:CellMeanAggregateFunction"></a>
+              <ol><li name="astraea.spark.rasterframes.expressions.Dimensions#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="&lt;init&gt;(child:org.apache.spark.sql.catalyst.expressions.Expression):astraea.spark.rasterframes.expressions.package.Dimensions"></a>
+      <a id="&lt;init&gt;:Dimensions"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">CellMeanAggregateFunction</span><span class="params">(<span name="child">child: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a></span>)</span>
+        <span class="name">Dimensions</span><span class="params">(<span name="child">child: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a></span>)</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@&lt;init&gt;(child:org.apache.spark.sql.catalyst.expressions.Expression):astraea.spark.rasterframes.functions.CellMeanAggregateFunction" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@&lt;init&gt;(child:org.apache.spark.sql.catalyst.expressions.Expression):astraea.spark.rasterframes.expressions.package.Dimensions" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -109,27 +108,7 @@
     </li></ol>
             </div>
 
-        <div id="types" class="types members">
-              <h3>Type Members</h3>
-              <ol><li name="org.apache.spark.sql.catalyst.expressions.aggregate.DeclarativeAggregate.RichAttribute" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="RichAttributeextendsAnyRef"></a>
-      <a id="RichAttribute:RichAttribute"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">class</span>
-      </span>
-      <span class="symbol">
-        <span class="name">RichAttribute</span><span class="result"> extends <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@RichAttributeextendsAnyRef" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>DeclarativeAggregate</dd></dl></div>
-    </li></ol>
-            </div>
+        
 
         
 
@@ -147,7 +126,7 @@
         <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@!=(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@!=(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -164,7 +143,7 @@
         <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@##():Int" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@##():Int" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -181,47 +160,13 @@
         <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@==(x$1:Any):Boolean" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@==(x$1:Any):Boolean" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.functions.CellMeanAggregateFunction#aggBufferAttributes" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="aggBufferAttributes:Seq[org.apache.spark.sql.catalyst.expressions.AttributeReference]"></a>
-      <a id="aggBufferAttributes:Seq[AttributeReference]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">lazy val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">aggBufferAttributes</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.collection.Seq" class="extype" target="_top">Seq</a>[<span class="extype" name="org.apache.spark.sql.catalyst.expressions.AttributeReference">AttributeReference</span>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@aggBufferAttributes:Seq[org.apache.spark.sql.catalyst.expressions.AttributeReference]" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="astraea.spark.rasterframes.functions.CellMeanAggregateFunction">CellMeanAggregateFunction</a> → AggregateFunction</dd></dl></div>
-    </li><li name="org.apache.spark.sql.catalyst.expressions.aggregate.DeclarativeAggregate#aggBufferSchema" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="aggBufferSchema:org.apache.spark.sql.types.StructType"></a>
-      <a id="aggBufferSchema:StructType"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">aggBufferSchema</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.types.StructType" class="extype" target="_top">StructType</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@aggBufferSchema:org.apache.spark.sql.types.StructType" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>DeclarativeAggregate → AggregateFunction</dd></dl></div>
     </li><li name="org.apache.spark.sql.catalyst.trees.TreeNode#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply(number:&lt;?&gt;):org.apache.spark.sql.catalyst.trees.TreeNode[_]"></a>
+      <a id="apply(number:Int):org.apache.spark.sql.catalyst.trees.TreeNode[_]"></a>
       <a id="apply(Int):TreeNode[_]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -232,7 +177,7 @@
         <span class="name">apply</span><span class="params">(<span name="number">number: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.trees.TreeNode" class="extype" target="_top">TreeNode</a>[_]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@apply(number:Int):org.apache.spark.sql.catalyst.trees.TreeNode[_]" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@apply(number:Int):org.apache.spark.sql.catalyst.trees.TreeNode[_]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -249,7 +194,7 @@
         <span class="name">argString</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@argString:String" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@argString:String" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -266,7 +211,7 @@
         <span class="name">asCode</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@asCode:String" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@asCode:String" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -283,7 +228,7 @@
         <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@asInstanceOf[T0]:T0" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@asInstanceOf[T0]:T0" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -300,12 +245,12 @@
         <span class="name">canonicalized</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@canonicalized:org.apache.spark.sql.catalyst.expressions.Expression" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@canonicalized:org.apache.spark.sql.catalyst.expressions.Expression" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Expression</dd></dl></div>
-    </li><li name="org.apache.spark.sql.catalyst.expressions.ExpectsInputTypes#checkInputDataTypes" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="astraea.spark.rasterframes.expressions.RequiresTile#checkInputDataTypes" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="checkInputDataTypes():org.apache.spark.sql.catalyst.analysis.TypeCheckResult"></a>
       <a id="checkInputDataTypes():TypeCheckResult"></a>
       <h4 class="signature">
@@ -317,12 +262,12 @@
         <span class="name">checkInputDataTypes</span><span class="params">()</span><span class="result">: <span class="extype" name="org.apache.spark.sql.catalyst.analysis.TypeCheckResult">TypeCheckResult</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@checkInputDataTypes():org.apache.spark.sql.catalyst.analysis.TypeCheckResult" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@checkInputDataTypes():org.apache.spark.sql.catalyst.analysis.TypeCheckResult" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>ExpectsInputTypes → Expression</dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.functions.CellMeanAggregateFunction#child" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="package$$RequiresTile.html" class="extype" name="astraea.spark.rasterframes.expressions.RequiresTile">RequiresTile</a></dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.expressions.Dimensions#child" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="child:org.apache.spark.sql.catalyst.expressions.Expression"></a>
       <a id="child:Expression"></a>
       <h4 class="signature">
@@ -334,28 +279,28 @@
         <span class="name">child</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@child:org.apache.spark.sql.catalyst.expressions.Expression" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@child:org.apache.spark.sql.catalyst.expressions.Expression" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
-    </li><li name="astraea.spark.rasterframes.functions.CellMeanAggregateFunction#children" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="astraea.spark.rasterframes.expressions.Dimensions">Dimensions</a> → UnaryExpression</dd></dl></div>
+    </li><li name="org.apache.spark.sql.catalyst.expressions.UnaryExpression#children" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="children:Seq[org.apache.spark.sql.catalyst.expressions.Expression]"></a>
       <a id="children:Seq[Expression]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
-        <span class="modifier"></span>
+        <span class="modifier">final </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">children</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.collection.Seq" class="extype" target="_top">Seq</a>[<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a>]</span>
+        <span class="name">children</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@children:Seq[org.apache.spark.sql.catalyst.expressions.Expression]" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@children:Seq[org.apache.spark.sql.catalyst.expressions.Expression]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="astraea.spark.rasterframes.functions.CellMeanAggregateFunction">CellMeanAggregateFunction</a> → TreeNode</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UnaryExpression → TreeNode</dd></dl></div>
     </li><li name="org.apache.spark.sql.catalyst.expressions.Expression#childrenResolved" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="childrenResolved:Boolean"></a>
       <a id="childrenResolved:Boolean"></a>
@@ -368,7 +313,7 @@
         <span class="name">childrenResolved</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@childrenResolved:Boolean" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@childrenResolved:Boolean" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -385,7 +330,7 @@
         <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@clone():Object" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@clone():Object" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -397,7 +342,7 @@
               
         </dd></dl></div>
     </li><li name="org.apache.spark.sql.catalyst.trees.TreeNode#collect" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="collect[B&lt;:&lt;?&gt;](pf:&lt;?&gt;):Seq[B]"></a>
+      <a id="collect[B](pf:PartialFunction[BaseType,B]):Seq[B]"></a>
       <a id="collect[B](PartialFunction[Expression,B]):Seq[B]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -408,13 +353,13 @@
         <span class="name">collect</span><span class="tparams">[<span name="B">B</span>]</span><span class="params">(<span name="pf">pf: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.PartialFunction" class="extype" target="_top">PartialFunction</a>[<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a>, <span class="extype" name="org.apache.spark.sql.catalyst.trees.TreeNode.collect.B">B</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="org.apache.spark.sql.catalyst.trees.TreeNode.collect.B">B</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@collect[B](pf:PartialFunction[BaseType,B]):Seq[B]" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@collect[B](pf:PartialFunction[BaseType,B]):Seq[B]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>TreeNode</dd></dl></div>
     </li><li name="org.apache.spark.sql.catalyst.trees.TreeNode#collectFirst" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="collectFirst[B&lt;:&lt;?&gt;](pf:&lt;?&gt;):Option[B]"></a>
+      <a id="collectFirst[B](pf:PartialFunction[BaseType,B]):Option[B]"></a>
       <a id="collectFirst[B](PartialFunction[Expression,B]):Option[B]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -425,7 +370,7 @@
         <span class="name">collectFirst</span><span class="tparams">[<span name="B">B</span>]</span><span class="params">(<span name="pf">pf: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.PartialFunction" class="extype" target="_top">PartialFunction</a>[<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a>, <span class="extype" name="org.apache.spark.sql.catalyst.trees.TreeNode.collectFirst.B">B</span>]</span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Option" class="extype" target="_top">Option</a>[<span class="extype" name="org.apache.spark.sql.catalyst.trees.TreeNode.collectFirst.B">B</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@collectFirst[B](pf:PartialFunction[BaseType,B]):Option[B]" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@collectFirst[B](pf:PartialFunction[BaseType,B]):Option[B]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -442,7 +387,7 @@
         <span class="name">collectLeaves</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@collectLeaves():Seq[BaseType]" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@collectLeaves():Seq[BaseType]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -459,45 +404,45 @@
         <span class="name">containsChild</span><span class="result">: <span class="extype" name="scala.Predef.Set">Set</span>[<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.trees.TreeNode" class="extype" target="_top">TreeNode</a>[_]]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@containsChild:Set[org.apache.spark.sql.catalyst.trees.TreeNode[_]]" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@containsChild:Set[org.apache.spark.sql.catalyst.trees.TreeNode[_]]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>TreeNode</dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.functions.CellMeanAggregateFunction#dataType" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="dataType:org.apache.spark.sql.types.DoubleType.type"></a>
-      <a id="dataType:DoubleType.type"></a>
+    </li><li name="astraea.spark.rasterframes.expressions.Dimensions#dataType" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="dataType:org.apache.spark.sql.types.StructType"></a>
+      <a id="dataType:StructType"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">dataType</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.types.DoubleType" class="extype" target="_top">DoubleType</a>.type</span>
+        <span class="name">dataType</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.types.StructType" class="extype" target="_top">StructType</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@dataType:org.apache.spark.sql.types.DoubleType.type" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@dataType:org.apache.spark.sql.types.StructType" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="astraea.spark.rasterframes.functions.CellMeanAggregateFunction">CellMeanAggregateFunction</a> → Expression</dd></dl></div>
-    </li><li name="org.apache.spark.sql.catalyst.expressions.aggregate.AggregateFunction#defaultResult" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="defaultResult:Option[org.apache.spark.sql.catalyst.expressions.Literal]"></a>
-      <a id="defaultResult:Option[Literal]"></a>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="astraea.spark.rasterframes.expressions.Dimensions">Dimensions</a> → Expression</dd></dl></div>
+    </li><li name="org.apache.spark.sql.catalyst.expressions.UnaryExpression#defineCodeGen" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="defineCodeGen(ctx:org.apache.spark.sql.catalyst.expressions.codegen.CodegenContext,ev:org.apache.spark.sql.catalyst.expressions.codegen.ExprCode,f:String=&gt;String):org.apache.spark.sql.catalyst.expressions.codegen.ExprCode"></a>
+      <a id="defineCodeGen(CodegenContext,ExprCode,(String)⇒String):ExprCode"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">defaultResult</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Option" class="extype" target="_top">Option</a>[<span class="extype" name="org.apache.spark.sql.catalyst.expressions.Literal">Literal</span>]</span>
+        <span class="name">defineCodeGen</span><span class="params">(<span name="ctx">ctx: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.codegen.CodegenContext" class="extype" target="_top">CodegenContext</a></span>, <span name="ev">ev: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.codegen.ExprCode" class="extype" target="_top">ExprCode</a></span>, <span name="f">f: (<span class="extype" name="scala.Predef.String">String</span>) ⇒ <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.codegen.ExprCode" class="extype" target="_top">ExprCode</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@defaultResult:Option[org.apache.spark.sql.catalyst.expressions.Literal]" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@defineCodeGen(ctx:org.apache.spark.sql.catalyst.expressions.codegen.CodegenContext,ev:org.apache.spark.sql.catalyst.expressions.codegen.ExprCode,f:String=&gt;String):org.apache.spark.sql.catalyst.expressions.codegen.ExprCode" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AggregateFunction</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>UnaryExpression</dd></dl></div>
     </li><li name="org.apache.spark.sql.catalyst.expressions.Expression#deterministic" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="deterministic:Boolean"></a>
       <a id="deterministic:Boolean"></a>
@@ -510,28 +455,28 @@
         <span class="name">deterministic</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@deterministic:Boolean" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@deterministic:Boolean" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Expression</dd></dl></div>
-    </li><li name="org.apache.spark.sql.catalyst.expressions.Unevaluable#doGenCode" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="astraea.spark.rasterframes.expressions.Dimensions#doGenCode" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="doGenCode(ctx:org.apache.spark.sql.catalyst.expressions.codegen.CodegenContext,ev:org.apache.spark.sql.catalyst.expressions.codegen.ExprCode):org.apache.spark.sql.catalyst.expressions.codegen.ExprCode"></a>
       <a id="doGenCode(CodegenContext,ExprCode):ExprCode"></a>
       <h4 class="signature">
       <span class="modifier_kind">
-        <span class="modifier">final </span>
+        <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
         <span class="name">doGenCode</span><span class="params">(<span name="ctx">ctx: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.codegen.CodegenContext" class="extype" target="_top">CodegenContext</a></span>, <span name="ev">ev: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.codegen.ExprCode" class="extype" target="_top">ExprCode</a></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.codegen.ExprCode" class="extype" target="_top">ExprCode</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@doGenCode(ctx:org.apache.spark.sql.catalyst.expressions.codegen.CodegenContext,ev:org.apache.spark.sql.catalyst.expressions.codegen.ExprCode):org.apache.spark.sql.catalyst.expressions.codegen.ExprCode" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@doGenCode(ctx:org.apache.spark.sql.catalyst.expressions.codegen.CodegenContext,ev:org.apache.spark.sql.catalyst.expressions.codegen.ExprCode):org.apache.spark.sql.catalyst.expressions.codegen.ExprCode" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Unevaluable → Expression</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="astraea.spark.rasterframes.expressions.Dimensions">Dimensions</a> → Expression</dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -544,47 +489,30 @@
         <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="org.apache.spark.sql.catalyst.expressions.Unevaluable#eval" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="org.apache.spark.sql.catalyst.expressions.UnaryExpression#eval" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eval(input:org.apache.spark.sql.catalyst.InternalRow):Any"></a>
       <a id="eval(InternalRow):Any"></a>
       <h4 class="signature">
       <span class="modifier_kind">
-        <span class="modifier">final </span>
+        <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
         <span class="name">eval</span><span class="params">(<span name="input">input: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.InternalRow" class="extype" target="_top">InternalRow</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@eval(input:org.apache.spark.sql.catalyst.InternalRow):Any" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@eval(input:org.apache.spark.sql.catalyst.InternalRow):Any" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Unevaluable → Expression</dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.functions.CellMeanAggregateFunction#evaluateExpression" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="evaluateExpression:org.apache.spark.sql.catalyst.expressions.Expression"></a>
-      <a id="evaluateExpression:Expression"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">evaluateExpression</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@evaluateExpression:org.apache.spark.sql.catalyst.expressions.Expression" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="astraea.spark.rasterframes.functions.CellMeanAggregateFunction">CellMeanAggregateFunction</a> → DeclarativeAggregate</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UnaryExpression → Expression</dd></dl></div>
     </li><li name="org.apache.spark.sql.catalyst.trees.TreeNode#fastEquals" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="fastEquals(other:&lt;?&gt;):Boolean"></a>
+      <a id="fastEquals(other:org.apache.spark.sql.catalyst.trees.TreeNode[_]):Boolean"></a>
       <a id="fastEquals(TreeNode[_]):Boolean"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -595,7 +523,7 @@
         <span class="name">fastEquals</span><span class="params">(<span name="other">other: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.trees.TreeNode" class="extype" target="_top">TreeNode</a>[_]</span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@fastEquals(other:org.apache.spark.sql.catalyst.trees.TreeNode[_]):Boolean" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@fastEquals(other:org.apache.spark.sql.catalyst.trees.TreeNode[_]):Boolean" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -612,7 +540,7 @@
         <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@finalize():Unit" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@finalize():Unit" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -624,7 +552,7 @@
               
         </dd></dl></div>
     </li><li name="org.apache.spark.sql.catalyst.trees.TreeNode#find" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="find(f:&lt;?&gt;):Option[BaseType]"></a>
+      <a id="find(f:BaseType=&gt;Boolean):Option[BaseType]"></a>
       <a id="find((Expression)⇒Boolean):Option[Expression]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -635,7 +563,7 @@
         <span class="name">find</span><span class="params">(<span name="f">f: (<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a>) ⇒ <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@find(f:BaseType=&gt;Boolean):Option[BaseType]" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@find(f:BaseType=&gt;Boolean):Option[BaseType]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -652,13 +580,13 @@
         <span class="name">flatArguments</span><span class="result">: <span class="extype" name="scala.Iterator">Iterator</span>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@flatArguments:Iterator[Any]" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@flatArguments:Iterator[Any]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>Expression</dd></dl></div>
     </li><li name="org.apache.spark.sql.catalyst.trees.TreeNode#flatMap" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="flatMap[A&lt;:&lt;?&gt;](f:&lt;?&gt;):Seq[A]"></a>
+      <a id="flatMap[A](f:BaseType=&gt;TraversableOnce[A]):Seq[A]"></a>
       <a id="flatMap[A]((Expression)⇒TraversableOnce[A]):Seq[A]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -669,30 +597,30 @@
         <span class="name">flatMap</span><span class="tparams">[<span name="A">A</span>]</span><span class="params">(<span name="f">f: (<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a>) ⇒ <span class="extype" name="scala.TraversableOnce">TraversableOnce</span>[<span class="extype" name="org.apache.spark.sql.catalyst.trees.TreeNode.flatMap.A">A</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="org.apache.spark.sql.catalyst.trees.TreeNode.flatMap.A">A</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@flatMap[A](f:BaseType=&gt;TraversableOnce[A]):Seq[A]" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@flatMap[A](f:BaseType=&gt;TraversableOnce[A]):Seq[A]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>TreeNode</dd></dl></div>
-    </li><li name="org.apache.spark.sql.catalyst.expressions.aggregate.AggregateFunction#foldable" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="org.apache.spark.sql.catalyst.expressions.UnaryExpression#foldable" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="foldable:Boolean"></a>
       <a id="foldable:Boolean"></a>
       <h4 class="signature">
       <span class="modifier_kind">
-        <span class="modifier">final </span>
+        <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
         <span class="name">foldable</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@foldable:Boolean" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@foldable:Boolean" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AggregateFunction → Expression</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UnaryExpression → Expression</dd></dl></div>
     </li><li name="org.apache.spark.sql.catalyst.trees.TreeNode#foreach" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="foreach(f:&lt;?&gt;):Unit"></a>
+      <a id="foreach(f:BaseType=&gt;Unit):Unit"></a>
       <a id="foreach((Expression)⇒Unit):Unit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -703,13 +631,13 @@
         <span class="name">foreach</span><span class="params">(<span name="f">f: (<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a>) ⇒ <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@foreach(f:BaseType=&gt;Unit):Unit" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@foreach(f:BaseType=&gt;Unit):Unit" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>TreeNode</dd></dl></div>
     </li><li name="org.apache.spark.sql.catalyst.trees.TreeNode#foreachUp" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="foreachUp(f:&lt;?&gt;):Unit"></a>
+      <a id="foreachUp(f:BaseType=&gt;Unit):Unit"></a>
       <a id="foreachUp((Expression)⇒Unit):Unit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -720,13 +648,13 @@
         <span class="name">foreachUp</span><span class="params">(<span name="f">f: (<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a>) ⇒ <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@foreachUp(f:BaseType=&gt;Unit):Unit" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@foreachUp(f:BaseType=&gt;Unit):Unit" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>TreeNode</dd></dl></div>
     </li><li name="org.apache.spark.sql.catalyst.expressions.Expression#genCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="genCode(ctx:&lt;?&gt;):org.apache.spark.sql.catalyst.expressions.codegen.ExprCode"></a>
+      <a id="genCode(ctx:org.apache.spark.sql.catalyst.expressions.codegen.CodegenContext):org.apache.spark.sql.catalyst.expressions.codegen.ExprCode"></a>
       <a id="genCode(CodegenContext):ExprCode"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -737,13 +665,13 @@
         <span class="name">genCode</span><span class="params">(<span name="ctx">ctx: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.codegen.CodegenContext" class="extype" target="_top">CodegenContext</a></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.codegen.ExprCode" class="extype" target="_top">ExprCode</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@genCode(ctx:org.apache.spark.sql.catalyst.expressions.codegen.CodegenContext):org.apache.spark.sql.catalyst.expressions.codegen.ExprCode" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@genCode(ctx:org.apache.spark.sql.catalyst.expressions.codegen.CodegenContext):org.apache.spark.sql.catalyst.expressions.codegen.ExprCode" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Expression</dd></dl></div>
     </li><li name="org.apache.spark.sql.catalyst.trees.TreeNode#generateTreeString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="generateTreeString(depth:&lt;?&gt;,lastChildren:&lt;?&gt;,builder:&lt;?&gt;,verbose:&lt;?&gt;,prefix:&lt;?&gt;):StringBuilder"></a>
+      <a id="generateTreeString(depth:Int,lastChildren:Seq[Boolean],builder:StringBuilder,verbose:Boolean,prefix:String):StringBuilder"></a>
       <a id="generateTreeString(Int,Seq[Boolean],StringBuilder,Boolean,String):StringBuilder"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -754,7 +682,7 @@
         <span class="name">generateTreeString</span><span class="params">(<span name="depth">depth: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="lastChildren">lastChildren: <span class="extype" name="scala.Seq">Seq</span>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a>]</span>, <span name="builder">builder: <span class="extype" name="scala.StringBuilder">StringBuilder</span></span>, <span name="verbose">verbose: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>, <span name="prefix">prefix: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.StringBuilder">StringBuilder</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@generateTreeString(depth:Int,lastChildren:Seq[Boolean],builder:StringBuilder,verbose:Boolean,prefix:String):StringBuilder" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@generateTreeString(depth:Int,lastChildren:Seq[Boolean],builder:StringBuilder,verbose:Boolean,prefix:String):StringBuilder" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -771,7 +699,7 @@
         <span class="name">getClass</span><span class="params">()</span><span class="result">: <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.lang.Class" class="extype" target="_top">Class</a>[_]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@getClass():Class[_]" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@getClass():Class[_]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -788,28 +716,11 @@
         <span class="name">hashCode</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@hashCode():Int" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@hashCode():Int" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>TreeNode → AnyRef → Any</dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.functions.CellMeanAggregateFunction#initialValues" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="initialValues:Seq[org.apache.spark.sql.catalyst.expressions.Literal]"></a>
-      <a id="initialValues:Seq[Literal]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">initialValues</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.collection.Seq" class="extype" target="_top">Seq</a>[<span class="extype" name="org.apache.spark.sql.catalyst.expressions.Literal">Literal</span>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@initialValues:Seq[org.apache.spark.sql.catalyst.expressions.Literal]" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="astraea.spark.rasterframes.functions.CellMeanAggregateFunction">CellMeanAggregateFunction</a> → DeclarativeAggregate</dd></dl></div>
     </li><li name="org.apache.spark.sql.catalyst.trees.TreeNode#innerChildren" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="innerChildren:Seq[org.apache.spark.sql.catalyst.trees.TreeNode[_]]"></a>
       <a id="innerChildren:Seq[TreeNode[_]]"></a>
@@ -822,45 +733,11 @@
         <span class="name">innerChildren</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.trees.TreeNode" class="extype" target="_top">TreeNode</a>[_]]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@innerChildren:Seq[org.apache.spark.sql.catalyst.trees.TreeNode[_]]" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@innerChildren:Seq[org.apache.spark.sql.catalyst.trees.TreeNode[_]]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>TreeNode</dd></dl></div>
-    </li><li name="org.apache.spark.sql.catalyst.expressions.aggregate.DeclarativeAggregate#inputAggBufferAttributes" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="inputAggBufferAttributes:Seq[org.apache.spark.sql.catalyst.expressions.AttributeReference]"></a>
-      <a id="inputAggBufferAttributes:Seq[AttributeReference]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">lazy val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">inputAggBufferAttributes</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="org.apache.spark.sql.catalyst.expressions.AttributeReference">AttributeReference</span>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@inputAggBufferAttributes:Seq[org.apache.spark.sql.catalyst.expressions.AttributeReference]" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>DeclarativeAggregate → AggregateFunction</dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.functions.CellMeanAggregateFunction#inputTypes" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="inputTypes:Seq[org.apache.spark.sql.gt.types.TileUDT.type]"></a>
-      <a id="inputTypes:Seq[TileUDT.type]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">inputTypes</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.collection.Seq" class="extype" target="_top">Seq</a>[<a href="../../../../org/apache/spark/sql/gt/types/TileUDT$.html" class="extype" name="org.apache.spark.sql.gt.types.TileUDT">TileUDT</a>.type]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@inputTypes:Seq[org.apache.spark.sql.gt.types.TileUDT.type]" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="astraea.spark.rasterframes.functions.CellMeanAggregateFunction">CellMeanAggregateFunction</a> → ExpectsInputTypes</dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <a id="isInstanceOf[T0]:Boolean"></a>
@@ -873,7 +750,7 @@
         <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -890,13 +767,13 @@
         <span class="name">jsonFields</span><span class="result">: <span class="extype" name="scala.List">List</span>[<span class="extype" name="org.json4s.JsonAST.JField">JField</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@jsonFields:List[org.json4s.JsonAST.JField]" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@jsonFields:List[org.json4s.JsonAST.JField]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>TreeNode</dd></dl></div>
     </li><li name="org.apache.spark.sql.catalyst.trees.TreeNode#makeCopy" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="makeCopy(newArgs:&lt;?&gt;):BaseType"></a>
+      <a id="makeCopy(newArgs:Array[AnyRef]):BaseType"></a>
       <a id="makeCopy(Array[AnyRef]):Expression"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -907,13 +784,13 @@
         <span class="name">makeCopy</span><span class="params">(<span name="newArgs">newArgs: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Array" class="extype" target="_top">Array</a>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>]</span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@makeCopy(newArgs:Array[AnyRef]):BaseType" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@makeCopy(newArgs:Array[AnyRef]):BaseType" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>TreeNode</dd></dl></div>
     </li><li name="org.apache.spark.sql.catalyst.trees.TreeNode#map" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="map[A&lt;:&lt;?&gt;](f:&lt;?&gt;):Seq[A]"></a>
+      <a id="map[A](f:BaseType=&gt;A):Seq[A]"></a>
       <a id="map[A]((Expression)⇒A):Seq[A]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -924,13 +801,13 @@
         <span class="name">map</span><span class="tparams">[<span name="A">A</span>]</span><span class="params">(<span name="f">f: (<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a>) ⇒ <span class="extype" name="org.apache.spark.sql.catalyst.trees.TreeNode.map.A">A</span></span>)</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="org.apache.spark.sql.catalyst.trees.TreeNode.map.A">A</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@map[A](f:BaseType=&gt;A):Seq[A]" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@map[A](f:BaseType=&gt;A):Seq[A]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>TreeNode</dd></dl></div>
     </li><li name="org.apache.spark.sql.catalyst.trees.TreeNode#mapChildren" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="mapChildren(f:&lt;?&gt;):BaseType"></a>
+      <a id="mapChildren(f:BaseType=&gt;BaseType):BaseType"></a>
       <a id="mapChildren((Expression)⇒Expression):Expression"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -941,13 +818,13 @@
         <span class="name">mapChildren</span><span class="params">(<span name="f">f: (<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a>) ⇒ <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@mapChildren(f:BaseType=&gt;BaseType):BaseType" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@mapChildren(f:BaseType=&gt;BaseType):BaseType" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>TreeNode</dd></dl></div>
     </li><li name="org.apache.spark.sql.catalyst.trees.TreeNode#mapProductIterator" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="mapProductIterator[B&lt;:&lt;?&gt;](f:&lt;?&gt;)(implicitevidence$1:&lt;?&gt;):Array[B]"></a>
+      <a id="mapProductIterator[B](f:Any=&gt;B)(implicitevidence$1:scala.reflect.ClassTag[B]):Array[B]"></a>
       <a id="mapProductIterator[B]((Any)⇒B)(ClassTag[B]):Array[B]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -958,28 +835,11 @@
         <span class="name">mapProductIterator</span><span class="tparams">[<span name="B">B</span>]</span><span class="params">(<span name="f">f: (<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a>) ⇒ <span class="extype" name="org.apache.spark.sql.catalyst.trees.TreeNode.mapProductIterator.B">B</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.reflect.ClassTag" class="extype" target="_top">ClassTag</a>[<span class="extype" name="org.apache.spark.sql.catalyst.trees.TreeNode.mapProductIterator.B">B</span>]</span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Array" class="extype" target="_top">Array</a>[<span class="extype" name="org.apache.spark.sql.catalyst.trees.TreeNode.mapProductIterator.B">B</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@mapProductIterator[B](f:Any=&gt;B)(implicitevidence$1:scala.reflect.ClassTag[B]):Array[B]" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@mapProductIterator[B](f:Any=&gt;B)(implicitevidence$1:scala.reflect.ClassTag[B]):Array[B]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>TreeNode</dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.functions.CellMeanAggregateFunction#mergeExpressions" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="mergeExpressions:Seq[org.apache.spark.sql.catalyst.expressions.Expression]"></a>
-      <a id="mergeExpressions:Seq[Expression]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">mergeExpressions</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.collection.Seq" class="extype" target="_top">Seq</a>[<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@mergeExpressions:Seq[org.apache.spark.sql.catalyst.expressions.Expression]" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="astraea.spark.rasterframes.functions.CellMeanAggregateFunction">CellMeanAggregateFunction</a> → DeclarativeAggregate</dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -992,7 +852,7 @@
         <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1009,7 +869,7 @@
         <span class="name">nodeName</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@nodeName:String" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@nodeName:String" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1026,7 +886,7 @@
         <span class="name">notify</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@notify():Unit" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@notify():Unit" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1043,12 +903,46 @@
         <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@notifyAll():Unit" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@notifyAll():Unit" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.functions.CellMeanAggregateFunction#nullable" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="org.apache.spark.sql.catalyst.expressions.UnaryExpression#nullSafeCodeGen" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="nullSafeCodeGen(ctx:org.apache.spark.sql.catalyst.expressions.codegen.CodegenContext,ev:org.apache.spark.sql.catalyst.expressions.codegen.ExprCode,f:String=&gt;String):org.apache.spark.sql.catalyst.expressions.codegen.ExprCode"></a>
+      <a id="nullSafeCodeGen(CodegenContext,ExprCode,(String)⇒String):ExprCode"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">nullSafeCodeGen</span><span class="params">(<span name="ctx">ctx: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.codegen.CodegenContext" class="extype" target="_top">CodegenContext</a></span>, <span name="ev">ev: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.codegen.ExprCode" class="extype" target="_top">ExprCode</a></span>, <span name="f">f: (<span class="extype" name="scala.Predef.String">String</span>) ⇒ <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.codegen.ExprCode" class="extype" target="_top">ExprCode</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@nullSafeCodeGen(ctx:org.apache.spark.sql.catalyst.expressions.codegen.CodegenContext,ev:org.apache.spark.sql.catalyst.expressions.codegen.ExprCode,f:String=&gt;String):org.apache.spark.sql.catalyst.expressions.codegen.ExprCode" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>UnaryExpression</dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.expressions.Dimensions#nullSafeEval" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="nullSafeEval(input:Any):Any"></a>
+      <a id="nullSafeEval(Any):Any"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">nullSafeEval</span><span class="params">(<span name="input">input: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@nullSafeEval(input:Any):Any" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="" class="extype" name="astraea.spark.rasterframes.expressions.Dimensions">Dimensions</a> → UnaryExpression</dd></dl></div>
+    </li><li name="org.apache.spark.sql.catalyst.expressions.UnaryExpression#nullable" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="nullable:Boolean"></a>
       <a id="nullable:Boolean"></a>
       <h4 class="signature">
@@ -1060,11 +954,11 @@
         <span class="name">nullable</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@nullable:Boolean" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@nullable:Boolean" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="astraea.spark.rasterframes.functions.CellMeanAggregateFunction">CellMeanAggregateFunction</a> → Expression</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>UnaryExpression → Expression</dd></dl></div>
     </li><li name="org.apache.spark.sql.catalyst.trees.TreeNode#numberedTreeString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="numberedTreeString:String"></a>
       <a id="numberedTreeString:String"></a>
@@ -1077,7 +971,7 @@
         <span class="name">numberedTreeString</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@numberedTreeString:String" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@numberedTreeString:String" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1094,7 +988,7 @@
         <span class="name">origin</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.trees.Origin" class="extype" target="_top">Origin</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@origin:org.apache.spark.sql.catalyst.trees.Origin" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@origin:org.apache.spark.sql.catalyst.trees.Origin" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1111,13 +1005,13 @@
         <span class="name">otherCopyArgs</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@otherCopyArgs:Seq[AnyRef]" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@otherCopyArgs:Seq[AnyRef]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>TreeNode</dd></dl></div>
     </li><li name="org.apache.spark.sql.catalyst.trees.TreeNode#p" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="p(number:&lt;?&gt;):BaseType"></a>
+      <a id="p(number:Int):BaseType"></a>
       <a id="p(Int):Expression"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -1128,7 +1022,7 @@
         <span class="name">p</span><span class="params">(<span name="number">number: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@p(number:Int):BaseType" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@p(number:Int):BaseType" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1145,12 +1039,12 @@
         <span class="name">prettyJson</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@prettyJson:String" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@prettyJson:String" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>TreeNode</dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.functions.CellMeanAggregateFunction#prettyName" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="org.apache.spark.sql.catalyst.expressions.Expression#prettyName" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="prettyName:String"></a>
       <a id="prettyName:String"></a>
       <h4 class="signature">
@@ -1162,11 +1056,11 @@
         <span class="name">prettyName</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@prettyName:String" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@prettyName:String" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="astraea.spark.rasterframes.functions.CellMeanAggregateFunction">CellMeanAggregateFunction</a> → Expression</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Expression</dd></dl></div>
     </li><li name="org.apache.spark.sql.catalyst.expressions.Expression#references" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="references:org.apache.spark.sql.catalyst.expressions.AttributeSet"></a>
       <a id="references:AttributeSet"></a>
@@ -1179,7 +1073,7 @@
         <span class="name">references</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.AttributeSet" class="extype" target="_top">AttributeSet</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@references:org.apache.spark.sql.catalyst.expressions.AttributeSet" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@references:org.apache.spark.sql.catalyst.expressions.AttributeSet" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1196,7 +1090,7 @@
         <span class="name">resolved</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@resolved:Boolean" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@resolved:Boolean" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1213,7 +1107,7 @@
         <span class="name">semanticEquals</span><span class="params">(<span name="other">other: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@semanticEquals(other:org.apache.spark.sql.catalyst.expressions.Expression):Boolean" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@semanticEquals(other:org.apache.spark.sql.catalyst.expressions.Expression):Boolean" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1230,7 +1124,7 @@
         <span class="name">semanticHash</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@semanticHash():Int" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@semanticHash():Int" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1247,28 +1141,11 @@
         <span class="name">simpleString</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@simpleString:String" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@simpleString:String" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Expression → TreeNode</dd></dl></div>
-    </li><li name="org.apache.spark.sql.catalyst.expressions.aggregate.AggregateFunction#sql" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="sql(isDistinct:Boolean):String"></a>
-      <a id="sql(Boolean):String"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">sql</span><span class="params">(<span name="isDistinct">isDistinct: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@sql(isDistinct:Boolean):String" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AggregateFunction</dd></dl></div>
     </li><li name="org.apache.spark.sql.catalyst.expressions.Expression#sql" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="sql:String"></a>
       <a id="sql:String"></a>
@@ -1281,7 +1158,7 @@
         <span class="name">sql</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@sql:String" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@sql:String" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1298,28 +1175,11 @@
         <span class="name">stringArgs</span><span class="result">: <span class="extype" name="scala.Iterator">Iterator</span>[<a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@stringArgs:Iterator[Any]" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@stringArgs:Iterator[Any]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>TreeNode</dd></dl></div>
-    </li><li name="org.apache.spark.sql.catalyst.expressions.aggregate.AggregateFunction#supportsPartial" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="supportsPartial:Boolean"></a>
-      <a id="supportsPartial:Boolean"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">supportsPartial</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@supportsPartial:Boolean" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AggregateFunction</dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -1332,62 +1192,11 @@
         <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="org.apache.spark.sql.catalyst.expressions.aggregate.AggregateFunction#toAggString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="toAggString(isDistinct:&lt;?&gt;):String"></a>
-      <a id="toAggString(Boolean):String"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">toAggString</span><span class="params">(<span name="isDistinct">isDistinct: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@toAggString(isDistinct:Boolean):String" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AggregateFunction</dd></dl></div>
-    </li><li name="org.apache.spark.sql.catalyst.expressions.aggregate.AggregateFunction#toAggregateExpression" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="toAggregateExpression(isDistinct:Boolean):org.apache.spark.sql.catalyst.expressions.aggregate.AggregateExpression"></a>
-      <a id="toAggregateExpression(Boolean):AggregateExpression"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">toAggregateExpression</span><span class="params">(<span name="isDistinct">isDistinct: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.aggregate.AggregateExpression" class="extype" target="_top">AggregateExpression</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@toAggregateExpression(isDistinct:Boolean):org.apache.spark.sql.catalyst.expressions.aggregate.AggregateExpression" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AggregateFunction</dd></dl></div>
-    </li><li name="org.apache.spark.sql.catalyst.expressions.aggregate.AggregateFunction#toAggregateExpression" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="toAggregateExpression():org.apache.spark.sql.catalyst.expressions.aggregate.AggregateExpression"></a>
-      <a id="toAggregateExpression():AggregateExpression"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">toAggregateExpression</span><span class="params">()</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.aggregate.AggregateExpression" class="extype" target="_top">AggregateExpression</a></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@toAggregateExpression():org.apache.spark.sql.catalyst.expressions.aggregate.AggregateExpression" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AggregateFunction</dd></dl></div>
     </li><li name="org.apache.spark.sql.catalyst.trees.TreeNode#toJSON" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toJSON:String"></a>
       <a id="toJSON:String"></a>
@@ -1400,7 +1209,7 @@
         <span class="name">toJSON</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@toJSON:String" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@toJSON:String" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1417,7 +1226,7 @@
         <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@toString():String" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@toString():String" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1434,13 +1243,13 @@
         <span class="name">transform</span><span class="params">(<span name="rule">rule: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.PartialFunction" class="extype" target="_top">PartialFunction</a>[<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a>, <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a>]</span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@transform(rule:PartialFunction[BaseType,BaseType]):BaseType" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@transform(rule:PartialFunction[BaseType,BaseType]):BaseType" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>TreeNode</dd></dl></div>
     </li><li name="org.apache.spark.sql.catalyst.trees.TreeNode#transformChildren" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="transformChildren(rule:&lt;?&gt;,nextOperation:&lt;?&gt;):BaseType"></a>
+      <a id="transformChildren(rule:PartialFunction[BaseType,BaseType],nextOperation:(BaseType,PartialFunction[BaseType,BaseType])=&gt;BaseType):BaseType"></a>
       <a id="transformChildren(PartialFunction[Expression,Expression],(Expression,PartialFunction[Expression,Expression])⇒Expression):Expression"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -1451,13 +1260,13 @@
         <span class="name">transformChildren</span><span class="params">(<span name="rule">rule: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.PartialFunction" class="extype" target="_top">PartialFunction</a>[<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a>, <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a>]</span>, <span name="nextOperation">nextOperation: (<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.PartialFunction" class="extype" target="_top">PartialFunction</a>[<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a>, <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a>]) ⇒ <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a></span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@transformChildren(rule:PartialFunction[BaseType,BaseType],nextOperation:(BaseType,PartialFunction[BaseType,BaseType])=&gt;BaseType):BaseType" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@transformChildren(rule:PartialFunction[BaseType,BaseType],nextOperation:(BaseType,PartialFunction[BaseType,BaseType])=&gt;BaseType):BaseType" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>TreeNode</dd></dl></div>
     </li><li name="org.apache.spark.sql.catalyst.trees.TreeNode#transformDown" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="transformDown(rule:&lt;?&gt;):BaseType"></a>
+      <a id="transformDown(rule:PartialFunction[BaseType,BaseType]):BaseType"></a>
       <a id="transformDown(PartialFunction[Expression,Expression]):Expression"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -1468,7 +1277,7 @@
         <span class="name">transformDown</span><span class="params">(<span name="rule">rule: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.PartialFunction" class="extype" target="_top">PartialFunction</a>[<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a>, <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a>]</span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@transformDown(rule:PartialFunction[BaseType,BaseType]):BaseType" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@transformDown(rule:PartialFunction[BaseType,BaseType]):BaseType" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1485,7 +1294,7 @@
         <span class="name">transformUp</span><span class="params">(<span name="rule">rule: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.PartialFunction" class="extype" target="_top">PartialFunction</a>[<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a>, <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a>]</span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@transformUp(rule:PartialFunction[BaseType,BaseType]):BaseType" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@transformUp(rule:PartialFunction[BaseType,BaseType]):BaseType" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1502,7 +1311,7 @@
         <span class="name">treeString</span><span class="params">(<span name="verbose">verbose: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@treeString(verbose:Boolean):String" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@treeString(verbose:Boolean):String" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1519,28 +1328,11 @@
         <span class="name">treeString</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@treeString:String" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@treeString:String" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>TreeNode</dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.functions.CellMeanAggregateFunction#updateExpressions" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="updateExpressions:Seq[org.apache.spark.sql.catalyst.expressions.ExpressionwithSerializable]"></a>
-      <a id="updateExpressions:Seq[ExpressionwithSerializable]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">updateExpressions</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.collection.Seq" class="extype" target="_top">Seq</a>[<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a> with <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@updateExpressions:Seq[org.apache.spark.sql.catalyst.expressions.ExpressionwithSerializable]" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="astraea.spark.rasterframes.functions.CellMeanAggregateFunction">CellMeanAggregateFunction</a> → DeclarativeAggregate</dd></dl></div>
     </li><li name="org.apache.spark.sql.catalyst.expressions.Expression#verboseString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="verboseString:String"></a>
       <a id="verboseString:String"></a>
@@ -1553,7 +1345,7 @@
         <span class="name">verboseString</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@verboseString:String" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@verboseString:String" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1570,7 +1362,7 @@
         <span class="name">wait</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@wait():Unit" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@wait():Unit" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1593,7 +1385,7 @@
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Long" class="extype" target="_top">Long</a></span>, <span name="arg1">arg1: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1616,7 +1408,7 @@
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Long" class="extype" target="_top">Long</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@wait(x$1:Long):Unit" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@wait(x$1:Long):Unit" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1628,7 +1420,7 @@
               
         </dd></dl></div>
     </li><li name="org.apache.spark.sql.catalyst.trees.TreeNode#withNewChildren" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="withNewChildren(newChildren:&lt;?&gt;):BaseType"></a>
+      <a id="withNewChildren(newChildren:Seq[BaseType]):BaseType"></a>
       <a id="withNewChildren(Seq[Expression]):Expression"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -1639,7 +1431,7 @@
         <span class="name">withNewChildren</span><span class="params">(<span name="newChildren">newChildren: <span class="extype" name="scala.Seq">Seq</span>[<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a>]</span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.functions.CellMeanAggregateFunction@withNewChildren(newChildren:Seq[BaseType]):BaseType" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.expressions.package$$Dimensions@withNewChildren(newChildren:Seq[BaseType]):BaseType" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -1653,20 +1445,14 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="org.apache.spark.sql.catalyst.expressions.aggregate.DeclarativeAggregate">
-              <h3>Inherited from <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.aggregate.DeclarativeAggregate" class="extype" target="_top">DeclarativeAggregate</a></h3>
-            </div><div class="parent" name="org.apache.spark.sql.catalyst.expressions.Unevaluable">
-              <h3>Inherited from <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Unevaluable" class="extype" target="_top">Unevaluable</a></h3>
-            </div><div class="parent" name="scala.Serializable">
+        <div class="parent" name="scala.Serializable">
               <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></h3>
             </div><div class="parent" name="java.io.Serializable">
               <h3>Inherited from <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.io.Serializable" class="extype" target="_top">Serializable</a></h3>
-            </div><div class="parent" name="org.apache.spark.sql.catalyst.expressions.aggregate.AggregateFunction">
-              <h3>Inherited from <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.aggregate.AggregateFunction" class="extype" target="_top">AggregateFunction</a></h3>
-            </div><div class="parent" name="org.apache.spark.sql.catalyst.expressions.ImplicitCastInputTypes">
-              <h3>Inherited from <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.ImplicitCastInputTypes" class="extype" target="_top">ImplicitCastInputTypes</a></h3>
-            </div><div class="parent" name="org.apache.spark.sql.catalyst.expressions.ExpectsInputTypes">
-              <h3>Inherited from <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.ExpectsInputTypes" class="extype" target="_top">ExpectsInputTypes</a></h3>
+            </div><div class="parent" name="astraea.spark.rasterframes.expressions.RequiresTile">
+              <h3>Inherited from <a href="package$$RequiresTile.html" class="extype" name="astraea.spark.rasterframes.expressions.RequiresTile">RequiresTile</a></h3>
+            </div><div class="parent" name="org.apache.spark.sql.catalyst.expressions.UnaryExpression">
+              <h3>Inherited from <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.UnaryExpression" class="extype" target="_top">UnaryExpression</a></h3>
             </div><div class="parent" name="org.apache.spark.sql.catalyst.expressions.Expression">
               <h3>Inherited from <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.catalyst.expressions.Expression" class="extype" target="_top">Expression</a></h3>
             </div><div class="parent" name="org.apache.spark.sql.catalyst.trees.TreeNode">
