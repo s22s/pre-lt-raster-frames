@@ -15,8 +15,6 @@ import de.heikoseeberger.sbtheader.license.Apache2_0
 import tut.TutPlugin.autoImport._
 import GhpagesPlugin.autoImport._
 import com.lightbend.paradox.sbt.ParadoxPlugin.autoImport._
-import giter8.Giter8Plugin
-import giter8.Giter8Plugin.autoImport.g8Test
 
 /**
  * @author sfitch
@@ -137,17 +135,6 @@ object ProjectPlugin extends AutoPlugin {
       // NB: These don't seem to work. Still trying to figure Tut's run model.
       fork in (Tut, run) := true,
       javaOptions in (Tut, run) := Seq("-Xmx6G")
-    )
-
-    def giter8Settings: Seq[Def.Setting[_]] = Seq(
-      test in Test := {
-        val _ = (
-          (test in Test).value,
-          (g8Test in Test).toTask("").value
-        )
-      },
-      resolvers += Resolver.url("typesafe", url("http://repo.typesafe.com/typesafe/ivy-releases/"))(Resolver.ivyStylePatterns)
-      // scriptedLaunchOpts ++= List("-Xms1024m", "-Xmx1024m", "-XX:ReservedCodeCacheSize=128m", "-XX:MaxPermSize=256m", "-Xss2m", "-Dfile.encoding=UTF-8"),
     )
   }
 }
