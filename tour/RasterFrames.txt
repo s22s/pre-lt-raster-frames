@@ -1,0 +1,168 @@
+| \gRasterFrames Tour\s
+/\r=\s\**\s\r=\b=\s\**\s\b=
+
+---
+
+| \_\*\bSetup\s
+
+Initialization of RasterFrames involves having an initialized
+Spark session and calling the \*rfInit(SQLContext)\s function:
+
+  implicit val spark = SparkSession.builder()
+     .master("local[*]")
+     .appName("RasterFrames")
+     .getOrCreate()
+
+  import spark.implicits._
+
+  rfInit(spark.sqlContext)
+
+
+---
+
+| \_\*\bReading Imagery\s
+
+Load a geo-referenced image via \_GeoTrellis\s routines:
+
+```
+  val scene =
+    SinglebandGeoTiff("../src/test/resources/L8-B8-Robinson-IL.tiff")
+```
+
+Convert it to a \_RasterFrame\s, discretizing it into \*64x64\s tile sizes:
+
+```
+  val rf = scene.projectedRaster.toRF(64, 64)
+```
+
+---
+
+| \_\*\bTake a Look\s
+
+
+Let's poke at the \*RasterFrame\s a bit:
+
+```
+  // RasterFrame schema
+  rf.printSchema
+  // Number of tiles created
+  println("Tile count: " + rf.count())
+  // View a sample of the contents
+  rf.show(8, false)
+```
+
+---
+
+| \_\*\bRasterFrame Columnar Functions\s
+
+
+A large part of \_RasterFrames\s functionality is provided
+through \_SparkSQL\s functions accepting one or more \*Tile\s
+columns as input.
+
+A few examples:
+
+| \*tileSum\s, \*tileSum\s, \*tileHistogram\s, \*noDataCells\s,
+| \*aggStats\s, \*tileToArray\s, \*arrayToTile\s, \*explodeTiles\s
+
+---
+
+| \_\*\bTile Statistics 1\s
+
+Confirm we have equally sized tiles:
+
+```
+  rf.select(tileDimensions($"tile")).distinct().show()
+```
+
+Count the number of no-data cells:
+
+```
+  rf.select(aggNoDataCells($"tile")).show(false)
+```
+
+---
+
+| \_\*\bTile Statistics 2\s
+
+
+Compute per-tile statistics:
+
+```
+  rf.select(tileStats($"tile")).show(8, false)
+```
+
+---
+
+| \_\*\bTile Statistics 3\s
+
+Compute some aggregate stats over all cells:
+
+```
+  rf.select(aggStats($"tile")).show(false)
+```
+
+---
+
+| \_\*\bArbitrary GeoTrellis Operations\s
+
+With the power of \_SparkSQL\s \*UDFs\s, we can create arbitrary functions
+over \*Tile\ss, making use of powerful \_GeoTrellis\s features.
+
+As an example, we'll use the GeoTrellis \*sigmoidal\s contrast
+adjustment function. First we define the \*UDF\s:
+
+```
+  val contrast = udf((t: Tile) ⇒ t.sigmoidal(0.2, 10))
+```
+
+--
+
+Let's append a new column with the contrast adjustment:
+
+```
+  val withAdjusted = rf.withColumn("adjusted", contrast($"tile")).asRF
+```
+
+---
+
+| \_\*\bTile Statistics 4\s
+
+Let's compare the before and after statistics:
+
+```
+  val before = rf.select(aggStats($"tile"))
+    .withColumn("which", lit("before"))
+  val after = withAdjusted.select(aggStats($"adjusted"))
+    .withColumn("which", lit("after"))
+  before.union(after).show(false)
+
+```
+
+---
+
+| \_\*\bRender Results\s
+
+\_RasterFrames\s provides special methods to invoke the \_GeoTrellis\s routines
+for converting \*Tile\ss in Spark into an image:
+
+```
+val raster = withAdjusted.toRaster($"adjusted", 774, 500)
+GeoTiff(raster).write("contrast-adjusted.tiff")
+```
+
+--
+
+Let's visually compare results:
+
+```
+  "open ../src/test/resources/L8-B8-Robinson-IL.tiff".!
+  "open contrast-adjusted.tiff".!
+```
+
+---
+
+| \gMachine Learning with RasterFrames\s
+/\r=\s\**\s\r=\b=\s\**\s\b=
+
+

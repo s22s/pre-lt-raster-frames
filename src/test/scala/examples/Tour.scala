@@ -22,8 +22,13 @@ package examples
 import org.apache.spark.sql._
 import org.apache.spark.sql.functions._
 import geotrellis.raster.io.geotiff._
-import geotrellis.raster.Tile
+import geotrellis.raster.{ByteConstantNoDataCellType, Tile}
 import astraea.spark.rasterframes._
+import astraea.spark.rasterframes.ml.TileExploder
+import geotrellis.raster.render.{ColorRamps, IndexedColorMap}
+import org.apache.spark.ml.Pipeline
+import org.apache.spark.ml.clustering.KMeans
+import org.apache.spark.ml.feature.VectorAssembler
 
 /**
  * Example tour of some general features in RasterFrames
@@ -56,11 +61,11 @@ object Tour extends App {
   // Confirm we have equally sized tiles
   rf.select(tileDimensions($"tile")).distinct().show()
 
-  // Compute per-tile statistics
-  rf.select(tileStats($"tile")).show(8, false)
-
   // Count the number of no-data cells
   rf.select(aggNoDataCells($"tile")).show(false)
+
+  // Compute per-tile statistics
+  rf.select(tileStats($"tile")).show(8, false)
 
   // Compute some aggregate stats over all cells
   rf.select(aggStats($"tile")).show(false)
@@ -69,7 +74,7 @@ object Tour extends App {
   val contrast = udf((t: Tile) ⇒ t.sigmoidal(0.2, 10))
 
   // Let's contrast adjust the tile column
-  val withAdjusted = rf.withColumn("adjusted", contrast(rf("tile"))).asRF
+  val withAdjusted = rf.withColumn("adjusted", contrast($"tile")).asRF
 
   // Show the stats for the adjusted version
   withAdjusted.select(aggStats($"adjusted")).show(false)
@@ -82,6 +87,54 @@ object Tour extends App {
   val withOp = withAdjusted.withColumn("op", localSubtract($"tile", $"adjusted")).asRF
   val raster2 = withOp.toRaster($"op", 774, 500)
   GeoTiff(raster2).write("with-op.tiff")
+
+
+  // Perform k-means clustering
+  val k = 4
+
+  // SparkML doesn't like NoData/NaN values, so we set the no-data value to something less offensive
+  val forML = rf.select(rf.spatialKeyColumn, withNoData($"tile", 99999) as "tile").asRF
+
+  // First we instantiate the transformer that converts tile rows into cell rows.
+  val exploder = new TileExploder()
+
+  // This transformer wraps the pixel values in a vector.
+  // Could use this with multiple bands
+  val assembler = new VectorAssembler().
+    setInputCols(Array("tile")).
+    setOutputCol("features")
+
+  // Or clustering algorithm
+  val kmeans = new KMeans().setK(k)
+
+  // Construct the ML pipeline
+  val pipeline = new Pipeline().setStages(Array(exploder, assembler, kmeans))
+
+  // Compute the model
+  val model = pipeline.fit(forML)
+
+  // Score the data
+  val clusteredCells = model.transform(forML)
+
+  clusteredCells.show()
+
+  // Reassembling the clustering results takes a number of steps.
+  val tlm = rf.tileLayerMetadata.left.get
+
+  // RasterFrames provides a special aggregation function for assembling tiles from cells with column/row indexes
+  val retiled = clusteredCells.groupBy(forML.spatialKeyColumn).agg(
+    assembleTile($"column_index", $"row_index", $"prediction", tlm.tileCols, tlm.tileRows, ByteConstantNoDataCellType)
+  )
+
+  val clusteredRF = retiled.asRF($"spatial_key", tlm)
+
+  val raster3 = clusteredRF.toRaster($"prediction", 774, 500)
+
+  val clusterColors = IndexedColorMap.fromColorMap(
+    ColorRamps.Viridis.toColorMap((0 until k).toArray)
+  )
+
+  GeoTiff(raster3).copy(options = GeoTiffOptions(clusterColors)).write("clustered.tiff")
 
   spark.stop()
 }
