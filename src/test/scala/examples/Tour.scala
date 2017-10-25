@@ -118,6 +118,8 @@ object Tour extends App {
 
   clusteredCells.show()
 
+  clusteredCells.groupBy("prediction").count().show
+
   // Reassembling the clustering results takes a number of steps.
   val tlm = rf.tileLayerMetadata.left.get
 

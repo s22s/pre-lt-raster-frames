@@ -23,3 +23,4 @@ spark/src/test/jupyter/.ipynb_checkpoints
 metastore_db
 .ensime*
 tour/jars
+tour/*.tiff

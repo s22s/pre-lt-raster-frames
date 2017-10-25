@@ -13,15 +13,6 @@ import org.apache.spark.ml.clustering.KMeans
 import org.apache.spark.ml.feature.VectorAssembler
 import scala.sys.process._
 
-implicit val spark = SparkSession.builder()
-    .master("local[*]")
-    .appName(getClass.getName)
-    .getOrCreate()
-spark.sparkContext.setLogLevel("ERROR")
-
-import spark.implicits._
-
-rfInit(spark.sqlContext)
 
 
 
