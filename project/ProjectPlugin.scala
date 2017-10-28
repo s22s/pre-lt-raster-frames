@@ -24,7 +24,7 @@ object ProjectPlugin extends AutoPlugin {
   override def trigger: PluginTrigger = allRequirements
 
   val versions = Map(
-    "geotrellis" -> "1.1.1",
+    "geotrellis" -> "1.2.0-RC1",
     "spark" -> "2.1.0"
   )
 

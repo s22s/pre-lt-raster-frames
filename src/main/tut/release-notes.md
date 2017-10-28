@@ -2,8 +2,9 @@
 
 ## 0.5.8
 
+* Upgraded to GeoTrellis 1.2.0-RC1
 * Added [`REPLsent`-based](https://github.com/marconilanna/REPLesent) tour of RasterFrames
-* Moved Giter8 template to separate repository s22s/raster-frames.g8 due to sbt limitations
+* Moved Giter8 template to separate repository `s22s/raster-frames.g8` due to sbt limitations
 * Updated _Getting Started_ to reference new Giter8 repo
 * Changed SQL function name `rf_stats` and `rf_histogram` to `rf_aggStats` and `rf_aggHistogram` 
   for consistency with DataFrames API
