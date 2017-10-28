@@ -23,6 +23,8 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-site" % "1.3.0")
 
 addSbtPlugin("com.lightbend.paradox" % "sbt-paradox" % "0.3.1")
 
+addSbtPlugin("io.github.jonas" % "sbt-paradox-material-theme" % "0.3.0")
+
 addSbtPlugin("pl.project13.scala" % "sbt-jmh" % "0.2.27")
 
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.3.5")

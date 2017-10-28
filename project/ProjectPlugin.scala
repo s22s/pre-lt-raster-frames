@@ -15,6 +15,8 @@ import de.heikoseeberger.sbtheader.license.Apache2_0
 import tut.TutPlugin.autoImport._
 import GhpagesPlugin.autoImport._
 import com.lightbend.paradox.sbt.ParadoxPlugin.autoImport._
+import io.github.jonas.paradox.material.theme.ParadoxMaterialThemePlugin
+import io.github.jonas.paradox.material.theme.ParadoxMaterialThemePlugin.autoImport._
 
 /**
  * @author sfitch
@@ -117,8 +119,15 @@ object ProjectPlugin extends AutoPlugin {
       paradoxProperties in Paradox ++= Map(
         "github.base_url" -> "https://github.com/s22s/raster-frames",
         "scaladoc.org.apache.spark.sql.gt" -> "http://rasterframes.io/latest",
-        "scaladoc.geotrellis.base_url" -> "https://geotrellis.github.io/scaladocs/latest"
+        "scaladoc.geotrellis.base_url" -> "https://geotrellis.github.io/zscaladocs/latest"
       ),
+      paradoxMaterialTheme in Paradox ~= {
+        _.withFavicon("assets/images/RasterFrames_32x32.ico")
+          .withLogo("assets/images/RasterFramesLogo.png")
+          .withRepository(uri("https://github.com/s22s/zraster-frames"))
+          .withCopyright("Copyright &copy; Astraea, Inc. All rights reserved.")
+          .withGoogleAnalytics("UA-106630615-1")
+      },
       sourceDirectory in Paradox := tutTargetDirectory.value,
       sourceDirectory in Paradox in paradoxTheme := sourceDirectory.value / "main" / "paradox" / "_template",
       makeSite := makeSite.dependsOn(tutQuick).value,
@@ -135,6 +144,6 @@ object ProjectPlugin extends AutoPlugin {
       // NB: These don't seem to work. Still trying to figure Tut's run model.
       fork in (Tut, run) := true,
       javaOptions in (Tut, run) := Seq("-Xmx6G")
-    )
+    ) ++ ParadoxMaterialThemePlugin.paradoxMaterialThemeSettings(Paradox)
   }
 }
