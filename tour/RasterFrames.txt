@@ -4,6 +4,18 @@
 
 ---
 
+| \_\*\bOverview\s
+
+\r*\s Setup
+\r*\s Creating & Inspecting
+\r*\s Exploratory Data Analysis
+\r*\s SQL
+\r*\s GeoTrellis Operations
+\r*\s Rendering Results
+\r*\s Machine Learning
+
+---
+
 | \_\*\bSetup\s
 
 Initialization of RasterFrames involves having an initialized
@@ -102,6 +114,20 @@ Compute some aggregate stats over all cells:
 
 ```
   rf.select(aggStats($"tile")).show(false)
+```
+
+---
+
+| \_\*\bAvailable in SQL Too!\s
+
+```
+  rf.createOrReplaceTempView("rf")
+  spark.sql("""
+    SELECT *,
+      rf_tileMean(tile) AS mean,
+      rf_dataCells(tile) AS cell_count
+    FROM rf
+  """).show(8)
 ```
 
 ---
