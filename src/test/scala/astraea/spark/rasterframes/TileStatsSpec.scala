@@ -131,7 +131,7 @@ class TileStatsSpec extends TestEnvironment with TestData  {
       //stats.select("stats.*").show(false)
       assert(stats.first().stddev === 1.0 +- 0.3) // <-- playing with statistical fire :)
 
-      val hist2 = sql("select rf_histogram(tiles) as hist from tmp").as[Histogram[Double]]
+      val hist2 = sql("select rf_aggHistogram(tiles) as hist from tmp").as[Histogram[Double]]
 
       assert(hist2.first.totalCount() === 250)
     }
@@ -157,7 +157,7 @@ class TileStatsSpec extends TestEnvironment with TestData  {
       assert(vrnc === agg.first() +- 1e-6)
 
       ds.createOrReplaceTempView("tmp")
-      val agg2 = sql("select stats.* from (select rf_stats(tiles) as stats from tmp)")
+      val agg2 = sql("select stats.* from (select rf_aggStats(tiles) as stats from tmp)")
       assert(agg2.first().getAs[Long]("dataCells") === 250L)
 
       val agg3 = ds.agg(aggStats($"tiles") as "stats").select($"stats.mean".as[Double])

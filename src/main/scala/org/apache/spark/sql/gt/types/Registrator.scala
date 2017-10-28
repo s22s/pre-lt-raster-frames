@@ -30,10 +30,5 @@ private[gt] object Registrator {
     TileUDT
     MultibandTileUDT
     HistogramUDT
-    LineUDT
-    MultiLineUDT
-    PointUDT
-    PolygonUDT
-    MultiPolygonUDT
   }
 }

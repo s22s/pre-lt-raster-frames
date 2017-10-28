@@ -30,12 +30,14 @@ import org.scalatest._
 trait TestEnvironment extends FunSpec with GeoTrellisTestEnvironment
   with Matchers with Inspectors with Tolerance with LazyLogging {
 
-  override implicit def sc: SparkContext = _sc
+  override implicit def sc: SparkContext = { _sc.setLogLevel("ERROR"); _sc }
+
   lazy val sqlContext = {
     val ctx = SQLContext.getOrCreate(_sc)
     rfInit(ctx)
     ctx
   }
+
   lazy val sql: (String) ⇒ DataFrame = sqlContext.sql
   implicit lazy val spark = sqlContext.sparkSession
 
