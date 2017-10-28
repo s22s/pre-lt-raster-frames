@@ -50,13 +50,6 @@ class EncodingSpec extends TestEnvironment with TestData  {
       assert(ds.toDF.as[Tile].collect().head === byteArrayTile)
     }
 
-    it("should code RDD[MultibandTile]") {
-      val rdd = sc.makeRDD(Seq(multibandTile, null))
-      val ds = rdd.toDS()
-      write(ds)
-      assert(ds.toDF.as[MultibandTile].collect().head === multibandTile)
-    }
-
     it("should code RDD[TileFeature]") {
       val thing = TileFeature(byteArrayTile: Tile, "meta")
       val ds = Seq(thing).toDS()
