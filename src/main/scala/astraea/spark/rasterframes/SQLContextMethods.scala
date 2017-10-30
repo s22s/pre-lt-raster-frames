@@ -17,32 +17,22 @@
  *
  */
 
-package examples
+package astraea.spark.rasterframes
 
-import astraea.spark.rasterframes._
-import geotrellis.raster.io.geotiff.SinglebandGeoTiff
-import org.apache.spark.sql.SparkSession
+import geotrellis.util.MethodExtensions
+import org.apache.spark.sql.{SQLContext, gt}
 
 /**
- * Compute the cell mean value of an image.
+ * Extension methods on [[SQLContext]]
  *
  * @author sfitch 
- * @since 10/23/17
+ * @since 10/30/17
  */
-object MeanValue extends App {
-
-  implicit val spark = SparkSession.builder()
-    .master("local[*]")
-    .appName(getClass.getName)
-    .getOrCreate()
-    .withRasterFrames
-
-
-  val scene = SinglebandGeoTiff("src/test/resources/L8-B8-Robinson-IL.tiff")
-
-  val rf = scene.projectedRaster.toRF(128, 128) // <-- tile size
-
-  rf.select(aggMean(rf("tile"))).show(false)
-
-  spark.stop()
+trait SQLContextMethods extends MethodExtensions[SQLContext] {
+  def withRasterFrames: SQLContext = {
+    gt.gtRegister(self)
+    functions.Registrator.register(self)
+    astraea.spark.rasterframes.expressions.Registrator.register(self)
+    self
+  }
 }

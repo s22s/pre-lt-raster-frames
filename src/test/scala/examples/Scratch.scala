@@ -39,8 +39,10 @@ object Scratch extends App {
     .config("spark.kryo.registrationRequired", "false")
     .config("spark.kryo.registrator", classOf[KryoRegistrator].getName)
     .getOrCreate()
+    .withRasterFrames
 
-  rfInit(spark.sqlContext)
   import spark.implicits._
+
+  // Your Spark code here.....
 
 }

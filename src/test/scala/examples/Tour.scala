@@ -41,10 +41,9 @@ object Tour extends App {
     .master("local[*]")
     .appName(getClass.getName)
     .getOrCreate()
+    .withRasterFrames
 
   import spark.implicits._
-
-  rfInit(spark.sqlContext)
 
   // Read in a geo-referenced image
   val scene = SinglebandGeoTiff("src/test/resources/L8-B8-Robinson-IL.tiff")

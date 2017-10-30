@@ -35,9 +35,8 @@ object Clustering extends App {
   def readTiff(name: String): SinglebandGeoTiff =
     SinglebandGeoTiff(getClass.getResource(s"/$name").getPath)
 
-  implicit val spark = SparkSession.builder().master("local[*]").appName(getClass.getName).getOrCreate()
+  implicit val spark = SparkSession.builder().master("local[*]").appName(getClass.getName).getOrCreate().withRasterFrames
 
-  rfInit(spark.sqlContext)
   import spark.implicits._
 
   // The first step is to load multiple bands of imagery and construct

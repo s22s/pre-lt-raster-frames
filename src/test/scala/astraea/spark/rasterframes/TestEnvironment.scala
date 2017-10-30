@@ -33,8 +33,7 @@ trait TestEnvironment extends FunSpec with GeoTrellisTestEnvironment
   override implicit def sc: SparkContext = { _sc.setLogLevel("ERROR"); _sc }
 
   lazy val sqlContext = {
-    val ctx = SQLContext.getOrCreate(_sc)
-    rfInit(ctx)
+    val ctx = SQLContext.getOrCreate(_sc).withRasterFrames
     ctx
   }
 

@@ -1,5 +1,10 @@
 # Release Notes
 
+## 0.5.9
+
+* Deprecated `rfIinit` in favor of `SparkSession.withRasterFrames` or `SQLContext.withRasterFrames` extension methods.
+
+
 ## 0.5.8
 
 * Upgraded to GeoTrellis 1.2.0-RC1
