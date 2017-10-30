@@ -4,9 +4,35 @@
 Most of the examples are shown using the Spark DataFrames API. However, many could also be rewritten to use the Spark SQL API instead. We hope to add more examples in that form in the future.
 @@@
 
-## sbt configuration
+## Quick Start
 
-*RasterFrames* is published via Bintray's JCenter server, which is one of the default sbt resolvers. To use, just add the following library dependency:
+### macOS
+
+1. If not already, install [Homebrew](https://brew.sh/)
+2. Run `brew install sbt`
+3. Run `sbt new s22s/raster-frames.g8`
+
+### Linux
+
+1. Install [sbt](http://www.scala-sbt.org/release/docs/Installing-sbt-on-Linux.html)
+2. Run `sbt new s22s/raster-frames.g8`
+
+### Windows
+
+1. Install [sbt](http://www.scala-sbt.org/release/docs/Installing-sbt-on-Windows.html)
+2. Run `sbt new s22s/raster-frames.g8`
+
+## General Setup
+
+*RasterFrames* is published via Bintray's JCenter server. In sbt you introduce it with this build setting: 
+
+```
+resolvers += Resolver.jcenterRepo
+``` 
+
+See [this](https://bintray.com/bintray/jcenter) for other build tools.
+
+To use RasterFrames, add the following library dependency:
 
 @@dependency[sbt,Maven,Gradle] {
   group="io.astraea"
@@ -14,9 +40,10 @@ Most of the examples are shown using the Spark DataFrames API. However, many cou
   version="x.y.z"
 }
 
-@@@ note
+It assumes that SparkSQL 2.1.1 is available in the runtime classpath. Here's how to add it explicitly:
 
-*Coming soon*: We'll soon be providing a new project template to streamline the process of getting
-started with *RasterFrames* 
-
-@@@
+@@dependency[sbt,Maven,Gradle] {
+  group="org.apache.spark"
+  artifact="spark-sql"
+  version="2.1.1"
+}

@@ -15,11 +15,9 @@
  */
 package astraea.spark.rasterframes
 
-import astraea.spark.rasterframes.functions.CellStatsAggregateFunction.Statistics
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local._
 import geotrellis.raster._
-import org.apache.spark.sql.Column
 
 import scala.reflect.runtime.universe._
 
@@ -30,6 +28,8 @@ import scala.reflect.runtime.universe._
  * @since 9/7/17
  */
 package object functions {
+  import astraea.spark.rasterframes.functions.CellStatsAggregateFunction.Statistics
+
   @inline
   private[rasterframes] def safeBinaryOp[T <: AnyRef, R >: T](op: (T, T) ⇒ R): ((T, T) ⇒ R) =
     (o1: T, o2: T) ⇒ {

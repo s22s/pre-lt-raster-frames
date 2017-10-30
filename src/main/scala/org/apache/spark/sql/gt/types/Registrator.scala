@@ -28,12 +28,6 @@ private[gt] object Registrator {
     // Referencing the companion objects here is intended to have it's constructor called,
     // which is where the registration actually happens.
     TileUDT
-    MultibandTileUDT
     HistogramUDT
-    LineUDT
-    MultiLineUDT
-    PointUDT
-    PolygonUDT
-    MultiPolygonUDT
   }
 }

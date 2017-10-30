@@ -15,7 +15,8 @@ operations within and between RasterFrames to occur, while still maintaining nec
 To learn more, please see the [Getting Started](getting-started.md) section of this manual.
 
 @@@ note
-RasterFrames™ is a new project under active development. Feedback and contributions are welcomed as we look to improve it.
+RasterFrames™ is a new project under active development. Feedback and contributions are welcomed as we look to improve it. 
+Please [submit an issue](https://github.com/s22s/raster-frames/issues) if there's a particular feature you think should be included.
 @@@
 
 @@@ div { .md-left}
