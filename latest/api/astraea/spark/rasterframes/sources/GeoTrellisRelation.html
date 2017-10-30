@@ -1,22 +1,22 @@
 <!DOCTYPE html >
 <html>
         <head>
-          <title>GeoTrellisRelation - org.apache.spark.sql.gt.sources.GeoTrellisRelation</title>
-          <meta name="description" content="GeoTrellisRelation - org.apache.spark.sql.gt.sources.GeoTrellisRelation" />
-          <meta name="keywords" content="GeoTrellisRelation org.apache.spark.sql.gt.sources.GeoTrellisRelation" />
+          <title>GeoTrellisRelation - astraea.spark.rasterframes.sources.GeoTrellisRelation</title>
+          <meta name="description" content="GeoTrellisRelation - astraea.spark.rasterframes.sources.GeoTrellisRelation" />
+          <meta name="keywords" content="GeoTrellisRelation astraea.spark.rasterframes.sources.GeoTrellisRelation" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
-      <link href="../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
-      <link href="../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
-      <script type="text/javascript" src="../../../../../../lib/jquery.js" id="jquery-js"></script>
-      <script type="text/javascript" src="../../../../../../lib/jquery-ui.js"></script>
-      <script type="text/javascript" src="../../../../../../lib/template.js"></script>
-      <script type="text/javascript" src="../../../../../../lib/tools.tooltip.js"></script>
+      <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../lib/tools.tooltip.js"></script>
       
       <script type="text/javascript">
          if(top === self) {
-            var url = '../../../../../../index.html';
-            var hash = 'org.apache.spark.sql.gt.sources.GeoTrellisRelation';
+            var url = '../../../../index.html';
+            var hash = 'astraea.spark.rasterframes.sources.GeoTrellisRelation';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -28,15 +28,15 @@
         </head>
         <body class="type">
       <div id="definition">
-        <a href="GeoTrellisRelation$.html" title="See companion object"><img alt="Class/Object" src="../../../../../../lib/class_to_object_big.png" /></a>
-        <p id="owner"><a href="../../../../../package.html" class="extype" name="org">org</a>.<a href="../../../../package.html" class="extype" name="org.apache">apache</a>.<a href="../../../package.html" class="extype" name="org.apache.spark">spark</a>.<a href="../../package.html" class="extype" name="org.apache.spark.sql">sql</a>.<a href="../package.html" class="extype" name="org.apache.spark.sql.gt">gt</a>.<a href="package.html" class="extype" name="org.apache.spark.sql.gt.sources">sources</a></p>
+        <a href="GeoTrellisRelation$.html" title="See companion object"><img alt="Class/Object" src="../../../../lib/class_to_object_big.png" /></a>
+        <p id="owner"><a href="../../../package.html" class="extype" name="astraea">astraea</a>.<a href="../../package.html" class="extype" name="astraea.spark">spark</a>.<a href="../package.html" class="extype" name="astraea.spark.rasterframes">rasterframes</a>.<a href="package.html" class="extype" name="astraea.spark.rasterframes.sources">sources</a></p>
         <h1><a href="GeoTrellisRelation$.html" title="See companion object">GeoTrellisRelation</a></h1><h3><span class="morelinks"><div>
             Related Docs:
             <a href="GeoTrellisRelation$.html" title="See companion object">object GeoTrellisRelation</a>
-            | <a href="package.html" class="extype" name="org.apache.spark.sql.gt.sources">package sources</a>
+            | <a href="package.html" class="extype" name="astraea.spark.rasterframes.sources">package sources</a>
           </div></span></h3><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.sources.GeoTrellisRelation" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.sources.GeoTrellisRelation" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       </div>
@@ -47,13 +47,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">GeoTrellisRelation</span><span class="params">(<span name="sqlContext">sqlContext: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.SQLContext" class="extype" target="_top">SQLContext</a></span>, <span name="uri">uri: <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.net.URI" class="extype" target="_top">URI</a></span>, <span name="layerId">layerId: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.LayerId" class="extype" target="_top">LayerId</a></span>, <span name="bbox">bbox: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-vector_2.11/1.1.1/geotrellis-vector_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.vector.Extent" class="extype" target="_top">Extent</a>]</span>)</span><span class="result"> extends <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.sources.BaseRelation" class="extype" target="_top">BaseRelation</a> with <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.sources.PrunedFilteredScan" class="extype" target="_top">PrunedFilteredScan</a> with <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-util_2.11/1.1.1/geotrellis-util_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.util.LazyLogging" class="extype" target="_top">LazyLogging</a> with <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
+        <span class="name">GeoTrellisRelation</span><span class="params">(<span name="sqlContext">sqlContext: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.SQLContext" class="extype" target="_top">SQLContext</a></span>, <span name="uri">uri: <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.net.URI" class="extype" target="_top">URI</a></span>, <span name="layerId">layerId: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.2.0-RC1/geotrellis-spark_2.11-1.2.0-RC1-javadoc.jar/!/index.html#geotrellis.spark.LayerId" class="extype" target="_top">LayerId</a></span>, <span name="bbox">bbox: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-vector_2.11/1.2.0-RC1/geotrellis-vector_2.11-1.2.0-RC1-javadoc.jar/!/index.html#geotrellis.vector.Extent" class="extype" target="_top">Extent</a>]</span>)</span><span class="result"> extends <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.sources.BaseRelation" class="extype" target="_top">BaseRelation</a> with <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.sources.PrunedFilteredScan" class="extype" target="_top">PrunedFilteredScan</a> with <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-util_2.11/1.2.0-RC1/geotrellis-util_2.11-1.2.0-RC1-javadoc.jar/!/index.html#geotrellis.util.LazyLogging" class="extype" target="_top">LazyLogging</a> with <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Product" class="extype" target="_top">Product</a> with <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.io.Serializable" class="extype" target="_top">Serializable</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Product" class="extype" target="_top">Product</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Equals" class="extype" target="_top">Equals</a>, <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-util_2.11/1.1.1/geotrellis-util_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.util.LazyLogging" class="extype" target="_top">LazyLogging</a>, <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.sources.PrunedFilteredScan" class="extype" target="_top">PrunedFilteredScan</a>, <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.sources.BaseRelation" class="extype" target="_top">BaseRelation</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></div>
+          <div class="superTypes hiddenContent"><a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.io.Serializable" class="extype" target="_top">Serializable</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Product" class="extype" target="_top">Product</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Equals" class="extype" target="_top">Equals</a>, <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-util_2.11/1.2.0-RC1/geotrellis-util_2.11-1.2.0-RC1-javadoc.jar/!/index.html#geotrellis.util.LazyLogging" class="extype" target="_top">LazyLogging</a>, <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.sources.PrunedFilteredScan" class="extype" target="_top">PrunedFilteredScan</a>, <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.sources.BaseRelation" class="extype" target="_top">BaseRelation</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div></div>
         
 
@@ -71,7 +71,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="org.apache.spark.sql.gt.sources.GeoTrellisRelation"><span>GeoTrellisRelation</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="geotrellis.util.LazyLogging"><span>LazyLogging</span></li><li class="in" name="org.apache.spark.sql.sources.PrunedFilteredScan"><span>PrunedFilteredScan</span></li><li class="in" name="org.apache.spark.sql.sources.BaseRelation"><span>BaseRelation</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="astraea.spark.rasterframes.sources.GeoTrellisRelation"><span>GeoTrellisRelation</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="geotrellis.util.LazyLogging"><span>LazyLogging</span></li><li class="in" name="org.apache.spark.sql.sources.PrunedFilteredScan"><span>PrunedFilteredScan</span></li><li class="in" name="org.apache.spark.sql.sources.BaseRelation"><span>BaseRelation</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -90,8 +90,8 @@
         <div id="allMembers">
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
-              <ol><li name="org.apache.spark.sql.gt.sources.GeoTrellisRelation#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(sqlContext:org.apache.spark.sql.SQLContext,uri:java.net.URI,layerId:geotrellis.spark.LayerId,bbox:Option[geotrellis.vector.Extent]):org.apache.spark.sql.gt.sources.GeoTrellisRelation"></a>
+              <ol><li name="astraea.spark.rasterframes.sources.GeoTrellisRelation#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="&lt;init&gt;(sqlContext:org.apache.spark.sql.SQLContext,uri:java.net.URI,layerId:geotrellis.spark.LayerId,bbox:Option[geotrellis.vector.Extent]):astraea.spark.rasterframes.sources.GeoTrellisRelation"></a>
       <a id="&lt;init&gt;:GeoTrellisRelation"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -99,11 +99,11 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">GeoTrellisRelation</span><span class="params">(<span name="sqlContext">sqlContext: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.SQLContext" class="extype" target="_top">SQLContext</a></span>, <span name="uri">uri: <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.net.URI" class="extype" target="_top">URI</a></span>, <span name="layerId">layerId: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.LayerId" class="extype" target="_top">LayerId</a></span>, <span name="bbox">bbox: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-vector_2.11/1.1.1/geotrellis-vector_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.vector.Extent" class="extype" target="_top">Extent</a>]</span>)</span>
+        <span class="name">GeoTrellisRelation</span><span class="params">(<span name="sqlContext">sqlContext: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.SQLContext" class="extype" target="_top">SQLContext</a></span>, <span name="uri">uri: <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.net.URI" class="extype" target="_top">URI</a></span>, <span name="layerId">layerId: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.2.0-RC1/geotrellis-spark_2.11-1.2.0-RC1-javadoc.jar/!/index.html#geotrellis.spark.LayerId" class="extype" target="_top">LayerId</a></span>, <span name="bbox">bbox: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-vector_2.11/1.2.0-RC1/geotrellis-vector_2.11-1.2.0-RC1-javadoc.jar/!/index.html#geotrellis.vector.Extent" class="extype" target="_top">Extent</a>]</span>)</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.sources.GeoTrellisRelation@&lt;init&gt;(sqlContext:org.apache.spark.sql.SQLContext,uri:java.net.URI,layerId:geotrellis.spark.LayerId,bbox:Option[geotrellis.vector.Extent]):org.apache.spark.sql.gt.sources.GeoTrellisRelation" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.sources.GeoTrellisRelation@&lt;init&gt;(sqlContext:org.apache.spark.sql.SQLContext,uri:java.net.URI,layerId:geotrellis.spark.LayerId,bbox:Option[geotrellis.vector.Extent]):astraea.spark.rasterframes.sources.GeoTrellisRelation" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       
@@ -128,8 +128,8 @@
         <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.sources.GeoTrellisRelation@!=(x$1:Any):Boolean" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.sources.GeoTrellisRelation@!=(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -145,8 +145,8 @@
         <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.sources.GeoTrellisRelation@##():Int" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.sources.GeoTrellisRelation@##():Int" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -162,8 +162,8 @@
         <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Any" class="extype" target="_top">Any</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.sources.GeoTrellisRelation@==(x$1:Any):Boolean" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.sources.GeoTrellisRelation@==(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -179,12 +179,12 @@
         <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.sources.GeoTrellisRelation@asInstanceOf[T0]:T0" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.sources.GeoTrellisRelation@asInstanceOf[T0]:T0" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.sources.GeoTrellisRelation#bbox" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="astraea.spark.rasterframes.sources.GeoTrellisRelation#bbox" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="bbox:Option[geotrellis.vector.Extent]"></a>
       <a id="bbox:Option[Extent]"></a>
       <h4 class="signature">
@@ -193,15 +193,15 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">bbox</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-vector_2.11/1.1.1/geotrellis-vector_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.vector.Extent" class="extype" target="_top">Extent</a>]</span>
+        <span class="name">bbox</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Option" class="extype" target="_top">Option</a>[<a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-vector_2.11/1.2.0-RC1/geotrellis-vector_2.11-1.2.0-RC1-javadoc.jar/!/index.html#geotrellis.vector.Extent" class="extype" target="_top">Extent</a>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.sources.GeoTrellisRelation@bbox:Option[geotrellis.vector.Extent]" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.sources.GeoTrellisRelation@bbox:Option[geotrellis.vector.Extent]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       
-    </li><li name="org.apache.spark.sql.gt.sources.GeoTrellisRelation#buildScan" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="astraea.spark.rasterframes.sources.GeoTrellisRelation#buildScan" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="buildScan(requiredColumns:Array[String],filters:Array[org.apache.spark.sql.sources.Filter]):org.apache.spark.rdd.RDD[org.apache.spark.sql.Row]"></a>
       <a id="buildScan(Array[String],Array[Filter]):RDD[Row]"></a>
       <h4 class="signature">
@@ -213,12 +213,12 @@
         <span class="name">buildScan</span><span class="params">(<span name="requiredColumns">requiredColumns: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Array" class="extype" target="_top">Array</a>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="filters">filters: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Array" class="extype" target="_top">Array</a>[<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.sources.Filter" class="extype" target="_top">Filter</a>]</span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.rdd.RDD" class="extype" target="_top">RDD</a>[<span class="extype" name="org.apache.spark.sql.Row">Row</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.sources.GeoTrellisRelation@buildScan(requiredColumns:Array[String],filters:Array[org.apache.spark.sql.sources.Filter]):org.apache.spark.rdd.RDD[org.apache.spark.sql.Row]" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.sources.GeoTrellisRelation@buildScan(requiredColumns:Array[String],filters:Array[org.apache.spark.sql.sources.Filter]):org.apache.spark.rdd.RDD[org.apache.spark.sql.Row]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="org.apache.spark.sql.gt.sources.GeoTrellisRelation">GeoTrellisRelation</a> → PrunedFilteredScan</dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.sources.GeoTrellisRelation#buildScan" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="astraea.spark.rasterframes.sources.GeoTrellisRelation">GeoTrellisRelation</a> → PrunedFilteredScan</dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.sources.GeoTrellisRelation#buildScan" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="buildScan(requiredColumns:Array[String]):org.apache.spark.rdd.RDD[org.apache.spark.sql.Row]"></a>
       <a id="buildScan(Array[String]):RDD[Row]"></a>
       <h4 class="signature">
@@ -230,8 +230,8 @@
         <span class="name">buildScan</span><span class="params">(<span name="requiredColumns">requiredColumns: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Array" class="extype" target="_top">Array</a>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.rdd.RDD" class="extype" target="_top">RDD</a>[<span class="extype" name="org.apache.spark.sql.Row">Row</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.sources.GeoTrellisRelation@buildScan(requiredColumns:Array[String]):org.apache.spark.rdd.RDD[org.apache.spark.sql.Row]" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.sources.GeoTrellisRelation@buildScan(requiredColumns:Array[String]):org.apache.spark.rdd.RDD[org.apache.spark.sql.Row]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       
@@ -247,11 +247,11 @@
         <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.sources.GeoTrellisRelation@clone():Object" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.sources.GeoTrellisRelation@clone():Object" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
       <span class="defval" name="classOf[java.lang.CloneNotSupportedException]">...</span>
@@ -270,8 +270,8 @@
         <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.sources.GeoTrellisRelation@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.sources.GeoTrellisRelation@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -287,11 +287,11 @@
         <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.sources.GeoTrellisRelation@finalize():Unit" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.sources.GeoTrellisRelation@finalize():Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@throws</span><span class="args">(<span>
       
       <span class="symbol">classOf[java.lang.Throwable]</span>
@@ -310,8 +310,8 @@
         <span class="name">getClass</span><span class="params">()</span><span class="result">: <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.lang.Class" class="extype" target="_top">Class</a>[_]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.sources.GeoTrellisRelation@getClass():Class[_]" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.sources.GeoTrellisRelation@getClass():Class[_]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -327,12 +327,12 @@
         <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.sources.GeoTrellisRelation@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.sources.GeoTrellisRelation@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.sources.GeoTrellisRelation#layerId" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="astraea.spark.rasterframes.sources.GeoTrellisRelation#layerId" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="layerId:geotrellis.spark.LayerId"></a>
       <a id="layerId:LayerId"></a>
       <h4 class="signature">
@@ -341,11 +341,11 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">layerId</span><span class="result">: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.1.1/geotrellis-spark_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.spark.LayerId" class="extype" target="_top">LayerId</a></span>
+        <span class="name">layerId</span><span class="result">: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-spark_2.11/1.2.0-RC1/geotrellis-spark_2.11-1.2.0-RC1-javadoc.jar/!/index.html#geotrellis.spark.LayerId" class="extype" target="_top">LayerId</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.sources.GeoTrellisRelation@layerId:geotrellis.spark.LayerId" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.sources.GeoTrellisRelation@layerId:geotrellis.spark.LayerId" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       
@@ -361,8 +361,8 @@
         <span class="name">logger</span><span class="result">: <a href="https://oss.sonatype.org/service/local/repositories/public/archive/com/typesafe/scala-logging/scala-logging_2.11/3.5.0/scala-logging_2.11-3.5.0-javadoc.jar/!/index.html#com.typesafe.scalalogging.Logger" class="extype" target="_top">Logger</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.sources.GeoTrellisRelation@logger:com.typesafe.scalalogging.Logger" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.sources.GeoTrellisRelation@logger:com.typesafe.scalalogging.Logger" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>LazyLogging</dd></dl></div>
@@ -378,8 +378,8 @@
         <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.sources.GeoTrellisRelation@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.sources.GeoTrellisRelation@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -395,8 +395,8 @@
         <span class="name">needConversion</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Boolean" class="extype" target="_top">Boolean</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.sources.GeoTrellisRelation@needConversion:Boolean" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.sources.GeoTrellisRelation@needConversion:Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>BaseRelation</dd></dl></div>
@@ -412,8 +412,8 @@
         <span class="name">notify</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.sources.GeoTrellisRelation@notify():Unit" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.sources.GeoTrellisRelation@notify():Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -429,12 +429,12 @@
         <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.sources.GeoTrellisRelation@notifyAll():Unit" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.sources.GeoTrellisRelation@notifyAll():Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.sources.GeoTrellisRelation#schema" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="astraea.spark.rasterframes.sources.GeoTrellisRelation#schema" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="schema:org.apache.spark.sql.types.StructType"></a>
       <a id="schema:StructType"></a>
       <h4 class="signature">
@@ -446,11 +446,11 @@
         <span class="name">schema</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.types.StructType" class="extype" target="_top">StructType</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.sources.GeoTrellisRelation@schema:org.apache.spark.sql.types.StructType" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.sources.GeoTrellisRelation@schema:org.apache.spark.sql.types.StructType" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="org.apache.spark.sql.gt.sources.GeoTrellisRelation">GeoTrellisRelation</a> → BaseRelation</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="astraea.spark.rasterframes.sources.GeoTrellisRelation">GeoTrellisRelation</a> → BaseRelation</dd></dl></div>
     </li><li name="org.apache.spark.sql.sources.BaseRelation#sizeInBytes" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="sizeInBytes:Long"></a>
       <a id="sizeInBytes:Long"></a>
@@ -463,12 +463,12 @@
         <span class="name">sizeInBytes</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Long" class="extype" target="_top">Long</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.sources.GeoTrellisRelation@sizeInBytes:Long" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.sources.GeoTrellisRelation@sizeInBytes:Long" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>BaseRelation</dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.sources.GeoTrellisRelation#sqlContext" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="astraea.spark.rasterframes.sources.GeoTrellisRelation#sqlContext" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="sqlContext:org.apache.spark.sql.SQLContext"></a>
       <a id="sqlContext:SQLContext"></a>
       <h4 class="signature">
@@ -480,11 +480,11 @@
         <span class="name">sqlContext</span><span class="result">: <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.SQLContext" class="extype" target="_top">SQLContext</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.sources.GeoTrellisRelation@sqlContext:org.apache.spark.sql.SQLContext" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.sources.GeoTrellisRelation@sqlContext:org.apache.spark.sql.SQLContext" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="org.apache.spark.sql.gt.sources.GeoTrellisRelation">GeoTrellisRelation</a> → BaseRelation</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="astraea.spark.rasterframes.sources.GeoTrellisRelation">GeoTrellisRelation</a> → BaseRelation</dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -497,12 +497,12 @@
         <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.sources.GeoTrellisRelation@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.sources.GeoTrellisRelation@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.sources.GeoTrellisRelation#unhandledFilters" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="astraea.spark.rasterframes.sources.GeoTrellisRelation#unhandledFilters" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="unhandledFilters(filters:Array[org.apache.spark.sql.sources.Filter]):Array[org.apache.spark.sql.sources.Filter]"></a>
       <a id="unhandledFilters(Array[Filter]):Array[Filter]"></a>
       <h4 class="signature">
@@ -514,12 +514,12 @@
         <span class="name">unhandledFilters</span><span class="params">(<span name="filters">filters: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Array" class="extype" target="_top">Array</a>[<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.sources.Filter" class="extype" target="_top">Filter</a>]</span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Array" class="extype" target="_top">Array</a>[<a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.sources.Filter" class="extype" target="_top">Filter</a>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.sources.GeoTrellisRelation@unhandledFilters(filters:Array[org.apache.spark.sql.sources.Filter]):Array[org.apache.spark.sql.sources.Filter]" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.sources.GeoTrellisRelation@unhandledFilters(filters:Array[org.apache.spark.sql.sources.Filter]):Array[org.apache.spark.sql.sources.Filter]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="org.apache.spark.sql.gt.sources.GeoTrellisRelation">GeoTrellisRelation</a> → BaseRelation</dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.sources.GeoTrellisRelation#uri" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="astraea.spark.rasterframes.sources.GeoTrellisRelation">GeoTrellisRelation</a> → BaseRelation</dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.sources.GeoTrellisRelation#uri" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="uri:java.net.URI"></a>
       <a id="uri:URI"></a>
       <h4 class="signature">
@@ -531,8 +531,8 @@
         <span class="name">uri</span><span class="result">: <a href="https://docs.oracle.com/javase/8/docs/api/index.html#java.net.URI" class="extype" target="_top">URI</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.sources.GeoTrellisRelation@uri:java.net.URI" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.sources.GeoTrellisRelation@uri:java.net.URI" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       
@@ -548,8 +548,8 @@
         <span class="name">wait</span><span class="params">()</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.sources.GeoTrellisRelation@wait():Unit" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.sources.GeoTrellisRelation@wait():Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -571,8 +571,8 @@
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Long" class="extype" target="_top">Long</a></span>, <span name="arg1">arg1: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Int" class="extype" target="_top">Int</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.sources.GeoTrellisRelation@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.sources.GeoTrellisRelation@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -594,8 +594,8 @@
         <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Long" class="extype" target="_top">Long</a></span>)</span><span class="result">: <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Unit" class="extype" target="_top">Unit</a></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../../../index.html#org.apache.spark.sql.gt.sources.GeoTrellisRelation@wait(x$1:Long):Unit" title="Permalink" target="_top">
-        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      <a href="../../../../index.html#astraea.spark.rasterframes.sources.GeoTrellisRelation@wait(x$1:Long):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -623,7 +623,7 @@
             </div><div class="parent" name="scala.Equals">
               <h3>Inherited from <a href="http://scala-lang.org/files/archive/api/2.11.11/index.html#scala.Equals" class="extype" target="_top">Equals</a></h3>
             </div><div class="parent" name="geotrellis.util.LazyLogging">
-              <h3>Inherited from <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-util_2.11/1.1.1/geotrellis-util_2.11-1.1.1-javadoc.jar/!/index.html#geotrellis.util.LazyLogging" class="extype" target="_top">LazyLogging</a></h3>
+              <h3>Inherited from <a href="https://oss.sonatype.org/service/local/repositories/public/archive/org/locationtech/geotrellis/geotrellis-util_2.11/1.2.0-RC1/geotrellis-util_2.11-1.2.0-RC1-javadoc.jar/!/index.html#geotrellis.util.LazyLogging" class="extype" target="_top">LazyLogging</a></h3>
             </div><div class="parent" name="org.apache.spark.sql.sources.PrunedFilteredScan">
               <h3>Inherited from <a href="https://spark.apache.org/docs/2.1.0/api/scala/index.html#org.apache.spark.sql.sources.PrunedFilteredScan" class="extype" target="_top">PrunedFilteredScan</a></h3>
             </div><div class="parent" name="org.apache.spark.sql.sources.BaseRelation">

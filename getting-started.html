@@ -40,35 +40,6 @@ gtag('config', 'UA-106630615-1');
 
 <div class="off-canvas position-left" id="off-canvas-menu" data-off-canvas>
 <nav class="off-canvas-nav">
-<div class="nav-home">
-<a href="index.html" >
-<span class="home-icon">⌂</span>RasterFrames
-</a>
-<div class="version-number">
-0.5.7
-</div>
-</div>
-<div class="nav-toc">
-<ul>
-  <li><a href="getting-started.html" class="active page">Getting Started</a></li>
-  <li><a href="creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
-  <li><a href="apps/index.html" class="page">Applications</a>
-  <ul>
-    <li><a href="apps/geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
-    <li><a href="apps/ndvi.html" class="page">Computing NDVI</a></li>
-  </ul></li>
-  <li><a href="ml/index.html" class="page">Machine Learning</a>
-  <ul>
-    <li><a href="ml/statistics.html" class="page">Raster Statistics</a></li>
-    <li><a href="ml/clustering.html" class="page">Clustering</a></li>
-    <li><a href="ml/classification.html" class="page">Classification</a></li>
-  </ul></li>
-  <li><a href="exporting-rasterframes.html" class="page">Exporting RasterFrames</a></li>
-  <li><a href="reference.html" class="page">Reference</a></li>
-  <li><a href="release-notes.html" class="page">Release Notes</a></li>
-</ul>
-</div>
-
 </nav>
 </div>
 
@@ -76,13 +47,9 @@ gtag('config', 'UA-106630615-1');
 
 <header class="site-header expanded row">
 <div class="small-12 column">
-<a href="#" class="off-canvas-toggle hide-for-medium" data-toggle="off-canvas-menu"><svg class="svg-icon svg-icon-menu" version="1.1" id="Menu" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" enable-background="new 0 0 20 20" xml:space="preserve"> <path class="svg-icon-menu-path" fill="#53CDEC" d="M16.4,9H3.6C3.048,9,3,9.447,3,10c0,0.553,0.048,1,0.6,1H16.4c0.552,0,0.6-0.447,0.6-1C17,9.447,16.952,9,16.4,9z M16.4,13
-H3.6C3.048,13,3,13.447,3,14c0,0.553,0.048,1,0.6,1H16.4c0.552,0,0.6-0.447,0.6-1C17,13.447,16.952,13,16.4,13z M3.6,7H16.4
-C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.048,7,3.6,7z"/></svg>
-</a>
+<a href="#" class="off-canvas-toggle hide-for-medium" data-toggle="off-canvas-menu"></a>
 <img style="max-height: 60px;" src="images/RasterFramesLogo.png" />
-<!-- <div class="title"><a href="index.html">RasterFrames</a></div>
- -->
+<!--  -->
 <a href="http://www.astraea.earth" class="logo show-for-medium">
 <img style="max-height: 40px;" src="images/astraea.png"/>
 </a>
@@ -93,35 +60,6 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 
 <div class="medium-3 large-2 show-for-medium column">
 <nav class="site-nav">
-<div class="nav-home">
-<a href="index.html" >
-<span class="home-icon">⌂</span>RasterFrames
-</a>
-<div class="version-number">
-0.5.7
-</div>
-</div>
-<div class="nav-toc">
-<ul>
-  <li><a href="getting-started.html" class="active page">Getting Started</a></li>
-  <li><a href="creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
-  <li><a href="apps/index.html" class="page">Applications</a>
-  <ul>
-    <li><a href="apps/geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
-    <li><a href="apps/ndvi.html" class="page">Computing NDVI</a></li>
-  </ul></li>
-  <li><a href="ml/index.html" class="page">Machine Learning</a>
-  <ul>
-    <li><a href="ml/statistics.html" class="page">Raster Statistics</a></li>
-    <li><a href="ml/clustering.html" class="page">Clustering</a></li>
-    <li><a href="ml/classification.html" class="page">Classification</a></li>
-  </ul></li>
-  <li><a href="exporting-rasterframes.html" class="page">Exporting RasterFrames</a></li>
-  <li><a href="reference.html" class="page">Reference</a></li>
-  <li><a href="release-notes.html" class="page">Release Notes</a></li>
-</ul>
-</div>
-
 </nav>
 </div>
 
@@ -143,15 +81,42 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <div class="small-12 large-9 column" id="docs">
 <h1><a href="#getting-started" name="getting-started" class="anchor"><span class="anchor-link"></span></a>Getting Started</h1><div class="callout note "><div class="callout-title">Note</div>
 <p>Most of the examples are shown using the Spark DataFrames API. However, many could also be rewritten to use the Spark SQL API instead. We hope to add more examples in that form in the future.</p></div>
-<h2><a href="#sbt-configuration" name="sbt-configuration" class="anchor"><span class="anchor-link"></span></a>sbt configuration</h2>
-<p><em>RasterFrames</em> is published via Bintray&rsquo;s JCenter server, which is one of the default sbt resolvers. To use, just add the following library dependency:</p><dl class="dependency"><dt>sbt</dt><dd><pre class="prettyprint"><code class="language-scala">libraryDependencies += "io.astraea" %% "raster-frames" % "x.y.z"</code></pre></dd><dt>Maven</dt><dd><pre class="prettyprint"><code class="language-xml">&lt;dependency&gt;
+<h2><a href="#quick-start" name="quick-start" class="anchor"><span class="anchor-link"></span></a>Quick Start</h2>
+<h3><a href="#macos" name="macos" class="anchor"><span class="anchor-link"></span></a>macOS</h3>
+<ol>
+  <li>If not already, install <a href="https://brew.sh/">Homebrew</a></li>
+  <li>Run <code>brew install sbt</code></li>
+  <li>Run <code>sbt new s22s/raster-frames.g8</code></li>
+</ol>
+<h3><a href="#linux" name="linux" class="anchor"><span class="anchor-link"></span></a>Linux</h3>
+<ol>
+  <li>Install <a href="http://www.scala-sbt.org/release/docs/Installing-sbt-on-Linux.html">sbt</a></li>
+  <li>Run <code>sbt new s22s/raster-frames.g8</code></li>
+</ol>
+<h3><a href="#windows" name="windows" class="anchor"><span class="anchor-link"></span></a>Windows</h3>
+<ol>
+  <li>Install <a href="http://www.scala-sbt.org/release/docs/Installing-sbt-on-Windows.html">sbt</a></li>
+  <li>Run <code>sbt new s22s/raster-frames.g8</code></li>
+</ol>
+<h2><a href="#general-setup" name="general-setup" class="anchor"><span class="anchor-link"></span></a>General Setup</h2>
+<p><em>RasterFrames</em> is published via Bintray&rsquo;s JCenter server. In sbt you introduce it with this build setting: </p>
+<pre><code>resolvers += Resolver.jcenterRepo
+</code></pre>
+<p>See <a href="https://bintray.com/bintray/jcenter">this</a> for other build tools.</p>
+<p>To use RasterFrames, add the following library dependency:</p><dl class="dependency"><dt>sbt</dt><dd><pre class="prettyprint"><code class="language-scala">libraryDependencies += "io.astraea" %% "raster-frames" % "x.y.z"</code></pre></dd><dt>Maven</dt><dd><pre class="prettyprint"><code class="language-xml">&lt;dependency&gt;
   &lt;groupId&gt;io.astraea&lt;/groupId&gt;
   &lt;artifactId&gt;raster-frames_2.11&lt;/artifactId&gt;
   &lt;version&gt;x.y.z&lt;/version&gt;
 &lt;/dependency&gt;</code></pre></dd><dt>Gradle</dt><dd><pre class="prettyprint"><code class="language-gradle">dependencies {
   compile group: 'io.astraea', name: 'raster-frames_2.11', version: 'x.y.z'
-}</code></pre></dd></dl><div class="callout note "><div class="callout-title">Note</div>
-<p><em>Coming soon</em>: We&rsquo;ll soon be providing a new project template to streamline the process of getting started with <em>RasterFrames</em> </p></div>
+}</code></pre></dd></dl>
+<p>It assumes that SparkSQL 2.1.1 is available in the runtime classpath. Here&rsquo;s how to add it explicitly:</p><dl class="dependency"><dt>sbt</dt><dd><pre class="prettyprint"><code class="language-scala">libraryDependencies += "org.apache.spark" % "spark-sql" % "2.1.1"</code></pre></dd><dt>Maven</dt><dd><pre class="prettyprint"><code class="language-xml">&lt;dependency&gt;
+  &lt;groupId&gt;org.apache.spark&lt;/groupId&gt;
+  &lt;artifactId&gt;spark-sql&lt;/artifactId&gt;
+  &lt;version&gt;2.1.1&lt;/version&gt;
+&lt;/dependency&gt;</code></pre></dd><dt>Gradle</dt><dd><pre class="prettyprint"><code class="language-gradle">dependencies {
+  compile group: 'org.apache.spark', name: 'spark-sql', version: '2.1.1'
+}</code></pre></dd></dl>
 <div class="nav-next">
 <p><strong>Next:</strong> <a href="creating-rasterframes.html">Creating RasterFrames</a></p>
 </div>
@@ -164,7 +129,8 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <ul>
   <li><a href="getting-started.html#getting-started" class="header">Getting Started</a>
   <ul>
-    <li><a href="getting-started.html#sbt-configuration" class="header">sbt configuration</a></li>
+    <li><a href="getting-started.html#quick-start" class="header">Quick Start</a></li>
+    <li><a href="getting-started.html#general-setup" class="header">General Setup</a></li>
   </ul></li>
 </ul>
 </div>
