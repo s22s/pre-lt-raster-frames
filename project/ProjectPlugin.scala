@@ -12,15 +12,20 @@ import com.typesafe.sbt.SbtGit.git
 import com.typesafe.sbt.sbtghpages.GhpagesPlugin
 import com.typesafe.sbt.site.SitePlugin.autoImport._
 import com.typesafe.sbt.site.paradox.ParadoxSitePlugin.autoImport._
+import tut.TutPlugin
 import tut.TutPlugin.autoImport._
 import GhpagesPlugin.autoImport._
 import com.lightbend.paradox.sbt.ParadoxPlugin.autoImport._
+import com.typesafe.sbt.site.SiteScaladocPlugin
+import com.typesafe.sbt.site.paradox.ParadoxSitePlugin
 
 /**
  * @author sfitch
  * @since 8/20/17
  */
 object ProjectPlugin extends AutoPlugin {
+  override def requires = SiteScaladocPlugin && ParadoxSitePlugin && TutPlugin && GhpagesPlugin
+
   override def trigger: PluginTrigger = allRequirements
 
   val versions = Map(
