@@ -14,11 +14,15 @@ import com.typesafe.sbt.site.paradox.ParadoxSitePlugin.autoImport._
 import tut.TutPlugin.autoImport._
 import GhpagesPlugin.autoImport._
 import com.lightbend.paradox.sbt.ParadoxPlugin.autoImport._
+import com.typesafe.sbt.site.SiteScaladocPlugin
+import com.typesafe.sbt.site.paradox.ParadoxSitePlugin
 
 /**
  * @since 8/20/17
  */
 object ProjectPlugin extends AutoPlugin {
+  override def requires = SiteScaladocPlugin && ParadoxSitePlugin && TutPlugin && GhpagesPlugin
+
   override def trigger: PluginTrigger = allRequirements
 
   import autoImport._
