@@ -28,8 +28,8 @@ initialCommands in console := """
   |    .config("spark.kryo.registrationRequired", "false")
   |    .config("spark.kryo.registrator", classOf[KryoRegistrator].getName)
   |    .getOrCreate()
+  |    .withRasterFrames
   |spark.sparkContext.setLogLevel("ERROR")
-  |rfInit(spark.sqlContext)
   |import spark.implicits._
   |
 """.stripMargin

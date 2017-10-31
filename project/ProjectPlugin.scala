@@ -12,15 +12,20 @@ import com.typesafe.sbt.site.paradox.ParadoxSitePlugin.autoImport._
 import de.heikoseeberger.sbtheader.CommentStyleMapping
 import de.heikoseeberger.sbtheader.HeaderKey.headers
 import de.heikoseeberger.sbtheader.license.Apache2_0
+import tut.TutPlugin
 import tut.TutPlugin.autoImport._
 import GhpagesPlugin.autoImport._
 import com.lightbend.paradox.sbt.ParadoxPlugin.autoImport._
+import com.typesafe.sbt.site.SiteScaladocPlugin
+import com.typesafe.sbt.site.paradox.ParadoxSitePlugin
 
 /**
  * @author sfitch
  * @since 8/20/17
  */
 object ProjectPlugin extends AutoPlugin {
+  override def requires = SiteScaladocPlugin && ParadoxSitePlugin && TutPlugin && GhpagesPlugin
+
   override def trigger: PluginTrigger = allRequirements
 
   val versions = Map(
@@ -113,7 +118,6 @@ object ProjectPlugin extends AutoPlugin {
     def docSettings: Seq[Def.Setting[_]] = Seq(
       git.remoteRepo := "git@github.com:s22s/raster-frames.git",
       apiURL := Some(url("http://rasterframes.io/latest/api")),
-      autoAPIMappings := true,
       paradoxProperties in Paradox ++= Map(
         "github.base_url" -> "https://github.com/s22s/raster-frames",
         "scaladoc.org.apache.spark.sql.gt" -> "http://rasterframes.io/latest",
@@ -132,9 +136,10 @@ object ProjectPlugin extends AutoPlugin {
         geotrellis("spark") % Tut,
         geotrellis("raster") % Tut
       ),
+      scalacOptions in (Compile,doc) += "-J-Xmx6G",
       // NB: These don't seem to work. Still trying to figure Tut's run model.
       fork in (Tut, run) := true,
-      javaOptions in (Tut, run) := Seq("-Xmx6G")
+      javaOptions in (Tut, run) += "-Xmx6G"
     )
   }
 }
