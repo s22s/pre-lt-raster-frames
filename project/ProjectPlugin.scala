@@ -5,14 +5,11 @@ import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 import sbtrelease.ReleasePlugin.autoImport._
 
 import _root_.bintray.BintrayPlugin.autoImport._
-import com.servicerocket.sbt.release.git.flow.Steps._
 import com.typesafe.sbt.SbtGit.git
 import com.typesafe.sbt.sbtghpages.GhpagesPlugin
 import com.typesafe.sbt.site.SitePlugin.autoImport._
 import com.typesafe.sbt.site.paradox.ParadoxSitePlugin.autoImport._
-import de.heikoseeberger.sbtheader.CommentStyleMapping
-import de.heikoseeberger.sbtheader.HeaderKey.headers
-import de.heikoseeberger.sbtheader.license.Apache2_0
+//import com.typesafe.sbt.site.paradox.ParadoxSitePlugin.autoImport._
 import tut.TutPlugin.autoImport._
 import GhpagesPlugin.autoImport._
 import com.lightbend.paradox.sbt.ParadoxPlugin.autoImport._
@@ -36,13 +33,12 @@ object ProjectPlugin extends AutoPlugin {
 
   override def projectSettings = Seq(
     organization := "io.astraea",
-    organizationName := "Astraea",
+    organizationName := "Astraea, Inc.",
+    startYear := Some(2017),
     homepage := Some(url("http://rasterframes.io")),
     scmInfo := Some(ScmInfo(url("https://github.com/s22s/raster-frames"), "git@github.com:s22s/raster-frames.git")),
     description := "RasterFrames brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer operations of GeoTrellis",
-    startYear := Some(2017),
     licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html")),
-    headers := CommentStyleMapping.createFrom(Apache2_0, "2017", "Astraea, Inc."),
     scalaVersion := "2.11.11",
     scalacOptions ++= Seq("-feature", "-deprecation"),
     cancelable in Global := true,
@@ -92,21 +88,23 @@ object ProjectPlugin extends AutoPlugin {
         bintrayOrganization := Some("s22s"),
         bintrayReleaseOnPublish in ThisBuild := false,
         publishArtifact in (Compile, packageDoc) := false,
+        releaseIgnoreUntrackedFiles := true,
+        releaseTagName := s"${version.value}",
         releaseProcess := Seq[ReleaseStep](
           checkSnapshotDependencies,
-          checkGitFlowExists,
           inquireVersions,
+          runClean,
           runTest,
-          gitFlowReleaseStart,
           setReleaseVersion,
           buildSite,
           publishSite,
           commitReleaseVersion,
+          tagRelease,
           publishArtifacts,
           releaseArtifacts,
-          gitFlowReleaseFinish,
           setNextVersion,
-          commitNextVersion
+          commitNextVersion,
+          pushChanges
         )
       )
     }
@@ -114,11 +112,11 @@ object ProjectPlugin extends AutoPlugin {
     def docSettings: Seq[Def.Setting[_]] = Seq(
       git.remoteRepo := "git@github.com:s22s/raster-frames.git",
       apiURL := Some(url("http://rasterframes.io/latest/api")),
-      autoAPIMappings := true,
+      autoAPIMappings := false,
       paradoxProperties in Paradox ++= Map(
-        "github.base_url" -> "https://github.com/s22s/raster-frames",
-        "scaladoc.org.apache.spark.sql.gt" -> "http://rasterframes.io/latest",
-        "scaladoc.geotrellis.base_url" -> "https://geotrellis.github.io/scaladocs/latest"
+        "github.base_url" -> "https://github.com/s22s/raster-frames"//,
+        //"scaladoc.org.apache.spark.sql.gt" -> "http://rasterframes.io/latest" //,
+        //"scaladoc.geotrellis.base_url" -> "https://geotrellis.github.io/scaladocs/latest"
       ),
       sourceDirectory in Paradox := tutTargetDirectory.value,
       sourceDirectory in Paradox in paradoxTheme := sourceDirectory.value / "main" / "paradox" / "_template",
@@ -134,8 +132,8 @@ object ProjectPlugin extends AutoPlugin {
         geotrellis("raster") % Tut
       ),
       // NB: These don't seem to work. Still trying to figure Tut's run model.
-      fork in (Tut, run) := true,
-      javaOptions in (Tut, run) := Seq("-Xmx6G")
+      fork in (Tut, runner) := true,
+      javaOptions in (Tut, runner) := Seq("-Xmx6G")
     )
 
     def buildInfoSettings: Seq[Def.Setting[_]] = Seq(
