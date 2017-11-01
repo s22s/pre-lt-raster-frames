@@ -130,6 +130,8 @@ object ProjectPlugin extends AutoPlugin {
       )
     }
 
+    val skipTut = false
+
     def docSettings: Seq[Def.Setting[_]] = Seq(
       git.remoteRepo := "git@github.com:s22s/raster-frames.git",
       apiURL := Some(url("http://rasterframes.io/latest/api")),
@@ -139,9 +141,8 @@ object ProjectPlugin extends AutoPlugin {
         "scaladoc.org.apache.spark.sql.gt" -> "http://rasterframes.io/latest",
         "scaladoc.geotrellis.base_url" -> "https://geotrellis.github.io/scaladocs/latest"
       ),
-      sourceDirectory in Paradox := tutTargetDirectory.value,
+      paradoxTheme in Paradox := Some(builtinParadoxTheme("generic")),
       sourceDirectory in Paradox in paradoxTheme := sourceDirectory.value / "main" / "paradox" / "_template",
-      makeSite := makeSite.dependsOn(tutQuick).value,
       ghpagesNoJekyll := true,
       scalacOptions in (Compile, doc) ++= Seq(
         "-no-link-warnings"
@@ -161,6 +162,7 @@ object ProjectPlugin extends AutoPlugin {
       buildInfoKeys ++= Seq[BuildInfoKey](
         name, version, scalaVersion, sbtVersion, geotrellisVersion, sparkVersion
       ),
+<<<<<<< HEAD
       buildInfoPackage := "astraea.spark.rasterframes",
       buildInfoObject := "RFBuildInfo",
       buildInfoOptions := Seq(
@@ -196,6 +198,17 @@ object ProjectPlugin extends AutoPlugin {
 
         case _ ⇒ MergeStrategy.deduplicate
       }
+=======
+      scalacOptions in (Compile, doc) += "-J-Xmx6G"
+    ) ++ (
+      if (skipTut) Seq(
+        sourceDirectory in Paradox := tutSourceDirectory.value
+      )
+      else Seq(
+        sourceDirectory in Paradox := tutTargetDirectory.value,
+        makeSite := makeSite.dependsOn(tutQuick).value
+      )
+>>>>>>> Added ability to create docs without running tut, for debugging build issues.
     )
   }
 }
