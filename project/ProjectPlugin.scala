@@ -13,19 +13,16 @@ import com.typesafe.sbt.sbtghpages.GhpagesPlugin
 import com.typesafe.sbt.site.SitePlugin.autoImport._
 import com.typesafe.sbt.site.paradox.ParadoxSitePlugin.autoImport._
 import tut.TutPlugin
+//import com.typesafe.sbt.site.paradox.ParadoxSitePlugin.autoImport._
 import tut.TutPlugin.autoImport._
 import GhpagesPlugin.autoImport._
 import com.lightbend.paradox.sbt.ParadoxPlugin.autoImport._
-import com.typesafe.sbt.site.SiteScaladocPlugin
-import com.typesafe.sbt.site.paradox.ParadoxSitePlugin
 
 /**
  * @author sfitch
  * @since 8/20/17
  */
 object ProjectPlugin extends AutoPlugin {
-  override def requires = SiteScaladocPlugin && ParadoxSitePlugin && TutPlugin && GhpagesPlugin
-
   override def trigger: PluginTrigger = allRequirements
 
   val versions = Map(
@@ -104,19 +101,20 @@ object ProjectPlugin extends AutoPlugin {
         releaseTagName := s"${version.value}",
         releaseProcess := Seq[ReleaseStep](
           checkSnapshotDependencies,
-          checkGitFlowExists,
           inquireVersions,
+          runClean,
           runTest,
-          gitFlowReleaseStart,
           setReleaseVersion,
           buildSite,
           publishSite,
           commitReleaseVersion,
+          tagRelease,
           publishArtifacts,
           releaseArtifacts,
-          gitFlowReleaseFinish,
           setNextVersion,
-          commitNextVersion
+          commitNextVersion,
+          commitNextVersion,
+          pushChanges
         ),
         commands += Command.command("bumpVersion"){ st ⇒
           val extracted = Project.extract(st)
@@ -137,9 +135,9 @@ object ProjectPlugin extends AutoPlugin {
       apiURL := Some(url("http://rasterframes.io/latest/api")),
       autoAPIMappings := false,
       paradoxProperties in Paradox ++= Map(
-        "github.base_url" -> "https://github.com/s22s/raster-frames",
-        "scaladoc.org.apache.spark.sql.gt" -> "http://rasterframes.io/latest",
-        "scaladoc.geotrellis.base_url" -> "https://geotrellis.github.io/scaladocs/latest"
+        "github.base_url" -> "https://github.com/s22s/raster-frames"//,
+        //"scaladoc.org.apache.spark.sql.gt" -> "http://rasterframes.io/latest" //,
+        //"scaladoc.geotrellis.base_url" -> "https://geotrellis.github.io/scaladocs/latest"
       ),
       sourceDirectory in Paradox := tutTargetDirectory.value,
       sourceDirectory in Paradox in paradoxTheme := sourceDirectory.value / "main" / "paradox" / "_template",
