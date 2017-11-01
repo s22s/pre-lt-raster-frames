@@ -20,10 +20,10 @@ import org.apache.spark.sql._
 // Utility for reading imagery from our test data set
 def readTiff(name: String): SinglebandGeoTiff = SinglebandGeoTiff(s"src/test/resources/$name")
 
-implicit val spark = SparkSession.builder().master("local[*]").appName(getClass.getName).getOrCreate()
+implicit val spark = SparkSession.builder().
+  master("local[*]").appName(getClass.getName).getOrCreate().withRasterFrames
 spark.sparkContext.setLogLevel("ERROR")
 
-rfInit(spark.sqlContext)
 import spark.implicits._
 ```
 
