@@ -22,10 +22,9 @@ import org.apache.spark.ml.tuning.{CrossValidator, ParamGridBuilder}
 import org.apache.spark.sql._
 
 implicit val spark = SparkSession.builder().
-  master("local[*]").appName(getClass.getName).getOrCreate()
+  master("local[*]").appName(getClass.getName).getOrCreate().withRasterFrames
 spark.sparkContext.setLogLevel("ERROR")
 
-rfInit(spark.sqlContext)
 import spark.implicits._
 
 // Utility for reading imagery from our test data set
