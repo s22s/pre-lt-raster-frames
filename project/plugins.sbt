@@ -3,6 +3,8 @@ resolvers += Resolver.bintrayRepo("hseeberger", "sbt-plugins")
 
 logLevel := sbt.Level.Error
 
+addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.5")
+
 addSbtPlugin("me.lessis" % "bintray-sbt" % "0.3.0")
 
 addSbtPlugin("de.heikoseeberger" % "sbt-header" % "1.8.0")
