@@ -9,19 +9,19 @@ First some setup:
 ```tut:silent
 import astraea.spark.rasterframes._
 import astraea.spark.rasterframes.ml.TileExploder
-import geotrellis.raster.ByteConstantNoDataCellType
-import geotrellis.raster.io.geotiff.reader.GeoTiffReader
-import geotrellis.raster.render.{ColorRamps, IndexedColorMap}
+import geotrellis.raster.io.geotiff.SinglebandGeoTiff
+import geotrellis.raster._
+import geotrellis.raster.render._
 import org.apache.spark.ml.Pipeline
 import org.apache.spark.ml.clustering.{KMeans, KMeansModel}
 import org.apache.spark.ml.feature.VectorAssembler
 import org.apache.spark.sql._
 
 // Utility for reading imagery from our test data set
-def readTiff(name: String) = GeoTiffReader.readSingleband(s"src/test/resources/$name")
+def readTiff(name: String): SinglebandGeoTiff = SinglebandGeoTiff(s"src/test/resources/$name")
 
-implicit val spark = SparkSession.builder().master("local[*]").config("spark.ui.enabled", "false").
-  appName(getClass.getName).getOrCreate().withRasterFrames
+implicit val spark = SparkSession.builder().
+  master("local[*]").appName(getClass.getName).getOrCreate().withRasterFrames
 spark.sparkContext.setLogLevel("ERROR")
 
 import spark.implicits._
