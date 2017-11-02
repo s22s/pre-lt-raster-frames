@@ -195,15 +195,13 @@ class RasterFrameSpec extends TestEnvironment with TestData {
     }
 
     def render(tile: Tile, tag: String): Unit = {
-      if(!isCI) {
+      if(false && !isCI) {
         val colors = ColorMap.fromQuantileBreaks(tile.histogram, Greyscale(128))
         val path = s"/tmp/${getClass.getSimpleName}_$tag.png"
         logger.info(s"Writing '$path'")
         tile.color(colors).renderPng().write(path)
       }
     }
-
-
 
     it("should rasterize with a spatiotemporal key") {
       val rf = TestData.randomSpatioTemporalTileLayerRDD(20, 20, 2, 2).toRF
