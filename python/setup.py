@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 import sys
 
-if sys.version_info < (3, 4):
-    sys.exit("PyRasterFrames requires Python 3.4 or greater.")
+#if sys.version_info < (3, 4):
+#    sys.exit("PyRasterFrames requires Python 3.4 or greater.")
 
 with open('README.rst') as f:
     readme = f.read()

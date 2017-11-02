@@ -6,6 +6,11 @@ import sbtassembly.AssemblyPlugin.autoImport.{ShadeRule, _}
 import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 import sbtrelease.ReleasePlugin.autoImport._
 import com.servicerocket.sbt.release.git.flow.Steps._
+import sbtassembly.AssemblyKeys.assembly
+import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
+import sbtrelease.ReleasePlugin.autoImport._
+import sbtsparkpackage.SparkPackagePlugin
+import sbtsparkpackage.SparkPackagePlugin.autoImport._
 
 import _root_.bintray.BintrayPlugin.autoImport._
 import com.typesafe.sbt.SbtGit.git
@@ -17,6 +22,7 @@ import tut.TutPlugin
 import tut.TutPlugin.autoImport._
 import GhpagesPlugin.autoImport._
 import com.lightbend.paradox.sbt.ParadoxPlugin.autoImport._
+import sbtassembly.AssemblyPlugin.autoImport._
 
 /**
  * @author sfitch
@@ -26,8 +32,8 @@ object ProjectPlugin extends AutoPlugin {
   override def trigger: PluginTrigger = allRequirements
 
   val versions = Map(
-    "geotrellis" -> "1.2.0-RC2",
-    "spark" -> "2.1.0"
+    "geotrellis" -> "1.2.0-RC1",
+    "spark" -> "2.1.1"
   )
 
   import autoImport._
@@ -54,8 +60,8 @@ object ProjectPlugin extends AutoPlugin {
       spark("core") % Provided,
       spark("mllib") % Provided,
       spark("sql") % Provided,
-      geotrellis("spark") % Provided,
-      geotrellis("raster") % Provided,
+      geotrellis("spark"),
+      geotrellis("raster"),
       geotrellis("spark-testkit") % Test excludeAll (
         ExclusionRule(organization = "org.scalastic"),
         ExclusionRule(organization = "org.scalatest")
@@ -83,7 +89,6 @@ object ProjectPlugin extends AutoPlugin {
   )
 
   object autoImport {
-
     def geotrellis(module: String) =
       "org.locationtech.geotrellis" %% s"geotrellis-$module" % versions("geotrellis")
     def spark(module: String) =
@@ -203,6 +208,46 @@ object ProjectPlugin extends AutoPlugin {
 
         case _ ⇒ MergeStrategy.deduplicate
       }
+    )
+
+    lazy val spJarFile = Def.taskDyn {
+      if (spShade.value) {
+        Def.task((assembly in spPackage).value)
+      } else {
+        Def.task(spPackage.value)
+      }
+    }
+
+
+    def spSettings: Seq[Def.Setting[_]] = Seq(
+      spName := "io.astraea/raster-frames",
+      sparkVersion := versions("spark"),
+      sparkComponents ++= Seq("sql", "mllib"),
+      spAppendScalaVersion := false,
+      spIncludeMaven := false,
+      spIgnoreProvided := true,
+      spShade := true,
+      spShortDescription := description.value,
+      spHomepage := homepage.value.get.toString,
+      spDescription := """
+        |RasterFrames brings the power of Spark DataFrames to geospatial raster data,
+        |empowered by the map algebra and tile layer operations of GeoTrellis.
+        |
+        |The underlying purpose of RasterFrames is to allow data scientists and software
+        |developers to process and analyze geospatial-temporal raster data with the
+        |same flexibility and ease as any other Spark Catalyst data type. At its core
+        |is a user-defined type (UDF) called TileUDT, which encodes a GeoTrellis Tile
+        |in a form the Spark Catalyst engine can process. Furthermore, we extend the
+        |definition of a DataFrame to encompass some additional invariants, allowing
+        |for geospatial operations within and between RasterFrames to occur, while
+        |still maintaining necessary geo-referencing constructs.
+      """.stripMargin,
+      test in assembly := {},
+      TaskKey[Unit]("pysparkShell") := {
+        val jar = spJarFile.value
+        println("foo: " + jar)
+      }
+      //credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
     )
   }
 }
