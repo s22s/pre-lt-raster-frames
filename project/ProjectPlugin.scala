@@ -63,7 +63,7 @@ object ProjectPlugin extends AutoPlugin {
       ),
       "org.scalatest" %% "scalatest" % "3.0.3" % Test
     ),
-    excludeDependencies += "com.lightbend.paradox" % "paradox-theme-generic",
+    //excludeDependencies += "com.lightbend.paradox" % "paradox-theme-generic",
     publishArtifact in Test := false,
     fork in Test := true,
     javaOptions in Test := Seq("-Xmx2G"),
@@ -112,7 +112,9 @@ object ProjectPlugin extends AutoPlugin {
       )
     }
 
-    def docSettings: Seq[Def.Setting[_]] = Seq(
+    val skipTut = false
+
+    def docSettings: Seq[Def.Setting[_]] = ParadoxMaterialThemePlugin.paradoxMaterialThemeSettings(Paradox) ++ Seq(
       git.remoteRepo := "git@github.com:s22s/raster-frames.git",
       apiURL := Some(url("http://rasterframes.io/latest/api")),
       autoAPIMappings := true,
@@ -124,13 +126,11 @@ object ProjectPlugin extends AutoPlugin {
       paradoxMaterialTheme in Paradox ~= {
         _.withFavicon("assets/images/RasterFrames_32x32.ico")
           .withLogo("assets/images/RasterFramesLogo.png")
-          .withRepository(uri("https://github.com/s22s/zraster-frames"))
+          .withRepository(uri("https://github.com/s22s/raster-frames"))
           .withCopyright("Copyright &copy; Astraea, Inc. All rights reserved.")
           .withGoogleAnalytics("UA-106630615-1")
       },
-      sourceDirectory in Paradox := tutTargetDirectory.value,
       sourceDirectory in Paradox in paradoxTheme := sourceDirectory.value / "main" / "paradox" / "_template",
-      makeSite := makeSite.dependsOn(tutQuick).value,
       ghpagesNoJekyll := true,
       scalacOptions in (Compile, doc) ++= Seq(
         "-no-link-warnings"
@@ -144,6 +144,14 @@ object ProjectPlugin extends AutoPlugin {
       // NB: These don't seem to work. Still trying to figure Tut's run model.
       fork in (Tut, run) := true,
       javaOptions in (Tut, run) := Seq("-Xmx6G")
-    ) ++ ParadoxMaterialThemePlugin.paradoxMaterialThemeSettings(Paradox)
+    ) ++ (
+      if (skipTut) Seq(
+        sourceDirectory in Paradox := tutSourceDirectory.value
+      )
+      else Seq(
+        sourceDirectory in Paradox := tutTargetDirectory.value,
+        makeSite := makeSite.dependsOn(tutQuick).value
+      )
+    )
   }
 }
