@@ -7,12 +7,12 @@ The source code can be found on GitHub at [s22s/raster-frames](https://github.co
 
 The underlying purpose of RasterFrames™ is to allow data scientists and software developers to process
 and analyze geospatial-temporal raster data with the same flexibility and ease as any other Spark Catalyst data type. At its
-core is a user-defined type (UDF) called @scaladoc[`TileUDT`](org.apache.spark.sql.gt.types.TileUDT), 
+core is a user-defined type (UDT) called @scaladoc[`TileUDT`](org.apache.spark.sql.gt.types.TileUDT), 
 which encodes a GeoTrellis @scaladoc[`Tile`](geotrellis.raster.Tile) in a form the Spark Catalyst engine can process. 
 Furthermore, we extend the definition of a DataFrame to encompass some additional invariants, allowing for geospatial 
 operations within and between RasterFrames to occur, while still maintaining necessary geo-referencing constructs.
 
-To learn more, please see the [Getting Started](getting-started.md) section of this manual.
+To learn more, please see the @ref:[Getting Started](getting-started.md) section of this manual.
 
 @@@ note
 RasterFrames™ is a new project under active development. Feedback and contributions are welcomed as we look to improve it. 
