@@ -131,7 +131,6 @@ object ProjectPlugin extends AutoPlugin {
         geotrellis("spark") % Tut,
         geotrellis("raster") % Tut
       ),
-      // NB: These don't seem to work. Still trying to figure Tut's run model.
       fork in (Tut, runner) := true,
       javaOptions in (Tut, runner) := Seq("-Xmx6G")
     )
