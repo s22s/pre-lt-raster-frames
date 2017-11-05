@@ -16,6 +16,8 @@ import GhpagesPlugin.autoImport._
 import com.lightbend.paradox.sbt.ParadoxPlugin.autoImport._
 import sbtassembly.AssemblyPlugin.autoImport._
 
+import scala.sys.process.{BasicIO, Process}
+
 /**
  * @since 8/20/17
  */
@@ -168,7 +170,6 @@ object ProjectPlugin extends AutoPlugin {
       }
     }
 
-
     def spSettings: Seq[Def.Setting[_]] = Seq(
       spName := "io.astraea/raster-frames",
       sparkVersion := versions("spark"),
@@ -177,6 +178,12 @@ object ProjectPlugin extends AutoPlugin {
       spIncludeMaven := false,
       spIgnoreProvided := true,
       spShade := true,
+      spPackage := {
+        val dist = spDist.value
+        val extracted = IO.unzip(dist, (target in spPackage).value, GlobFilter("*.jar"))
+        if(extracted.size != 1) sys.error("Didn't expect to find multiple .jar files in distribution.")
+        extracted.head
+      },
       spShortDescription := description.value,
       spHomepage := homepage.value.get.toString,
       spDescription := """
@@ -193,9 +200,12 @@ object ProjectPlugin extends AutoPlugin {
         |still maintaining necessary geo-referencing constructs.
       """.stripMargin,
       test in assembly := {},
-      TaskKey[Unit]("pysparkShell") := {
-        val jar = spJarFile.value
-        println("foo: " + jar)
+      TaskKey[Unit]("pysparkCmd") := {
+        val _ = spPublishLocal.value
+        val id = (projectID in spPublishLocal).value
+        val args = "pyspark" ::  "--packages" :: s"${id.organization}:${id.name}:${id.revision}" :: Nil
+        val log = streams.value.log
+        log.info("PySpark Command:\n" + args.mkString(" "))
       }
       //credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
     )
