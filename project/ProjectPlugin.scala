@@ -1,22 +1,18 @@
 import sbt.Keys._
-import sbt._
+import sbt.{io, _}
 import sbtassembly.AssemblyKeys.assembly
 import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 import sbtrelease.ReleasePlugin.autoImport._
-import sbtsparkpackage.SparkPackagePlugin
 import sbtsparkpackage.SparkPackagePlugin.autoImport._
 
 import _root_.bintray.BintrayPlugin.autoImport._
+import com.lightbend.paradox.sbt.ParadoxPlugin.autoImport._
 import com.typesafe.sbt.SbtGit.git
 import com.typesafe.sbt.sbtghpages.GhpagesPlugin
+import com.typesafe.sbt.sbtghpages.GhpagesPlugin.autoImport._
 import com.typesafe.sbt.site.SitePlugin.autoImport._
 import com.typesafe.sbt.site.paradox.ParadoxSitePlugin.autoImport._
 import tut.TutPlugin.autoImport._
-import GhpagesPlugin.autoImport._
-import com.lightbend.paradox.sbt.ParadoxPlugin.autoImport._
-import sbtassembly.AssemblyPlugin.autoImport._
-
-import scala.sys.process.{BasicIO, Process}
 
 /**
  * @author sfitch
@@ -83,10 +79,10 @@ object ProjectPlugin extends AutoPlugin {
     )
   )
 
+  val skipTut = false
+
   object autoImport {
-
-
-    val skipTut = false
+    val pysparkCmd = taskKey[Unit]("Builds pyspark package and emits command string for running pyspark with package")
 
     def docSettings: Seq[Def.Setting[_]] = Seq(
       git.remoteRepo := "git@github.com:s22s/raster-frames.git",
@@ -151,20 +147,32 @@ object ProjectPlugin extends AutoPlugin {
         |The underlying purpose of RasterFrames is to allow data scientists and software
         |developers to process and analyze geospatial-temporal raster data with the
         |same flexibility and ease as any other Spark Catalyst data type. At its core
-        |is a user-defined type (UDF) called TileUDT, which encodes a GeoTrellis Tile
+        |is a user-defined type (UDT) called TileUDT, which encodes a GeoTrellis Tile
         |in a form the Spark Catalyst engine can process. Furthermore, we extend the
         |definition of a DataFrame to encompass some additional invariants, allowing
         |for geospatial operations within and between RasterFrames to occur, while
         |still maintaining necessary geo-referencing constructs.
       """.stripMargin,
       test in assembly := {},
-      TaskKey[Unit]("pysparkCmd") := {
+      spPublishLocal := {
+        // This unfortunate override is necessary because
+        // the ivy resolver in pyspark defaults to the cache more
+        // frequently than we'd like.
+        val id = (projectID in spPublishLocal).value
+        val home = ivyPaths.value.ivyHome
+          .getOrElse(io.Path.userHome / ".ivy2")
+        val cacheDir = home / "cache" / id.organization / id.name
+        IO.delete(cacheDir)
+        spPublishLocal.value
+      },
+      pysparkCmd := {
         val _ = spPublishLocal.value
         val id = (projectID in spPublishLocal).value
         val args = "pyspark" ::  "--packages" :: s"${id.organization}:${id.name}:${id.revision}" :: Nil
-        val log = streams.value.log
-        log.info("PySpark Command:\n" + args.mkString(" "))
-      }
+        streams.value.log.info("PySpark Command:\n" + args.mkString(" "))
+        // --conf spark.jars.ivy=(ivyPaths in pysparkCmd).value....
+      },
+      ivyPaths in pysparkCmd := ivyPaths.value.withIvyHome(target.value / "ivy")
       //credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
     )
 
