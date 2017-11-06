@@ -14,11 +14,9 @@ class RFContext:
         self.gateway = self.sc._gateway
         self.jvm = self.gateway.jvm
 
-        java_import(self.jvm, "astraea.spark.rasterframes.*")
-        java_import(self.jvm, "geotrellis.raster.io.geotiff.SinglebandGeoTiff")
-
     def read_geotiff(self, path):
-        return self.jvm.SinglebandGeoTiff(path)
+        pio = self.jvm.astraea.spark.rasterframes.py.IO()
+        return pio.read_geotiff(path)
 
 
 def _rf_init(spark_session):
