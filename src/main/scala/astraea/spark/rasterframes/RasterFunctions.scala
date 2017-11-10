@@ -58,7 +58,7 @@ trait RasterFunctions {
   /** Query the number of (cols, rows) in a Tile. */
   def tileDimensions(col: Column): Column = expressions.DimensionsExpression(col.expr).asColumn
 
-  /** Flattens Tile into an array. A numeric type parameter is required*/
+  /** Flattens Tile into an array. A numeric type parameter is required. */
   @Experimental
   def tileToArray[T: HasCellType: TypeTag](col: Column): TypedColumn[Any, Array[T]] = withAlias("tileToArray", col)(
     udf[Array[T], Tile](F.tileToArray).apply(col)
@@ -70,7 +70,7 @@ trait RasterFunctions {
     udf[Tile, AnyRef](F.arrayToTile(cols, rows)).apply(arrayCol)
   )
 
-  /** Create a Tile from  */
+  /** Create a Tile from  a column of cell data with location indexes. */
   @Experimental
   def assembleTile(columnIndex: Column, rowIndex: Column, cellData: Column, cols: Int, rows: Int, ct: CellType): TypedColumn[Any, Tile] = {
     F.assembleTile(cols, rows, ct)(columnIndex, rowIndex, cellData)
