@@ -4,7 +4,7 @@ from pyspark.sql import SparkSession, DataFrame
 from pyspark.sql.types import *
 from pyspark.sql.column import Column, _to_java_column
 
-__all__ = ['RFContext', 'RasterFrame', 'tileMean']
+__all__ = ['RFContext', 'RasterFrame']
 
 # Helpful info:
 # http://aseigneurin.github.io/2016/09/01/spark-calling-scala-code-from-pyspark.html
@@ -51,66 +51,14 @@ class RasterFrame(DataFrame):
         col = self._jrfctx.temporalKeyColumn(self._jdf)
         return col and Column(col)
 
-# class TileUDT(UserDefinedType):
-#     """
-#     SQL user-defined type (UDT) for a GeoTrellis Tile.
-#     """
-#
-#     @classmethod
-#     def sqlType(cls):
-#         return StructType([
-#             StructField("cellType", StringType(), False),
-#             StructField("cols", ShortType(), False),
-#             StructField("rows", ShortType(), False),
-#             StructField("data", BinaryType(), False)
-#         ])
-#
-#     @classmethod
-#     def module(cls):
-#         return "pyrasterframes"
-#
-#     @classmethod
-#     def scalaUDT(cls):
-#         return "org.apache.spark.sql.gt.types.TileUDT"
-#
-#     def serialize(self, obj):
-#         if isinstance(obj, Tile):
-#             raise NotImplementedError("Not implemented yet")
-#         else:
-#             raise TypeError("cannot serialize %r of type %r" % (obj, type(obj)))
-#
-#     def deserialize(self, datum):
-#         assert len(datum) == 4, \
-#             "VectorUDT.deserialize given row with length %d but requires 4" % len(datum)
-#         raise NotImplementedError("Not yet implemneted")
-#
-#     def simpleString(self):
-#         return "rf_tile"
-#
-#
-# class Tile(object):
-#
-#     __UDT__ = TileUDT()
-#
-#     def __init__(self, jTile):
-#         self._tile = jTile
-
-
 
 def _rf_init(spark_session):
     """Patches in RasterFrames functionality to PySpark session."""
     if not hasattr(spark_session, "rf"):
         spark_session.rf = RFContext(spark_session)
-        spark_session.sparkContext.rf = spark_session.rf
+        #spark_session.sparkContext.rf = spark_session.rf
     return spark_session
 
 # Patch new method on SparkSession to mirror Scala approach
 SparkSession.withRasterFrames = _rf_init
-
-def tileMean(col):
-    """
-    Compute the Tile-wise mean
-    """
-    rfctx = SparkContext._active_spark_context.rf._jrfctx
-    return Column(rfctx.tileMean(_to_java_column(col)))
 
