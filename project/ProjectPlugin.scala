@@ -160,7 +160,8 @@ object ProjectPlugin extends AutoPlugin {
         geotrellis("raster") % Tut
       ),
       fork in (Tut, runner) := true,
-      javaOptions in (Tut, runner) := Seq("-Xmx8G")
+      javaOptions in (Tut, runner) := Seq("-Xmx8G"),
+      scalacOptions in (Compile, doc) += "-J-Xmx6G"
     ) ++ (
       if (skipTut) Seq(
         sourceDirectory in Paradox := tutSourceDirectory.value

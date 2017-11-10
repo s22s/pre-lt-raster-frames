@@ -19,15 +19,29 @@
 package astraea.spark.rasterframes.py
 
 import geotrellis.raster.io.geotiff.reader.GeoTiffReader
+import org.apache.spark.sql._
+import astraea.spark.rasterframes._
 
 /**
- * py4j access wrapper to IO related methods.
+ * py4j access wrapper to RasterFrame entry points.
  *
  * @author sfitch 
  * @since 11/6/17
  */
-class IO {
-  def read_geotiff(path: String) = {
-    GeoTiffReader.readSingleband(path)
+class PyRFContext(implicit sparkSession: SparkSession) extends ColumnFunctions {
+  sparkSession.withRasterFrames
+
+  def readSingleband(path: String): RasterFrame = {
+    val scene = GeoTiffReader.readSingleband(path)
+    scene.projectedRaster.toRF(128, 128)
   }
+
+  def tileColumns(df: DataFrame): Array[Column] =
+    df.asRF.tileColumns.toArray
+
+  def spatialKeyColumn(df: DataFrame): Column =
+    df.asRF.spatialKeyColumn
+
+  def temporalKeyColumn(df: DataFrame): Column =
+    df.asRF.temporalKeyColumn.orNull
 }

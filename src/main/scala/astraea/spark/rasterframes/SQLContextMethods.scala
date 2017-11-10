@@ -30,6 +30,7 @@ import org.apache.spark.sql.{SQLContext, gt}
  */
 trait SQLContextMethods extends MethodExtensions[SQLContext] {
   def withRasterFrames: SQLContext = {
+    // TODO: ensure this only gets called once.
     gt.gtRegister(self)
     functions.Registrator.register(self)
     astraea.spark.rasterframes.expressions.Registrator.register(self)
