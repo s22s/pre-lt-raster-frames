@@ -1,5 +1,6 @@
 import sbt.Keys._
 import sbt._
+import sbtbuildinfo.BuildInfoPlugin.autoImport.{BuildInfoKey, BuildInfoOption, _}
 import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 import sbtrelease.ReleasePlugin.autoImport._
 
@@ -135,6 +136,18 @@ object ProjectPlugin extends AutoPlugin {
       // NB: These don't seem to work. Still trying to figure Tut's run model.
       fork in (Tut, run) := true,
       javaOptions in (Tut, run) := Seq("-Xmx6G")
+    )
+
+    def buildInfoSettings: Seq[Def.Setting[_]] = Seq(
+      buildInfoKeys ++= Seq[BuildInfoKey](
+        name, version, scalaVersion, sbtVersion
+      ) ++ versions.toSeq.map(p => (p._1 + "Version", p._2): BuildInfoKey),
+      buildInfoPackage := "astraea.rasterframes",
+      buildInfoObject := "RFBuildInfo",
+      buildInfoOptions := Seq(
+        BuildInfoOption.ToMap,
+        BuildInfoOption.BuildTime
+      )
     )
   }
 }
