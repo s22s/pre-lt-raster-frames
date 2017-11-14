@@ -58,7 +58,6 @@ object ProjectPlugin extends AutoPlugin {
       ),
       "org.scalatest" %% "scalatest" % "3.0.3" % Test
     ),
-    excludeDependencies += "com.lightbend.paradox" % "paradox-theme-generic",
     publishArtifact in Test := false,
     fork in Test := true,
     javaOptions in Test := Seq("-Xmx2G"),
@@ -102,9 +101,8 @@ object ProjectPlugin extends AutoPlugin {
           tagRelease,
           publishArtifacts,
           releaseArtifacts,
-          setNextVersion,
-          commitNextVersion,
-          pushChanges
+          //setNextVersion,
+          //commitNextVersion
         )
       )
     }
@@ -131,7 +129,6 @@ object ProjectPlugin extends AutoPlugin {
         geotrellis("spark") % Tut,
         geotrellis("raster") % Tut
       ),
-      // NB: These don't seem to work. Still trying to figure Tut's run model.
       fork in (Tut, runner) := true,
       javaOptions in (Tut, runner) := Seq("-Xmx6G")
     )
