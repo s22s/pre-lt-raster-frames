@@ -100,9 +100,18 @@ object ProjectPlugin extends AutoPlugin {
           tagRelease,
           publishArtifacts,
           releaseArtifacts,
-          //setNextVersion,
-          //commitNextVersion
-        )
+        ),
+        commands += Command.command("bumpVersion"){ st ⇒
+          val extracted = Project.extract(st)
+          val ver = extracted.get(version)
+          val nextFun = extracted.runTask(releaseNextVersion, st)._2
+
+          val nextVersion = nextFun(ver)
+
+          val file = extracted.get(releaseVersionFile)
+          IO.writeLines(file, Seq(s"""version in ThisBuild := "$nextVersion""""))
+          extracted.append(Seq(version := nextVersion), st)
+        }
       )
     }
 
