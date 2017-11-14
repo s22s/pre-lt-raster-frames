@@ -19,7 +19,7 @@
 
 package astraea.spark.rasterframes.bench
 
-import astraea.spark.rasterframes.rfInit
+import astraea.spark.rasterframes._
 import org.apache.spark.sql.SparkSession
 import org.openjdk.jmh.annotations.{Level, TearDown}
 
@@ -40,9 +40,9 @@ trait SparkEnv {
     .config("spark.ui.enabled", false)
     .config("spark.ui.showConsoleProgress", false)
     .getOrCreate
-  spark.sparkContext.setLogLevel("ERROR")
+    .withRasterFrames
 
-  rfInit(spark.sqlContext)
+  spark.sparkContext.setLogLevel("ERROR")
 
   @TearDown(Level.Trial)
   def shutdown(): Unit =  spark.stop()

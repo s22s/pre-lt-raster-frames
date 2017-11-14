@@ -16,12 +16,14 @@ import org.apache.spark.sql._
 import org.apache.spark.sql.functions._
 ```
 
-Next, initialize the `SparkSession`, and then register RasterFrames with Spark:
+Next, initialize the `SparkSession`, and call the `withRasterFrames` method on it:
  
 ```tut:silent
-implicit val spark = SparkSession.builder().master("local").appName("RasterFrames").getOrCreate()
+implicit val spark = SparkSession.builder().
+  master("local").appName("RasterFrames").
+  getOrCreate().
+  withRasterFrames
 
-rfInit(spark.sqlContext)
 import spark.implicits._
 ```
 

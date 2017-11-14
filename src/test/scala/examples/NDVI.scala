@@ -30,11 +30,9 @@ object NDVI extends App {
 
   def readTiff(name: String) = SinglebandGeoTiff(IOUtils.toByteArray(getClass.getResourceAsStream(s"/$name")))
 
-  implicit val spark = SparkSession.builder().master("local[*]").appName(getClass.getName).getOrCreate()
+  implicit val spark = SparkSession.builder().master("local[*]").appName(getClass.getName).getOrCreate().withRasterFrames
 
-  rfInit(spark.sqlContext)
   import spark.implicits._
-
 
   def redBand = readTiff("L8-B4-Elkton-VA.tiff").projectedRaster.toRF("red_band")
   def nirBand = readTiff("L8-B5-Elkton-VA.tiff").projectedRaster.toRF("nir_band")
