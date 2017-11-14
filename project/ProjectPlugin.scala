@@ -102,9 +102,8 @@ object ProjectPlugin extends AutoPlugin {
           tagRelease,
           publishArtifacts,
           releaseArtifacts,
-          setNextVersion,
-          commitNextVersion,
-          pushChanges
+          //setNextVersion,
+          //commitNextVersion
         )
       )
     }
