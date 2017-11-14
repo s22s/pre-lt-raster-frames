@@ -58,7 +58,6 @@ object ProjectPlugin extends AutoPlugin {
       ),
       "org.scalatest" %% "scalatest" % "3.0.3" % Test
     ),
-    excludeDependencies += "com.lightbend.paradox" % "paradox-theme-generic",
     publishArtifact in Test := false,
     fork in Test := true,
     javaOptions in Test := Seq("-Xmx2G"),
