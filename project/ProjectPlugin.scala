@@ -1,6 +1,6 @@
 import sbt.Keys._
 import sbt._
-import sbtbuildinfo.BuildInfoPlugin.autoImport.{BuildInfoKey, BuildInfoOption, _}
+import sbtbuildinfo.BuildInfoPlugin.autoImport._
 import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 import sbtrelease.ReleasePlugin.autoImport._
 
