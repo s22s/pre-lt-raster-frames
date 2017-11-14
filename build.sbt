@@ -1,14 +1,17 @@
-
-import sbt._
-import sbt.Keys._
-
 lazy val `raster-frames` = project
   .in(file("."))
-  .enablePlugins(SiteScaladocPlugin, ParadoxSitePlugin, TutPlugin, GhpagesPlugin)
+  .enablePlugins(
+    SiteScaladocPlugin,
+    ParadoxSitePlugin,
+    TutPlugin,
+    GhpagesPlugin,
+    BuildInfoPlugin
+  )
   .settings(name := "RasterFrames")
   .settings(moduleName := "raster-frames")
-  .settings(releaseSettings: _*)
-  .settings(docSettings: _*)
+  .settings(releaseSettings)
+  .settings(docSettings)
+  .settings(buildInfoSettings)
 
 lazy val bench = project
   .dependsOn(`raster-frames`)
@@ -28,8 +31,8 @@ initialCommands in console := """
   |    .config("spark.kryo.registrationRequired", "false")
   |    .config("spark.kryo.registrator", classOf[KryoRegistrator].getName)
   |    .getOrCreate()
+  |    .withRasterFrames
   |spark.sparkContext.setLogLevel("ERROR")
-  |rfInit(spark.sqlContext)
   |import spark.implicits._
   |
 """.stripMargin

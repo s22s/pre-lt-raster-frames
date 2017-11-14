@@ -45,12 +45,8 @@ package object rasterframes extends EncoderImplicits with ColumnFunctions {
    * Initialization injection point. Must be called before any RasterFrame
    * types are used.
    */
-  def rfInit(sqlContext: SQLContext): Unit = {
-    // TODO: Can this be automatically done via some SPI-like construct in Spark?
-    gt.gtRegister(sqlContext)
-    functions.Registrator.register(sqlContext)
-    astraea.spark.rasterframes.expressions.Registrator.register(sqlContext)
-  }
+  @deprecated("Please use 'SparkSession.withRasterFrames' or 'SQLContext.withRasterFrames' instead.", "0.5.3")
+  def rfInit(sqlContext: SQLContext): Unit = sqlContext.withRasterFrames
 
   /** Default RasterFrame spatial column name. */
   val SPATIAL_KEY_COLUMN = "spatial_key"
@@ -109,6 +105,12 @@ package object rasterframes extends EncoderImplicits with ColumnFunctions {
   }
 
   // ----------- Extension Method Injections: Beware the Ugly ------------
+
+  implicit class WithSparkSessionMethods(val self: SparkSession)
+    extends SparkSessionMethods
+
+  implicit class WithSQLContextMethods(val self: SQLContext)
+    extends SQLContextMethods
 
   implicit class WithProjectedRasterMethods(val self: ProjectedRaster[Tile])
       extends ProjectedRasterMethods

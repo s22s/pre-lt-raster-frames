@@ -1,5 +1,12 @@
 # Release Notes
 
+## 0.5.9
+
+* Ported to sbt 1.0.3
+* Added sbt-generated `astraea.spark.rasterframes.RFBuildInfo`
+* Fixed bug in computing `aggMean` when one or more tiles are `null` 
+* Deprecated `rfIinit` in favor of `SparkSession.withRasterFrames` or `SQLContext.withRasterFrames` extension methods
+
 ## 0.5.8
 
 * Upgraded to GeoTrellis 1.2.0-RC1
