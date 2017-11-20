@@ -46,7 +46,7 @@ object ProjectPlugin extends AutoPlugin {
 //      "locationtech-releases" at "https://repo.locationtech.org/content/groups/releases"
 //    ),
     libraryDependencies ++= Seq(
-      "com.chuusai" %% "shapeless" % "2.0.0",
+      "com.chuusai" %% "shapeless" % "2.3.2",
       spark("core") % Provided,
       spark("mllib") % Provided,
       spark("sql") % Provided,
