@@ -3,7 +3,7 @@
 ## 0.5.10
 
 * Upgraded to shapeless 2.3.2
-* Fixed @github[#36]
+* Fixed @github[#36], @github[#37]
 
 ## 0.5.9
 
