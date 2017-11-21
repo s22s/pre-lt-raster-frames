@@ -32,9 +32,8 @@ import org.apache.spark.sql.functions._
  * @since 9/18/17
  */
 class ExplodeSpec extends TestEnvironment with TestData {
-  import sqlContext.implicits._
-
   describe("conversion to/from exploded representation of tiles") {
+    import sqlContext.implicits._
 
     it("should explode tiles") {
       val query = sql(
@@ -68,9 +67,13 @@ class ExplodeSpec extends TestEnvironment with TestData {
     }
 
     it("should handle null tiles.") {
-      val df = Seq[Tile](byteArrayTile, null, byteArrayTile).toDF("tile1")
+      val df = Seq[Tile](null, byteArrayTile, null, byteArrayTile, null).toDF("tile1")
       val exploded = df.select(explodeTiles($"tile1"))
       assert(exploded.count === byteArrayTile.size * 2)
+
+      val df2 = Seq[(Tile, Tile)]((byteArrayTile, null), (null, byteArrayTile), (byteArrayTile, byteArrayTile)).toDF("tile1", "tile2")
+      val exploded2 = df2.select(explodeTiles($"tile1", $"tile2"))
+      assert(exploded2.count === byteArrayTile.size * 3)
     }
 
     it("should convert tile into array") {

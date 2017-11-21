@@ -1,5 +1,10 @@
 # Release Notes
 
+## 0.5.10
+
+* Upgraded to shapeless 2.3.2
+* Fixed @github[#36]
+
 ## 0.5.9
 
 * Ported to sbt 1.0.3
