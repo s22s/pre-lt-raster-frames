@@ -3,13 +3,13 @@ import sbt._
 import sbtbuildinfo.BuildInfoPlugin.autoImport._
 import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 import sbtrelease.ReleasePlugin.autoImport._
+import com.servicerocket.sbt.release.git.flow.Steps._
 
 import _root_.bintray.BintrayPlugin.autoImport._
 import com.typesafe.sbt.SbtGit.git
 import com.typesafe.sbt.sbtghpages.GhpagesPlugin
 import com.typesafe.sbt.site.SitePlugin.autoImport._
 import com.typesafe.sbt.site.paradox.ParadoxSitePlugin.autoImport._
-//import com.typesafe.sbt.site.paradox.ParadoxSitePlugin.autoImport._
 import tut.TutPlugin.autoImport._
 import GhpagesPlugin.autoImport._
 import com.lightbend.paradox.sbt.ParadoxPlugin.autoImport._
@@ -42,11 +42,11 @@ object ProjectPlugin extends AutoPlugin {
     scalaVersion := "2.11.11",
     scalacOptions ++= Seq("-feature", "-deprecation"),
     cancelable in Global := true,
-    resolvers ++= Seq(
-      "locationtech-releases" at "https://repo.locationtech.org/content/groups/releases"
-    ),
+//    resolvers ++= Seq(
+//      "locationtech-releases" at "https://repo.locationtech.org/content/groups/releases"
+//    ),
     libraryDependencies ++= Seq(
-      "com.chuusai" %% "shapeless" % "2.0.0",
+      "com.chuusai" %% "shapeless" % "2.3.2",
       spark("core") % Provided,
       spark("mllib") % Provided,
       spark("sql") % Provided,
@@ -91,19 +91,31 @@ object ProjectPlugin extends AutoPlugin {
         releaseTagName := s"${version.value}",
         releaseProcess := Seq[ReleaseStep](
           checkSnapshotDependencies,
+          checkGitFlowExists,
           inquireVersions,
-          runClean,
           runTest,
+          gitFlowReleaseStart,
           setReleaseVersion,
           buildSite,
           publishSite,
           commitReleaseVersion,
-          tagRelease,
           publishArtifacts,
           releaseArtifacts,
-          //setNextVersion,
-          //commitNextVersion
-        )
+          gitFlowReleaseFinish,
+          setNextVersion,
+          commitNextVersion
+        ),
+        commands += Command.command("bumpVersion"){ st ⇒
+          val extracted = Project.extract(st)
+          val ver = extracted.get(version)
+          val nextFun = extracted.runTask(releaseNextVersion, st)._2
+
+          val nextVersion = nextFun(ver)
+
+          val file = extracted.get(releaseVersionFile)
+          IO.writeLines(file, Seq(s"""version in ThisBuild := "$nextVersion""""))
+          extracted.append(Seq(version := nextVersion), st)
+        }
       )
     }
 

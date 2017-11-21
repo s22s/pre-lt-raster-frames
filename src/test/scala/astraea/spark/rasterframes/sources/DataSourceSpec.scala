@@ -81,7 +81,7 @@ class DataSourceSpec extends TestEnvironment with TestData {
       val Extent(xmin,ymin,xmax,ymax) = testRdd.metadata.layout.mapTransform(boundKeys.toGridBounds())
       val df = dfr.option("bbox", s"$xmin,$ymin,$xmax,$ymax").load()
 
-      df.count() should be (boundKeys.toGridBounds.size)
+      df.count() should be (boundKeys.toGridBounds.sizeLong)
     }
 
     it("should provide un-packable records"){

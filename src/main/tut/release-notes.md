@@ -1,5 +1,10 @@
 # Release Notes
 
+## 0.5.10
+
+* Upgraded to shapeless 2.3.2
+* Fixed [#36](https://github.com/s22s/raster-frames/issues/36), [#37](https://github.com/s22s/raster-frames/issues/37)
+
 ## 0.5.9
 
 * Ported to sbt 1.0.3

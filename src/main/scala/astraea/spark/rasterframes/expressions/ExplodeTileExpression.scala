@@ -70,7 +70,7 @@ private[rasterframes] case class ExplodeTileExpression(
       def safeGet(tile: Tile, col: Int, row: Int): Double =
         if (tile == null) NODATA else tile.getDouble(col, row)
 
-      val (cols, rows) = tiles.head.dimensions
+      val (cols, rows) = dims.head
 
       for {
         row ← 0 until rows

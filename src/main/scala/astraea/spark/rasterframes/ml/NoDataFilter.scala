@@ -22,7 +22,7 @@ package astraea.spark.rasterframes.ml
 import astraea.spark.rasterframes.ml.Parameters.HasInputCols
 import org.apache.spark.ml.Transformer
 import org.apache.spark.ml.param.ParamMap
-import org.apache.spark.ml.util.{DefaultParamsWritable, Identifiable}
+import org.apache.spark.ml.util.{DefaultParamsReadable, DefaultParamsWritable, Identifiable}
 import org.apache.spark.sql.Dataset
 import org.apache.spark.sql.types.StructType
 
@@ -47,3 +47,5 @@ class NoDataFilter (override val uid: String) extends Transformer
 
   def transformSchema(schema: StructType) = schema
 }
+
+object NoDataFilter extends DefaultParamsReadable[NoDataFilter]
