@@ -24,6 +24,7 @@ import org.apache.spark.sql.catalyst.analysis.TypeCheckResult
 import org.apache.spark.sql.catalyst.analysis.TypeCheckResult.{TypeCheckFailure, TypeCheckSuccess}
 import org.apache.spark.sql.catalyst.expressions._
 import org.apache.spark.sql.catalyst.expressions.codegen.{CodegenContext, ExprCode}
+import org.apache.spark.sql.gt.InternalRowTile
 import org.apache.spark.sql.gt.types.TileUDT
 import org.apache.spark.sql.types._
 
@@ -79,12 +80,8 @@ package object expressions {
            final short $cols = $eval.getShort(${TileUDT.C.COLS});
            final short $rows = $eval.getShort(${TileUDT.C.ROWS});
            ${ev.value} = new GenericInternalRow(new Object[] { $cols, $rows });
-           //${ctx.setColumn(ev.value, ShortType, 0, cols)};
-           //${ctx.setColumn(ev.value, ShortType, 1, rows)};
          """
       )
     }
-
-      //defineCodeGen(ctx, ev, c ⇒ s"$c.getUTF8String(${TileUDT.C.CELL_TYPE})")
   }
 }

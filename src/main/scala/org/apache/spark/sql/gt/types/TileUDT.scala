@@ -22,6 +22,8 @@ package org.apache.spark.sql.gt.types
 
 import geotrellis.raster._
 import org.apache.spark.sql.catalyst.InternalRow
+import org.apache.spark.sql.catalyst.util.ArrayData
+import org.apache.spark.sql.gt.InternalRowTile
 import org.apache.spark.sql.types.{DataType, _}
 import org.apache.spark.unsafe.types.UTF8String
 
@@ -56,17 +58,8 @@ class TileUDT extends UserDefinedType[Tile] {
 
   override def deserialize(datum: Any): Tile = {
     Option(datum)
-      .collect { case row: InternalRow ⇒
-        val ctName = row.getString(C.CELL_TYPE)
-        val cols = row.getShort(C.COLS)
-        val rows = row.getShort(C.ROWS)
-        val data = row.getBinary(C.DATA)
-        val cellType = CellType.fromName(ctName)
-        // This is likely a time bomb, but short of adding a flag, not sure how else to do this.
-        if(data.length < cols * rows && !cellType.isInstanceOf[BitCells])
-          constantTileFromBytes(data, cellType, cols, rows)
-        else
-          ArrayTile.fromBytes(data, cellType, cols, rows)
+      .collect {
+        case row: InternalRow ⇒ new InternalRowTile(row).toArrayTile()
       }
       .orNull
   }
@@ -81,28 +74,6 @@ class TileUDT extends UserDefinedType[Tile] {
 
 case object TileUDT extends TileUDT {
   UDTRegistration.register(classOf[Tile].getName, classOf[TileUDT].getName)
-
-  // Temporary, until GeoTrellis 1.2
-  // See https://github.com/locationtech/geotrellis/pull/2401
-  private[TileUDT] def constantTileFromBytes(bytes: Array[Byte], t: CellType, cols: Int, rows: Int): ConstantTile =
-    t match {
-      case _: BitCells =>
-        BitConstantTile(BitArrayTile.fromBytes(bytes, 1, 1).array(0), cols, rows)
-      case ct: ByteCells =>
-        ByteConstantTile(ByteArrayTile.fromBytes(bytes, 1, 1, ct).array(0), cols, rows, ct)
-      case ct: UByteCells =>
-        UByteConstantTile(UByteArrayTile.fromBytes(bytes, 1, 1, ct).array(0), cols, rows, ct)
-      case ct: ShortCells =>
-        ShortConstantTile(ShortArrayTile.fromBytes(bytes, 1, 1, ct).array(0), cols, rows, ct)
-      case ct: UShortCells =>
-        UShortConstantTile(UShortArrayTile.fromBytes(bytes, 1, 1, ct).array(0), cols, rows, ct)
-      case ct: IntCells =>
-        IntConstantTile(IntArrayTile.fromBytes(bytes, 1, 1, ct).array(0), cols, rows, ct)
-      case ct: FloatCells =>
-        FloatConstantTile(FloatArrayTile.fromBytes(bytes, 1, 1, ct).array(0), cols, rows, ct)
-      case ct: DoubleCells =>
-        DoubleConstantTile(DoubleArrayTile.fromBytes(bytes, 1, 1, ct).array(0), cols, rows, ct)
-    }
 
   object C {
     val CELL_TYPE = 0
