@@ -23,9 +23,8 @@ import java.nio.ByteBuffer
 
 import geotrellis.raster._
 import org.apache.spark.sql.catalyst.InternalRow
-import org.apache.spark.sql.gt.types.TileUDT
-
-import scala.reflect.macros.whitebox
+import org.apache.spark.sql.types._
+import org.apache.spark.unsafe.types.UTF8String
 
 /**
  * Wrapper around a `Tile` encoded in a Catalyst `InternalRow`, for the purpose
@@ -39,23 +38,31 @@ import scala.reflect.macros.whitebox
  * @since 11/29/17
  */
 class InternalRowTile(mem: InternalRow) extends ArrayTile {
-  import org.apache.spark.sql.gt.types.TileUDT.C._
+  import InternalRowTile.C._
 
   /** Retrieve the cell type from the internal encoding. */
-  def cellType: CellType = CellType.fromName(mem.getString(CELL_TYPE))
+  val cellType: CellType = CellType.fromName(mem.getString(CELL_TYPE))
 
   /** Retrieve the number of columns from the internal encoding. */
-  def cols: Int = mem.getShort(COLS)
+  val cols: Int = mem.getShort(COLS)
 
   /** Retrieve the number of rows from the internal encoding. */
-  def rows: Int = mem.getShort(ROWS)
+  val rows: Int = mem.getShort(ROWS)
 
   /** Get the internally encoded tile data cells. */
-  def toBytes(): Array[Byte] = mem.getBinary(DATA)
+  lazy val toBytes: Array[Byte] = mem.getBinary(DATA)
 
-  private def toByteBuffer: ByteBuffer = {
-    val data = toBytes()
-    ByteBuffer.wrap(data)
+  private lazy val toByteBuffer: ByteBuffer = {
+    val data = toBytes
+    if(data.length < cols * rows && cellType.name != "bool") {
+      // Handling constant tiles like this is inefficient and ugly. All the edge
+      // cases associated with them create too much undue complexity for
+      // something that's unlikely to be
+      // used much in production to warrant handling them specially.
+      // If a more efficient handling is necessary, consider a flag in
+      // the UDT struct.
+      ByteBuffer.wrap(toArrayTile.toBytes())
+    } else ByteBuffer.wrap(data)
   }
 
   /** Reads the cell value at the given index as an Int. */
@@ -84,7 +91,7 @@ class InternalRowTile(mem: InternalRow) extends ArrayTile {
 
   /** @group COPIES */
   override def toArrayTile: ArrayTile = {
-    val data = toBytes()
+    val data = toBytes
     if(data.length < cols * rows && cellType.name != "bool") {
       val ctile = InternalRowTile.constantTileFromBytes(data, cellType, cols, rows)
       val atile = ctile.toArrayTile()
@@ -110,6 +117,40 @@ class InternalRowTile(mem: InternalRow) extends ArrayTile {
 }
 
 object InternalRowTile {
+  object C {
+    val CELL_TYPE = 0
+    val COLS = 1
+    val ROWS = 2
+    val DATA = 3
+  }
+
+  val schema = StructType(Seq(
+    StructField("cellType", StringType, false),
+    StructField("cols", ShortType, false),
+    StructField("rows", ShortType, false),
+    StructField("data", BinaryType, false)
+  ))
+
+  /**
+   * Constructor.
+   * @param row
+   * @return
+   */
+  def apply(row: InternalRow): InternalRowTile = new InternalRowTile(row)
+
+  /**
+   * Extractor.
+   * @param tile
+   * @return
+   */
+  def unapply(tile: Tile): Option[InternalRow] = Some(
+    InternalRow(
+      UTF8String.fromString(tile.cellType.name),
+      tile.cols.toShort,
+      tile.rows.toShort,
+      tile.toBytes)
+  )
+
   // Temporary, until GeoTrellis 1.2
   // See https://github.com/locationtech/geotrellis/pull/2401
   private[gt] def constantTileFromBytes(bytes: Array[Byte], t: CellType, cols: Int, rows: Int): ConstantTile =
