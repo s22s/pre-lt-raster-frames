@@ -22,7 +22,6 @@ package org.apache.spark.sql.gt.types
 
 import geotrellis.raster._
 import org.apache.spark.sql.catalyst.InternalRow
-import org.apache.spark.sql.catalyst.util.ArrayData
 import org.apache.spark.sql.gt.InternalRowTile
 import org.apache.spark.sql.types.{DataType, _}
 import org.apache.spark.unsafe.types.UTF8String
@@ -44,7 +43,7 @@ class TileUDT extends UserDefinedType[Tile] {
     StructField("data", BinaryType, false)
   ))
 
-  override def serialize(obj: Tile): Any = {
+  override def serialize(obj: Tile): InternalRow = {
     Option(obj)
       .map(tile ⇒ {
         InternalRow(
@@ -58,8 +57,8 @@ class TileUDT extends UserDefinedType[Tile] {
 
   override def deserialize(datum: Any): Tile = {
     Option(datum)
-      .collect {
-        case row: InternalRow ⇒ new InternalRowTile(row).toArrayTile()
+      .collect { case row: InternalRow ⇒
+        new InternalRowTile(row).toArrayTile
       }
       .orNull
   }

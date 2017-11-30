@@ -62,12 +62,11 @@ class InternalRowTile(mem: InternalRow) extends ArrayTile {
   def apply(i: Int): Int = {
     val bb = toByteBuffer
     cellType match {
-      // This case isn't worth the effort to decode directly
-      case _: BitCells ⇒  BitArrayTile.fromBytes(bb.array(), cols, rows)(i)
+      case _: BitCells ⇒ (bb.get(i >> 3) >> (i & 7)) & 1 // See BitArrayTile.apply
       case _: ByteCells ⇒ bb.get(i)
-      case _: UByteCells ⇒ bb.asIntBuffer().get(i)
+      case _: UByteCells ⇒ bb.get(i) & 0xFF
       case _: ShortCells ⇒ bb.asShortBuffer().get(i)
-      case _: UShortCells ⇒ bb.asIntBuffer().get(i)
+      case _: UShortCells ⇒ bb.asShortBuffer().get(i) & 0xFFFF
       case _: IntCells ⇒ bb.asIntBuffer().get(i)
       case _: FloatCells ⇒ bb.asFloatBuffer().get(i).toInt
       case _: DoubleCells ⇒ bb.asDoubleBuffer().get(i).toInt
@@ -86,8 +85,11 @@ class InternalRowTile(mem: InternalRow) extends ArrayTile {
   /** @group COPIES */
   override def toArrayTile: ArrayTile = {
     val data = toBytes()
-    if(data.length < cols * rows && !cellType.isInstanceOf[BitCells])
-      InternalRowTile.constantTileFromBytes(data, cellType, cols, rows).toArrayTile()
+    if(data.length < cols * rows && cellType.name != "bool") {
+      val ctile = InternalRowTile.constantTileFromBytes(data, cellType, cols, rows)
+      val atile = ctile.toArrayTile()
+      atile
+    }
     else
       ArrayTile.fromBytes(data, cellType, cols, rows)
   }
@@ -110,7 +112,7 @@ class InternalRowTile(mem: InternalRow) extends ArrayTile {
 object InternalRowTile {
   // Temporary, until GeoTrellis 1.2
   // See https://github.com/locationtech/geotrellis/pull/2401
-  private[InternalRowTile] def constantTileFromBytes(bytes: Array[Byte], t: CellType, cols: Int, rows: Int): ConstantTile =
+  private[gt] def constantTileFromBytes(bytes: Array[Byte], t: CellType, cols: Int, rows: Int): ConstantTile =
     t match {
       case _: BitCells =>
         BitConstantTile(BitArrayTile.fromBytes(bytes, 1, 1).array(0), cols, rows)
