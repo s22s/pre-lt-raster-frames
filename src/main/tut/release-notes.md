@@ -1,7 +1,7 @@
 # Release Notes
 ## 0.5.11
 
-* Significant (1-2 orders of magnitude) performance improvement for `explodeTiles`.
+* Significant performance improvement in `explodeTiles` (1-2 orders of magnitude).
 
 
 ## 0.5.10

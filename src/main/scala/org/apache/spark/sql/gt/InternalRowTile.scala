@@ -38,6 +38,7 @@ import org.apache.spark.unsafe.types.UTF8String
  * @since 11/29/17
  */
 class InternalRowTile(mem: InternalRow) extends ArrayTile {
+  import InternalRowTile._
   import InternalRowTile.C._
 
   /** Retrieve the cell type from the internal encoding. */
@@ -66,28 +67,10 @@ class InternalRowTile(mem: InternalRow) extends ArrayTile {
   }
 
   /** Reads the cell value at the given index as an Int. */
-  def apply(i: Int): Int = {
-    val bb = toByteBuffer
-    cellType match {
-      case _: BitCells ⇒ (bb.get(i >> 3) >> (i & 7)) & 1 // See BitArrayTile.apply
-      case _: ByteCells ⇒ bb.get(i)
-      case _: UByteCells ⇒ bb.get(i) & 0xFF
-      case _: ShortCells ⇒ bb.asShortBuffer().get(i)
-      case _: UShortCells ⇒ bb.asShortBuffer().get(i) & 0xFFFF
-      case _: IntCells ⇒ bb.asIntBuffer().get(i)
-      case _: FloatCells ⇒ bb.asFloatBuffer().get(i).toInt
-      case _: DoubleCells ⇒ bb.asDoubleBuffer().get(i).toInt
-    }
-  }
+  def apply(i: Int): Int = cellReader(i)
 
   /** Reads the cell value at the given index as a Double. */
-  def applyDouble(i: Int): Double = {
-    cellType match {
-      case _: FloatCells ⇒ toByteBuffer.asFloatBuffer().get(i)
-      case _: DoubleCells ⇒ toByteBuffer.asDoubleBuffer().get(i)
-      case _ ⇒ apply(i).toDouble
-    }
-  }
+  def applyDouble(i: Int): Double = cellReader.applyDouble(i)
 
   /** @group COPIES */
   override def toArrayTile: ArrayTile = {
@@ -114,6 +97,19 @@ class InternalRowTile(mem: InternalRow) extends ArrayTile {
 
   /** @group COPIES */
   def copy = new InternalRowTile(mem.copy)
+
+  private lazy val cellReader: CellReader = {
+    cellType match {
+      case _: BitCells ⇒ BitCellReader(this)
+      case _: ByteCells ⇒ ByteCellReader(this)
+      case _: UByteCells ⇒ UByteCellReader(this)
+      case _: ShortCells ⇒ ShortCellReader(this)
+      case _: UShortCells ⇒ UShortCellReader(this)
+      case _: IntCells ⇒ IntCellReader(this)
+      case _: FloatCells ⇒ FloatCellReader(this)
+      case _: DoubleCells ⇒ DoubleCellReader(this)
+    }
+  }
 }
 
 object InternalRowTile {
@@ -133,15 +129,16 @@ object InternalRowTile {
 
   /**
    * Constructor.
-   * @param row
-   * @return
+   * @param row Catalyst internal format conforming to `shema`
+   * @return row wrapper
    */
   def apply(row: InternalRow): InternalRowTile = new InternalRowTile(row)
 
   /**
-   * Extractor.
-   * @param tile
-   * @return
+   * Convenience extractor for converting a `Tile` to an `InternalRow`.
+   *
+   * @param tile tile to convert
+   * @return Catalyst internal representation.
    */
   def unapply(tile: Tile): Option[InternalRow] = Some(
     InternalRow(
@@ -150,6 +147,52 @@ object InternalRowTile {
       tile.rows.toShort,
       tile.toBytes)
   )
+
+  sealed trait CellReader {
+    def apply(index: Int): Int
+    def applyDouble(index: Int): Double
+  }
+
+  case class BitCellReader(t: InternalRowTile) extends CellReader {
+    def apply(i: Int): Int =
+      (t.toByteBuffer.get(i >> 3) >> (i & 7)) & 1 // See BitArrayTile.apply
+    def applyDouble(i: Int): Double = apply(i).toDouble
+  }
+
+  case class ByteCellReader(t: InternalRowTile) extends CellReader {
+    def apply(i: Int): Int = t.toByteBuffer.get(i)
+    def applyDouble(i: Int): Double = apply(i).toDouble
+  }
+
+  case class UByteCellReader(t: InternalRowTile) extends CellReader {
+    def apply(i: Int): Int = t.toByteBuffer.get(i) & 0xFF
+    def applyDouble(i: Int): Double = apply(i).toDouble
+  }
+
+  case class ShortCellReader(t: InternalRowTile) extends CellReader {
+    def apply(i: Int): Int = t.toByteBuffer.asShortBuffer().get(i)
+    def applyDouble(i: Int): Double = apply(i)
+  }
+
+  case class UShortCellReader(t: InternalRowTile) extends CellReader {
+    def apply(i: Int): Int = t.toByteBuffer.asShortBuffer().get(i) & 0xFFFF
+    def applyDouble(i: Int): Double = apply(i)
+  }
+
+  case class IntCellReader(t: InternalRowTile) extends CellReader {
+    def apply(i: Int): Int = t.toByteBuffer.asIntBuffer().get(i)
+    def applyDouble(i: Int): Double = apply(i)
+  }
+
+  case class FloatCellReader(t: InternalRowTile) extends CellReader {
+    def apply(i: Int): Int = t.toByteBuffer.asFloatBuffer().get(i).toInt
+    def applyDouble(i: Int): Double = t.toByteBuffer.asFloatBuffer().get(i).toDouble
+  }
+
+  case class DoubleCellReader(t: InternalRowTile) extends CellReader {
+    def apply(i: Int): Int = t.toByteBuffer.asDoubleBuffer().get(i).toInt
+    def applyDouble(i: Int): Double = t.toByteBuffer.asDoubleBuffer().get(i)
+  }
 
   // Temporary, until GeoTrellis 1.2
   // See https://github.com/locationtech/geotrellis/pull/2401
