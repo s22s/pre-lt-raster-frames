@@ -73,7 +73,7 @@ private[rasterframes] case class ExplodeTileExpression(
       val retval = Array.ofDim[InternalRow](cols * rows)
       cfor(0)(_ < rows, _ + 1) { row =>
         cfor(0)(_ < cols, _ + 1) { col =>
-          val index = row * cols + col
+          val rowIndex = row * cols + col
           val outCols = Array.ofDim[Any](numOutCols)
           outCols(0) = col
           outCols(1) = row
@@ -81,7 +81,7 @@ private[rasterframes] case class ExplodeTileExpression(
             val tile = tiles(index)
             outCols(index + 2) = if(tile == null) doubleNODATA else tile.getDouble(col, row)
           }
-          retval(index) = new GenericInternalRow(outCols)
+          retval(rowIndex) = new GenericInternalRow(outCols)
         }
       }
       if(sampleFraction < 1.0) sample(retval)
