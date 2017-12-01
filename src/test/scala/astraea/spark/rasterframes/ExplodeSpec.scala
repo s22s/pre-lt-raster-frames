@@ -75,7 +75,7 @@ class ExplodeSpec extends TestEnvironment with TestData {
       assert(exploded2.count === byteArrayTile.size * 3)
     }
 
-    it("should handle user-defined NoData values") {
+    it("should handle single tile with user-defined NoData value") {
       // Create a tile with a single (wierd) no-data value
       val tile: Tile = UShortArrayTile(rangeArray(9, _.toShort), 3, 3, 5.toShort)
       val cells = Seq(tile).toDF("tile")
@@ -84,6 +84,15 @@ class ExplodeSpec extends TestEnvironment with TestData {
         .collect()
 
       assert(cells.count(_.isNaN) === 1)
+    }
+
+    it("should handle user-defined NoData values in tile sampler") {
+      val tiles = allTileTypes.filter(t ⇒ !t.isInstanceOf[BitArrayTile]).map(_.withNoData(Some(3)))
+      val cells = tiles.toDF("tile")
+        .select(explodeTiles($"tile"))
+        .select($"tile".as[Double])
+        .collect()
+      assert(cells.count(_.isNaN) === tiles.size)
     }
 
     it("should convert tile into array") {
