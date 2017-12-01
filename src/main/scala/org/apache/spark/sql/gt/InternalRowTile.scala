@@ -207,8 +207,8 @@ object InternalRowTile {
   }
 
   case class UShortCellReader(t: InternalRowTile) extends CellReader {
-    def apply(i: Int): Int = t.toByteBuffer.asShortBuffer().get(i) & 0xFFFF
-    def applyDouble(i: Int): Double = apply(i)
+    def apply(i: Int): Int = us2i(t.toByteBuffer.asShortBuffer().get(i))
+    def applyDouble(i: Int): Double = us2d(t.toByteBuffer.asShortBuffer().get(i))
   }
 
   case class UShortUDNDCellReader(t: InternalRowTile, userDefinedShortNoDataValue: Short)
