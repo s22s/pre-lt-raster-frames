@@ -100,8 +100,8 @@ class GTSQLSpec extends TestEnvironment with TestData  {
 
       withClue("subtract") {
         val sub = ds.select(localSubtract($"left", $"right")).as[Tile].first()
-
-        val expected = Subtract(byteArrayTile, byteConstantTile)
+        // remove toArrayTile when https://github.com/locationtech/geotrellis/issues/2493 is released
+        val expected = Subtract(byteArrayTile, byteConstantTile.toArrayTile())
         assert(sub === expected)
 
         val sqlSub = sql("select rf_localSubtract(left, right) from tmp")
@@ -119,7 +119,8 @@ class GTSQLSpec extends TestEnvironment with TestData  {
 
       withClue("divide") {
         val sub = ds.select(localDivide($"left", $"right"))
-        val expected = Divide(byteArrayTile, byteConstantTile)
+        // remove toArrayTile when https://github.com/locationtech/geotrellis/issues/2493 is released
+        val expected = Divide(byteArrayTile, byteConstantTile.toArrayTile())
         assert(sub.as[Tile].first() === expected)
 
         val sqlSub = sql("select rf_localDivide(left, right) from tmp")
