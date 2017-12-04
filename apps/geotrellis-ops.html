@@ -45,7 +45,7 @@ gtag('config', 'UA-106630615-1');
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.5.10
+0.5.11
 </div>
 </div>
 <div class="nav-toc">
@@ -98,7 +98,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.5.10
+0.5.11
 </div>
 </div>
 <div class="nav-toc">
@@ -149,7 +149,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 import geotrellis.raster.equalization._
 
 scala&gt; val equalizer = udf((t: Tile) =&gt; t.equalize())
-equalizer: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(&lt;function1&gt;,org.apache.spark.sql.gt.types.TileUDT@56a7a828,Some(List(org.apache.spark.sql.gt.types.TileUDT@56a7a828)))
+equalizer: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(&lt;function1&gt;,org.apache.spark.sql.gt.types.TileUDT@3f196004,Some(List(org.apache.spark.sql.gt.types.TileUDT@3f196004)))
 
 scala&gt; val equalized = rf.select(equalizer($&quot;tile&quot;) as &quot;equalized&quot;)
 equalized: org.apache.spark.sql.DataFrame = [equalized: rf_tile]
@@ -169,46 +169,36 @@ only showing top 5 rows
 </code></pre>
 <p>Here&rsquo;s an example downsampling a tile and rendering each tile as a matrix of numerical values.</p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; val downsample = udf((t: Tile) =&gt; t.resample(4, 4))
-downsample: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(&lt;function1&gt;,org.apache.spark.sql.gt.types.TileUDT@56a7a828,Some(List(org.apache.spark.sql.gt.types.TileUDT@56a7a828)))
+downsample: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(&lt;function1&gt;,org.apache.spark.sql.gt.types.TileUDT@3f196004,Some(List(org.apache.spark.sql.gt.types.TileUDT@3f196004)))
 
 scala&gt; val downsampled = rf.select(renderAscii(downsample($&quot;tile&quot;)) as &quot;minime&quot;)
 downsampled: org.apache.spark.sql.DataFrame = [minime: string]
 
 scala&gt; downsampled.show(5, false)
-+-----------------------------------------------------------------------------------------------------+
-|minime                                                                                               |
-+-----------------------------------------------------------------------------------------------------+
-|  8837  8316 10855 10780
-  8125 10082  9930  8290
-  7624 10739 12019 11287
- 11738  8125 11830 11260
-
-|
-| 11278  8090  9976 10251
-  9152  9952  8598  7867
- 11155 10279  9599  7892
- 16544 12812  9280 12004
-
-|
-|    ND    ND    ND    ND
-    ND    ND    ND    ND
-    ND    ND    ND    ND
-    ND    ND    ND    ND
-
-|
-|  8116  7766 10988 11587
-  8844  8386  8538  7900
-  8219  8007  8739  8615
- 10438 13469  8790 13562
-
-|
-|  8149  7967 16175 11629
-  8453  8974 10055 10609
- 12485 12847 11454  9899
-  7913 10969 11147  9728
-
-|
-+-----------------------------------------------------------------------------------------------------+
++-------------------+
+|minime             |
++-------------------+
+|]~Cz
+&quot;t)l
+ n$d
+o&quot;&amp;Z|
+|bIvY
+-j&lt; 
+wQ\&quot;
+$&amp;{*|
+|∘∘∘∘
+∘∘∘∘
+∘∘∘∘
+∘∘∘∘|
+|&lt; b*
+Q{\&quot;
+-Ivj
+w&amp;Y$|
+|I&quot;$b
+&lt;-jv
+*&amp;w\
+ YQ{|
++-------------------+
 only showing top 5 rows
 
 </code></pre>

@@ -45,7 +45,7 @@ gtag('config', 'UA-106630615-1');
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.5.10
+0.5.11
 </div>
 </div>
 <div class="nav-toc">
@@ -98,7 +98,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.5.10
+0.5.11
 </div>
 </div>
 <div class="nav-toc">
@@ -261,7 +261,7 @@ val trainer = new CrossValidator().
 </code></pre>
 <p>Push the &ldquo;go&rdquo; button:</p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; val model = trainer.fit(abt)
-model: org.apache.spark.ml.tuning.CrossValidatorModel = cv_300af440c56a
+model: org.apache.spark.ml.tuning.CrossValidatorModel = cv_fde552efbdbe
 </code></pre>
 <h2><a href="#model-evaluation" name="model-evaluation" class="anchor"><span class="anchor-link"></span></a>Model Evaluation</h2>
 <p>To view the model&rsquo;s performance we format the <code>paramGrid</code> settings used for each model and render the parameter/performance association.</p>
@@ -289,7 +289,7 @@ scala&gt; scored.groupBy($&quot;prediction&quot; as &quot;class&quot;).count().s
 |class|count|
 +-----+-----+
 |  0.0| 7181|
-|  1.0|15717|
+|  1.0|14851|
 |  2.0| 9402|
 +-----+-----+
 

@@ -45,7 +45,7 @@ gtag('config', 'UA-106630615-1');
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.5.10
+0.5.11
 </div>
 </div>
 <div class="nav-toc">
@@ -98,7 +98,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.5.10
+0.5.11
 </div>
 </div>
 <div class="nav-toc">
@@ -199,7 +199,7 @@ only showing top 3 rows
 
 </code></pre>
 <h3><a href="#histogram" name="histogram" class="anchor"><span class="anchor-link"></span></a>Histogram</h3>
-<p>The <code>tileHistogram</code> function computes a histogram over the data in each tile. See the <a href="http://rasterframes.io/latest/api/geotrellis/raster/histogram/Histogram.html">GeoTrellis <code>Histogram</code></a> documentation for details on what&rsquo;s available in the resulting data structure. Use this version for integral cell types, and <code>tileHistorgramDouble</code> for floating point cells types. </p>
+<p>The <code>tileHistogram</code> function computes a histogram over the data in each tile. See the <a href="https://geotrellis.github.io/scaladocs/latest/geotrellis/raster/histogram/Histogram.html">GeoTrellis <code>Histogram</code></a> documentation for details on what&rsquo;s available in the resulting data structure. Use this version for integral cell types, and <code>tileHistorgramDouble</code> for floating point cells types. </p>
 <p>In this example we compute quantile breaks.</p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; rf.select(tileHistogram($&quot;tile&quot;)).map(_.quantileBreaks(5)).show(5, false)
 +----------------------------------------------------------------------------------------+
