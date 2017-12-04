@@ -127,9 +127,9 @@ object ProjectPlugin extends AutoPlugin {
       apiURL := Some(url("http://rasterframes.io/latest/api")),
       autoAPIMappings := false,
       paradoxProperties in Paradox ++= Map(
-        "github.base_url" -> "https://github.com/s22s/raster-frames"//,
-        //"scaladoc.org.apache.spark.sql.gt" -> "http://rasterframes.io/latest" //,
-        //"scaladoc.geotrellis.base_url" -> "https://geotrellis.github.io/scaladocs/latest"
+        "github.base_url" -> "https://github.com/s22s/raster-frames",
+        "scaladoc.org.apache.spark.sql.gt" -> "http://rasterframes.io/latest",
+        "scaladoc.geotrellis.base_url" -> "https://geotrellis.github.io/scaladocs/latest"
       ),
       sourceDirectory in Paradox := tutTargetDirectory.value,
       sourceDirectory in Paradox in paradoxTheme := sourceDirectory.value / "main" / "paradox" / "_template",
