@@ -49,7 +49,7 @@ object CRSEncoder {
         classOf[UTF8String],
         StringType,
         "fromString",
-        Invoke(inputObject, "toProj4String", intermediateType) :: Nil
+        InvokeSafely(inputObject, "toProj4String", intermediateType) :: Nil
       )
 
     val inputRow = GetColumnByOrdinal(0, schema)
@@ -58,7 +58,7 @@ object CRSEncoder {
         CRSEncoder.getClass,
         ctType,
         "fromString",
-        Invoke(inputRow, "toString", intermediateType) :: Nil
+        InvokeSafely(inputRow, "toString", intermediateType) :: Nil
       )
 
     ExpressionEncoder[CRS](schema, flat = false, Seq(serializer), deserializer, classTag[CRS])
@@ -67,29 +67,4 @@ object CRSEncoder {
   // Not sure why this delegate is necessary, but doGenCode fails without it.
   def fromString(str: String): CRS = CRS.fromString(str)
 
-  def InvokeSafely(targetObject: Expression, functionName: String, dataType: DataType): InvokeLike = {
-    val ctor = classOf[Invoke].getConstructors.head
-    val TRUE = Boolean.box(true)
-    if(ctor.getParameterTypes.length == 5) {
-      // In Spark 2.1.0 the signature looks like this:
-      // case class Invoke(
-      //   targetObject: Expression,
-      //   functionName: String,
-      //   dataType: DataType,
-      //   arguments: Seq[Expression] = Nil,
-      //   propagateNull: Boolean = true) extends InvokeLike
-      ctor.newInstance(targetObject, functionName, dataType, Nil, TRUE).asInstanceOf[InvokeLike]
-    }
-    else  {
-      // In spark 2.2.0 the signature looks like this:
-      // case class Invoke(
-      //   targetObject: Expression,
-      //   functionName: String,
-      //   dataType: DataType,
-      //   arguments: Seq[Expression] = Nil,
-      //   propagateNull: Boolean = true,
-      //   returnNullable : Boolean = true) extends InvokeLike
-      ctor.newInstance(targetObject, functionName, dataType, Nil, TRUE, TRUE).asInstanceOf[InvokeLike]
-    }
-  }
 }
