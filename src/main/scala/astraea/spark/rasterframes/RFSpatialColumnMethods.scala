@@ -92,7 +92,7 @@ trait RFSpatialColumnMethods extends MethodExtensions[RasterFrame] {
    * @param applyOrdering if true, adds `.orderBy(asc(colName))` to result. Defaults to `true`
    * @return RasterFrame with index column.
    */
-  def withSpatialIndex(colName: String = "index", applyOrdering: Boolean = true): RasterFrame = {
+  def withSpatialIndex(colName: String = "spatial_index", applyOrdering: Boolean = true): RasterFrame = {
     val zindex = udf(keyCol2LatLng andThen (p ⇒ Z2SFC.index(p._1, p._2).z))
     self.withColumn(colName, zindex(self.spatialKeyColumn)) match {
       case rf if applyOrdering ⇒ rf.orderBy(asc(colName)).certify

@@ -21,6 +21,7 @@ package astraea.spark.rasterframes
 
 import geotrellis.proj4.LatLng
 import geotrellis.vector.{Extent, Point}
+import org.locationtech.geomesa.curve.{Z2SFC, Z3SFC}
 
 /**
  * Test rig associated with spatial key related extension methods
@@ -41,19 +42,26 @@ class SpatialKeySpec  extends TestEnvironment with TestData {
     it("should add an extent column") {
       val expected = raster.extent
       val result = rf.withExtent().select($"extent".as[Extent]).first
-      assert(expected === result)
+      assert(result === expected)
     }
 
     it("should add a center value") {
       val expected = raster.extent.center
       val result = rf.withCenter().select($"center".as[(Double, Double)]).first
-      assert(expected === Point(result._1, result._2))
+      assert(Point(result._1, result._2) === expected)
     }
 
     it("should add a center lat/lng value") {
       val expected = raster.extent.center.reproject(raster.crs, LatLng)
       val result = rf.withCenterLatLng().select($"center".as[(Double, Double)]).first
-      assert(expected === Point(result._1, result._2))
+      assert( Point(result._1, result._2) === expected)
+    }
+
+    it("should add a z-index value") {
+      val center = raster.extent.center.reproject(raster.crs, LatLng)
+      val expected = Z2SFC.index(center.x, center.y).z
+      val result = rf.withSpatialIndex().select($"spatial_index".as[Long]).first
+      assert(result === expected)
     }
   }
 
