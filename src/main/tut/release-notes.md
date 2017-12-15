@@ -1,4 +1,11 @@
 # Release Notes
+
+## 0.5.12
+
+* Added column-appending convenience methods: `withExtent`, `withCenter`,  `withCenterLatLng`
+* Added Spark 2.2.0 forward-compatibility
+* Upgraded to GeoTrellis 1.2.0-RC2
+
 ## 0.5.11
 
 * Significant performance improvement in `explodeTiles` (1-2 orders of magnitude). See [#38](https://github.com/s22s/raster-frames/issues/38)

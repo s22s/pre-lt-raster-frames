@@ -25,10 +25,10 @@ import geotrellis.util.{LazyLogging, MethodExtensions}
 import geotrellis.vector.ProjectedExtent
 import org.apache.spark.annotation.Experimental
 import org.apache.spark.rdd.RDD
+import org.apache.spark.sql._
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.gt.types.TileUDT
 import org.apache.spark.sql.types.{Metadata, StructField}
-import org.apache.spark.sql.{Column, DataFrame, Dataset, TypedColumn}
 import spray.json._
 
 import scala.reflect.runtime.universe._
@@ -38,7 +38,7 @@ import scala.reflect.runtime.universe._
  * @author sfitch
  * @since 7/18/17
  */
-trait RasterFrameMethods extends MethodExtensions[RasterFrame] with LazyLogging {
+trait RasterFrameMethods extends MethodExtensions[RasterFrame] with RFSpatialColumnMethods with LazyLogging {
   type TileColumn = TypedColumn[Any, Tile]
 
   private val _df = self
