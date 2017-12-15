@@ -45,7 +45,7 @@ gtag('config', 'UA-106630615-1');
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.5.11
+0.5.12*
 </div>
 </div>
 <div class="nav-toc">
@@ -98,7 +98,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.5.11
+0.5.12*
 </div>
 </div>
 <div class="nav-toc">
@@ -164,7 +164,7 @@ import spark.implicits._
 <h2><a href="#from-projectedextent" name="from-projectedextent" class="anchor"><span class="anchor-link"></span></a>From <code>ProjectedExtent</code></h2>
 <p>The simplest mechanism for getting a RasterFrame is to use the <code>toRF(tileCols, tileRows)</code> extension method on <code>ProjectedRaster</code>. </p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; val scene = SinglebandGeoTiff(&quot;src/test/resources/L8-B8-Robinson-IL.tiff&quot;)
-scene: geotrellis.raster.io.geotiff.SinglebandGeoTiff = SinglebandGeoTiff(geotrellis.raster.UShortConstantNoDataArrayTile@26184295,Extent(431902.5, 4313647.5, 443512.5, 4321147.5),EPSG:32616,Tags(Map(AREA_OR_POINT -&gt; POINT),List(Map())),GeoTiffOptions(geotrellis.raster.io.geotiff.Striped@159d67ce,geotrellis.raster.io.geotiff.compression.DeflateCompression$@2ef4f29b,1,None))
+scene: geotrellis.raster.io.geotiff.SinglebandGeoTiff = SinglebandGeoTiff(geotrellis.raster.UShortConstantNoDataArrayTile@4107677c,Extent(431902.5, 4313647.5, 443512.5, 4321147.5),EPSG:32616,Tags(Map(AREA_OR_POINT -&gt; POINT),List(Map())),GeoTiffOptions(geotrellis.raster.io.geotiff.Striped@3916fc0e,geotrellis.raster.io.geotiff.compression.DeflateCompression$@63ea2f49,1,None))
 
 scala&gt; val rf = scene.projectedRaster.toRF(128, 128)
 rf: astraea.spark.rasterframes.RasterFrame = [spatial_key: struct&lt;col: int, row: int&gt;, tile: rf_tile]
@@ -173,11 +173,11 @@ scala&gt; rf.show(5, false)
 +-----------+--------------------------------------------------------+
 |spatial_key|tile                                                    |
 +-----------+--------------------------------------------------------+
-|[0,0]      |geotrellis.raster.UShortConstantNoDataArrayTile@35b28c50|
-|[1,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@500e0db6|
-|[6,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@4debd59b|
-|[3,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@5118f356|
-|[4,2]      |geotrellis.raster.UShortConstantNoDataArrayTile@70693529|
+|[0,0]      |geotrellis.raster.UShortConstantNoDataArrayTile@321c8188|
+|[1,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@1f049478|
+|[6,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@62d34dde|
+|[3,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@39b09dc0|
+|[4,2]      |geotrellis.raster.UShortConstantNoDataArrayTile@6f765bbf|
 +-----------+--------------------------------------------------------+
 only showing top 5 rows
 
