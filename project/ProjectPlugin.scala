@@ -42,13 +42,14 @@ object ProjectPlugin extends AutoPlugin {
     scalacOptions ++= Seq("-feature", "-deprecation"),
     cancelable in Global := true,
     resolvers ++= Seq(
-      "locationtech-releases" at "https://repo.locationtech.org/content/groups/releases"
+      "locationtech-releases" at "https://repo.locationtech.org/content/groups/releases",
+      "boundless-releases" at "https://repo.boundlessgeo.com/main/",
+      Resolver.bintrayRepo("s22s", "maven")
     ),
     libraryDependencies ++= Seq(
       "com.chuusai" %% "shapeless" % "2.3.2",
-      //"org.locationtech.sfcurve" %% "sfcurve-zorder" % "0.2.0",
-      //"org.locationtech.geomesa" %% "geomesa-jts-spark" % "astraea.1",
       "org.locationtech.geomesa" %% "geomesa-z3" % "1.3.5",
+      "org.locationtech.geomesa" %% "geomesa-jts-spark" % "1.4.0-astraea.1",
       spark("core") % Provided,
       spark("mllib") % Provided,
       spark("sql") % Provided,
