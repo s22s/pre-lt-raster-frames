@@ -21,6 +21,7 @@ package astraea.spark.rasterframes
 
 import astraea.spark.rasterframes.expressions.ExplodeTileExpression
 import astraea.spark.rasterframes.functions.{CellCountAggregateFunction, CellMeanAggregateFunction, CellStatsAggregateFunction}
+import astraea.spark.rasterframes.jts.SpatialRelations
 import astraea.spark.rasterframes.{functions ⇒ F}
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.LocalTileBinaryOp
@@ -39,7 +40,7 @@ import scala.reflect.runtime.universe._
  * @author sfitch
  * @since 4/3/17
  */
-trait ColumnFunctions {
+trait ColumnFunctions extends SpatialRelations {
   private implicit def arrayEnc[T: TypeTag]: Encoder[Array[T]] = ExpressionEncoder()
   private implicit def genEnc[T: TypeTag]: Encoder[T] = ExpressionEncoder()
 

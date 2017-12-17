@@ -18,6 +18,7 @@
 
 package astraea.spark.rasterframes
 
+import java.nio.file.Path
 import java.time.ZonedDateTime
 
 import astraea.spark.rasterframes.{functions ⇒ F}
@@ -87,20 +88,22 @@ trait TestData {
     )
   }
 
-  def sampleGeoTiff = SinglebandGeoTiff(IOUtils.toByteArray(getClass.getResourceAsStream("/L8-B8-Robinson-IL.tiff")))
+  def readSingleband(name: String) = SinglebandGeoTiff(IOUtils.toByteArray(getClass.getResourceAsStream("/" + name)))
+
+  def sampleGeoTiff = readSingleband("L8-B8-Robinson-IL.tiff")
+
+  def l8Sample(band: Int) = {
+    require((1 to 11).contains(band), "Invalid band number")
+    readSingleband(s"L8-B$band-Elkton-VA.tiff")
+  }
+  def l8Labels = readSingleband("L8-Labels-Elkton-VA.tiff")
 
   def sampleTileLayerRDD(implicit spark: SparkSession): TileLayerRDD[SpatialKey] = {
-
     val raster = sampleGeoTiff.projectedRaster.reproject(LatLng)
-
     val layout = LayoutDefinition(LatLng.worldExtent, TileLayout(36, 18, 128, 128))
-
     val kb = KeyBounds(SpatialKey(0, 0), SpatialKey(layout.layoutCols, layout.layoutRows))
-
     val tlm = TileLayerMetadata(raster.tile.cellType, layout, layout.extent, LatLng, kb)
-
     val rdd = spark.sparkContext.makeRDD(Seq((raster.projectedExtent, raster.tile)))
-
     ContextRDD(rdd.tileToLayout(tlm), tlm)
   }
 }

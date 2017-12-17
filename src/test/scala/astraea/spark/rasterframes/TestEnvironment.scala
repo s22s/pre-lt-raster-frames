@@ -53,3 +53,10 @@ trait TestEnvironment extends FunSpec with GeoTrellisTestEnvironment
   }
 
 }
+
+/** IntelliJ incorrectly indicates that `withFixture` needs to be implemented, resulting
+ * in a distracting error. This for whatever reason gets it to quiet down. */
+trait IntelliJPresentationCompilerHack { this: Suite ⇒
+  // This is to avoid an IntelliJ error
+  protected def withFixture(test: Any) = ???
+}
