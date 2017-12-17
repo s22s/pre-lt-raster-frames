@@ -17,23 +17,17 @@
  *
  */
 
-package astraea.spark.rasterframes
+package astraea.spark.rasterframes.jts
 
-import geotrellis.util.MethodExtensions
-import org.apache.spark.sql.{SQLContext, SQLTypes, gt}
+
+import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 
 /**
- * Extension methods on [[SQLContext]] for initializing RasterFrames support in Catalyst.
  *
  * @author sfitch 
- * @since 10/30/17
+ * @since 12/17/17
  */
-trait SQLContextMethods extends MethodExtensions[SQLContext] {
-  def withRasterFrames: SQLContext = {
-    SQLTypes.init(self) // <-- JTS types.
-    gt.gtRegister(self)
-    functions.Registrator.register(self)
-    astraea.spark.rasterframes.expressions.Registrator.register(self)
-    self
-  }
+trait SpatialEncoders {
+  implicit def jtsPointEncoder = ExpressionEncoder[com.vividsolutions.jts.geom.Point]()
+
 }

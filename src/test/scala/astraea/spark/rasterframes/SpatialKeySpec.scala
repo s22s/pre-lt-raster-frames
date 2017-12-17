@@ -30,8 +30,7 @@ import org.locationtech.geomesa.curve.{Z2SFC, Z3SFC}
  * @since 12/15/17
  */
 class SpatialKeySpec  extends TestEnvironment with TestData {
-  // This is to avoid an IntelliJ error
-  protected def withFixture(test: Any) = ???
+
   import spark.implicits._
 
   describe("Spatial key conversions") {
@@ -64,5 +63,6 @@ class SpatialKeySpec  extends TestEnvironment with TestData {
       assert(result === expected)
     }
   }
-
+  // This is to avoid an IntelliJ error
+  protected def withFixture(test: Any) = ???
 }

@@ -19,21 +19,31 @@
 
 package astraea.spark.rasterframes
 
-import geotrellis.util.MethodExtensions
-import org.apache.spark.sql.{SQLContext, SQLTypes, gt}
+import geotrellis.vector.Point
 
 /**
- * Extension methods on [[SQLContext]] for initializing RasterFrames support in Catalyst.
+ * Test rig for operations providing interop with JTS types.
  *
- * @author sfitch 
- * @since 10/30/17
+ * @author sfitch
+ * @since 12/16/17
  */
-trait SQLContextMethods extends MethodExtensions[SQLContext] {
-  def withRasterFrames: SQLContext = {
-    SQLTypes.init(self) // <-- JTS types.
-    gt.gtRegister(self)
-    functions.Registrator.register(self)
-    astraea.spark.rasterframes.expressions.Registrator.register(self)
-    self
+class JTSSpec extends TestEnvironment with TestData with IntelliJPresentationCompilerHack {
+  import spark.implicits._
+
+  describe("JTS interop") {
+    it("should allow filtering of tiles based on points") {
+      val coords = Seq(
+        Point(38.3957546898, -78.6445222907),
+        Point(38.3976614324, -78.6601240367),
+        Point(38.4001666769, -78.6123381343)
+      )
+
+
+      val rf = l8Sample(1).projectedRaster.toRF(10, 10).withExtent()
+
+      rf.show(false)
+      coords.toDS().show(false)
+    }
+
   }
 }

@@ -19,21 +19,25 @@
 
 package astraea.spark.rasterframes
 
-import geotrellis.util.MethodExtensions
-import org.apache.spark.sql.{SQLContext, SQLTypes, gt}
-
 /**
- * Extension methods on [[SQLContext]] for initializing RasterFrames support in Catalyst.
+ * Tests type encoding for spatial types.
  *
  * @author sfitch 
- * @since 10/30/17
+ * @since 12/17/17
  */
-trait SQLContextMethods extends MethodExtensions[SQLContext] {
-  def withRasterFrames: SQLContext = {
-    SQLTypes.init(self) // <-- JTS types.
-    gt.gtRegister(self)
-    functions.Registrator.register(self)
-    astraea.spark.rasterframes.expressions.Registrator.register(self)
-    self
+class SpatialEncodingSpec extends TestEnvironment with TestData with IntelliJPresentationCompilerHack {
+
+  import sqlContext.implicits._
+
+  describe("Dataframe encoding ops on spatial types") {
+
+    it("should code RDD[Point]") {
+      val points = Seq(null, extent.center, null)
+      val ds = points.toDS
+      write(ds)
+      ds.show()
+
+      assert(ds.collect().toSeq === points)
+    }
   }
 }

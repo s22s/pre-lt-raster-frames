@@ -19,9 +19,7 @@ import org.apache.spark.sql.functions._
  * @author sfitch 
  * @since 7/10/17
  */
-class RasterFrameSpec extends TestEnvironment with TestData {
-  // This is to avoid an IntelliJ error
-  protected def withFixture(test: Any) = ???
+class RasterFrameSpec extends TestEnvironment with TestData with IntelliJPresentationCompilerHack {
   import TestData.randomTile
   import spark.implicits._
 

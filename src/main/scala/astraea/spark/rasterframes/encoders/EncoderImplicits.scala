@@ -20,6 +20,7 @@
 package astraea.spark.rasterframes.encoders
 
 import astraea.spark.rasterframes.Statistics
+import astraea.spark.rasterframes.jts.SpatialEncoders
 import geotrellis.proj4.CRS
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.{CellType, MultibandTile, Tile}
@@ -34,7 +35,7 @@ import scala.reflect.runtime.universe._
 /**
  * Implicit encoder definitions for RasterFrame types.
  */
-trait EncoderImplicits {
+trait EncoderImplicits extends SpatialEncoders {
   implicit def singlebandTileEncoder = ExpressionEncoder[Tile]()
   implicit def multibandTileEncoder = ExpressionEncoder[MultibandTile]()
   implicit val crsEncoder = CRSEncoder(): ExpressionEncoder[CRS]
@@ -46,9 +47,10 @@ trait EncoderImplicits {
   implicit def tileLayerMetadataEncoder[K: TypeTag]: Encoder[TileLayerMetadata[K]] = TileLayerMetadataEncoder[K]()
   implicit val layoutDefinitionEncoder = ExpressionEncoder[LayoutDefinition]()
   implicit val stkBoundsEncoder = ExpressionEncoder[KeyBounds[SpaceTimeKey]]()
-  implicit val cellTypeEncoder = CellTypeEncoder(): ExpressionEncoder[CellType]
+  implicit val cellTypeEncoder = CellTypeEncoder()
   implicit val spatialKeyEncoder = ExpressionEncoder[SpatialKey]()
   implicit val temporalKeyEncoder = ExpressionEncoder[TemporalKey]()
   implicit val spaceTimeKeyEncoder = ExpressionEncoder[SpaceTimeKey]()
+  implicit def pointEncoder = PointEncoder()
 }
 
