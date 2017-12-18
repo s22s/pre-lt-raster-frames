@@ -210,12 +210,12 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with RFSpatialCol
    * Convert from RasterFrame to a GeoTrellis [[TileLayerMetadata]]
    * @param tileCol column with tiles to be the
    */
-  def toTileLayerRDD(tileCol: TileColumn): Either[TileLayerRDD[SpatialKey], TileLayerRDD[SpaceTimeKey]] =
+  def toTileLayerRDD(tileCol: Column): Either[TileLayerRDD[SpatialKey], TileLayerRDD[SpaceTimeKey]] =
     tileLayerMetadata.fold(
-      tlm ⇒ Left(ContextRDD(self.select(spatialKeyColumn, tileCol).rdd, tlm)),
+      tlm ⇒ Left(ContextRDD(self.select(spatialKeyColumn, tileCol.as[Tile]).rdd, tlm)),
       tlm ⇒ {
         val rdd = self
-          .select(spatialKeyColumn, temporalKeyColumn.get, tileCol)
+          .select(spatialKeyColumn, temporalKeyColumn.get, tileCol.as[Tile])
           .rdd
           .map { case (sk, tk, v) ⇒ (SpaceTimeKey(sk, tk), v) }
         Right(ContextRDD(rdd, tlm))

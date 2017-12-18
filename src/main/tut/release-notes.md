@@ -4,6 +4,7 @@
 
 * Added `withSpatialIndex` to introduce a column assigning a z-curve index value based on the tile's centroid in EPSG:4326. 
 * Added column-appending convenience methods: `withExtent`, `withCenter`,  `withCenterLatLng`
+* Documented example of creating a GeoTrellis layer from a RasterFrame.
 * Added Spark 2.2.0 forward-compatibility
 * Upgraded to GeoTrellis 1.2.0-RC2
 
