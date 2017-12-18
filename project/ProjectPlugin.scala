@@ -60,7 +60,7 @@ object ProjectPlugin extends AutoPlugin {
         ExclusionRule(organization = "org.scalastic"),
         ExclusionRule(organization = "org.scalatest")
       ),
-      "org.scalatest" %% "scalatest" % "3.0.3" % Test
+      scalaTest
     ),
     publishArtifact in Test := false,
     fork in Test := true,
@@ -88,6 +88,8 @@ object ProjectPlugin extends AutoPlugin {
       "org.locationtech.geotrellis" %% s"geotrellis-$module" % versions("geotrellis")
     def spark(module: String) =
       "org.apache.spark" %% s"spark-$module" % versions("spark")
+
+    val scalaTest = "org.scalatest" %% "scalatest" % "3.0.3" % Test
 
     def releaseSettings: Seq[Def.Setting[_]] = {
       val buildSite: (State) ⇒ State = releaseStepTask(makeSite)

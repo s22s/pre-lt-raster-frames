@@ -1,7 +1,7 @@
 /*
  * This software is licensed under the Apache 2 license, quoted below.
  *
- * Copyright 2017 Astraea, Inc.
+ * Copyright 2017 Azavea
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -17,7 +17,7 @@
  *
  */
 
-package astraea.spark.rasterframes.sources
+package astraea.spark.rasterframes.datasource
 
 import java.net.URI
 
@@ -27,6 +27,9 @@ import org.apache.spark.annotation.Experimental
 import org.apache.spark.sql._
 import org.apache.spark.sql.sources._
 
+/**
+ * @author echeipesh
+ */
 @Experimental
 class GeoTrellisDataSource extends DataSourceRegister with RelationProvider {
   def shortName(): String = "geotrellis"
@@ -35,8 +38,6 @@ class GeoTrellisDataSource extends DataSourceRegister with RelationProvider {
     require(parameters.contains("uri"), "'uri' parameter for catalog location required.")
     require(parameters.contains("layer"), "'layer' parameter for raster layer name required.")
     require(parameters.contains("zoom"), "'zoom' parameter for raster layer zoom level required.")
-
-    gt.gtRegister(sqlContext)
 
     val uri: URI = URI.create(parameters("uri"))
     val layerId: LayerId = LayerId(parameters("layer"), parameters("zoom").toInt)

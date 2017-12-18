@@ -16,7 +16,7 @@
  * the License.
  *
  */
-package astraea.spark.rasterframes.sources
+package astraea.spark.rasterframes.datasource
 
 import astraea.spark.rasterframes._
 import geotrellis.proj4.LatLng
@@ -28,8 +28,10 @@ import geotrellis.spark.io.index.ZCurveKeyIndexMethod
 import geotrellis.spark.tiling.ZoomedLayoutScheme
 import geotrellis.vector._
 
-
-class DataSourceSpec extends TestEnvironment with TestData {
+/**
+ * @author echeipesh
+ */
+class DataSourceSpec extends TestEnvironment with TestData with IntelliJPresentationCompilerHack {
 
   import sqlContext.implicits._
 
@@ -95,6 +97,5 @@ class DataSourceSpec extends TestEnvironment with TestData {
       df.show()
       assert(df.count > 0)
     }
-
   }
 }
