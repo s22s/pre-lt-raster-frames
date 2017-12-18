@@ -32,11 +32,10 @@ import org.apache.spark.sql.functions.udf
  * @since 12/17/17
  */
 trait SpatialConverters {
-  val geomAsWKT = udf((g: Geometry) ⇒ WKTUtils.write(g))
-  val geomAsWKB = udf((g: Geometry) ⇒ WKBUtils.write(g))
-  val geomAsGeoJSON = udf(ST_AsGeoJSON)
-  val pointAsLatLonText = udf(ST_AsLatLonText)
-  val geomAsText = udf(ST_AsText)
-  val geomFromWKT = udf(ST_GeomFromWKT)
-  val geomFromWKB = udf(ST_GeomFromWKB)
+  def geomAsWKT = udf((g: Geometry) ⇒ WKTUtils.write(g))
+  def geomAsWKB = udf((g: Geometry) ⇒ WKBUtils.write(g))
+  def geomAsGeoJSON = udf(ST_AsGeoJSON)
+  def pointAsLatLonText = udf(ST_AsLatLonText)
+  def geomAsText = udf(ST_AsText)
+  def pointFromWKT = udf(ST_PointFromText)
 }

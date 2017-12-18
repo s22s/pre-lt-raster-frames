@@ -29,19 +29,13 @@ import org.apache.spark.sql.functions.udf
  * @since 12/17/17
  */
 trait SpatialRelations {
-  val contains = udf(ST_Contains)
-  val covers = udf(ST_Covers)
-  val crosses = udf(ST_Crosses)
-  val disjoint = udf(ST_Disjoint)
-  val equals = udf(ST_Equals)
-  val intersects = udf(ST_Intersects)
-  val overlaps = udf(ST_Overlaps)
-  val touches = udf(ST_Touches)
-  val within = udf(ST_Within)
-
-  /*
-    val ST_Relate:     (Geometry, Geometry) => String = nullableUDF((geom1, geom2) => geom1.relate(geom2).toString)
-    val ST_RelateBool: (Geometry, Geometry, String) => Boolean =
-      nullableUDF((geom1, geom2, pattern) => geom1.relate(geom2, pattern))
-   */
+  def contains = udf(ST_Contains)
+  def covers = udf(ST_Covers)
+  def crosses = udf(ST_Crosses)
+  def disjoint = udf(ST_Disjoint)
+  def equals = udf(ST_Equals)
+  def intersects = udf(ST_Intersects)
+  def overlaps = udf(ST_Overlaps)
+  def touches = udf(ST_Touches)
+  def within = udf(ST_Within)
 }

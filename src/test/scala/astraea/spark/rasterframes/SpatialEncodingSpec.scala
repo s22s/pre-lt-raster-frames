@@ -32,7 +32,7 @@ class SpatialEncodingSpec extends TestEnvironment with TestData with IntelliJPre
   describe("Dataframe encoding ops on spatial types") {
 
     it("should code RDD[Point]") {
-      val points = Seq(null, extent.center, null)
+      val points = Seq(null, extent.center.jtsGeom, null)
       val ds = points.toDS
       write(ds)
       ds.show()
