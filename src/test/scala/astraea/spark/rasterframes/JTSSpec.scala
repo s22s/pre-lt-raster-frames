@@ -19,7 +19,10 @@
 
 package astraea.spark.rasterframes
 
+import astraea.spark.rasterframes.encoders.PointEncoder
+import geotrellis.proj4.LatLng
 import geotrellis.vector.Point
+import org.apache.spark.sql.Encoders
 
 /**
  * Test rig for operations providing interop with JTS types.
@@ -32,17 +35,24 @@ class JTSSpec extends TestEnvironment with TestData with IntelliJPresentationCom
 
   describe("JTS interop") {
     it("should allow filtering of tiles based on points") {
+      // TODO: Figure out how to get rid of this when Points are within other structures.
+      // Hoping UDFs aren't required.
+      implicit def pairEncoder = Encoders.tuple(Encoders.STRING, PointEncoder())
+      val rf = l8Sample(1).projectedRaster.toRF(10, 10).withBounds()
+      val crs = rf.tileLayerMetadata.widen.crs
       val coords = Seq(
-        Point(38.3957546898, -78.6445222907),
-        Point(38.3976614324, -78.6601240367),
-        Point(38.4001666769, -78.6123381343)
+        "one" -> Point(-78.6445222907, 38.3957546898).reproject(LatLng, crs),
+        "two" -> Point(-78.6601240367, 38.3976614324).reproject(LatLng, crs),
+        "three" -> Point( -78.6123381343, 38.4001666769).reproject(LatLng, crs)
       )
 
+      val locs = coords.toDF("id", "point")
 
-      val rf = l8Sample(1).projectedRaster.toRF(10, 10).withExtent()
+      //rf.show(false)
+      rf.printSchema()
+      locs.printSchema()
 
-      rf.show(false)
-      coords.toDS().show(false)
+      rf.drop($"tile").join(locs, contains($"bounds", $"point")).show(false)
     }
 
   }

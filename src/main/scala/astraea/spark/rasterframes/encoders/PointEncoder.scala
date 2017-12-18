@@ -21,13 +21,10 @@ package astraea.spark.rasterframes.encoders
 
 import astraea.spark.rasterframes.jts.SpatialEncoders
 import geotrellis.vector.Point
-import org.apache.spark.ml.attribute.UnresolvedAttribute
-import org.apache.spark.sql.PointUDT
 import org.apache.spark.sql.catalyst.ScalaReflection
-import org.apache.spark.sql.catalyst.analysis.{GetColumnByOrdinal, UnresolvedAttribute, UnresolvedExtractValue}
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
+import org.apache.spark.sql.catalyst.expressions.BoundReference
 import org.apache.spark.sql.catalyst.expressions.objects.NewInstance
-import org.apache.spark.sql.catalyst.expressions.{BoundReference, Literal}
 
 /**
  *
@@ -45,12 +42,8 @@ object PointEncoder extends SpatialEncoders {
         InvokeSafely(inputObject, "jtsGeom", r.dataType)
     })
 
-    val input = GetColumnByOrdinal(0, schema)
-
-    jtsPointEncoder.deserializer
-
     val deserializer = NewInstance(runtimeClass[Point], Seq(jtsPointEncoder.deserializer), userType, propagateNull = true)
 
-    ExpressionEncoder(schema, flat = false, serializer, deserializer, typeToClassTag[Point])
+    ExpressionEncoder(schema, flat = true, serializer, deserializer, typeToClassTag[Point])
   }
 }
