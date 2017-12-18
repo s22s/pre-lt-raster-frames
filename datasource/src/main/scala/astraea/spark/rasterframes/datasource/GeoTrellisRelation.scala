@@ -21,74 +21,89 @@ package astraea.spark.rasterframes.datasource
 
 import java.net.URI
 
-import geotrellis.raster.Tile
-import geotrellis.spark.io.file.FileLayerReader
-import geotrellis.spark.io.hadoop.HadoopLayerReader
-import geotrellis.spark.io.{FilteringLayerReader, Intersects}
-import geotrellis.spark.{LayerId, SpatialKey, TileLayerMetadata}
-import geotrellis.util.LazyLogging
-import geotrellis.vector.Extent
-import org.apache.spark.SparkContext
-import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.gt.types.TileUDT
-import org.apache.spark.sql.sources.{BaseRelation, Filter, PrunedFilteredScan}
-import org.apache.spark.sql.types.{DataTypes, StructField, StructType}
-import org.apache.spark.sql.{Row, SQLContext}
-import geotrellis.raster.Tile
-import geotrellis.spark._
+import astraea.spark.rasterframes._
+import astraea.spark.rasterframes.util._
+import geotrellis.raster.{Tile, TileFeature}
 import geotrellis.spark.io._
-import geotrellis.spark.io.file.FileLayerReader
-import geotrellis.spark.io.hadoop.HadoopLayerReader
-import geotrellis.spark.io.Intersects
-import geotrellis.spark.{LayerId, SpatialKey, TileLayerMetadata}
+import geotrellis.spark.{LayerId, SpatialKey, TileLayerMetadata, _}
 import geotrellis.util.LazyLogging
-import geotrellis.vector.Extent
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.gt.types._
-import org.apache.spark.sql.sources.{BaseRelation, Filter, PrunedFilteredScan}
-import org.apache.spark.sql.types.{DataTypes, StructField, StructType}
+import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
+import org.apache.spark.sql.gt.types.TileUDT
+import org.apache.spark.sql.sources._
+import org.apache.spark.sql.types.{Metadata, StructField, StructType}
 import org.apache.spark.sql.{Row, SQLContext}
+import spray.json.JsValue
+import spray.json.DefaultJsonProtocol._
 
-
+import scala.reflect.runtime.universe._
 
 /**
  * @author echeipesh
+ * @author sfitch
  */
-case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId, bbox: Option[Extent])
-    extends BaseRelation
-    with PrunedFilteredScan
-    with LazyLogging {
+case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId)
+    extends BaseRelation with PrunedFilteredScan with LazyLogging {
 
-  // TODO: implement sizeInBytes
+  private implicit val spark = sqlContext.sparkSession
 
-  override def schema: StructType =
-    StructType(
-      List(
-        StructField("col", DataTypes.IntegerType, nullable = false),
-        StructField("row", DataTypes.IntegerType, nullable = false),
-        StructField(
-          "extent",
-          StructType(
-            List(
-              StructField("xmin", DataTypes.DoubleType, nullable = false),
-              StructField("xmax", DataTypes.DoubleType, nullable = false),
-              StructField("ymin", DataTypes.DoubleType, nullable = false),
-              StructField("ymax", DataTypes.DoubleType, nullable = false)
-            )
-          )
-        ),
-        StructField("tile", TileUDT, nullable = true)
-      )
-    )
+  private lazy val attributes = AttributeStore(uri)
+  private lazy val (keyType, tileClass) = attributes.readHeader[LayerHeader](layerId) |>
+    (h ⇒ {
+      val kt = Class.forName(h.keyClass) match {
+        case c if c.isAssignableFrom(classOf[SpaceTimeKey]) ⇒ typeOf[SpaceTimeKey]
+        case c if c.isAssignableFrom(classOf[SpatialKey]) ⇒ typeOf[SpatialKey]
+        case c ⇒ throw new UnsupportedOperationException("Unsupported key type " + c)
+      }
+      val tt = Class.forName(h.valueClass) match {
+        case c if c.isAssignableFrom(classOf[Tile]) ⇒ typeOf[Tile]
+        case c if c.isAssignableFrom(classOf[TileFeature[_, _]]) ⇒ typeOf[TileFeature[_, _]]
+        case c ⇒ throw new UnsupportedOperationException("Unsupported tile type " + c)
+      }
+      (kt, tt)
+    })
 
-  def buildScan(requiredColumns: Array[String]): RDD[Row] = {
-    buildScan(requiredColumns, Array.empty[Filter])
+  override def schema: StructType = {
+    val skSchema = ExpressionEncoder[SpatialKey]().schema
+
+    val metadata = attributes.readMetadata[JsValue](layerId) |>
+      (m ⇒ Metadata.fromJson(m.compactPrint))
+
+    val keyFields = keyType match {
+      case t if t =:= typeOf[SpaceTimeKey] ⇒
+        val tkSchema = ExpressionEncoder[TemporalKey]().schema
+        List(
+          StructField(SPATIAL_KEY_COLUMN, skSchema, nullable = false, metadata),
+          StructField(TEMPORAL_KEY_COLUMN, tkSchema, nullable = false)
+        )
+      case t if t =:= typeOf[SpatialKey] ⇒
+        List(
+          StructField(SPATIAL_KEY_COLUMN, skSchema, nullable = false, metadata)
+        )
+      case c ⇒ throw new UnsupportedOperationException("Unsupported key type " + c)
+    }
+
+    val tileFields = tileClass match {
+      case t if t =:= typeOf[Tile]  ⇒
+        List(
+          StructField(TILE_COLUMN, TileUDT, nullable = true)
+        )
+      case t if t =:= typeOf[TileFeature[_, _]] ⇒
+        List(
+          StructField(TILE_COLUMN, TileUDT, nullable = true)
+        )
+    }
+
+    StructType(keyFields ++ tileFields)
   }
 
+  /** Declare filter handling. */
   override def unhandledFilters(filters: Array[Filter]): Array[Filter] = {
-    // only primitive comparisons can be pushed down, not UDFs
-    // @see DataSourceStrategy.scala:509 translateFilter()
     filters
+//    filters.filter {
+//      case (_:IsNotNull | _:IsNull) => true
+//      case _ => false
+//    }
   }
 
   override def buildScan(requiredColumns: Array[String], filters: Array[Filter]): RDD[Row] = {
@@ -97,35 +112,29 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
     logger.debug(s"PushedDown filters: ${filters.toList}")
 
     implicit val sc = sqlContext.sparkContext
+    lazy val reader = LayerReader(uri)
 
-    // TODO: check they type of layer before reading, generating time column dynamically
-    // FIX: do not ignore requiredColumns, it breaks DataFrames selection from DataSource
-    val reader = GeoTrellisRelation.layerReaderFromUri(uri)
-    val query = reader.query[SpatialKey, Tile, TileLayerMetadata[SpatialKey]](layerId)
-    val rdd = bbox match {
-      case Some(extent) ⇒ query.where(Intersects(extent)).result
-      case None ⇒ query.result
-    }
 
-    rdd.map {
-      case (sk: SpatialKey, tile: Tile) ⇒
-        val key_extent: Extent = rdd.metadata.layout.mapTransform(sk)
-        Row(sk.col, sk.row, key_extent, tile)
-    }
-  }
-}
-
-object GeoTrellisRelation {
-  def layerReaderFromUri(uri: URI)(implicit sc: SparkContext): FilteringLayerReader[LayerId] = {
-    uri.getScheme match {
-      case "file" ⇒
-        FileLayerReader(uri.getSchemeSpecificPart)
-
-      case "hdfs" ⇒
-        val path = new org.apache.hadoop.fs.Path(uri)
-        HadoopLayerReader(path)
-
-      // others require modules outside of geotrellis-spark
+    keyType match {
+      case t if t =:= typeOf[SpaceTimeKey] ⇒
+        reader.query[SpaceTimeKey, Tile, TileLayerMetadata[SpaceTimeKey]](layerId)
+          .result
+          .map { case (stk: SpaceTimeKey, tile: Tile) ⇒
+            Row(stk.spatialKey, stk.temporalKey, tile)
+          }
+      case t if t =:= typeOf[SpatialKey] ⇒
+        reader.query[SpatialKey, Tile, TileLayerMetadata[SpatialKey]](layerId)
+          .result
+          .map { case (sk: SpatialKey, tile: Tile) ⇒
+            Row(sk, tile)
+          }
     }
   }
+
+  // TODO: Is there size speculation we can do?
+  override def sizeInBytes = {
+    super.sizeInBytes
+  }
+
 }
+

@@ -27,11 +27,12 @@ import geotrellis.spark.io.file.{FileLayerReader, FileLayerWriter}
 import geotrellis.spark.io.index.ZCurveKeyIndexMethod
 import geotrellis.spark.tiling.ZoomedLayoutScheme
 import geotrellis.vector._
+import org.apache.spark.sql.functions._
 
 /**
  * @author echeipesh
  */
-class DataSourceSpec extends TestEnvironment with TestData with IntelliJPresentationCompilerHack {
+class GeoTrellisDataSourceSpec extends TestEnvironment with TestData with IntelliJPresentationCompilerHack {
 
   import sqlContext.implicits._
 
@@ -74,26 +75,28 @@ class DataSourceSpec extends TestEnvironment with TestData with IntelliJPresenta
     }
 
     it("used produce tile UDT that we can manipulate"){
-      val df = dfr.load().select($"col", $"row", $"extent", tileStats($"tile"))
+      val df = dfr.load().select($"spatial_key", tileStats($"tile"))
       df.show()
       assert(df.count() > 0)
     }
-    it("should respect bbox query"){
-      val boundKeys = KeyBounds(SpatialKey(3,4),SpatialKey(4,4))
-      val Extent(xmin,ymin,xmax,ymax) = testRdd.metadata.layout.mapTransform(boundKeys.toGridBounds())
-      val df = dfr.option("bbox", s"$xmin,$ymin,$xmax,$ymax").load()
 
+    it("should respect bbox query") {
+      val boundKeys = KeyBounds(SpatialKey(3,4),SpatialKey(4,4))
+      val bbox = testRdd.metadata.layout
+        .mapTransform(boundKeys.toGridBounds()).jtsGeom
+      val df = dfr.load().where(intersects($"spatial_key", geomlit(bbox)))
       df.count() should be (boundKeys.toGridBounds.sizeLong)
     }
 
-    it("should provide un-packable records"){
-      val df = dfr.load().select($"col", $"row", $"extent.xmin", $"tile")
-      df.show()
-      assert(df.count > 0)
+    it("should respect predicate push-down") {
+      val df = dfr.load().where(contains($"spatial_key", makePoint(-88, 60)))
+      df.printSchema()
+      df.show(false)
     }
 
+
     it("should invoke Encoder[Extent]"){
-      val df = dfr.load().select($"col", $"row", $"extent".as[Extent], $"tile")
+      val df = dfr.load().select($"spatial_key".as[SpatialKey], $"tile")
       df.show()
       assert(df.count > 0)
     }

@@ -39,3 +39,4 @@ trait SpatialEncoders {
   implicit def jtsMultiPolygonEncoder = ExpressionEncoder[jts.MultiPolygon]()
   implicit def jtsGeometryCollectionEncoder = ExpressionEncoder[jts.GeometryCollection]()
 }
+object SpatialEncoders extends SpatialEncoders
