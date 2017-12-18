@@ -213,6 +213,24 @@
     </span>
       <p class="shortcomment cmt">Extension methods on <span class="extype" name="ProjectedRaster">ProjectedRaster</span> for creating <a href="#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a>s.</p><div class="fullcomment"><div class="comment cmt"><p>Extension methods on <span class="extype" name="ProjectedRaster">ProjectedRaster</span> for creating <a href="#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a>s.
 </p></div><dl class="attributes block"> <dt>Since</dt><dd><p>8/10/17</p></dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.RFSpatialColumnMethods" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="RFSpatialColumnMethodsextendsMethodExtensions[astraea.spark.rasterframes.RasterFrame]"></a>
+      <a id="RFSpatialColumnMethods:RFSpatialColumnMethods"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="RFSpatialColumnMethods.html"><span class="name">RFSpatialColumnMethods</span></a><span class="result"> extends <span class="extype" name="geotrellis.util.MethodExtensions">MethodExtensions</span>[<a href="#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#astraea.spark.rasterframes.package@RFSpatialColumnMethodsextendsMethodExtensions[astraea.spark.rasterframes.RasterFrame]" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">RasterFrame extension methods associated with adding spatially descriptive columns.</p><div class="fullcomment"><div class="comment cmt"><p>RasterFrame extension methods associated with adding spatially descriptive columns.
+</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>12/15/17</p></dd></dl></div>
     </li><li name="astraea.spark.rasterframes.RasterFrame" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]"></a>
       <a id="RasterFrame:RasterFrame"></a>
@@ -234,7 +252,7 @@
   3. The <code>TileLayerMetadata</code> is encoded and attached to the key column.
 </li></ol></div></div>
     </li><li name="astraea.spark.rasterframes.RasterFrameMethods" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="RasterFrameMethodsextendsMethodExtensions[astraea.spark.rasterframes.RasterFrame]withLazyLogging"></a>
+      <a id="RasterFrameMethodsextendsMethodExtensions[astraea.spark.rasterframes.RasterFrame]withRFSpatialColumnMethodswithLazyLogging"></a>
       <a id="RasterFrameMethods:RasterFrameMethods"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -242,10 +260,10 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="RasterFrameMethods.html"><span class="name">RasterFrameMethods</span></a><span class="result"> extends <span class="extype" name="geotrellis.util.MethodExtensions">MethodExtensions</span>[<a href="#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a>] with <span class="extype" name="geotrellis.util.LazyLogging">LazyLogging</span></span>
+        <a href="RasterFrameMethods.html"><span class="name">RasterFrameMethods</span></a><span class="result"> extends <span class="extype" name="geotrellis.util.MethodExtensions">MethodExtensions</span>[<a href="#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a>] with <a href="RFSpatialColumnMethods.html" class="extype" name="astraea.spark.rasterframes.RFSpatialColumnMethods">RFSpatialColumnMethods</a> with <span class="extype" name="geotrellis.util.LazyLogging">LazyLogging</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.package@RasterFrameMethodsextendsMethodExtensions[astraea.spark.rasterframes.RasterFrame]withLazyLogging" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.package@RasterFrameMethodsextendsMethodExtensions[astraea.spark.rasterframes.RasterFrame]withRFSpatialColumnMethodswithLazyLogging" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -596,6 +614,23 @@
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#astraea.spark.rasterframes.package@HasCellType" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="astraea.spark.rasterframes.RFSpatialColumnMethods" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="RFSpatialColumnMethods"></a>
+      <a id="RFSpatialColumnMethods:RFSpatialColumnMethods"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="RFSpatialColumnMethods$.html"><span class="name">RFSpatialColumnMethods</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#astraea.spark.rasterframes.package@RFSpatialColumnMethods" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>

@@ -51,7 +51,7 @@
       
           <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="RasterFrameMethods.html" class="extype" name="astraea.spark.rasterframes.RasterFrameMethods">RasterFrameMethods</a>, <span class="extype" name="geotrellis.util.LazyLogging">LazyLogging</span>, <span class="extype" name="geotrellis.util.MethodExtensions">MethodExtensions</span>[<a href="package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a>], <span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><a href="RasterFrameMethods.html" class="extype" name="astraea.spark.rasterframes.RasterFrameMethods">RasterFrameMethods</a>, <span class="extype" name="geotrellis.util.LazyLogging">LazyLogging</span>, <a href="RFSpatialColumnMethods.html" class="extype" name="astraea.spark.rasterframes.RFSpatialColumnMethods">RFSpatialColumnMethods</a>, <span class="extype" name="geotrellis.util.MethodExtensions">MethodExtensions</span>[<a href="package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a>], <span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -69,7 +69,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="astraea.spark.rasterframes.WithRasterFrameMethods"><span>WithRasterFrameMethods</span></li><li class="in" name="astraea.spark.rasterframes.RasterFrameMethods"><span>RasterFrameMethods</span></li><li class="in" name="geotrellis.util.LazyLogging"><span>LazyLogging</span></li><li class="in" name="geotrellis.util.MethodExtensions"><span>MethodExtensions</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="astraea.spark.rasterframes.WithRasterFrameMethods"><span>WithRasterFrameMethods</span></li><li class="in" name="astraea.spark.rasterframes.RasterFrameMethods"><span>RasterFrameMethods</span></li><li class="in" name="geotrellis.util.LazyLogging"><span>LazyLogging</span></li><li class="in" name="astraea.spark.rasterframes.RFSpatialColumnMethods"><span>RFSpatialColumnMethods</span></li><li class="in" name="geotrellis.util.MethodExtensions"><span>MethodExtensions</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -385,6 +385,23 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>LazyLogging</dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.RFSpatialColumnMethods#mapTransform" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="mapTransform:geotrellis.spark.tiling.MapKeyTransform"></a>
+      <a id="mapTransform:MapKeyTransform"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">mapTransform</span><span class="result">: <span class="extype" name="geotrellis.spark.tiling.MapKeyTransform">MapKeyTransform</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#astraea.spark.rasterframes.package$$WithRasterFrameMethods@mapTransform:geotrellis.spark.tiling.MapKeyTransform" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Returns the key-space to map-space coordinate transform.</p><div class="fullcomment"><div class="comment cmt"><p>Returns the key-space to map-space coordinate transform.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RFSpatialColumnMethods.html" class="extype" name="astraea.spark.rasterframes.RFSpatialColumnMethods">RFSpatialColumnMethods</a></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -598,18 +615,18 @@ will merge based</p></div><dl class="attributes block"> <dt>Definition Classes</
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="astraea.spark.rasterframes.RasterFrameMethods#toTileLayerRDD" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="toTileLayerRDD(tileCol:RasterFrameMethods.this.TileColumn):Either[geotrellis.spark.TileLayerRDD[geotrellis.spark.SpatialKey],geotrellis.spark.TileLayerRDD[geotrellis.spark.SpaceTimeKey]]"></a>
-      <a id="toTileLayerRDD(TileColumn):Either[TileLayerRDD[SpatialKey],TileLayerRDD[SpaceTimeKey]]"></a>
+      <a id="toTileLayerRDD(tileCol:org.apache.spark.sql.Column):Either[geotrellis.spark.TileLayerRDD[geotrellis.spark.SpatialKey],geotrellis.spark.TileLayerRDD[geotrellis.spark.SpaceTimeKey]]"></a>
+      <a id="toTileLayerRDD(Column):Either[TileLayerRDD[SpatialKey],TileLayerRDD[SpaceTimeKey]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">toTileLayerRDD</span><span class="params">(<span name="tileCol">tileCol: <a href="#TileColumn=org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.Tile]" class="extmbr" name="astraea.spark.rasterframes.WithRasterFrameMethods.TileColumn">TileColumn</a></span>)</span><span class="result">: <span class="extype" name="scala.Either">Either</span>[<a href="../../../geotrellis/spark/package.html#TileLayerRDD[K]=org.apache.spark.rdd.RDD[(K,geotrellis.raster.Tile)]withgeotrellis.spark.Metadata[geotrellis.spark.TileLayerMetadata[K]]" class="extmbr" name="geotrellis.spark.TileLayerRDD">TileLayerRDD</a>[<span class="extype" name="geotrellis.spark.SpatialKey">SpatialKey</span>], <a href="../../../geotrellis/spark/package.html#TileLayerRDD[K]=org.apache.spark.rdd.RDD[(K,geotrellis.raster.Tile)]withgeotrellis.spark.Metadata[geotrellis.spark.TileLayerMetadata[K]]" class="extmbr" name="geotrellis.spark.TileLayerRDD">TileLayerRDD</a>[<span class="extype" name="geotrellis.spark.SpaceTimeKey">SpaceTimeKey</span>]]</span>
+        <span class="name">toTileLayerRDD</span><span class="params">(<span name="tileCol">tileCol: <span class="extype" name="org.apache.spark.sql.Column">Column</span></span>)</span><span class="result">: <span class="extype" name="scala.Either">Either</span>[<a href="../../../geotrellis/spark/package.html#TileLayerRDD[K]=org.apache.spark.rdd.RDD[(K,geotrellis.raster.Tile)]withgeotrellis.spark.Metadata[geotrellis.spark.TileLayerMetadata[K]]" class="extmbr" name="geotrellis.spark.TileLayerRDD">TileLayerRDD</a>[<span class="extype" name="geotrellis.spark.SpatialKey">SpatialKey</span>], <a href="../../../geotrellis/spark/package.html#TileLayerRDD[K]=org.apache.spark.rdd.RDD[(K,geotrellis.raster.Tile)]withgeotrellis.spark.Metadata[geotrellis.spark.TileLayerMetadata[K]]" class="extmbr" name="geotrellis.spark.TileLayerRDD">TileLayerRDD</a>[<span class="extype" name="geotrellis.spark.SpaceTimeKey">SpaceTimeKey</span>]]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../index.html#astraea.spark.rasterframes.package$$WithRasterFrameMethods@toTileLayerRDD(tileCol:RasterFrameMethods.this.TileColumn):Either[geotrellis.spark.TileLayerRDD[geotrellis.spark.SpatialKey],geotrellis.spark.TileLayerRDD[geotrellis.spark.SpaceTimeKey]]" title="Permalink" target="_top">
+      <a href="../../../index.html#astraea.spark.rasterframes.package$$WithRasterFrameMethods@toTileLayerRDD(tileCol:org.apache.spark.sql.Column):Either[geotrellis.spark.TileLayerRDD[geotrellis.spark.SpatialKey],geotrellis.spark.TileLayerRDD[geotrellis.spark.SpaceTimeKey]]" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -683,7 +700,61 @@ will merge based</p></div><dl class="attributes block"> <dt>Definition Classes</
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.RasterFrameMethods#withSpatialIndex" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="astraea.spark.rasterframes.RFSpatialColumnMethods#withCenter" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="withCenter(colName:String):astraea.spark.rasterframes.RasterFrame"></a>
+      <a id="withCenter(String):RasterFrame"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">withCenter</span><span class="params">(<span name="colName">colName: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;center&quot;</span></span>)</span><span class="result">: <a href="package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#astraea.spark.rasterframes.package$$WithRasterFrameMethods@withCenter(colName:String):astraea.spark.rasterframes.RasterFrame" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Append a column containing the center of the row's spatial key.</p><div class="fullcomment"><div class="comment cmt"><p>Append a column containing the center of the row's spatial key.
+Coordinate is in native CRS.</p></div><dl class="paramcmts block"><dt class="param">colName</dt><dd class="cmt"><p>name of column to append. Defaults to &quot;center&quot;</p></dd><dt>returns</dt><dd class="cmt"><p>updated RasterFrame</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RFSpatialColumnMethods.html" class="extype" name="astraea.spark.rasterframes.RFSpatialColumnMethods">RFSpatialColumnMethods</a></dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.RFSpatialColumnMethods#withCenterLatLng" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="withCenterLatLng(colName:String):astraea.spark.rasterframes.RasterFrame"></a>
+      <a id="withCenterLatLng(String):RasterFrame"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">withCenterLatLng</span><span class="params">(<span name="colName">colName: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;center&quot;</span></span>)</span><span class="result">: <a href="package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#astraea.spark.rasterframes.package$$WithRasterFrameMethods@withCenterLatLng(colName:String):astraea.spark.rasterframes.RasterFrame" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Append a column containing the center of the row's spatial key.</p><div class="fullcomment"><div class="comment cmt"><p>Append a column containing the center of the row's spatial key.
+Coordinate is in (longitude, latitude) (EPSG:4326).</p></div><dl class="paramcmts block"><dt class="param">colName</dt><dd class="cmt"><p>name of column to append. Defaults to &quot;center&quot;</p></dd><dt>returns</dt><dd class="cmt"><p>updated RasterFrame</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RFSpatialColumnMethods.html" class="extype" name="astraea.spark.rasterframes.RFSpatialColumnMethods">RFSpatialColumnMethods</a></dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.RFSpatialColumnMethods#withExtent" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="withExtent(colName:String):astraea.spark.rasterframes.RasterFrame"></a>
+      <a id="withExtent(String):RasterFrame"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">withExtent</span><span class="params">(<span name="colName">colName: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;extent&quot;</span></span>)</span><span class="result">: <a href="package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#astraea.spark.rasterframes.package$$WithRasterFrameMethods@withExtent(colName:String):astraea.spark.rasterframes.RasterFrame" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Append a column containing the extent of the row's spatial key.</p><div class="fullcomment"><div class="comment cmt"><p>Append a column containing the extent of the row's spatial key.
+Coordinates are in native CRS.</p></div><dl class="paramcmts block"><dt class="param">colName</dt><dd class="cmt"><p>name of column to append. Defaults to &quot;extent&quot;</p></dd><dt>returns</dt><dd class="cmt"><p>updated RasterFrame</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RFSpatialColumnMethods.html" class="extype" name="astraea.spark.rasterframes.RFSpatialColumnMethods">RFSpatialColumnMethods</a></dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.RFSpatialColumnMethods#withSpatialIndex" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="withSpatialIndex(colName:String,applyOrdering:Boolean):astraea.spark.rasterframes.RasterFrame"></a>
       <a id="withSpatialIndex(String,Boolean):RasterFrame"></a>
       <h4 class="signature">
@@ -692,14 +763,14 @@ will merge based</p></div><dl class="attributes block"> <dt>Definition Classes</
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">withSpatialIndex</span><span class="params">(<span name="colName">colName: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;index&quot;</span></span>, <span name="applyOrdering">applyOrdering: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">true</span></span>)</span><span class="result">: <a href="package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a></span>
+        <span class="name">withSpatialIndex</span><span class="params">(<span name="colName">colName: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;spatial_index&quot;</span></span>, <span name="applyOrdering">applyOrdering: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">true</span></span>)</span><span class="result">: <a href="package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../index.html#astraea.spark.rasterframes.package$$WithRasterFrameMethods@withSpatialIndex(colName:String,applyOrdering:Boolean):astraea.spark.rasterframes.RasterFrame" title="Permalink" target="_top">
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RasterFrameMethods.html" class="extype" name="astraea.spark.rasterframes.RasterFrameMethods">RasterFrameMethods</a></dd></dl></div>
+      <p class="shortcomment cmt">Appends a spatial index column</p><div class="fullcomment"><div class="comment cmt"><p>Appends a spatial index column</p></div><dl class="paramcmts block"><dt class="param">colName</dt><dd class="cmt"><p>name of new column to create. Defaults to <code>index</code></p></dd><dt class="param">applyOrdering</dt><dd class="cmt"><p>if true, adds <code>.orderBy(asc(colName))</code> to result. Defaults to <code>true</code></p></dd><dt>returns</dt><dd class="cmt"><p>RasterFrame with index column.</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RFSpatialColumnMethods.html" class="extype" name="astraea.spark.rasterframes.RFSpatialColumnMethods">RFSpatialColumnMethods</a></dd></dl></div>
     </li></ol>
             </div>
 
@@ -713,6 +784,8 @@ will merge based</p></div><dl class="attributes block"> <dt>Definition Classes</
               <h3>Inherited from <a href="RasterFrameMethods.html" class="extype" name="astraea.spark.rasterframes.RasterFrameMethods">RasterFrameMethods</a></h3>
             </div><div class="parent" name="geotrellis.util.LazyLogging">
               <h3>Inherited from <span class="extype" name="geotrellis.util.LazyLogging">LazyLogging</span></h3>
+            </div><div class="parent" name="astraea.spark.rasterframes.RFSpatialColumnMethods">
+              <h3>Inherited from <a href="RFSpatialColumnMethods.html" class="extype" name="astraea.spark.rasterframes.RFSpatialColumnMethods">RFSpatialColumnMethods</a></h3>
             </div><div class="parent" name="geotrellis.util.MethodExtensions">
               <h3>Inherited from <span class="extype" name="geotrellis.util.MethodExtensions">MethodExtensions</span>[<a href="package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a>]</h3>
             </div><div class="parent" name="scala.Serializable">

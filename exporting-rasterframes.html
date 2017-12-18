@@ -170,11 +170,11 @@ scala&gt; tileBack.drop(&quot;tileData&quot;).show(5, 40)
 +-----------+--------------------------------------+
 |spatial_key|                             tileAgain|
 +-----------+--------------------------------------+
-|      [6,3]|ShortRawArrayTile([S@16f33bda,128,128)|
-|      [4,0]|ShortRawArrayTile([S@73e42f41,128,128)|
-|      [0,0]|ShortRawArrayTile([S@331bd1d9,128,128)|
-|      [4,2]| ShortRawArrayTile([S@37afc62,128,128)|
-|      [0,2]| ShortRawArrayTile([S@c583a3c,128,128)|
+|      [6,3]|ShortRawArrayTile([S@3f28185f,128,128)|
+|      [4,0]| ShortRawArrayTile([S@9559fad,128,128)|
+|      [0,0]|ShortRawArrayTile([S@7a8305c1,128,128)|
+|      [4,2]|ShortRawArrayTile([S@4414b334,128,128)|
+|      [0,2]|ShortRawArrayTile([S@3b81a109,128,128)|
 +-----------+--------------------------------------+
 only showing top 5 rows
 
@@ -187,11 +187,11 @@ scala&gt; tileBackAgain.drop(&quot;tileData&quot;).show(5, 50)
 +-----------+--------------------------------------------------+
 |spatial_key|                                         tileAgain|
 +-----------+--------------------------------------------------+
-|      [6,3]|ShortUserDefinedNoDataArrayTile([S@7a3e6ce2,128...|
-|      [4,0]|ShortUserDefinedNoDataArrayTile([S@5b98d660,128...|
-|      [0,0]|ShortUserDefinedNoDataArrayTile([S@437c9139,128...|
-|      [4,2]|ShortUserDefinedNoDataArrayTile([S@7948b5f4,128...|
-|      [0,2]|ShortUserDefinedNoDataArrayTile([S@70189f43,128...|
+|      [6,3]|ShortUserDefinedNoDataArrayTile([S@1236ec38,128...|
+|      [4,0]|ShortUserDefinedNoDataArrayTile([S@6711780,128,...|
+|      [0,0]|ShortUserDefinedNoDataArrayTile([S@10739df0,128...|
+|      [4,2]|ShortUserDefinedNoDataArrayTile([S@25b4f705,128...|
+|      [0,2]|ShortUserDefinedNoDataArrayTile([S@c688a7,128,1...|
 +-----------+--------------------------------------------------+
 only showing top 5 rows
 
@@ -269,6 +269,39 @@ scala&gt; equalized.select(aggStats($&quot;equalized&quot;)).show(false)
 +---------+---+-------+------------------+-------------------+
 
 </code></pre>
+<h2><a href="#exporting-a-raster" name="exporting-a-raster" class="anchor"><span class="anchor-link"></span></a>Exporting a Raster</h2>
+<p>For the purposes of debugging, the RasterFrame tiles can be reassembled back into a raster for viewing. However, keep in mind that this will download all the data to the driver, and reassemble it in-memory. So it&rsquo;s not appropriate for very large coverages.</p>
+<p>Here&rsquo;s how one might render the image to a georeferenced GeoTIFF file: </p>
+<pre class="prettyprint"><code class="language-scala">import geotrellis.raster.io.geotiff.GeoTiff
+val image = equalized.toRaster($&quot;equalized&quot;, 774, 500)
+GeoTiff(image).write(&quot;target/scala-2.11/tut/rf-raster.tiff&quot;)
+</code></pre>
+<p><a href="rf-raster.tiff"><em>Download GeoTIFF</em></a></p>
+<p>Here&rsquo;s how one might render a raster frame to a false color PNG file:</p>
+<pre class="prettyprint"><code class="language-scala">val colors = ColorMap.fromQuantileBreaks(image.tile.histogram, ColorRamps.BlueToOrange)
+image.tile.color(colors).renderPng().write(&quot;target/scala-2.11/tut/rf-raster.png&quot;)
+</code></pre>
+<p><img src="rf-raster.png" /></p>
+<h2><a href="#exporting-to-a-geotrellis-layer" name="exporting-to-a-geotrellis-layer" class="anchor"><span class="anchor-link"></span></a>Exporting to a GeoTrellis Layer</h2>
+<p>For future analysis it is helpful to persist a RasterFrame as a <a href="http://geotrellis.readthedocs.io/en/latest/guide/tile-backends.html">GeoTrellis layer</a>.</p>
+<p>First, convert the RasterFrame into a TileLayerRDD. The return type is an Either; the <code>left</code> side is for spatial-only keyed data</p>
+<pre class="prettyprint"><code class="language-scala">val tlRDD = equalized.toTileLayerRDD($&quot;equalized&quot;).left.get
+// tlRDD: geotrellis.spark.TileLayerRDD[geotrellis.spark.SpatialKey] = ContextRDD[67] at RDD at ContextRDD.scala:35
+</code></pre>
+<p>Then create a GeoTrellis layer writer:</p>
+<pre class="prettyprint"><code class="language-scala">import java.nio.file.Files
+import geotrellis.spark.io._
+val p = Files.createTempDirectory(&quot;gt-store&quot;)
+val writer: LayerWriter[LayerId] = LayerWriter(p.toUri)
+
+val layerId = LayerId(&quot;equalized&quot;, 0)
+writer.write(layerId, tlRDD, index.ZCurveKeyIndexMethod)
+</code></pre>
+<p>Take a look at the metadata in JSON format:</p>
+<pre class="prettyprint"><code class="language-scala">import spray.json._
+import DefaultJsonProtocol._
+println(AttributeStore(p.toUri).readMetadata[JsValue](layerId).prettyPrint)
+</code></pre>
 <h2><a href="#converting-to-rdd-and-tilelayerrdd" name="converting-to-rdd-and-tilelayerrdd" class="anchor"><span class="anchor-link"></span></a>Converting to <code>RDD</code> and <code>TileLayerRDD</code></h2>
 <p>Since a <code>RasterFrame</code> is just a <code>DataFrame</code> with extra metadata, the method <a href="http://rasterframes.io/latest/api/org/apache/spark/sql/Dataset.html#frdd:org.apache.spark.rdd.RDD[T]"><code>DataFrame.rdd</code></a> is available for simple conversion back to <code>RDD</code> space. The type returned by <code>.rdd</code> is dependent upon how you select it.</p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; import scala.reflect.runtime.universe._
@@ -288,21 +321,8 @@ org.apache.spark.rdd.RDD[(geotrellis.spark.SpatialKey, geotrellis.raster.Tile)]
 </code></pre>
 <p>If your goal convert a single tile column with its spatial key back to a <code>TileLayerRDD[K]</code>, then there&rsquo;s an additional extension method on <code>RasterFrame</code> called <a href="astraea.spark.rasterframes.RasterFrameMethods#toTileLayerRDD%28tileCol:RasterFrameMethods.this.TileColumn%29:Either[geotrellis.spark.TileLayerRDD[geotrellis.spark.SpatialKey],geotrellis.spark.TileLayerRDD[geotrellis.spark.SpaceTimeKey]]"><code>toTileLayerRDD</code></a>, which preserves the tile layer metadata, enhancing interoperation with GeoTrellis RDD extension methods.</p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; showType(rf.toTileLayerRDD($&quot;tile&quot;.as[Tile]))
-scala.util.Either[org.apache.spark.rdd.RDD[(geotrellis.spark.SpatialKey, geotrellis.raster.Tile)] with geotrellis.spark.Metadata[geotrellis.spark.TileLayerMetadata[geotrellis.spark.SpatialKey]],org.apache.spark.rdd.RDD[(geotrellis.spark.SpaceTimeKey, geotrellis.raster.Tile)] with geotrellis.spark.Metadata[geotrellis.spark.TileLayerMetadata[geotrellis.spark.SpaceTimeKey]]]
+scala.Either[geotrellis.spark.TileLayerRDD[geotrellis.spark.SpatialKey],geotrellis.spark.TileLayerRDD[geotrellis.spark.SpaceTimeKey]]
 </code></pre>
-<h2><a href="#exporting-a-raster" name="exporting-a-raster" class="anchor"><span class="anchor-link"></span></a>Exporting a Raster</h2>
-<p>For the purposes of debugging, the RasterFrame tiles can be reassembled back into a raster for viewing. However, keep in mind that this will download all the data to the driver, and reassemble it in-memory. So it&rsquo;s not appropriate for very large coverages.</p>
-<p>Here&rsquo;s how one might render a raster frame to a false color PNG file:</p>
-<pre class="prettyprint"><code class="language-scala">val image = equalized.toRaster($&quot;equalized&quot;, 774, 500)
-val colors = ColorMap.fromQuantileBreaks(image.tile.histogram, ColorRamps.BlueToOrange)
-image.tile.color(colors).renderPng().write(&quot;target/scala-2.11/tut/rf-raster.png&quot;)
-</code></pre>
-<p><img src="rf-raster.png" /></p>
-<p>Here&rsquo;s how one might render the image to a georeferenced GeoTIFF file: </p>
-<pre class="prettyprint"><code class="language-scala">import geotrellis.raster.io.geotiff.GeoTiff
-GeoTiff(image).write(&quot;target/scala-2.11/tut/rf-raster.tiff&quot;)
-</code></pre>
-<p><a href="rf-raster.tiff"><em>Download GeoTIFF</em></a></p>
 <div class="nav-next">
 <p><strong>Next:</strong> <a href="reference.html">Reference</a></p>
 </div>
@@ -317,8 +337,9 @@ GeoTiff(image).write(&quot;target/scala-2.11/tut/rf-raster.tiff&quot;)
   <ul>
     <li><a href="exporting-rasterframes.html#converting-to-array" class="header">Converting to Array</a></li>
     <li><a href="exporting-rasterframes.html#writing-to-parquet" class="header">Writing to Parquet</a></li>
-    <li><a href="exporting-rasterframes.html#converting-to-rdd-and-tilelayerrdd" class="header">Converting to <code>RDD</code> and <code>TileLayerRDD</code></a></li>
     <li><a href="exporting-rasterframes.html#exporting-a-raster" class="header">Exporting a Raster</a></li>
+    <li><a href="exporting-rasterframes.html#exporting-to-a-geotrellis-layer" class="header">Exporting to a GeoTrellis Layer</a></li>
+    <li><a href="exporting-rasterframes.html#converting-to-rdd-and-tilelayerrdd" class="header">Converting to <code>RDD</code> and <code>TileLayerRDD</code></a></li>
   </ul></li>
 </ul>
 </div>
