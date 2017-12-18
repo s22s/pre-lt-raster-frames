@@ -20,17 +20,16 @@
 package astraea.spark.rasterframes
 
 import astraea.spark.rasterframes.expressions.ExplodeTileExpression
-import astraea.spark.rasterframes.functions.{CellCountAggregateFunction, CellMeanAggregateFunction, CellStatsAggregateFunction}
-import astraea.spark.rasterframes.jts.{SpatialConverters, SpatialRelations}
+import astraea.spark.rasterframes.functions.{CellCountAggregateFunction, CellMeanAggregateFunction}
+import astraea.spark.rasterframes.jts.{SpatialConverters, SpatialPredicates}
 import astraea.spark.rasterframes.{functions ⇒ F}
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.LocalTileBinaryOp
 import geotrellis.raster.{CellType, Tile}
 import org.apache.spark.annotation.Experimental
-import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
+import org.apache.spark.sql._
 import org.apache.spark.sql.functions.udf
 import org.apache.spark.sql.gt._
-import org.apache.spark.sql._
 
 import scala.reflect.runtime.universe._
 
@@ -40,9 +39,8 @@ import scala.reflect.runtime.universe._
  * @author sfitch
  * @since 4/3/17
  */
-trait ColumnFunctions extends SpatialRelations with SpatialConverters {
-  private implicit def arrayEnc[T: TypeTag]: Encoder[Array[T]] = ExpressionEncoder()
-  private implicit def genEnc[T: TypeTag]: Encoder[T] = ExpressionEncoder()
+trait ColumnFunctions extends SpatialPredicates with SpatialConverters {
+  import util._
 
   // format: off
   /** Create a row for each cell in Tile. */
@@ -235,15 +233,4 @@ trait ColumnFunctions extends SpatialRelations with SpatialConverters {
     udf[String, Tile](F.renderAscii).apply(col)
   ).as[String]
 
-  // --------------------------------------------------------------------------------------------
-  // -- Private APIs below --
-  // --------------------------------------------------------------------------------------------
-  /** Tags output column with a nicer name. */
-  private[rasterframes] def withAlias(name: String, inputs: Column*)(output: Column) = {
-    val paramNames = inputs.map(_.columnName).mkString(",")
-    output.as(s"$name($paramNames)")
-  }
-
-  private[rasterframes] def opName(op: LocalTileBinaryOp) =
-    op.getClass.getSimpleName.replace("$", "").toLowerCase
 }

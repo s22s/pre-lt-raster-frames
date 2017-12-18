@@ -21,7 +21,6 @@ package astraea.spark.rasterframes
 
 import geotrellis.proj4.LatLng
 import geotrellis.vector.Point
-import org.apache.spark.sql.functions._
 
 /**
  * Test rig for operations providing interop with JTS types.
@@ -46,7 +45,7 @@ class JTSSpec extends TestEnvironment with TestData with IntelliJPresentationCom
       val joined = rf.join(locs, contains($"bounds", $"point"))
       assert(joined.count === coords.length)
 
-      val searchPoint = pointFromWKT(lit(coords.head._2.toText))
+      val searchPoint = pointFromWKT(coords.head._2.toText)
       val filtered = rf.filter(contains($"bounds", searchPoint))
       assert(filtered.count === 1)
     }

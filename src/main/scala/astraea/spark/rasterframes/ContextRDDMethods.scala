@@ -20,7 +20,7 @@ import geotrellis.raster.{Tile, TileFeature}
 import geotrellis.spark._
 import geotrellis.spark.io._
 import geotrellis.util.MethodExtensions
-import org.apache.spark.rdd.{PairRDDFunctions, RDD}
+import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 import spray.json.JsonFormat
 
@@ -78,13 +78,9 @@ abstract class SpatioTemporalContextRDDMethods(implicit spark: SparkSession)
 abstract class TFContextRDDMethods[K: SpatialComponent: JsonFormat: ClassTag: TypeTag, D: TypeTag](implicit spark: SparkSession)
     extends MethodExtensions[RDD[(K, TileFeature[Tile, D])] with Metadata[TileLayerMetadata[K]]] {
 
-  val TF_COL = "tileFeature"
-
   def toRF: RasterFrame = {
     import spark.implicits._
     val rdd = self: RDD[(K, TileFeature[Tile, D])]
-
-    new PairRDDFunctions(rdd).mapValues(identity)
 
     val df = rdd
       .map { case (k, v) ⇒ (k, v.tile, v.data) }
@@ -102,8 +98,6 @@ abstract class TFContextRDDMethods[K: SpatialComponent: JsonFormat: ClassTag: Ty
  */
 abstract class TFSTContextRDDMethods[D: TypeTag](implicit spark: SparkSession)
   extends MethodExtensions[RDD[(SpaceTimeKey, TileFeature[Tile, D])] with Metadata[TileLayerMetadata[SpaceTimeKey]]] {
-
-  val TF_COL = "tileFeature"
 
   def toRF: RasterFrame = {
     import spark.implicits._
