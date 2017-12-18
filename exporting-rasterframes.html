@@ -170,11 +170,11 @@ scala&gt; tileBack.drop(&quot;tileData&quot;).show(5, 40)
 +-----------+--------------------------------------+
 |spatial_key|                             tileAgain|
 +-----------+--------------------------------------+
-|      [6,3]|ShortRawArrayTile([S@3f28185f,128,128)|
-|      [4,0]| ShortRawArrayTile([S@9559fad,128,128)|
-|      [0,0]|ShortRawArrayTile([S@7a8305c1,128,128)|
-|      [4,2]|ShortRawArrayTile([S@4414b334,128,128)|
-|      [0,2]|ShortRawArrayTile([S@3b81a109,128,128)|
+|      [6,3]|ShortRawArrayTile([S@307b279b,128,128)|
+|      [4,0]|ShortRawArrayTile([S@42259cd5,128,128)|
+|      [0,0]|ShortRawArrayTile([S@1676b279,128,128)|
+|      [4,2]|ShortRawArrayTile([S@437b77a8,128,128)|
+|      [0,2]|ShortRawArrayTile([S@2ad5d7a3,128,128)|
 +-----------+--------------------------------------+
 only showing top 5 rows
 
@@ -187,11 +187,11 @@ scala&gt; tileBackAgain.drop(&quot;tileData&quot;).show(5, 50)
 +-----------+--------------------------------------------------+
 |spatial_key|                                         tileAgain|
 +-----------+--------------------------------------------------+
-|      [6,3]|ShortUserDefinedNoDataArrayTile([S@1236ec38,128...|
-|      [4,0]|ShortUserDefinedNoDataArrayTile([S@6711780,128,...|
-|      [0,0]|ShortUserDefinedNoDataArrayTile([S@10739df0,128...|
-|      [4,2]|ShortUserDefinedNoDataArrayTile([S@25b4f705,128...|
-|      [0,2]|ShortUserDefinedNoDataArrayTile([S@c688a7,128,1...|
+|      [6,3]|ShortUserDefinedNoDataArrayTile([S@55d59d94,128...|
+|      [4,0]|ShortUserDefinedNoDataArrayTile([S@6252009b,128...|
+|      [0,0]|ShortUserDefinedNoDataArrayTile([S@5731346,128,...|
+|      [4,2]|ShortUserDefinedNoDataArrayTile([S@910caf4,128,...|
+|      [0,2]|ShortUserDefinedNoDataArrayTile([S@70d0df7f,128...|
 +-----------+--------------------------------------------------+
 only showing top 5 rows
 
@@ -290,6 +290,8 @@ image.tile.color(colors).renderPng().write(&quot;target/scala-2.11/tut/rf-raster
 </code></pre>
 <p>Then create a GeoTrellis layer writer:</p>
 <pre class="prettyprint"><code class="language-scala">import java.nio.file.Files
+import spray.json._
+import DefaultJsonProtocol._
 import geotrellis.spark.io._
 val p = Files.createTempDirectory(&quot;gt-store&quot;)
 val writer: LayerWriter[LayerId] = LayerWriter(p.toUri)
@@ -298,9 +300,42 @@ val layerId = LayerId(&quot;equalized&quot;, 0)
 writer.write(layerId, tlRDD, index.ZCurveKeyIndexMethod)
 </code></pre>
 <p>Take a look at the metadata in JSON format:</p>
-<pre class="prettyprint"><code class="language-scala">import spray.json._
-import DefaultJsonProtocol._
-println(AttributeStore(p.toUri).readMetadata[JsValue](layerId).prettyPrint)
+<pre class="prettyprint"><code class="language-scala">scala&gt; AttributeStore(p.toUri).readMetadata[JsValue](layerId).prettyPrint
+res16: String =
+{
+  &quot;extent&quot;: {
+    &quot;xmin&quot;: 431902.5,
+    &quot;ymin&quot;: 4313647.5,
+    &quot;xmax&quot;: 443512.5,
+    &quot;ymax&quot;: 4321147.5
+  },
+  &quot;layoutDefinition&quot;: {
+    &quot;extent&quot;: {
+      &quot;xmin&quot;: 431902.5,
+      &quot;ymin&quot;: 4313467.5,
+      &quot;xmax&quot;: 445342.5,
+      &quot;ymax&quot;: 4321147.5
+    },
+    &quot;tileLayout&quot;: {
+      &quot;layoutCols&quot;: 7,
+      &quot;layoutRows&quot;: 4,
+      &quot;tileCols&quot;: 128,
+      &quot;tileRows&quot;: 128
+    }
+  },
+  &quot;bounds&quot;: {
+    &quot;minKey&quot;: {
+      &quot;col&quot;: 0,
+      &quot;row&quot;: 0
+    },
+    &quot;maxKey&quot;: {
+      &quot;col&quot;: 6,
+      &quot;row&quot;: 3
+    }
+  },
+  &quot;cellType&quot;: &quot;uint16&quot;,
+  &quot;crs&quot;: &quot;+proj=utm +zone=16 +datum=WGS84 +units=m +no_defs &quot;
+}
 </code></pre>
 <h2><a href="#converting-to-rdd-and-tilelayerrdd" name="converting-to-rdd-and-tilelayerrdd" class="anchor"><span class="anchor-link"></span></a>Converting to <code>RDD</code> and <code>TileLayerRDD</code></h2>
 <p>Since a <code>RasterFrame</code> is just a <code>DataFrame</code> with extra metadata, the method <a href="http://rasterframes.io/latest/api/org/apache/spark/sql/Dataset.html#frdd:org.apache.spark.rdd.RDD[T]"><code>DataFrame.rdd</code></a> is available for simple conversion back to <code>RDD</code> space. The type returned by <code>.rdd</code> is dependent upon how you select it.</p>
