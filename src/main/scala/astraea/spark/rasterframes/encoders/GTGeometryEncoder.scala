@@ -20,30 +20,35 @@
 package astraea.spark.rasterframes.encoders
 
 import astraea.spark.rasterframes.jts.SpatialEncoders
-import geotrellis.vector.Point
 import org.apache.spark.sql.catalyst.ScalaReflection
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 import org.apache.spark.sql.catalyst.expressions.BoundReference
 import org.apache.spark.sql.catalyst.expressions.objects.NewInstance
+import geotrellis.vector.{Geometry ⇒ GTGeom}
+import org.apache.spark.annotation.Experimental
+
+import scala.reflect.runtime.universe._
 
 /**
+ * Experimental encoder for encoding Geotrellis vector types as JTS UDTs.
  *
  * @author sfitch 
  * @since 12/17/17
  */
-object PointEncoder extends SpatialEncoders {
-  def apply(): ExpressionEncoder[Point] = {
-    val userType = ScalaReflection.dataTypeFor[Point]
-    val schema = jtsPointEncoder.schema
+object GTGeometryEncoder extends SpatialEncoders {
+  @Experimental
+  def apply[G <: GTGeom: TypeTag](): ExpressionEncoder[G] = {
+    val userType = ScalaReflection.dataTypeFor[G]
+    val schema = jtsGeometryEncoder.schema
     val inputObject = BoundReference(0, userType, nullable = true)
 
-    val serializer = jtsPointEncoder.serializer.map(_.transform {
+    val serializer = jtsGeometryEncoder.serializer.map(_.transform {
       case r: BoundReference if r != inputObject ⇒
         InvokeSafely(inputObject, "jtsGeom", r.dataType)
     })
 
-    val deserializer = NewInstance(runtimeClass[Point], Seq(jtsPointEncoder.deserializer), userType, propagateNull = true)
+    val deserializer = NewInstance(runtimeClass[G], Seq(jtsGeometryEncoder.deserializer), userType, propagateNull = true)
 
-    ExpressionEncoder(schema, flat = true, serializer, deserializer, typeToClassTag[Point])
+    ExpressionEncoder(schema, flat = true, serializer, deserializer, typeToClassTag[G])
   }
 }

@@ -19,10 +19,9 @@
 
 package astraea.spark.rasterframes
 
-import astraea.spark.rasterframes.encoders.PointEncoder
 import geotrellis.proj4.LatLng
 import geotrellis.vector.Point
-import org.apache.spark.sql.Encoders
+import org.apache.spark.sql.functions._
 
 /**
  * Test rig for operations providing interop with JTS types.
@@ -34,26 +33,22 @@ class JTSSpec extends TestEnvironment with TestData with IntelliJPresentationCom
   import spark.implicits._
 
   describe("JTS interop") {
-    it("should allow filtering of tiles based on points") {
-      // TODO: Figure out how to get rid of this when Points are within other structures.
-      // Hoping UDFs aren't required.
-      implicit def pairEncoder = Encoders.tuple(Encoders.STRING, PointEncoder())
+    it("should allow joining and filtering of tiles based on points") {
       val rf = l8Sample(1).projectedRaster.toRF(10, 10).withBounds()
       val crs = rf.tileLayerMetadata.widen.crs
       val coords = Seq(
-        "one" -> Point(-78.6445222907, 38.3957546898).reproject(LatLng, crs),
-        "two" -> Point(-78.6601240367, 38.3976614324).reproject(LatLng, crs),
-        "three" -> Point( -78.6123381343, 38.4001666769).reproject(LatLng, crs)
+        "one" -> Point(-78.6445222907, 38.3957546898).reproject(LatLng, crs).jtsGeom,
+        "two" -> Point(-78.6601240367, 38.3976614324).reproject(LatLng, crs).jtsGeom,
+        "three" -> Point( -78.6123381343, 38.4001666769).reproject(LatLng, crs).jtsGeom
       )
 
       val locs = coords.toDF("id", "point")
+      val joined = rf.join(locs, contains($"bounds", $"point"))
+      assert(joined.count === coords.length)
 
-      //rf.show(false)
-      rf.printSchema()
-      locs.printSchema()
-
-      rf.drop($"tile").join(locs, contains($"bounds", $"point")).show(false)
+      val searchPoint = pointFromWKT(lit(coords.head._2.toText))
+      val filtered = rf.filter(contains($"bounds", searchPoint))
+      assert(filtered.count === 1)
     }
-
   }
 }

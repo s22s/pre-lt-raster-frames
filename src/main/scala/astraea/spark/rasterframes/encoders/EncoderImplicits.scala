@@ -38,7 +38,7 @@ import scala.reflect.runtime.universe._
 trait EncoderImplicits extends SpatialEncoders {
   implicit def singlebandTileEncoder = ExpressionEncoder[Tile]()
   implicit def multibandTileEncoder = ExpressionEncoder[MultibandTile]()
-  implicit val crsEncoder = CRSEncoder(): ExpressionEncoder[CRS]
+  implicit val crsEncoder = CRSEncoder()
   implicit val extentEncoder = ExpressionEncoder[Extent]()
   implicit val projectedExtentEncoder = ProjectedExtentEncoder()
   implicit val temporalProjectedExtentEncoder = TemporalProjectedExtentEncoder()
@@ -51,6 +51,5 @@ trait EncoderImplicits extends SpatialEncoders {
   implicit val spatialKeyEncoder = ExpressionEncoder[SpatialKey]()
   implicit val temporalKeyEncoder = ExpressionEncoder[TemporalKey]()
   implicit val spaceTimeKeyEncoder = ExpressionEncoder[SpaceTimeKey]()
-  implicit def pointEncoder = PointEncoder()
 }
 
