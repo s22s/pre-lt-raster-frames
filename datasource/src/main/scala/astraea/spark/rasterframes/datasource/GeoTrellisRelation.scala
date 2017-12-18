@@ -1,7 +1,7 @@
 /*
  * This software is licensed under the Apache 2 license, quoted below.
  *
- * Copyright 2017 Astraea, Inc.
+ * Copyright 2017 Azavea
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -17,24 +17,43 @@
  *
  */
 
-package astraea.spark.rasterframes.sources
+package astraea.spark.rasterframes.datasource
 
 import java.net.URI
 
+import geotrellis.raster.Tile
+import geotrellis.spark.io.file.FileLayerReader
+import geotrellis.spark.io.hadoop.HadoopLayerReader
+import geotrellis.spark.io.{FilteringLayerReader, Intersects}
+import geotrellis.spark.{LayerId, SpatialKey, TileLayerMetadata}
+import geotrellis.util.LazyLogging
+import geotrellis.vector.Extent
+import org.apache.spark.SparkContext
+import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.gt.types.TileUDT
+import org.apache.spark.sql.sources.{BaseRelation, Filter, PrunedFilteredScan}
+import org.apache.spark.sql.types.{DataTypes, StructField, StructType}
+import org.apache.spark.sql.{Row, SQLContext}
 import geotrellis.raster.Tile
 import geotrellis.spark._
 import geotrellis.spark.io._
 import geotrellis.spark.io.file.FileLayerReader
 import geotrellis.spark.io.hadoop.HadoopLayerReader
+import geotrellis.spark.io.Intersects
+import geotrellis.spark.{LayerId, SpatialKey, TileLayerMetadata}
 import geotrellis.util.LazyLogging
 import geotrellis.vector.Extent
-import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.gt.types._
 import org.apache.spark.sql.sources.{BaseRelation, Filter, PrunedFilteredScan}
 import org.apache.spark.sql.types.{DataTypes, StructField, StructType}
 import org.apache.spark.sql.{Row, SQLContext}
 
+
+
+/**
+ * @author echeipesh
+ */
 case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId, bbox: Option[Extent])
     extends BaseRelation
     with PrunedFilteredScan
