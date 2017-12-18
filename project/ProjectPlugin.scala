@@ -44,7 +44,8 @@ object ProjectPlugin extends AutoPlugin {
     resolvers ++= Seq(
       "locationtech-releases" at "https://repo.locationtech.org/content/groups/releases",
       "boundless-releases" at "https://repo.boundlessgeo.com/main/",
-      Resolver.bintrayRepo("s22s", "maven")
+      Resolver.bintrayRepo("s22s", "maven"),
+      "osgeo-releases" at "http://download.osgeo.org/webdav/geotools/"
     ),
     libraryDependencies ++= Seq(
       "com.chuusai" %% "shapeless" % "2.3.2",

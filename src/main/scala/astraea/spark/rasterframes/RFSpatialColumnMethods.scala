@@ -65,6 +65,17 @@ trait RFSpatialColumnMethods extends MethodExtensions[RasterFrame] {
   }
 
   /**
+   * Append a column containing the polygonal bounds of the row's spatial key.
+   * Coordinates are in native CRS.
+   * @param colName name of column to append. Defaults to "bounds"
+   * @return updated RasterFrame
+   */
+  def withBounds(colName: String = "bounds"): RasterFrame = {
+    val key2Bounds = udf(keyCol2Extent andThen (_.jtsGeom))
+    self.withColumn(colName, key2Bounds(self.spatialKeyColumn)).certify
+  }
+
+  /**
    * Append a column containing the center of the row's spatial key.
    * Coordinate is in native CRS.
    * @param colName name of column to append. Defaults to "center"

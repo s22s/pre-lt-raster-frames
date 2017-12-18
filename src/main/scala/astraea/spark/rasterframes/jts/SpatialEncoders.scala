@@ -21,13 +21,21 @@ package astraea.spark.rasterframes.jts
 
 
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
+import com.vividsolutions.jts.{geom ⇒ jts}
 
 /**
+ * Encoder implicits for JTS UDTs.
  *
  * @author sfitch 
  * @since 12/17/17
  */
 trait SpatialEncoders {
-  implicit def jtsPointEncoder = ExpressionEncoder[com.vividsolutions.jts.geom.Point]()
-
+  implicit def jtsGeometryEncoder = ExpressionEncoder[jts.Geometry]()
+  implicit def jtsPointEncoder = ExpressionEncoder[jts.Point]()
+  implicit def jtsLineStringEncoder = ExpressionEncoder[jts.LineString]()
+  implicit def jtsPolygonEncoder = ExpressionEncoder[jts.Polygon]()
+  implicit def jtsMultiPointEncoder = ExpressionEncoder[jts.MultiPoint]()
+  implicit def jtsMultiLineStringEncoder = ExpressionEncoder[jts.MultiLineString]()
+  implicit def jtsMultiPolygonEncoder = ExpressionEncoder[jts.MultiPolygon]()
+  implicit def jtsGeometryCollectionEncoder = ExpressionEncoder[jts.GeometryCollection]()
 }
