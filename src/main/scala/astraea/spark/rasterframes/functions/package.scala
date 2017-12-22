@@ -19,6 +19,8 @@ import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local._
 import geotrellis.raster._
 import geotrellis.raster.render.ascii.AsciiArtEncoder
+import org.apache.spark.sql.SQLContext
+import org.apache.spark.sql.gt.types
 
 import scala.reflect.runtime.universe._
 
@@ -226,5 +228,32 @@ package object functions {
       case ct: FloatCells ⇒ FloatConstantTile(value.floatValue(), cols, rows, ct)
       case ct: DoubleCells ⇒ DoubleConstantTile(value.doubleValue(), cols, rows, ct)
     }
+  }
+
+  def register(sqlContext: SQLContext): Unit = {
+    sqlContext.udf.register("rf_makeConstantTile", makeConstantTile)
+    sqlContext.udf.register("rf_tileToArrayInt", tileToArray[Int])
+    sqlContext.udf.register("rf_tileToArrayDouble", tileToArray[Double])
+    sqlContext.udf.register("rf_aggHistogram", aggHistogram)
+    sqlContext.udf.register("rf_aggStats", aggStats)
+    sqlContext.udf.register("rf_tileMin", tileMean)
+    sqlContext.udf.register("rf_tileMax", tileMean)
+    sqlContext.udf.register("rf_tileMean", tileMean)
+    sqlContext.udf.register("rf_tileSum", tileSum)
+    sqlContext.udf.register("rf_tileHistogram", tileHistogram)
+    sqlContext.udf.register("rf_tileStats", tileStats)
+    sqlContext.udf.register("rf_dataCells", dataCells)
+    sqlContext.udf.register("rf_nodataCells", dataCells)
+    sqlContext.udf.register("rf_localAggStats", localAggStats)
+    sqlContext.udf.register("rf_localAggMax", localAggMax)
+    sqlContext.udf.register("rf_localAggMin", localAggMin)
+    sqlContext.udf.register("rf_localAggMean", localAggMean)
+    sqlContext.udf.register("rf_localAggCount", localAggCount)
+    sqlContext.udf.register("rf_localAdd", localAdd)
+    sqlContext.udf.register("rf_localSubtract", localSubtract)
+    sqlContext.udf.register("rf_localMultiply", localMultiply)
+    sqlContext.udf.register("rf_localDivide", localDivide)
+    sqlContext.udf.register("rf_cellTypes", types.cellTypes)
+    sqlContext.udf.register("rf_renderAscii", renderAscii)
   }
 }

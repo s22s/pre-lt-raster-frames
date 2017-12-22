@@ -18,6 +18,9 @@
  */
 package astraea.spark.rasterframes.datasource
 
+import java.io.File
+import java.nio.file.Files
+
 import astraea.spark.rasterframes._
 import geotrellis.proj4.LatLng
 import geotrellis.raster._
@@ -28,18 +31,17 @@ import geotrellis.spark.io.index.ZCurveKeyIndexMethod
 import geotrellis.spark.tiling.ZoomedLayoutScheme
 import geotrellis.vector._
 import org.apache.spark.sql.functions._
+import org.scalactic.source.Position
+import org.scalatest.BeforeAndAfter
 
 /**
  * @author echeipesh
  */
-class GeoTrellisDataSourceSpec extends TestEnvironment with TestData with IntelliJPresentationCompilerHack {
+class GeoTrellisDataSourceSpec extends TestEnvironment with TestData with BeforeAndAfter with IntelliJPresentationCompilerHack {
 
   import sqlContext.implicits._
 
-  lazy val reader = FileLayerReader(outputLocalPath)
-  lazy val writer = FileLayerWriter(outputLocalPath)
-
-  val testRdd = {
+  lazy val testRdd = {
     val recs: Seq[(SpatialKey, Tile)] = for {
       col <- 2 to 5
       row <- 2 to 5
@@ -58,8 +60,13 @@ class GeoTrellisDataSourceSpec extends TestEnvironment with TestData with Intell
     ContextRDD(rdd, md)
   }
 
-  // TestEnvironment will clean this up
-  writer.write(LayerId("all-ones", 4), testRdd, ZCurveKeyIndexMethod)
+  before {
+    val outputDir = new File(outputLocalPath)
+    outputDir.deleteOnExit()
+    lazy val writer = LayerWriter(outputDir.toURI)
+    // TestEnvironment will clean this up
+    writer.write(LayerId("all-ones", 4), testRdd, ZCurveKeyIndexMethod)
+  }
 
   describe("GeoTrellis DataSource") {
     val dfr = sqlContext.read
@@ -89,11 +96,13 @@ class GeoTrellisDataSourceSpec extends TestEnvironment with TestData with Intell
     }
 
     it("should respect predicate push-down") {
-      val df = dfr.load().where(contains($"spatial_key", makePoint(-88, 60)))
+      val df = dfr.load()
+        .asRF
+        .withBounds()
+        .where(contains($"bounds", makePoint(-88, 60)))
       df.printSchema()
       df.show(false)
     }
-
 
     it("should invoke Encoder[Extent]"){
       val df = dfr.load().select($"spatial_key".as[SpatialKey], $"tile")

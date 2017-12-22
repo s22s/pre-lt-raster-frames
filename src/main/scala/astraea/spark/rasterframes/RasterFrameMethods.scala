@@ -104,7 +104,7 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with RFSpatialCol
     val df = self.withColumn(TEMPORAL_KEY_COLUMN, litKey())
 
     df.setSpatialColumnRole(df(SPATIAL_KEY_COLUMN), newTlm)
-      .setColumnRole(df(TEMPORAL_KEY_COLUMN), classOf[TemporalKey].getSimpleName)
+      .setTemporalColumnRole(df(TEMPORAL_KEY_COLUMN))
       .certify
   }
 

@@ -25,6 +25,7 @@ import org.apache.spark.sql.SQLGeometricConstructorFunctions._
 import org.apache.spark.sql._
 import org.apache.spark.sql.functions.udf
 import astraea.spark.rasterframes.util._
+import org.apache.spark.annotation.Experimental
 import org.apache.spark.sql.catalyst.expressions.Literal
 
 /**
@@ -65,7 +66,7 @@ trait SpatialConverters {
     udf(() ⇒ ST_MakeBBOX(lowerX, lowerY, upperX, upperY)).apply().as("makeBBox()")
   }.as[Geometry]
 
-  //import org.apache.spark.sql.functions._
+  @Experimental
   def geomlit(geom: Geometry) = geom match {
     case g: Point ⇒ new Column(Literal(g, PointUDT.sqlType))
     case g: Polygon ⇒ new Column(Literal(g, PolygonUDT.sqlType))

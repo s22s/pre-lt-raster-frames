@@ -16,7 +16,6 @@
 
 package org.apache.spark.sql
 
-import org.apache.spark.annotation.Experimental
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.analysis.FunctionRegistry
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
@@ -33,8 +32,7 @@ package object gt {
     def asColumn: Column = Column(expression)
   }
 
-  @Experimental
-  def gtRegister(sqlContext: SQLContext): Unit = {
+  def register(sqlContext: SQLContext): Unit = {
     gt.types.Registrator.register()
   }
 

@@ -17,24 +17,26 @@
  *
  */
 
-package astraea.spark.rasterframes
+package astraea.spark.rasterframes.jts
 
-import geotrellis.util.MethodExtensions
-import org.apache.spark.sql.{SQLContext, SQLTypes, gt}
+import geotrellis.util.LazyLogging
+import org.apache.spark.sql.catalyst.plans.logical.{Filter, LogicalPlan}
+import org.apache.spark.sql.catalyst.rules.Rule
 
 /**
- * Extension methods on [[SQLContext]] for initializing RasterFrames support in Catalyst.
+ * Logical plan manipulations to handle spatial queries on tile components.
  *
  * @author sfitch 
- * @since 10/30/17
+ * @since 12/21/17
  */
-trait SQLContextMethods extends MethodExtensions[SQLContext] {
-  def withRasterFrames: SQLContext = {
-    SQLTypes.init(self) // <-- JTS types.
-    gt.register(self)
-    functions.register(self)
-    expressions.register(self)
-    jts.register(self)
-    self
+object SpatialRules extends Rule[LogicalPlan] with LazyLogging {
+  def apply(plan: LogicalPlan): LogicalPlan = {
+    logger.debug(s"Evaluating $plan")
+    plan.transform {
+      //case f @ Filter(cond, lp) ⇒ println(f); f
+      case lp: LogicalPlan ⇒ lp.transformExpressionsDown {
+        case s ⇒ s
+      }
+    }
   }
 }

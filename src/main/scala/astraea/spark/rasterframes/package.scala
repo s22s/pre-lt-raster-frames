@@ -17,19 +17,13 @@
 package astraea.spark
 
 import astraea.spark.rasterframes.encoders.EncoderImplicits
-import geotrellis.raster.{ProjectedRaster, Tile, TileFeature}
-import geotrellis.spark.{Bounds, ContextRDD, Metadata, SpaceTimeKey, SpatialComponent, TileLayerMetadata}
+import geotrellis.raster.{Tile, TileFeature}
+import geotrellis.spark.{Bounds, ContextRDD, Metadata, TileLayerMetadata}
 import geotrellis.util.GetComponent
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql._
-import org.apache.spark.sql.catalyst.analysis.UnresolvedAttribute
-import org.apache.spark.sql.catalyst.expressions.{Alias, AttributeReference}
 import shapeless.tag.@@
-import shapeless.{Lub, tag}
-import spray.json.JsonFormat
-
-import scala.reflect.ClassTag
-import scala.reflect.runtime.universe._
+import shapeless.tag
 
 /**
  *  Module providing support for RasterFrames.
@@ -38,7 +32,9 @@ import scala.reflect.runtime.universe._
  * @author sfitch
  * @since 7/18/17
  */
-package object rasterframes extends EncoderImplicits with ColumnFunctions {
+package object rasterframes extends ColumnFunctions
+  with Implicits with EncoderImplicits {
+
   type Statistics = astraea.spark.rasterframes.functions.CellStatsAggregateFunction.Statistics
 
   /**
@@ -95,6 +91,15 @@ package object rasterframes extends EncoderImplicits with ColumnFunctions {
     type get[M] = GetComponent[M, Bounds[K]]
   }
 
+  type TileFeatureLayerRDD[K, D] =
+    RDD[(K, TileFeature[Tile, D])] with Metadata[TileLayerMetadata[K]]
+
+  object TileFeatureLayerRDD {
+    def apply[K, D](rdd: RDD[(K, TileFeature[Tile, D])],
+      metadata: TileLayerMetadata[K]): TileFeatureLayerRDD[K, D] =
+      new ContextRDD(rdd, metadata)
+  }
+
   trait HasCellType[T] extends Serializable
   object HasCellType {
     implicit val intHasCellType = new HasCellType[Int] {}
@@ -102,73 +107,5 @@ package object rasterframes extends EncoderImplicits with ColumnFunctions {
     implicit val byteHasCellType = new HasCellType[Byte] {}
     implicit val shortHasCellType = new HasCellType[Short] {}
     implicit val floatHasCellType = new HasCellType[Float] {}
-  }
-
-  // ----------- Extension Method Injections: Beware the Ugly ------------
-
-  implicit class WithSparkSessionMethods(val self: SparkSession)
-    extends SparkSessionMethods
-
-  implicit class WithSQLContextMethods(val self: SQLContext)
-    extends SQLContextMethods
-
-  implicit class WithProjectedRasterMethods(val self: ProjectedRaster[Tile])
-      extends ProjectedRasterMethods
-
-  implicit class WithDataFrameMethods(val self: DataFrame) extends DataFrameMethods
-
-  implicit class WithRasterFrameMethods(val self: RasterFrame) extends RasterFrameMethods
-
-  implicit class WithSpatialContextRDDMethods[K: SpatialComponent: JsonFormat: TypeTag](
-    val self: RDD[(K, Tile)] with Metadata[TileLayerMetadata[K]]
-  )(implicit spark: SparkSession)
-      extends SpatialContextRDDMethods[K]
-
-  implicit class WithSpatioTemporalContextRDDMethods(
-    val self: RDD[(SpaceTimeKey, Tile)] with Metadata[TileLayerMetadata[SpaceTimeKey]]
-  )(implicit spark: SparkSession)
-      extends SpatioTemporalContextRDDMethods
-
-  implicit class WithTFContextRDDMethods[K: SpatialComponent: JsonFormat: ClassTag: TypeTag,
-                                         D: TypeTag](
-    val self: RDD[(K, TileFeature[Tile, D])] with Metadata[TileLayerMetadata[K]]
-  )(implicit spark: SparkSession)
-      extends TFContextRDDMethods[K, D]
-
-  implicit class WithTFSTContextRDDMethods[D: TypeTag](
-    val self: RDD[(SpaceTimeKey, TileFeature[Tile, D])] with Metadata[TileLayerMetadata[SpaceTimeKey]]
-  )(implicit spark: SparkSession)
-      extends TFSTContextRDDMethods[D]
-
-  private[astraea] implicit class WithMetadataMethods[R: JsonFormat](val self: R)
-      extends MetadataMethods[R]
-
-  type TileFeatureLayerRDD[K, D] =
-    RDD[(K, TileFeature[Tile, D])] with Metadata[TileLayerMetadata[K]]
-
-  object TileFeatureLayerRDD {
-    def apply[K, D](rdd: RDD[(K, TileFeature[Tile, D])],
-                    metadata: TileLayerMetadata[K]): TileFeatureLayerRDD[K, D] =
-      new ContextRDD(rdd, metadata)
-  }
-
-  private[rasterframes] implicit class WithWiden[A, B](thing: Either[A, B]) {
-    /** Returns the value as a LUB of the Left & Right items. */
-    def widen[Out](implicit ev: Lub[A, B, Out]): Out =
-      thing.fold(identity, identity).asInstanceOf[Out]
-  }
-
-  private[rasterframes] implicit class WithCombine[T](left: Option[T]) {
-    def combine[A, R >: A](a: A)(f: (T, A) ⇒ R): R = left.map(f(_, a)).getOrElse(a)
-    def tupleWith[R](right: Option[R]): Option[(T, R)] = left.flatMap(l ⇒ right.map((l, _)))
-  }
-
-  implicit class NamedColumn(col: Column) {
-    def columnName: String = col.expr match {
-      case ua: UnresolvedAttribute ⇒ ua.name
-      case ar: AttributeReference ⇒ ar.name
-      case as: Alias ⇒ as.name
-      case o ⇒ o.prettyName
-    }
   }
 }
