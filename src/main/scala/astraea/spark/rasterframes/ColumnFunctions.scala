@@ -56,7 +56,7 @@ trait ColumnFunctions extends SpatialPredicates with SpatialConverters {
   }
 
   /** Query the number of (cols, rows) in a Tile. */
-  def tileDimensions(col: Column): Column = expressions.Dimensions(col.expr).asColumn
+  def tileDimensions(col: Column): Column = expressions.DimensionsExpression(col.expr).asColumn
 
   /** Flattens Tile into an array. A numeric type parameter is required*/
   @Experimental
@@ -78,7 +78,7 @@ trait ColumnFunctions extends SpatialPredicates with SpatialConverters {
 
   /** Extract the Tile's cell type */
   def cellType(col: Column): TypedColumn[Any, String] =
-    expressions.CellType(col.expr).asColumn.as[String]
+    expressions.CellTypeExpression(col.expr).asColumn.as[String]
 
   /** Assign a `NoData` value to the Tiles. */
   def withNoData(col: Column, nodata: Double) = withAlias("withNoData", col)(

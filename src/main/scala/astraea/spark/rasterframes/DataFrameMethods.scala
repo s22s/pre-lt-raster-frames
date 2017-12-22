@@ -59,18 +59,25 @@ trait DataFrameMethods extends MethodExtensions[DataFrame] {
     analyzed.find(selector(column)).map(reader)
   }
 
-  /** Set column role tag for subsequent interpretation. */
-  private[astraea] def setColumnRole(column: Column, roleName: String): DataFrame =
-    addColumnMetadata(column, _.putString(SPATIAL_ROLE_KEY, roleName))
+//  /** Set column role tag for subsequent interpretation. */
+//  private[astraea] def setColumnRole(column: Column, roleName: String): DataFrame =
+//    addColumnMetadata(column, _.putString(SPATIAL_ROLE_KEY, roleName))
 
-  private[astraea] def setSpatialColumnRole[K: SpatialComponent: JsonFormat](column: Column, md: TileLayerMetadata[K]) =
+
+  private[astraea]
+  def setSpatialColumnRole[K: SpatialComponent: JsonFormat](
+    column: Column, md: TileLayerMetadata[K]) =
     addColumnMetadata(self(SPATIAL_KEY_COLUMN),
-      _.putMetadata(CONTEXT_METADATA_KEY, md.asColumnMetadata)
-        .putString(SPATIAL_ROLE_KEY, classOf[SpatialKey].getSimpleName)
+      _.attachContext(md.asColumnMetadata).tagSpatialKey
     )
 
+  private[astraea]
+  def setTemporalColumnRole(column: Column) =
+    addColumnMetadata(self(SPATIAL_KEY_COLUMN), _.tagTemporalKey)
+
   /** Get the role tag the column plays in the RasterFrame, if any. */
-  private[astraea] def getColumnRole(column: Column): Option[String] =
+  private[astraea]
+  def getColumnRole(column: Column): Option[String] =
     fetchMetadataValue(column, _.metadata.getString(SPATIAL_ROLE_KEY))
 
   /** Converts this DataFrame to a RasterFrame after ensuring it has:
@@ -131,7 +138,7 @@ trait DataFrameMethods extends MethodExtensions[DataFrame] {
   @throws[IllegalArgumentException]
   def asRF(spatialKey: Column, temporalKey: Column, tlm: TileLayerMetadata[SpaceTimeKey]): RasterFrame =
     self.setSpatialColumnRole(spatialKey, tlm)
-      .setColumnRole(temporalKey, classOf[TemporalKey].getSimpleName)
+      .setTemporalColumnRole(temporalKey)
       .asRF
 
   /**

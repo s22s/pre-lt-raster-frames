@@ -19,22 +19,20 @@
 
 package astraea.spark.rasterframes
 
+import geotrellis.spark.{SpatialKey, TemporalKey}
 import geotrellis.util.MethodExtensions
-import org.apache.spark.sql.{SQLContext, SQLTypes, gt}
+import org.apache.spark.sql.types.{Metadata, MetadataBuilder}
 
 /**
- * Extension methods on [[SQLContext]] for initializing RasterFrames support in Catalyst.
+ * Convenience to deal with boilerplate associated with adding
+ * additional metadata to a column.
  *
  * @author sfitch 
- * @since 10/30/17
+ * @since 12/21/17
  */
-trait SQLContextMethods extends MethodExtensions[SQLContext] {
-  def withRasterFrames: SQLContext = {
-    SQLTypes.init(self) // <-- JTS types.
-    gt.register(self)
-    functions.register(self)
-    expressions.register(self)
-    jts.register(self)
-    self
-  }
+private[astraea]
+abstract class MetadataBuilderMethods extends MethodExtensions[MetadataBuilder] {
+  def attachContext(md: Metadata) = self.putMetadata(CONTEXT_METADATA_KEY, md)
+  def tagSpatialKey = self.putString(SPATIAL_ROLE_KEY, classOf[SpatialKey].getSimpleName)
+  def tagTemporalKey = self.putString(SPATIAL_ROLE_KEY, classOf[TemporalKey].getSimpleName)
 }

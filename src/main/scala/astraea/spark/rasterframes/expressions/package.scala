@@ -20,10 +20,11 @@
 package astraea.spark.rasterframes
 
 import org.apache.spark.sql.catalyst.InternalRow
-import org.apache.spark.sql.catalyst.analysis.TypeCheckResult
+import org.apache.spark.sql.catalyst.analysis.{FunctionRegistry, TypeCheckResult}
 import org.apache.spark.sql.catalyst.analysis.TypeCheckResult.{TypeCheckFailure, TypeCheckSuccess}
 import org.apache.spark.sql.catalyst.expressions._
 import org.apache.spark.sql.catalyst.expressions.codegen.{CodegenContext, ExprCode}
+import org.apache.spark.sql.{SQLContext, gt}
 import org.apache.spark.sql.gt.InternalRowTile
 import org.apache.spark.sql.gt.types.TileUDT
 import org.apache.spark.sql.types._
@@ -36,9 +37,9 @@ import org.apache.spark.sql.types._
  */
 package object expressions {
   import InternalRowTile.C._
-  private def row(input: Any) = input.asInstanceOf[InternalRow]
+  private[expressions] def row(input: Any) = input.asInstanceOf[InternalRow]
 
-  protected trait RequiresTile { self: UnaryExpression ⇒
+  trait RequiresTile { self: UnaryExpression ⇒
     abstract override def checkInputDataTypes(): TypeCheckResult = {
       if(child.dataType.isInstanceOf[TileUDT]) TypeCheckSuccess
       else TypeCheckFailure(
@@ -47,42 +48,18 @@ package object expressions {
     }
   }
 
-  /** Extract a Tile's cell type */
-  case class CellType(child: Expression) extends UnaryExpression with RequiresTile {
 
-    def dataType: DataType = StringType
 
-    override protected def nullSafeEval(input: Any): Any =
-      row(input).getUTF8String(CELL_TYPE)
+  /** Unary expression builder builder. */
+  private def ub[A, B](f: A ⇒ B)(a: Seq[A]) = f(a.head)
 
-    protected def doGenCode(ctx: CodegenContext, ev: ExprCode): ExprCode =
-      defineCodeGen(ctx, ev, c ⇒ s"$c.getUTF8String($CELL_TYPE);")
-   }
+  def register(sqlContext: SQLContext): Unit = {
+    // Expression-oriented functions have a different registration scheme
+    // Currently have to register with the `builtin` registry due to Spark data hiding.
+    val registry: FunctionRegistry = gt.registry(sqlContext)
 
-  /** Extract a Tile's dimensions */
-  case class Dimensions(child: Expression) extends UnaryExpression with RequiresTile {
-    def dataType = StructType(Seq(
-      StructField("cols", ShortType),
-      StructField("rows", ShortType)
-    ))
-
-    override protected def nullSafeEval(input: Any): Any = {
-      val r = row(input)
-      val cols = r.getShort(COLS)
-      val rows = r.getShort(ROWS)
-      InternalRow(cols, rows)
-    }
-
-    protected def doGenCode(ctx: CodegenContext, ev: ExprCode): ExprCode = {
-      val cols = ctx.freshName("cols")
-      val rows = ctx.freshName("rows")
-      nullSafeCodeGen(ctx, ev, eval ⇒
-        s"""
-           final short $cols = $eval.getShort($COLS);
-           final short $rows = $eval.getShort($ROWS);
-           ${ev.value} = new GenericInternalRow(new Object[] { $cols, $rows });
-         """
-      )
-    }
+    registry.registerFunction("rf_explodeTiles", ExplodeTileExpression.apply(1.0, _))
+    registry.registerFunction("rf_cellType", ub(CellTypeExpression.apply))
+    registry.registerFunction("rf_tileDimensions", ub(DimensionsExpression.apply))
   }
 }

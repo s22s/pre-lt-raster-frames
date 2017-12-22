@@ -32,8 +32,8 @@ import scala.reflect.runtime.universe._
  * @since 7/18/17
  */
 abstract class SpatialContextRDDMethods[K: SpatialComponent: JsonFormat: TypeTag](implicit spark: SparkSession)
-    extends MethodExtensions[RDD[(K, Tile)] with Metadata[TileLayerMetadata[K]]] {
-
+    extends MethodExtensions[RDD[(K, Tile)]
+      with Metadata[TileLayerMetadata[K]]] {
 
   def toRF: RasterFrame = toRF(TILE_COLUMN)
 
@@ -66,7 +66,7 @@ abstract class SpatioTemporalContextRDDMethods(implicit spark: SparkSession)
 
     df
       .setSpatialColumnRole(df(SPATIAL_KEY_COLUMN), self.metadata)
-      .setColumnRole(df(TEMPORAL_KEY_COLUMN), classOf[TemporalKey].getSimpleName)
+      .setTemporalColumnRole(df(TEMPORAL_KEY_COLUMN))
       .certify
   }
 }
@@ -109,7 +109,7 @@ abstract class TFSTContextRDDMethods[D: TypeTag](implicit spark: SparkSession)
 
     df
       .setSpatialColumnRole(df(SPATIAL_KEY_COLUMN), self.metadata)
-      .setColumnRole(df(TEMPORAL_KEY_COLUMN), classOf[TemporalKey].getSimpleName)
+      .setTemporalColumnRole(df(TEMPORAL_KEY_COLUMN))
       .certify
   }
 }

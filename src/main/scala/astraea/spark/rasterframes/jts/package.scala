@@ -17,28 +17,25 @@
  *
  */
 
-package astraea.spark.rasterframes.expressions
+package astraea.spark.rasterframes
 
 import org.apache.spark.sql.SQLContext
-import org.apache.spark.sql.catalyst.analysis.FunctionRegistry
-import org.apache.spark.sql.gt
+import org.apache.spark.sql.catalyst.plans.logical.LogicalPlan
+import org.apache.spark.sql.catalyst.rules.Rule
 
 /**
+ * Module support routines.
  *
  * @author sfitch 
- * @since 10/11/17
+ * @since 12/21/17
  */
-private[rasterframes] object Registrator {
-  /** Unary expression builder builder. */
-  private def ub[A, B](f: A ⇒ B)(a: Seq[A]) = f(a.head)
+package object jts {
+  private def register(sqlContext: SQLContext, rule: Rule[LogicalPlan]): Unit = {
+    if(!sqlContext.experimental.extraOptimizations.contains(rule))
+      sqlContext.experimental.extraOptimizations :+= rule
+  }
 
   def register(sqlContext: SQLContext): Unit = {
-    // Expression-oriented functions have a different registration scheme
-    // Currently have to register with the `builtin` registry due to Spark data hiding.
-    val registry: FunctionRegistry = gt.registry(sqlContext)
-
-    registry.registerFunction("rf_explodeTiles", ExplodeTileExpression.apply(1.0, _))
-    registry.registerFunction("rf_cellType", ub(CellType.apply))
-    registry.registerFunction("rf_tileDimensions", ub(Dimensions.apply))
+    register(sqlContext, SpatialRules)
   }
 }
