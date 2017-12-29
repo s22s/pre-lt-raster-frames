@@ -20,8 +20,12 @@
 package astraea.spark.rasterframes
 
 import geotrellis.raster.mapalgebra.local.LocalTileBinaryOp
-import org.apache.spark.sql.{Column, Encoder}
+import org.apache.spark.sql.{Column, Encoder, SQLContext}
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
+import org.apache.spark.sql.catalyst.plans.logical.LogicalPlan
+import org.apache.spark.sql.catalyst.rules.Rule
+import org.apache.spark.sql.gt.analyzer
+
 import scala.reflect.runtime.universe._
 
 
@@ -37,12 +41,6 @@ package object util {
     def |>[B](f: A ⇒ B): B = f(a)
   }
 
-  private[rasterframes]
-  implicit def arrayEnc[T: TypeTag]: Encoder[Array[T]] = ExpressionEncoder()
-
-  private[rasterframes]
-  implicit def genEnc[T: TypeTag]: Encoder[T] = ExpressionEncoder()
-
   /** Tags output column with a nicer name. */
   private[rasterframes]
   def withAlias(name: String, inputs: Column*)(output: Column) = {
@@ -54,4 +52,13 @@ package object util {
   private[rasterframes]
   def opName(op: LocalTileBinaryOp) =
     op.getClass.getSimpleName.replace("$", "").toLowerCase
+
+  private[rasterframes]
+  def registerOptimization(sqlContext: SQLContext, rule: Rule[LogicalPlan]): Unit = {
+    if(!sqlContext.experimental.extraOptimizations.contains(rule))
+      sqlContext.experimental.extraOptimizations :+= rule
+  }
+  def registerResolution(sqlContext: SQLContext, rule: Rule[LogicalPlan]): Unit = {
+    analyzer(sqlContext).extendedResolutionRules
+  }
 }

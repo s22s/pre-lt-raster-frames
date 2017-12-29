@@ -21,6 +21,7 @@ package astraea.spark.rasterframes.datasource
 
 import java.net.URI
 
+import astraea.spark.rasterframes.util.registerOptimization
 import geotrellis.spark._
 import org.apache.spark.annotation.Experimental
 import org.apache.spark.sql._
@@ -37,6 +38,8 @@ class GeoTrellisDataSource extends DataSourceRegister with RelationProvider {
   def createRelation(sqlContext: SQLContext, parameters: Map[String, String]): BaseRelation = {
     require(parameters.contains("layer"), "'layer' parameter for raster layer name required.")
     require(parameters.contains("zoom"), "'zoom' parameter for raster layer zoom level required.")
+
+    registerOptimization(sqlContext, SpatialFilterPushdownRules)
 
     val uri: URI = URI.create(parameters("uri"))
     val layerId: LayerId = LayerId(parameters("layer"), parameters("zoom").toInt)

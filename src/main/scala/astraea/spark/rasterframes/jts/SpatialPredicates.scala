@@ -18,10 +18,12 @@
  */
 
 package astraea.spark.rasterframes.jts
+import astraea.spark.rasterframes.expressions.IntersectsExpression
 import org.apache.spark.sql.Column
 import org.apache.spark.sql.SQLSpatialFunctions._
 import org.apache.spark.sql.functions.udf
 import astraea.spark.rasterframes.util._
+import org.apache.spark.sql.gt._
 
 /**
  * UDF wrappers around JTS spark relations.
@@ -30,6 +32,7 @@ import astraea.spark.rasterframes.util._
  * @since 12/17/17
  */
 trait SpatialPredicates {
+  import astraea.spark.rasterframes.encoders.SparkDefaultEncoders._
   def contains(left: Column, right: Column) = withAlias("contains", left, right)(
     udf(ST_Contains).apply(left, right)
   ).as[Boolean]
@@ -45,9 +48,10 @@ trait SpatialPredicates {
   def equals(left: Column, right: Column) = withAlias("equals", left, right)(
     udf(ST_Equals).apply(left, right)
   ).as[Boolean]
-  def intersects(left: Column, right: Column) = withAlias("intersects", left, right)(
-    udf(ST_Intersects).apply(left, right)
-  ).as[Boolean]
+  def intersects(left: Column, right: Column) = IntersectsExpression(left.expr, right.expr).asColumn
+  //withAlias("intersects", left, right)(
+  //  udf(ST_Intersects).apply(left, right)
+  //).as[Boolean]
   def overlaps(left: Column, right: Column) = withAlias("overlaps", left, right)(
     udf(ST_Overlaps).apply(left, right)
   ).as[Boolean]
@@ -57,4 +61,8 @@ trait SpatialPredicates {
   def within(left: Column, right: Column) = withAlias("within", left, right)(
     udf(ST_Within).apply(left, right)
   ).as[Boolean]
+}
+
+object SpatialPredicates {
+
 }

@@ -19,6 +19,7 @@
 
 package astraea.spark.rasterframes
 
+import com.vividsolutions.jts.geom.Point
 import geotrellis.proj4.LatLng
 import geotrellis.spark.SpatialKey
 import geotrellis.spark.tiling.MapKeyTransform
@@ -59,21 +60,21 @@ trait RFSpatialColumnMethods extends MethodExtensions[RasterFrame] {
    * @param colName name of column to append. Defaults to "extent"
    * @return updated RasterFrame
    */
-  def withExtent(colName: String = "extent"): RasterFrame = {
+  def withExtent(colName: String = EXTENT_COLUMN.columnName): RasterFrame = {
     val key2Extent = udf(keyCol2Extent)
     self.withColumn(colName, key2Extent(self.spatialKeyColumn)).certify
   }
 
-  /**
-   * Append a column containing the polygonal bounds of the row's spatial key.
-   * Coordinates are in native CRS.
-   * @param colName name of column to append. Defaults to "bounds"
-   * @return updated RasterFrame
-   */
-  def withBounds(colName: String = "bounds"): RasterFrame = {
-    val key2Bounds = udf(keyCol2Extent andThen (_.jtsGeom))
-    self.withColumn(colName, key2Bounds(self.spatialKeyColumn)).certify
-  }
+//  /**
+//   * Append a column containing the polygonal bounds of the row's spatial key.
+//   * Coordinates are in native CRS.
+//   * @param colName name of column to append. Defaults to "bounds"
+//   * @return updated RasterFrame
+//   */
+//  def withBounds(colName: String = "bounds"): RasterFrame = {
+//    val key2Bounds = udf(keyCol2Extent andThen (_.jtsGeom))
+//    self.withColumn(colName, key2Bounds(self.spatialKeyColumn)).certify
+//  }
 
   /**
    * Append a column containing the center of the row's spatial key.
@@ -81,9 +82,9 @@ trait RFSpatialColumnMethods extends MethodExtensions[RasterFrame] {
    * @param colName name of column to append. Defaults to "center"
    * @return updated RasterFrame
    */
-  def withCenter(colName: String = "center"): RasterFrame = {
+  def withCenter(colName: String = CENTER_COLUMN.columnName): RasterFrame = {
     val key2Center = udf(keyCol2Extent andThen (_.center) andThen (c ⇒ (c.x, c.y)))
-    self.withColumn(colName, key2Center(self.spatialKeyColumn).cast(RFSpatialColumnMethods.PointStructType)).certify
+    self.withColumn(colName, key2Center(self.spatialKeyColumn).as[Point]).certify
   }
 
   /**
@@ -103,7 +104,7 @@ trait RFSpatialColumnMethods extends MethodExtensions[RasterFrame] {
    * @param applyOrdering if true, adds `.orderBy(asc(colName))` to result. Defaults to `true`
    * @return RasterFrame with index column.
    */
-  def withSpatialIndex(colName: String = "spatial_index", applyOrdering: Boolean = true): RasterFrame = {
+  def withSpatialIndex(colName: String = SPATIAL_INDEX_COLUMN.columnName, applyOrdering: Boolean = true): RasterFrame = {
     val zindex = udf(keyCol2LatLng andThen (p ⇒ Z2SFC.index(p._1, p._2).z))
     self.withColumn(colName, zindex(self.spatialKeyColumn)) match {
       case rf if applyOrdering ⇒ rf.orderBy(asc(colName)).certify
@@ -113,6 +114,6 @@ trait RFSpatialColumnMethods extends MethodExtensions[RasterFrame] {
 }
 
 object RFSpatialColumnMethods {
-  private val PointStructType = StructType(Seq(StructField("x", DoubleType), StructField("y", DoubleType)))
-  private val LngLatStructType = StructType(Seq(StructField("longitude", DoubleType), StructField("latitude", DoubleType)))
+  //private[rasterframes] val PointStructType = StructType(Seq(StructField("x", DoubleType), StructField("y", DoubleType)))
+  private[rasterframes] val LngLatStructType = StructType(Seq(StructField("longitude", DoubleType), StructField("latitude", DoubleType)))
 }

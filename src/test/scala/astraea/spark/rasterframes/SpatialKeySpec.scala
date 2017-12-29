@@ -29,7 +29,8 @@ import org.locationtech.geomesa.curve.{Z2SFC, Z3SFC}
  * @author sfitch 
  * @since 12/15/17
  */
-class SpatialKeySpec  extends TestEnvironment with TestData {
+class SpatialKeySpec extends TestEnvironment with TestData {
+  assert(!spark.sparkContext.isStopped)
 
   import spark.implicits._
 

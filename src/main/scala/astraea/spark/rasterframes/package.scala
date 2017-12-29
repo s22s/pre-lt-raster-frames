@@ -16,14 +16,17 @@
 
 package astraea.spark
 
-import astraea.spark.rasterframes.encoders.EncoderImplicits
+import astraea.spark.rasterframes.encoders.GeoTrellisEncoders
+import astraea.spark.rasterframes.jts.SpatialEncoders
 import geotrellis.raster.{Tile, TileFeature}
-import geotrellis.spark.{Bounds, ContextRDD, Metadata, TileLayerMetadata}
+import geotrellis.spark.{Bounds, ContextRDD, Metadata, SpatialKey, TemporalKey, TileLayerMetadata}
 import geotrellis.util.GetComponent
+import geotrellis.vector.Extent
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql._
 import shapeless.tag.@@
 import shapeless.tag
+import org.apache.spark.sql.functions._
 
 /**
  *  Module providing support for RasterFrames.
@@ -33,9 +36,9 @@ import shapeless.tag
  * @since 7/18/17
  */
 package object rasterframes extends ColumnFunctions
-  with Implicits with EncoderImplicits {
-
+  with Implicits with GeoTrellisEncoders with SpatialEncoders {
   type Statistics = astraea.spark.rasterframes.functions.CellStatsAggregateFunction.Statistics
+  import astraea.spark.rasterframes.encoders.SparkDefaultEncoders._
 
   /**
    * Initialization injection point. Must be called before any RasterFrame
@@ -45,22 +48,32 @@ package object rasterframes extends ColumnFunctions
   def rfInit(sqlContext: SQLContext): Unit = sqlContext.withRasterFrames
 
   /** Default RasterFrame spatial column name. */
-  val SPATIAL_KEY_COLUMN = "spatial_key"
+  val SPATIAL_KEY_COLUMN = col("spatial_key").as[SpatialKey]
 
   /** Default RasterFrame temporal column name. */
-  val TEMPORAL_KEY_COLUMN = "temporal_key"
+  val TEMPORAL_KEY_COLUMN = col("temporal_key").as[TemporalKey]
+
+  /** Default RasterFrame column name for an tile extent value. */
+  val EXTENT_COLUMN = col("extent").as[Extent]
+
+  /** Default RasterFrame column name for the center coordinates of the tile's extent. */
+  val CENTER_COLUMN = col("center")
+
+  /** Default RAsterFrame column name for an added spatial index. */
+  val SPATIAL_INDEX_COLUMN = col("spatial_index").as[Long]
 
   /** Default RasterFrame tile column name. */
-  val TILE_COLUMN = "tile"
+  // This is a `def` because `TileUDF` needs to be initialized first.
+  def TILE_COLUMN = col("tile").as[Tile]
 
   /** Default RasterFrame [[TileFeature.data]] column name. */
-  val TILE_FEATURE_DATA_COLUMN = "tile_data"
+  val TILE_FEATURE_DATA_COLUMN = col("tile_data")
+
+  /** Default column index column for the cells of exploded tiles. */
+  val COLUMN_INDEX_COLUMN = col("column_index").as[Int]
 
   /** Default teil column index column for the cells of exploded tiles. */
-  val COLUMN_INDEX_COLUMN = "column_index"
-
-  /** Default teil column index column for the cells of exploded tiles. */
-  val ROW_INDEX_COLUMN = "row_index"
+  val ROW_INDEX_COLUMN = col("row_index").as[Int]
 
   /** Key under which ContextRDD metadata is stored. */
   private[rasterframes] val CONTEXT_METADATA_KEY = "_context"

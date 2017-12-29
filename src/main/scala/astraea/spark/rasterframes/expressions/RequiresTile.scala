@@ -17,26 +17,24 @@
  *
  */
 
-package astraea.spark.rasterframes.jts
+package astraea.spark.rasterframes.expressions
 
-import geotrellis.util.LazyLogging
-import org.apache.spark.sql.catalyst.plans.logical.{Filter, LogicalPlan}
-import org.apache.spark.sql.catalyst.rules.Rule
+import org.apache.spark.sql.catalyst.analysis.TypeCheckResult
+import org.apache.spark.sql.catalyst.analysis.TypeCheckResult.{TypeCheckFailure, TypeCheckSuccess}
+import org.apache.spark.sql.catalyst.expressions.UnaryExpression
+import org.apache.spark.sql.gt.types.TileUDT
 
 /**
- * Logical plan manipulations to handle spatial queries on tile components.
+ * Mixin for indicating an expression requires a Tile for input.
  *
  * @author sfitch 
- * @since 12/21/17
+ * @since 12/28/17
  */
-object SpatialRules extends Rule[LogicalPlan] with LazyLogging {
-  def apply(plan: LogicalPlan): LogicalPlan = {
-    logger.debug(s"Evaluating $plan")
-    plan.transform {
-      //case f @ Filter(cond, lp) ⇒ println(f); f
-      case lp: LogicalPlan ⇒ lp.transformExpressionsDown {
-        case s ⇒ s
-      }
-    }
+trait RequiresTile { self: UnaryExpression ⇒
+  abstract override def checkInputDataTypes(): TypeCheckResult = {
+    if(child.dataType.isInstanceOf[TileUDT]) TypeCheckSuccess
+    else TypeCheckFailure(
+      s"Expected '${TileUDT.typeName}' but received '${child.dataType.simpleString}'"
+    )
   }
 }

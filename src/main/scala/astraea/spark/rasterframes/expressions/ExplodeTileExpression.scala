@@ -19,7 +19,7 @@
 
 package astraea.spark.rasterframes.expressions
 
-import astraea.spark.rasterframes
+import astraea.spark.rasterframes._
 import geotrellis.raster._
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.expressions.codegen.CodegenFallback
@@ -45,8 +45,8 @@ private[rasterframes] case class ExplodeTileExpression(
 
     StructType(
       Seq(
-        StructField(rasterframes.COLUMN_INDEX_COLUMN, IntegerType, false),
-        StructField(rasterframes.ROW_INDEX_COLUMN, IntegerType, false)) ++ names
+        StructField(COLUMN_INDEX_COLUMN.columnName, IntegerType, false),
+        StructField(ROW_INDEX_COLUMN.columnName, IntegerType, false)) ++ names
         .map(n ⇒ StructField(n, DoubleType, false)))
   }
 

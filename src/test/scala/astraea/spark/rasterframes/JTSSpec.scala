@@ -33,7 +33,7 @@ class JTSSpec extends TestEnvironment with TestData with IntelliJPresentationCom
 
   describe("JTS interop") {
     it("should allow joining and filtering of tiles based on points") {
-      val rf = l8Sample(1).projectedRaster.toRF(10, 10).withBounds()
+      val rf = l8Sample(1).projectedRaster.toRF(10, 10).withExtent()
       val crs = rf.tileLayerMetadata.widen.crs
       val coords = Seq(
         "one" -> Point(-78.6445222907, 38.3957546898).reproject(LatLng, crs).jtsGeom,

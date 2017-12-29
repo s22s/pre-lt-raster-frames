@@ -17,13 +17,24 @@
  *
  */
 
-package astraea.spark.rasterframes
+package astraea.spark.rasterframes.encoders
+
+import org.apache.spark.sql.{Encoder, Encoders}
+import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
+
+import scala.reflect.runtime.universe._
 
 /**
- * Module support routines.
+ * Container for primitive Spark encoders, pulled into implicit scope.
  *
  * @author sfitch 
- * @since 12/21/17
+ * @since 12/28/17
  */
-package object jts {
+private[rasterframes] trait SparkDefaultEncoders {
+  implicit def arrayEnc[T: TypeTag]: Encoder[Array[T]] = ExpressionEncoder()
+  implicit def genEnc[T: TypeTag]: Encoder[T] = ExpressionEncoder()
+  implicit val intEnc = Encoders.scalaInt
+  implicit val stringEnc = Encoders.STRING
 }
+
+private[rasterframes] object SparkDefaultEncoders extends SparkDefaultEncoders

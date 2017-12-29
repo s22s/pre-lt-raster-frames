@@ -19,6 +19,7 @@
 
 package astraea.spark.rasterframes
 
+import astraea.spark.rasterframes.encoders.SparkDefaultEncoders
 import astraea.spark.rasterframes.expressions.ExplodeTileExpression
 import astraea.spark.rasterframes.functions.{CellCountAggregateFunction, CellMeanAggregateFunction}
 import astraea.spark.rasterframes.jts.{SpatialConverters, SpatialPredicates}
@@ -41,6 +42,7 @@ import scala.reflect.runtime.universe._
  */
 trait ColumnFunctions extends SpatialPredicates with SpatialConverters {
   import util._
+  import SparkDefaultEncoders._
 
   // format: off
   /** Create a row for each cell in Tile. */

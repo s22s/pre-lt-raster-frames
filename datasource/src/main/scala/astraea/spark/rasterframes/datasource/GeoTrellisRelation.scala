@@ -27,6 +27,7 @@ import geotrellis.raster.Tile
 import geotrellis.spark.io._
 import geotrellis.spark.{LayerId, SpatialKey, TileLayerMetadata, _}
 import geotrellis.util.LazyLogging
+import geotrellis.vector.Extent
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 import org.apache.spark.sql.gt.types.TileUDT
@@ -74,23 +75,26 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
         val tkSchema = ExpressionEncoder[TemporalKey]().schema
         val tkMetadata = Metadata.empty.append.tagTemporalKey.build
         List(
-          StructField(SPATIAL_KEY_COLUMN, skSchema, nullable = false, skMetadata),
-          StructField(TEMPORAL_KEY_COLUMN, tkSchema, nullable = false, tkMetadata)
+          StructField(SPATIAL_KEY_COLUMN.columnName, skSchema, nullable = false, skMetadata),
+          StructField(TEMPORAL_KEY_COLUMN.columnName, tkSchema, nullable = false, tkMetadata)
         )
       case t if t =:= typeOf[SpatialKey] ⇒
         List(
-          StructField(SPATIAL_KEY_COLUMN, skSchema, nullable = false, skMetadata)
+          StructField(SPATIAL_KEY_COLUMN.columnName, skSchema, nullable = false, skMetadata)
         )
     }
 
     val tileFields = tileClass match {
       case t if t =:= typeOf[Tile]  ⇒
         List(
-          StructField(TILE_COLUMN, TileUDT, nullable = true)
+          StructField(TILE_COLUMN.columnName, TileUDT, nullable = true)
         )
     }
 
-    StructType(keyFields ++ tileFields)
+    val extentSchema = ExpressionEncoder[Extent]().schema
+    val extentField = List(StructField(EXTENT_COLUMN.columnName, extentSchema, false))
+
+    StructType(keyFields ++ extentField ++ tileFields)
   }
 
   /** Declare filter handling. */
@@ -109,19 +113,28 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
     implicit val sc = sqlContext.sparkContext
     lazy val reader = LayerReader(uri)
 
-
     keyType match {
+      // With temporal key case
       case k if k =:= typeOf[SpaceTimeKey] ⇒
-        reader.query[SpaceTimeKey, Tile, TileLayerMetadata[SpaceTimeKey]](layerId)
-          .result
+          val rdd = reader
+            .query[SpaceTimeKey, Tile, TileLayerMetadata[SpaceTimeKey]](layerId)
+            .result
+
+        val trans = rdd.metadata.layout.mapTransform
+        rdd
           .map { case (stk: SpaceTimeKey, tile: Tile) ⇒
-            Row(stk.spatialKey, stk.temporalKey, tile)
+            Row(stk.spatialKey, stk.temporalKey, trans(stk), tile)
           }
+      // Without temporal key case
       case k if k =:= typeOf[SpatialKey] ⇒
-        reader.query[SpatialKey, Tile, TileLayerMetadata[SpatialKey]](layerId)
+        val rdd = reader
+          .query[SpatialKey, Tile, TileLayerMetadata[SpatialKey]](layerId)
           .result
+
+        val trans = rdd.metadata.layout.mapTransform
+        rdd
           .map { case (sk: SpatialKey, tile: Tile) ⇒
-            Row(sk, tile)
+            Row(sk, trans(sk), tile)
           }
     }
   }

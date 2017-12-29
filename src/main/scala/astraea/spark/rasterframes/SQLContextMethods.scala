@@ -34,7 +34,6 @@ trait SQLContextMethods extends MethodExtensions[SQLContext] {
     gt.register(self)
     functions.register(self)
     expressions.register(self)
-    jts.register(self)
     self
   }
 }
