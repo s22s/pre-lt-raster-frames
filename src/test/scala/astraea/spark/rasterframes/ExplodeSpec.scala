@@ -132,9 +132,9 @@ class ExplodeSpec extends TestEnvironment with TestData {
         .select(explodeTiles($"tile"))
 
       val assembled = df.agg(assembleTile(
-        col(COLUMN_INDEX_COLUMN),
-        col(ROW_INDEX_COLUMN),
-        col(TILE_COLUMN),
+        COLUMN_INDEX_COLUMN,
+        ROW_INDEX_COLUMN,
+        TILE_COLUMN,
         3, 3, byteArrayTile.cellType
       )).as[Tile]
 
@@ -152,19 +152,19 @@ class ExplodeSpec extends TestEnvironment with TestData {
 
       val assembled = exploded.groupBy(tinyTiles.spatialKeyColumn)
         .agg(assembleTile(
-          col(COLUMN_INDEX_COLUMN),
-          col(ROW_INDEX_COLUMN),
-          col(TILE_COLUMN),
+          COLUMN_INDEX_COLUMN,
+          ROW_INDEX_COLUMN,
+          TILE_COLUMN,
           10, 10, IntConstantNoDataCellType
         ))
 
       val tlm = tinyTiles.tileLayerMetadata.left.get
 
-      val rf = assembled.asRF(col(SPATIAL_KEY_COLUMN), tlm)
+      val rf = assembled.asRF(SPATIAL_KEY_COLUMN, tlm)
 
       val (cols, rows) = image.tile.dimensions
 
-      val recovered = rf.toRaster(col(TILE_COLUMN), cols, rows, NearestNeighbor)
+      val recovered = rf.toRaster(TILE_COLUMN, cols, rows, NearestNeighbor)
 
       //GeoTiff(recovered).write("foo.tiff")
 

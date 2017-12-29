@@ -36,6 +36,7 @@ import org.apache.spark.sql.catalyst.expressions.Literal
  */
 trait SpatialConverters {
   import SpatialEncoders._
+  import astraea.spark.rasterframes.encoders.SparkDefaultEncoders._
 
   def geomAsWKT(geom: Column) = withAlias("geomAsWKT", geom) {
     udf(ST_AsText).apply(geom)
@@ -52,8 +53,9 @@ trait SpatialConverters {
   def pointFromWKT(wkt: String) = {
     udf(() ⇒ ST_PointFromText(wkt)).apply().as("pointFromWKT")
   }.as[Point]
-  def makePoint(x: Double, y: Double) = {
+  def makePoint(x: Double, y: Double): TypedColumn[Any, Point] = {
     udf(() ⇒ ST_MakePoint(x, y)).apply().as("makePoint()")
+    //geomlit(ST_MakePoint(x, y))
   }.as[Point]
   def makePoint(x: Column, y: Column) = withAlias("makePoint", x, y) {
     udf(ST_MakePoint).apply(x, y)
@@ -68,7 +70,7 @@ trait SpatialConverters {
 
   @Experimental
   def geomlit(geom: Geometry) = geom match {
-    case g: Point ⇒ new Column(Literal(g, PointUDT.sqlType))
-    case g: Polygon ⇒ new Column(Literal(g, PolygonUDT.sqlType))
+    case g: Point ⇒ new Column(Literal(g, PointUDT.sqlType)).as[Point]
+    case g: Polygon ⇒ new Column(Literal(g, PolygonUDT.sqlType)).as[Polygon]
   }
 }

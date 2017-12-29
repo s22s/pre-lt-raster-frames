@@ -30,6 +30,7 @@ import geotrellis.spark.io.file.{FileLayerReader, FileLayerWriter}
 import geotrellis.spark.io.index.ZCurveKeyIndexMethod
 import geotrellis.spark.tiling.ZoomedLayoutScheme
 import geotrellis.vector._
+import org.apache.hadoop.fs.FileUtil
 import org.apache.spark.sql.functions._
 import org.scalactic.source.Position
 import org.scalatest.BeforeAndAfter
@@ -62,6 +63,7 @@ class GeoTrellisDataSourceSpec extends TestEnvironment with TestData with Before
 
   before {
     val outputDir = new File(outputLocalPath)
+    FileUtil.fullyDelete(outputDir)
     outputDir.deleteOnExit()
     lazy val writer = LayerWriter(outputDir.toURI)
     // TestEnvironment will clean this up
@@ -82,7 +84,7 @@ class GeoTrellisDataSourceSpec extends TestEnvironment with TestData with Before
     }
 
     it("used produce tile UDT that we can manipulate"){
-      val df = dfr.load().select($"spatial_key", tileStats($"tile"))
+      val df = dfr.load().select(SPATIAL_KEY_COLUMN, EXTENT_COLUMN, tileStats(TILE_COLUMN))
       df.show()
       assert(df.count() > 0)
     }
@@ -91,23 +93,25 @@ class GeoTrellisDataSourceSpec extends TestEnvironment with TestData with Before
       val boundKeys = KeyBounds(SpatialKey(3,4),SpatialKey(4,4))
       val bbox = testRdd.metadata.layout
         .mapTransform(boundKeys.toGridBounds()).jtsGeom
-      val df = dfr.load().where(intersects($"spatial_key", geomlit(bbox)))
+      val df = dfr.load().asRF.withCenter().where(intersects(CENTER_COLUMN, geomlit(bbox)))
       df.count() should be (boundKeys.toGridBounds.sizeLong)
     }
 
     it("should respect predicate push-down") {
       val df = dfr.load()
         .asRF
-        .withBounds()
         .where(contains($"bounds", makePoint(-88, 60)))
+      df.explain(true)
       df.printSchema()
       df.show(false)
     }
 
     it("should invoke Encoder[Extent]"){
-      val df = dfr.load().select($"spatial_key".as[SpatialKey], $"tile")
+      val df = dfr.load().select(SPATIAL_KEY_COLUMN, EXTENT_COLUMN, TILE_COLUMN)
       df.show()
       assert(df.count > 0)
+      assert(df.first._2 != null)
+
     }
   }
 }

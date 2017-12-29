@@ -35,7 +35,7 @@ import scala.reflect.runtime.universe._
 /**
  * Implicit encoder definitions for RasterFrame types.
  */
-trait EncoderImplicits extends SpatialEncoders {
+trait GeoTrellisEncoders {
   implicit def singlebandTileEncoder = ExpressionEncoder[Tile]()
   implicit def multibandTileEncoder = ExpressionEncoder[MultibandTile]()
   implicit val crsEncoder = CRSEncoder()
@@ -53,3 +53,4 @@ trait EncoderImplicits extends SpatialEncoders {
   implicit val spaceTimeKeyEncoder = ExpressionEncoder[SpaceTimeKey]()
 }
 
+object GeoTrellisEncoders extends GeoTrellisEncoders

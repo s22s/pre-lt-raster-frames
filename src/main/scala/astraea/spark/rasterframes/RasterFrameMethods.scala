@@ -94,6 +94,7 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with RFSpatialCol
       Left(extract[TileLayerMetadata[SpatialKey]](CONTEXT_METADATA_KEY)(spatialMD))
   }
 
+  /** Add a temporal component to the RasterFrame, assigning the same temporal key to all rows. */
   def addTemporalComponent(value: TemporalKey): RasterFrame = {
     require(temporalKeyColumn.isEmpty, "RasterFrame already has a temporal component")
     val tlm = tileLayerMetadata.left.get
@@ -101,10 +102,10 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with RFSpatialCol
 
     val litKey = udf(() ⇒ value)
 
-    val df = self.withColumn(TEMPORAL_KEY_COLUMN, litKey())
+    val df = self.withColumn(TEMPORAL_KEY_COLUMN.columnName, litKey())
 
-    df.setSpatialColumnRole(df(SPATIAL_KEY_COLUMN), newTlm)
-      .setTemporalColumnRole(df(TEMPORAL_KEY_COLUMN))
+    df.setSpatialColumnRole(SPATIAL_KEY_COLUMN, newTlm)
+      .setTemporalColumnRole(TEMPORAL_KEY_COLUMN)
       .certify
   }
 

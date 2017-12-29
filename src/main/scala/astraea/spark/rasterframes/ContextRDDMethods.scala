@@ -35,16 +35,16 @@ abstract class SpatialContextRDDMethods[K: SpatialComponent: JsonFormat: TypeTag
     extends MethodExtensions[RDD[(K, Tile)]
       with Metadata[TileLayerMetadata[K]]] {
 
-  def toRF: RasterFrame = toRF(TILE_COLUMN)
+  def toRF: RasterFrame = toRF(TILE_COLUMN.columnName)
 
   def toRF(tileColumnName: String): RasterFrame = {
     import spark.implicits._
 
     val rdd = self: RDD[(K, Tile)]
     val df = rdd
-      .toDF(SPATIAL_KEY_COLUMN, tileColumnName)
+      .toDF(SPATIAL_KEY_COLUMN.columnName, tileColumnName)
 
-    df.setSpatialColumnRole(df(SPATIAL_KEY_COLUMN), self.metadata)
+    df.setSpatialColumnRole(SPATIAL_KEY_COLUMN, self.metadata)
       .certify
   }
 }
@@ -62,11 +62,11 @@ abstract class SpatioTemporalContextRDDMethods(implicit spark: SparkSession)
     val rdd = self: RDD[(SpaceTimeKey, Tile)]
     val df = rdd
       .map { case (k, v) ⇒ (k.spatialKey, k.temporalKey, v)}
-      .toDF(SPATIAL_KEY_COLUMN, TEMPORAL_KEY_COLUMN, TILE_COLUMN)
+      .toDF(SPATIAL_KEY_COLUMN.columnName, TEMPORAL_KEY_COLUMN.columnName, TILE_COLUMN.columnName)
 
     df
-      .setSpatialColumnRole(df(SPATIAL_KEY_COLUMN), self.metadata)
-      .setTemporalColumnRole(df(TEMPORAL_KEY_COLUMN))
+      .setSpatialColumnRole(SPATIAL_KEY_COLUMN, self.metadata)
+      .setTemporalColumnRole(TEMPORAL_KEY_COLUMN)
       .certify
   }
 }
@@ -84,10 +84,10 @@ abstract class TFContextRDDMethods[K: SpatialComponent: JsonFormat: ClassTag: Ty
 
     val df = rdd
       .map { case (k, v) ⇒ (k, v.tile, v.data) }
-      .toDF(SPATIAL_KEY_COLUMN, TILE_COLUMN, TILE_FEATURE_DATA_COLUMN)
+      .toDF(SPATIAL_KEY_COLUMN.columnName, TILE_COLUMN.columnName, TILE_FEATURE_DATA_COLUMN.columnName)
 
     df
-      .setSpatialColumnRole(df(SPATIAL_KEY_COLUMN), self.metadata)
+      .setSpatialColumnRole(SPATIAL_KEY_COLUMN, self.metadata)
       .certify
   }
 }
@@ -105,11 +105,11 @@ abstract class TFSTContextRDDMethods[D: TypeTag](implicit spark: SparkSession)
 
     val df = rdd
       .map { case (k, v) ⇒ (k.spatialKey, k.temporalKey, v.tile, v.data)}
-      .toDF(SPATIAL_KEY_COLUMN, TEMPORAL_KEY_COLUMN, TILE_COLUMN, TILE_FEATURE_DATA_COLUMN)
+      .toDF(SPATIAL_KEY_COLUMN.columnName, TEMPORAL_KEY_COLUMN.columnName, TILE_COLUMN.columnName, TILE_FEATURE_DATA_COLUMN.columnName)
 
     df
-      .setSpatialColumnRole(df(SPATIAL_KEY_COLUMN), self.metadata)
-      .setTemporalColumnRole(df(TEMPORAL_KEY_COLUMN))
+      .setSpatialColumnRole(SPATIAL_KEY_COLUMN, self.metadata)
+      .setTemporalColumnRole(TEMPORAL_KEY_COLUMN)
       .certify
   }
 }

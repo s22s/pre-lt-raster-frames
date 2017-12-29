@@ -31,6 +31,8 @@ import org.apache.spark.sql.types.{ShortType, StructField, StructType}
  * @since 12/21/17
  */
 case class DimensionsExpression(child: Expression) extends UnaryExpression with RequiresTile {
+  override def toString: String = s"dimension($child)"
+
   def dataType = StructType(Seq(
     StructField("cols", ShortType),
     StructField("rows", ShortType)

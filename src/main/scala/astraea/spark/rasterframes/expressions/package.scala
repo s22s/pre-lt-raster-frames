@@ -20,14 +20,8 @@
 package astraea.spark.rasterframes
 
 import org.apache.spark.sql.catalyst.InternalRow
-import org.apache.spark.sql.catalyst.analysis.{FunctionRegistry, TypeCheckResult}
-import org.apache.spark.sql.catalyst.analysis.TypeCheckResult.{TypeCheckFailure, TypeCheckSuccess}
-import org.apache.spark.sql.catalyst.expressions._
-import org.apache.spark.sql.catalyst.expressions.codegen.{CodegenContext, ExprCode}
+import org.apache.spark.sql.catalyst.analysis.FunctionRegistry
 import org.apache.spark.sql.{SQLContext, gt}
-import org.apache.spark.sql.gt.InternalRowTile
-import org.apache.spark.sql.gt.types.TileUDT
-import org.apache.spark.sql.types._
 
 /**
  * Module of Catalyst expressions for efficiently working with tiles.
@@ -36,19 +30,7 @@ import org.apache.spark.sql.types._
  * @since 10/10/17
  */
 package object expressions {
-  import InternalRowTile.C._
   private[expressions] def row(input: Any) = input.asInstanceOf[InternalRow]
-
-  trait RequiresTile { self: UnaryExpression ⇒
-    abstract override def checkInputDataTypes(): TypeCheckResult = {
-      if(child.dataType.isInstanceOf[TileUDT]) TypeCheckSuccess
-      else TypeCheckFailure(
-        s"Expected '${TileUDT.typeName}' but received '${child.dataType.simpleString}'"
-      )
-    }
-  }
-
-
 
   /** Unary expression builder builder. */
   private def ub[A, B](f: A ⇒ B)(a: Seq[A]) = f(a.head)

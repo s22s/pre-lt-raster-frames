@@ -17,7 +17,7 @@
 package org.apache.spark.sql
 
 import org.apache.spark.sql.catalyst.InternalRow
-import org.apache.spark.sql.catalyst.analysis.FunctionRegistry
+import org.apache.spark.sql.catalyst.analysis.{Analyzer, FunctionRegistry}
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 import org.apache.spark.sql.catalyst.expressions.Expression
 
@@ -38,6 +38,10 @@ package object gt {
 
   def registry(sqlContext: SQLContext): FunctionRegistry = {
     sqlContext.sessionState.functionRegistry
+  }
+
+  def analyzer(sqlContext: SQLContext): Analyzer = {
+    sqlContext.sessionState.analyzer
   }
 
   implicit class WithDecoder[T](enc: ExpressionEncoder[T]) {

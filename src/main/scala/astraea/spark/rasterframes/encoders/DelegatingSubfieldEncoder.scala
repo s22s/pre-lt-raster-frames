@@ -34,6 +34,7 @@ import scala.reflect.runtime.universe._
  * @since 8/2/17
  */
 trait DelegatingSubfieldEncoder {
+
   protected def create[T: TypeTag](fieldEncoders: Seq[(String, ExpressionEncoder[_])]): ExpressionEncoder[T] = {
     val schema = StructType(fieldEncoders.map {
       case (name, encoder) ⇒
