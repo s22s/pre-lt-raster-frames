@@ -30,6 +30,7 @@ import geotrellis.util.LazyLogging
 import geotrellis.vector.Extent
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
+import org.apache.spark.sql.catalyst.expressions.GenericRow
 import org.apache.spark.sql.gt.types.TileUDT
 import org.apache.spark.sql.sources._
 import org.apache.spark.sql.types._
@@ -100,7 +101,7 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
   /** Declare filter handling. */
   override def unhandledFilters(filters: Array[Filter]): Array[Filter] = {
     filters.filter {
-      case (_:IsNotNull | _:IsNull) => true
+      case (_: IsNotNull | _: IsNull) => true
       case _ => false
     }
   }
@@ -113,6 +114,8 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
     implicit val sc = sqlContext.sparkContext
     lazy val reader = LayerReader(uri)
 
+    val columnIndexes = requiredColumns.map(schema.fieldIndex)
+
     keyType match {
       // With temporal key case
       case k if k =:= typeOf[SpaceTimeKey] ⇒
@@ -123,7 +126,13 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
         val trans = rdd.metadata.layout.mapTransform
         rdd
           .map { case (stk: SpaceTimeKey, tile: Tile) ⇒
-            Row(stk.spatialKey, stk.temporalKey, trans(stk), tile)
+            val entries = columnIndexes.map {
+              case 0 ⇒ stk.spatialKey
+              case 1 ⇒ stk.temporalKey
+              case 2 ⇒ trans(stk)
+              case 3 ⇒ tile
+            }
+            Row(entries: _*)
           }
       // Without temporal key case
       case k if k =:= typeOf[SpatialKey] ⇒
@@ -134,7 +143,13 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
         val trans = rdd.metadata.layout.mapTransform
         rdd
           .map { case (sk: SpatialKey, tile: Tile) ⇒
-            Row(sk, trans(sk), tile)
+            val entries = columnIndexes.map {
+              case 0 ⇒ sk
+              case 1 ⇒ trans(sk)
+              case 2 ⇒ tile
+            }
+
+            Row(entries: _*)
           }
     }
   }

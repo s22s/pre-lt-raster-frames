@@ -83,7 +83,7 @@ trait RFSpatialColumnMethods extends MethodExtensions[RasterFrame] {
    * @return updated RasterFrame
    */
   def withCenter(colName: String = CENTER_COLUMN.columnName): RasterFrame = {
-    val key2Center = udf(keyCol2Extent andThen (_.center) andThen (c ⇒ (c.x, c.y)))
+    val key2Center = udf(keyCol2Extent andThen (_.center.jtsGeom))
     self.withColumn(colName, key2Center(self.spatialKeyColumn).as[Point]).certify
   }
 
