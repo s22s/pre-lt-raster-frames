@@ -27,6 +27,7 @@ import org.apache.spark.sql.types._
 import astraea.spark.rasterframes.encoders.GeoTrellisEncoders._
 import astraea.spark.rasterframes.jts.SpatialEncoders._
 import com.vividsolutions.jts.geom.Geometry
+import org.apache.spark.sql.{GeometryUDT, PointUDT}
 
 /**
  * Determine if two spatial constructs intersect each other.
@@ -48,11 +49,15 @@ case class IntersectsExpression(left: Expression, right: Expression)
       case g: Geometry ⇒ g
       case r: InternalRow ⇒
         expr.dataType match {
-          case e if e == extentEncoder.schema ⇒
+          case t if t == extentEncoder.schema ⇒
             val extent = extentEncoder.resolveAndBind().fromRow(r)
             extent.jtsGeom
-          case e if e == jtsPointEncoder.schema ⇒
+          case t if t == jtsPointEncoder.schema ⇒
             jtsPointEncoder.resolveAndBind().fromRow(r)
+          case t if t.getClass.isAssignableFrom(PointUDT.getClass) ⇒
+            PointUDT.deserialize(r)
+          case t if t.getClass.isAssignableFrom(GeometryUDT.getClass) ⇒
+            GeometryUDT.deserialize(r)
         }
     }
   }

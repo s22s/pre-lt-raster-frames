@@ -35,8 +35,10 @@ import scala.reflect.runtime.universe._
  * @author sfitch 
  * @since 12/17/17
  */
-object GTGeometryEncoder extends SpatialEncoders {
+object GTGeometryEncoder {
+  import SpatialEncoders.jtsGeometryEncoder
   @Experimental
+  @deprecated("probably going to go away", "always")
   def apply[G <: GTGeom: TypeTag](): ExpressionEncoder[G] = {
     val userType = ScalaReflection.dataTypeFor[G]
     val schema = jtsGeometryEncoder.schema

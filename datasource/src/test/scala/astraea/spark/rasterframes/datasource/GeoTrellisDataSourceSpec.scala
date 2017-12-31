@@ -100,9 +100,9 @@ class GeoTrellisDataSourceSpec extends TestEnvironment with TestData with Before
     it("should respect predicate push-down") {
       val df = dfr.load()
         .asRF
-        .where(contains($"bounds", makePoint(-88, 60)))
-      df.explain(true)
+        .where(intersects(EXTENT_COLUMN, makePoint(-88, 60)))
       df.printSchema()
+      df.explain(true)
       df.show(false)
     }
 
