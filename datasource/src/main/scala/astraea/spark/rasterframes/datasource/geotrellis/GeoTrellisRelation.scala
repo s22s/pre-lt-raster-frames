@@ -1,7 +1,7 @@
 /*
  * This software is licensed under the Apache 2 license, quoted below.
  *
- * Copyright 2017 Azavea & Astraea, Inc.
+ * Copyright 2018 Astraea, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -17,11 +17,12 @@
  *
  */
 
-package astraea.spark.rasterframes.datasource
+package astraea.spark.rasterframes.datasource.geotrellis
 
 import java.net.URI
 
 import astraea.spark.rasterframes._
+import astraea.spark.rasterframes.datasource.geotrellis.SpatialFilterPushdownRules.FilterPredicate
 import astraea.spark.rasterframes.util._
 import geotrellis.raster.Tile
 import geotrellis.spark.io._
@@ -44,8 +45,10 @@ import scala.reflect.runtime.universe._
  * @author echeipesh
  * @author sfitch
  */
-case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId)
-    extends BaseRelation with PrunedFilteredScan with LazyLogging {
+case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId, filters: Seq[FilterPredicate] = Seq.empty)
+    extends BaseRelation with PrunedScan with LazyLogging {
+
+  def withFilter(value: FilterPredicate): GeoTrellisRelation = copy(filters = filters :+ value)
 
   private implicit val spark = sqlContext.sparkSession
 
@@ -98,18 +101,10 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
     StructType(keyFields ++ extentField ++ tileFields)
   }
 
-  /** Declare filter handling. */
-  override def unhandledFilters(filters: Array[Filter]): Array[Filter] = {
-    filters.filter {
-      case (_: IsNotNull | _: IsNull) => true
-      case _ => false
-    }
-  }
 
-  override def buildScan(requiredColumns: Array[String], filters: Array[Filter]): RDD[Row] = {
+  override def buildScan(requiredColumns: Array[String]): RDD[Row] = {
     logger.debug(s"Reading: $layerId from $uri")
     logger.debug(s"Required columns: ${requiredColumns.toList}")
-    logger.debug(s"PushedDown filters: ${filters.toList}")
 
     implicit val sc = sqlContext.sparkContext
     lazy val reader = LayerReader(uri)

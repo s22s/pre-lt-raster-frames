@@ -19,15 +19,16 @@
 
 package astraea.spark.rasterframes.expressions
 
-import astraea.spark.rasterframes.RFSpatialColumnMethods
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.expressions._
 import org.apache.spark.sql.catalyst.expressions.codegen.CodegenFallback
 import org.apache.spark.sql.types._
 import astraea.spark.rasterframes.encoders.GeoTrellisEncoders._
+import astraea.spark.rasterframes.expressions.SpatialExpression.RelationPredicate
 import astraea.spark.rasterframes.jts.SpatialEncoders._
 import com.vividsolutions.jts.geom.Geometry
-import org.apache.spark.sql.{GeometryUDT, PointUDT}
+import org.apache.spark.sql.{GeometryUDT, PointUDT, SQLSpatialFunctions}
+
 
 /**
  * Determine if two spatial constructs intersect each other.
@@ -35,10 +36,9 @@ import org.apache.spark.sql.{GeometryUDT, PointUDT}
  * @author sfitch 
  * @since 12/28/17
  */
-case class IntersectsExpression(left: Expression, right: Expression)
-  extends BinaryExpression with CodegenFallback {
+abstract class SpatialExpression extends BinaryExpression with CodegenFallback {
 
-  override def toString: String = s"intersects($left, $right)"
+  override def toString: String = s"$nodeName($left, $right)"
 
   override def dataType: DataType = BooleanType
 
@@ -62,9 +62,21 @@ case class IntersectsExpression(left: Expression, right: Expression)
     }
   }
 
-  override protected def nullSafeEval(leftEval: Any, rightEval: Any): Any = {
+  override protected def nullSafeEval(leftEval: Any, rightEval: Any): java.lang.Boolean = {
     val leftGeom = asGeom(left, leftEval)
     val rightGeom = asGeom(right, rightEval)
-    leftGeom.intersects(rightGeom)
+    relation(leftGeom, rightGeom)
+  }
+
+  val relation: RelationPredicate
+
+}
+
+object SpatialExpression {
+  type RelationPredicate = (Geometry, Geometry) ⇒ java.lang.Boolean
+
+  case class Intersects(left: Expression, right: Expression) extends SpatialExpression {
+    override def nodeName = "intersects"
+    val relation = SQLSpatialFunctions.ST_Intersects
   }
 }
