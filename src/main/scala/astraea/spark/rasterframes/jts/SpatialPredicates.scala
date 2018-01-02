@@ -18,7 +18,7 @@
  */
 
 package astraea.spark.rasterframes.jts
-import astraea.spark.rasterframes.expressions.IntersectsExpression
+import astraea.spark.rasterframes.expressions.SpatialExpression
 import org.apache.spark.sql.Column
 import org.apache.spark.sql.SQLSpatialFunctions._
 import org.apache.spark.sql.functions.udf
@@ -48,7 +48,7 @@ trait SpatialPredicates {
   def equals(left: Column, right: Column) = withAlias("equals", left, right)(
     udf(ST_Equals).apply(left, right)
   ).as[Boolean]
-  def intersects(left: Column, right: Column) = IntersectsExpression(left.expr, right.expr).asColumn
+  def intersects(left: Column, right: Column) = SpatialExpression.Intersects(left.expr, right.expr).asColumn
   //withAlias("intersects", left, right)(
   //  udf(ST_Intersects).apply(left, right)
   //).as[Boolean]
