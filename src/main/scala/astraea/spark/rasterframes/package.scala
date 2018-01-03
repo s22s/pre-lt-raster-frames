@@ -59,7 +59,7 @@ package object rasterframes extends ColumnFunctions
   /** Default RasterFrame column name for the center coordinates of the tile's extent. */
   val CENTER_COLUMN = col("center")
 
-  /** Default RAsterFrame column name for an added spatial index. */
+  /** Default RasterFrame column name for an added spatial index. */
   val SPATIAL_INDEX_COLUMN = col("spatial_index").as[Long]
 
   /** Default RasterFrame tile column name. */

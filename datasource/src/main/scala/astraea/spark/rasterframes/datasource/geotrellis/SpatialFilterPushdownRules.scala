@@ -24,12 +24,10 @@ import astraea.spark.rasterframes.expressions.SpatialExpression.{Intersects, Rel
 import com.vividsolutions.jts.geom.Geometry
 import geotrellis.util.LazyLogging
 import org.apache.spark.sql.SQLRules.GeometryLiteral
-import org.apache.spark.sql.SQLSpatialFunctions.ST_Contains
-import org.apache.spark.sql.catalyst.expressions.{AttributeReference, Expression, ScalaUDF}
+import org.apache.spark.sql.catalyst.expressions.AttributeReference
 import org.apache.spark.sql.catalyst.plans.logical.{Filter, LogicalPlan}
 import org.apache.spark.sql.catalyst.rules.Rule
 import org.apache.spark.sql.execution.datasources.LogicalRelation
-import org.apache.spark.sql.types._
 
 /**
  * Logical plan manipulations to handle spatial queries on tile components.
@@ -59,7 +57,8 @@ object SpatialFilterPushdownRules extends Rule[LogicalPlan] with LazyLogging {
       case f @ Filter(condition, lr @ LogicalRelation(gm: GeoTrellisRelation, _, _)) ⇒
         condition match {
           case i @ Intersects(ExtentAttr(), g: GeometryLiteral) ⇒
-            lr.copy(relation = gm.withFilter(FilterPredicate(EXTENT_COLUMN.columnName, i.relation, g.geom)))
+            // Introduce SFCurve relation
+            f
           case _ ⇒ f
         }
     }

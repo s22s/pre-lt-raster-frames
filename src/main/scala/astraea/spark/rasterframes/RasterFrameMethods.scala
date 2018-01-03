@@ -74,11 +74,11 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with RFSpatialCol
 
   /** The spatial key is the first one found with context metadata attached to it. */
   private[rasterframes] def findSpatialKeyField: Option[StructField] =
-    findRoleField(classOf[SpatialKey].getSimpleName)
+    findRoleField(SPATIAL_KEY_COLUMN.columnName)
 
   /** The temporal key is the first one found with the temporal tag. */
   private[rasterframes] def findTemporalKeyField: Option[StructField] =
-    findRoleField(classOf[TemporalKey].getSimpleName)
+    findRoleField(TEMPORAL_KEY_COLUMN.columnName)
 
   /**
    * Reassemble the [[TileLayerMetadata]] record from DataFrame metadata.

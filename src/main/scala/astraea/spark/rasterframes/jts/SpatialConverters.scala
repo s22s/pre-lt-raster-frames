@@ -74,3 +74,7 @@ trait SpatialConverters {
     case g: Polygon ⇒ new Column(Literal(g, PolygonUDT.sqlType)).as[Polygon]
   }
 }
+
+object SpatialConverters {
+
+}
