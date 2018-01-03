@@ -19,7 +19,6 @@
 
 package astraea.spark.rasterframes
 
-import geotrellis.spark.{SpatialKey, TemporalKey}
 import geotrellis.util.MethodExtensions
 import org.apache.spark.sql.types.{Metadata, MetadataBuilder}
 
@@ -33,6 +32,7 @@ import org.apache.spark.sql.types.{Metadata, MetadataBuilder}
 private[astraea]
 abstract class MetadataBuilderMethods extends MethodExtensions[MetadataBuilder] {
   def attachContext(md: Metadata) = self.putMetadata(CONTEXT_METADATA_KEY, md)
-  def tagSpatialKey = self.putString(SPATIAL_ROLE_KEY, classOf[SpatialKey].getSimpleName)
-  def tagTemporalKey = self.putString(SPATIAL_ROLE_KEY, classOf[TemporalKey].getSimpleName)
+  def tagSpatialKey = self.putString(SPATIAL_ROLE_KEY, SPATIAL_KEY_COLUMN.columnName)
+  def tagTemporalKey = self.putString(SPATIAL_ROLE_KEY, TEMPORAL_KEY_COLUMN.columnName)
+  def tagSpatialIndex = self.putString(SPATIAL_ROLE_KEY, SPATIAL_INDEX_COLUMN.columnName)
 }

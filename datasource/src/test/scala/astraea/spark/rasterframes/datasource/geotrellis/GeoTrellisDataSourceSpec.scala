@@ -1,7 +1,7 @@
 /*
  * This software is licensed under the Apache 2 license, quoted below.
  *
- * Copyright 2018 Astraea, Inc.
+ * Copyright 2017-2018 Azavea & Astraea, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -31,6 +31,7 @@ import geotrellis.spark.io.index.ZCurveKeyIndexMethod
 import geotrellis.spark.tiling.ZoomedLayoutScheme
 import geotrellis.vector._
 import org.apache.hadoop.fs.FileUtil
+import org.apache.spark.sql.SQLGeometricConstructorFunctions
 import org.apache.spark.sql.functions._
 import org.scalactic.source.Position
 import org.scalatest.BeforeAndAfter
@@ -84,7 +85,7 @@ class GeoTrellisDataSourceSpec extends TestEnvironment with TestData with Before
     }
 
     it("used produce tile UDT that we can manipulate"){
-      val df = dfr.load().select(SPATIAL_KEY_COLUMN, EXTENT_COLUMN, tileStats(TILE_COLUMN))
+      val df = dfr.load().select(SPATIAL_KEY_COLUMN, tileStats(TILE_COLUMN))
       df.show()
       assert(df.count() > 0)
     }
@@ -98,19 +99,25 @@ class GeoTrellisDataSourceSpec extends TestEnvironment with TestData with Before
     }
 
     it("should respect predicate push-down") {
+      val pt = SQLGeometricConstructorFunctions.ST_MakePoint(-88, 60)
+
+      val targetKey = testRdd.metadata.mapTransform(Point(pt))
+
       val df = dfr.load()
-        .asRF
-        .where(intersects(EXTENT_COLUMN, makePoint(-88, 60)))
+        .where(intersects(SPATIAL_INDEX_COLUMN, geomlit(pt)))
+        .orderBy(SPATIAL_INDEX_COLUMN)
       df.printSchema()
       df.explain(true)
+      println(targetKey)
       df.show(false)
     }
 
     it("should invoke Encoder[Extent]"){
-      val df = dfr.load().select(SPATIAL_KEY_COLUMN, EXTENT_COLUMN, TILE_COLUMN)
+      val df = dfr.load().asRF.withExtent()
       df.show()
       assert(df.count > 0)
-      assert(df.first._2 != null)
+      assert(df.first.length === 4)
+      assert(df.first.getAs[Extent](3) !== null)
 
     }
   }

@@ -26,8 +26,11 @@ import org.apache.spark.sql.types._
 import astraea.spark.rasterframes.encoders.GeoTrellisEncoders._
 import astraea.spark.rasterframes.expressions.SpatialExpression.RelationPredicate
 import astraea.spark.rasterframes.jts.SpatialEncoders._
-import com.vividsolutions.jts.geom.Geometry
+import com.vividsolutions.jts.geom._
+import geotrellis.vector.GeometryCollection
 import org.apache.spark.sql.{GeometryUDT, PointUDT, SQLSpatialFunctions}
+import org.geotools.geometry.jts.JTSFactoryFinder
+import org.locationtech.geomesa.curve.XZ2SFC
 
 
 /**
@@ -59,6 +62,7 @@ abstract class SpatialExpression extends BinaryExpression with CodegenFallback {
           case t if t.getClass.isAssignableFrom(GeometryUDT.getClass) ⇒
             GeometryUDT.deserialize(r)
         }
+      case sfcIndex: Long ⇒ SpatialExpression.Index(sfcIndex)
     }
   }
 
@@ -74,6 +78,23 @@ abstract class SpatialExpression extends BinaryExpression with CodegenFallback {
 
 object SpatialExpression {
   type RelationPredicate = (Geometry, Geometry) ⇒ java.lang.Boolean
+  // TODO: externalize
+  val xzPrecision = 20.toShort
+
+  val sfc = XZ2SFC(xzPrecision)
+
+  @transient
+  private val geomFactory = JTSFactoryFinder.getGeometryFactory
+
+  private case class Index(sfcIndex: Long) extends Point(
+    geomFactory.getCoordinateSequenceFactory.create(0, 0), geomFactory
+  ) {
+    override def intersects(g: Geometry): Boolean = {
+      val env = g.getEnvelopeInternal
+      val ranges = sfc.ranges(env.getMinX, env.getMinY, env.getMaxX, env.getMaxY)
+      ranges.exists(r ⇒ r.lower <= sfcIndex && sfcIndex <= r.upper)
+    }
+  }
 
   case class Intersects(left: Expression, right: Expression) extends SpatialExpression {
     override def nodeName = "intersects"
