@@ -19,29 +19,23 @@
 package astraea.spark.rasterframes.datasource.geotrellis
 
 import java.io.File
-import java.nio.file.Files
 
 import astraea.spark.rasterframes._
 import geotrellis.proj4.LatLng
 import geotrellis.raster._
 import geotrellis.spark._
 import geotrellis.spark.io._
-import geotrellis.spark.io.file.{FileLayerReader, FileLayerWriter}
 import geotrellis.spark.io.index.ZCurveKeyIndexMethod
 import geotrellis.spark.tiling.ZoomedLayoutScheme
 import geotrellis.vector._
 import org.apache.hadoop.fs.FileUtil
 import org.apache.spark.sql.SQLGeometricConstructorFunctions
-import org.apache.spark.sql.functions._
-import org.scalactic.source.Position
 import org.scalatest.BeforeAndAfter
 
 /**
  * @author echeipesh
  */
 class GeoTrellisDataSourceSpec extends TestEnvironment with TestData with BeforeAndAfter with IntelliJPresentationCompilerHack {
-
-  import sqlContext.implicits._
 
   lazy val testRdd = {
     val recs: Seq[(SpatialKey, Tile)] = for {
@@ -103,22 +97,37 @@ class GeoTrellisDataSourceSpec extends TestEnvironment with TestData with Before
 
       val targetKey = testRdd.metadata.mapTransform(Point(pt))
 
-      val df = dfr.load()
-        .where(intersects(SPATIAL_INDEX_COLUMN, geomlit(pt)))
-        .orderBy(SPATIAL_INDEX_COLUMN)
-      df.printSchema()
-      df.explain(true)
-      println(targetKey)
-      df.show(false)
+      withClue("using geomlit") {
+        val df = dfr.load()
+          .where(intersects(EXTENT_COLUMN, geomlit(pt)))
+          .asRF
+
+        df.printSchema()
+        df.explain(true)
+        df.show(false)
+
+        assert(df.count() === 1)
+        assert(df.select(SPATIAL_KEY_COLUMN).first === targetKey)
+      }
+
+      withClue("using udf") {
+        val df = dfr.load()
+          .where(intersects(EXTENT_COLUMN, makePoint(pt.getX, pt.getY)))
+          .asRF
+
+        df.explain(true)
+
+        assert(df.count() === 1)
+        assert(df.select(SPATIAL_KEY_COLUMN).first === targetKey)
+      }
     }
 
     it("should invoke Encoder[Extent]"){
       val df = dfr.load().asRF.withExtent()
       df.show()
       assert(df.count > 0)
-      assert(df.first.length === 4)
-      assert(df.first.getAs[Extent](3) !== null)
-
+      assert(df.first.length === 3)
+      assert(df.first.getAs[Extent](1) !== null)
     }
   }
 }

@@ -25,7 +25,7 @@ object ProjectPlugin extends AutoPlugin {
 
   val versions = Map(
     "geotrellis" -> "1.2.0",
-    "spark" -> "2.1.0"
+    "spark" -> "2.2.1"
   )
 
   import autoImport._
