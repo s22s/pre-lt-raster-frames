@@ -1,5 +1,10 @@
 # Release Notes
 
+## 0.6.0
+
+* Upgraded to Spark 2.2.0 (now required)
+* <<Predicate pushdown in GeoTrellis Data Source>>
+
 ## 0.5.12
 
 * Added `withSpatialIndex` to introduce a column assigning a z-curve index value based on the tile's centroid in EPSG:4326. 

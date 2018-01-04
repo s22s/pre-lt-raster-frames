@@ -1,20 +1,13 @@
-import geotrellis.raster.io.geotiff.SinglebandGeoTiff
-import geotrellis.util.Filesystem
-import geotrellis.vector._
-import geotrellis.vector.io._
-import geotrellis.vector.io.json.JsonFeatureCollection
-import spray.json.DefaultJsonProtocol._
-import spray.json.JsonReader
+import com.vividsolutions.jts.geom._
+import org.geotools.geometry.jts.JTSFactoryFinder
 
-def parseFeatures[G <: Geometry : JsonReader,D <: Product: JsonReader](jsonString: String) : Seq[Feature[G,D]] = {
-  val jfc  = jsonString.parseGeoJson[JsonFeatureCollection]
-  jfc.getAllFeatures[Feature[G,D]]
-}
+val f = JTSFactoryFinder.getGeometryFactory
 
-val tiff = SinglebandGeoTiff(getClass.getResource("/L8-B2-Elkton-VA.tiff").getPath)
-val json = Filesystem.readText(getClass.getResource("/L8-Labels-Elkton-VA.geojson").getPath)//
+val pt = f.createPoint(new Coordinate(1, 2))
 
-json.extractFeatures[Feature[Geometry, Map[String, String]]]()
+val poly = f.createPolygon(Array(new Coordinate(0, 0), new Coordinate(0, 3), new Coordinate(3, 3), new Coordinate(3, 0), new Coordinate(0, 0)))
 
-//implicit val foo = jsonFormat1[Tuple1[Int]]
-parseFeatures[Polygon, Tuple1[Int]](json)
+
+poly.intersects(pt)
+pt.intersects(poly)
+pt.intersects(pt)
