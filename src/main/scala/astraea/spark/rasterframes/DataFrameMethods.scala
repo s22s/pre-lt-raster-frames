@@ -67,13 +67,13 @@ trait DataFrameMethods extends MethodExtensions[DataFrame] {
   private[astraea]
   def setSpatialColumnRole[K: SpatialComponent: JsonFormat](
     column: Column, md: TileLayerMetadata[K]) =
-    addColumnMetadata(SPATIAL_KEY_COLUMN,
+    addColumnMetadata(column,
       _.attachContext(md.asColumnMetadata).tagSpatialKey
     )
 
   private[astraea]
   def setTemporalColumnRole(column: Column) =
-    addColumnMetadata(SPATIAL_KEY_COLUMN, _.tagTemporalKey)
+    addColumnMetadata(column, _.tagTemporalKey)
 
   /** Get the role tag the column plays in the RasterFrame, if any. */
   private[astraea]

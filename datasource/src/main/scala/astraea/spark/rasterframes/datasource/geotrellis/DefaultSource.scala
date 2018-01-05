@@ -32,16 +32,17 @@ import org.apache.spark.sql.sources._
  * @author sfitch
  */
 @Experimental
-class GeoTrellisDataSource extends DataSourceRegister with RelationProvider {
+class DefaultSource extends DataSourceRegister with RelationProvider {
   def shortName(): String = "geotrellis"
 
   def createRelation(sqlContext: SQLContext, parameters: Map[String, String]): BaseRelation = {
+    require(parameters.contains("path"), "'path' parameter required.")
     require(parameters.contains("layer"), "'layer' parameter for raster layer name required.")
     require(parameters.contains("zoom"), "'zoom' parameter for raster layer zoom level required.")
 
     registerOptimization(sqlContext, SpatialFilterPushdownRules)
 
-    val uri: URI = URI.create(parameters("uri"))
+    val uri: URI = URI.create(parameters("path"))
     val layerId: LayerId = LayerId(parameters("layer"), parameters("zoom").toInt)
 
     // here would be the place to read the layer metadata

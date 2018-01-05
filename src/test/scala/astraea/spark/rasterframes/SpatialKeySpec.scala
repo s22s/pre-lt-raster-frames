@@ -47,8 +47,8 @@ class SpatialKeySpec extends TestEnvironment with TestData {
 
     it("should add a center value") {
       val expected = raster.extent.center
-      val result = rf.withCenter().select($"center".as[(Double, Double)]).first
-      assert(Point(result._1, result._2) === expected)
+      val result = rf.withCenter().select(CENTER_COLUMN).first
+      assert(result === expected.jtsGeom)
     }
 
     it("should add a center lat/lng value") {

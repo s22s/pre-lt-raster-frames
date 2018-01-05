@@ -21,7 +21,7 @@ package astraea.spark.rasterframes.datasource.geotrellis
 
 import astraea.spark.rasterframes._
 import astraea.spark.rasterframes.datasource.geotrellis.GeoTrellisRelation.FilterPredicate
-import astraea.spark.rasterframes.expressions.SpatialExpression.{Intersects, RelationPredicate}
+import astraea.spark.rasterframes.expressions.SpatialExpression.Intersects
 import com.vividsolutions.jts.geom.Geometry
 import geotrellis.util.LazyLogging
 import org.apache.spark.sql.SQLRules.GeometryLiteral
