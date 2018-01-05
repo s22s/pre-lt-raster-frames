@@ -41,8 +41,14 @@ package object functions {
       else op(o1, o2)
     }
   @inline
-  private[rasterframes] def safeEval[P, R](f: P ⇒ R): P ⇒ R =
+  private[rasterframes] def safeEval[P, R <: AnyRef](f: P ⇒ R): P ⇒ R =
     (p) ⇒ if (p == null) null.asInstanceOf[R] else f(p)
+  @inline
+  private[rasterframes] def safeEval[P](f: P ⇒ Double)(implicit d: DummyImplicit): P ⇒ Double =
+    (p) ⇒ if (p == null) Double.NaN else f(p)
+  @inline
+  private[rasterframes] def safeEval[P](f: P ⇒ Long)(implicit d1: DummyImplicit, d2: DummyImplicit): P ⇒ Long =
+    (p) ⇒ if (p == null) 0l else f(p)
   @inline
   private[rasterframes] def safeEval[P1, P2, R](f: (P1, P2) ⇒ R): (P1, P2) ⇒ R =
     (p1, p2) ⇒ if (p1 == null || p2 == null) null.asInstanceOf[R] else f(p1, p2)

@@ -89,4 +89,9 @@ object SpatialExpression {
     override def nodeName = "intersects"
     val relation = SQLSpatialFunctions.ST_Intersects
   }
+  case class Contains(left: Expression, right: Expression) extends SpatialExpression {
+    override def nodeName = "contains"
+    val relation = SQLSpatialFunctions.ST_Contains
+  }
+
 }

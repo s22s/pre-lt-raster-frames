@@ -11,3 +11,6 @@ val poly = f.createPolygon(Array(new Coordinate(0, 0), new Coordinate(0, 3), new
 poly.intersects(pt)
 pt.intersects(poly)
 pt.intersects(pt)
+
+
+Double.NaN.toInt

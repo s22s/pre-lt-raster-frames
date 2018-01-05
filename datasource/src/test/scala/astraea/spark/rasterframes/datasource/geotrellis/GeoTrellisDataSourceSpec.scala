@@ -30,6 +30,7 @@ import geotrellis.spark.tiling.ZoomedLayoutScheme
 import geotrellis.vector._
 import org.apache.hadoop.fs.FileUtil
 import org.apache.spark.sql.SQLGeometricConstructorFunctions
+import org.apache.spark.sql.execution.datasources.LogicalRelation
 import org.scalatest.BeforeAndAfter
 
 /**
@@ -62,24 +63,24 @@ class GeoTrellisDataSourceSpec extends TestEnvironment with TestData with Before
     outputDir.deleteOnExit()
     lazy val writer = LayerWriter(outputDir.toURI)
     // TestEnvironment will clean this up
-    writer.write(LayerId("all-ones", 4), testRdd, ZCurveKeyIndexMethod)
+    writer.write(LayerId("all-ones", 0), testRdd, ZCurveKeyIndexMethod)
   }
 
-  describe("GeoTrellis DataSource") {
-    val dfr = sqlContext.read
+  describe("GeoTrellis DataSource reading") {
+    val layerReader = sqlContext.read
       .format("geotrellis")
-      .option("uri", outputLocal.toUri.toString)
+      .option("path", outputLocal.toUri.toString)
       .option("layer", "all-ones")
-      .option("zoom", "4")
+      .option("zoom", "0")
 
     it("should read tiles") {
-      val df = dfr.load()
+      val df = layerReader.load()
       df.show()
       df.count should be((2 to 5).length * (2 to 5).length)
     }
 
     it("used produce tile UDT that we can manipulate"){
-      val df = dfr.load().select(SPATIAL_KEY_COLUMN, tileStats(TILE_COLUMN))
+      val df = layerReader.load().select(SPATIAL_KEY_COLUMN, tileStats(TILE_COLUMN))
       df.show()
       assert(df.count() > 0)
     }
@@ -88,7 +89,7 @@ class GeoTrellisDataSourceSpec extends TestEnvironment with TestData with Before
       val boundKeys = KeyBounds(SpatialKey(3,4),SpatialKey(4,4))
       val bbox = testRdd.metadata.layout
         .mapTransform(boundKeys.toGridBounds()).jtsGeom
-      val df = dfr.load().asRF.withCenter().where(intersects(CENTER_COLUMN, geomlit(bbox)))
+      val df = layerReader.load().asRF.withCenter().where(intersects(CENTER_COLUMN, geomlit(bbox)))
       df.count() should be (boundKeys.toGridBounds.sizeLong)
     }
 
@@ -98,24 +99,25 @@ class GeoTrellisDataSourceSpec extends TestEnvironment with TestData with Before
       val targetKey = testRdd.metadata.mapTransform(Point(pt))
 
       withClue("using geomlit") {
-        val df = dfr.load()
+        val df = layerReader.load()
           .where(intersects(EXTENT_COLUMN, geomlit(pt)))
           .asRF
 
-        df.printSchema()
-        df.explain(true)
-        df.show(false)
+        //df.explain(true)
 
+        val plan = df.queryExecution.optimizedPlan
+        val filters = plan.children.collect {
+          case LogicalRelation(gt: GeoTrellisRelation, _, _) ⇒ gt.filters
+        }.flatten
         assert(df.count() === 1)
         assert(df.select(SPATIAL_KEY_COLUMN).first === targetKey)
+        assert(filters.length === 1)
       }
 
       withClue("using udf") {
-        val df = dfr.load()
+        val df = layerReader.load()
           .where(intersects(EXTENT_COLUMN, makePoint(pt.getX, pt.getY)))
           .asRF
-
-        df.explain(true)
 
         assert(df.count() === 1)
         assert(df.select(SPATIAL_KEY_COLUMN).first === targetKey)
@@ -123,7 +125,7 @@ class GeoTrellisDataSourceSpec extends TestEnvironment with TestData with Before
     }
 
     it("should invoke Encoder[Extent]"){
-      val df = dfr.load().asRF.withExtent()
+      val df = layerReader.load().asRF.withExtent()
       df.show()
       assert(df.count > 0)
       assert(df.first.length === 3)

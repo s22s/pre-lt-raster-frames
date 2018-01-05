@@ -18,6 +18,7 @@ package astraea.spark
 
 import astraea.spark.rasterframes.encoders.GeoTrellisEncoders
 import astraea.spark.rasterframes.jts.SpatialEncoders
+import com.vividsolutions.jts.geom.{Point ⇒ jtsPoint}
 import geotrellis.raster.{Tile, TileFeature}
 import geotrellis.spark.{Bounds, ContextRDD, Metadata, SpatialKey, TemporalKey, TileLayerMetadata}
 import geotrellis.util.GetComponent
@@ -57,13 +58,14 @@ package object rasterframes extends ColumnFunctions
   val EXTENT_COLUMN = col("extent").as[Extent]
 
   /** Default RasterFrame column name for the center coordinates of the tile's extent. */
-  val CENTER_COLUMN = col("center")
+  // This is a `def` because `PointUDT` needs to be initialized first.
+  def CENTER_COLUMN = col("center").as[jtsPoint]
 
   /** Default RasterFrame column name for an added spatial index. */
   val SPATIAL_INDEX_COLUMN = col("spatial_index").as[Long]
 
   /** Default RasterFrame tile column name. */
-  // This is a `def` because `TileUDF` needs to be initialized first.
+  // This is a `def` because `TileUDT` needs to be initialized first.
   def TILE_COLUMN = col("tile").as[Tile]
 
   /** Default RasterFrame [[TileFeature.data]] column name. */

@@ -28,7 +28,7 @@ import com.vividsolutions.jts.geom
 import com.vividsolutions.jts.geom.Geometry
 import geotrellis.raster.Tile
 import geotrellis.spark.io._
-import geotrellis.spark.{LayerId, Metadata, SpatialKey, TileLayerMetadata, _}
+import geotrellis.spark.{LayerId, SpatialKey, TileLayerMetadata, _}
 import geotrellis.util.LazyLogging
 import geotrellis.vector._
 import org.apache.spark.rdd.RDD
@@ -187,7 +187,6 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
   override def sizeInBytes = {
     super.sizeInBytes
   }
-
 }
 
 object GeoTrellisRelation {

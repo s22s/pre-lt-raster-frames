@@ -42,11 +42,11 @@ class JTSSpec extends TestEnvironment with TestData with IntelliJPresentationCom
       )
 
       val locs = coords.toDF("id", "point")
-      val joined = rf.join(locs, contains($"bounds", $"point"))
+      val joined = rf.join(locs, contains(EXTENT_COLUMN, $"point"))
       assert(joined.count === coords.length)
 
       val searchPoint = pointFromWKT(coords.head._2.toText)
-      val filtered = rf.filter(contains($"bounds", searchPoint))
+      val filtered = rf.filter(contains(EXTENT_COLUMN, searchPoint))
       assert(filtered.count === 1)
     }
   }
