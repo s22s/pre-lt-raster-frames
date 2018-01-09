@@ -50,7 +50,7 @@ case class CellCountAggregateFunction(isData: Boolean, child: Expression) extend
 
   private val cellTest =
     if (isData) udf(dataCells)
-    else udf(nodataCells)
+    else udf(noDataCells)
 
   val updateExpressions = Seq(
     If(IsNull(child), count, Add(count, cellTest(child.asColumn).expr))

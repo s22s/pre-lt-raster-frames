@@ -24,3 +24,6 @@ metastore_db
 .ensime*
 tour/jars
 tour/*.tiff
+
+# python
+_jars/

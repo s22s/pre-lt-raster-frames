@@ -52,8 +52,8 @@ object ProjectPlugin extends AutoPlugin {
       spark("core") % Provided,
       spark("mllib") % Provided,
       spark("sql") % Provided,
-      geotrellis("spark") % Provided,
-      geotrellis("raster") % Provided,
+      geotrellis("spark"),
+      geotrellis("raster"),
       geotrellis("spark-testkit") % Test excludeAll (
         ExclusionRule(organization = "org.scalastic"),
         ExclusionRule(organization = "org.scalatest")
