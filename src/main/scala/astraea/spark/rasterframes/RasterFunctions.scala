@@ -155,8 +155,8 @@ trait RasterFunctions {
 
   /** Counts the number of NoData cells per Tile. */
   def noDataCells(tile: Column): TypedColumn[Any, Long] =
-    withAlias("nodataCells", tile)(
-      udf(F.nodataCells).apply(tile)
+    withAlias("noDataCells", tile)(
+      udf(F.noDataCells).apply(tile)
     ).as[Long]
 
   /** Compute cell-local aggregate descriptive statistics for a column of Tiles. */
