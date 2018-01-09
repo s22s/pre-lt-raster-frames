@@ -1,6 +1,8 @@
 import sbt.Keys._
 import sbt._
 import sbtbuildinfo.BuildInfoPlugin.autoImport._
+import sbtassembly.AssemblyPlugin
+import sbtassembly.AssemblyPlugin.autoImport.{ShadeRule, _}
 import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 import sbtrelease.ReleasePlugin.autoImport._
 import com.servicerocket.sbt.release.git.flow.Steps._
@@ -161,6 +163,35 @@ object ProjectPlugin extends AutoPlugin {
         BuildInfoOption.ToMap,
         BuildInfoOption.BuildTime
       )
+    )
+
+    def assemblySettings: Seq[Def.Setting[_]] = Seq(
+      test in assembly := {},
+      assemblyMergeStrategy in assembly := {
+        case "logback.xml" ⇒ MergeStrategy.singleOrError
+        case "git.properties" ⇒ MergeStrategy.discard
+        case x if Assembly.isConfigFile(x) ⇒ MergeStrategy.concat
+        case PathList(ps @ _*) if Assembly.isReadme(ps.last) || Assembly.isLicenseFile(ps.last) ⇒
+          MergeStrategy.rename
+        case PathList("META-INF", xs @ _*) ⇒
+          (xs map { _.toLowerCase }) match {
+            case ("manifest.mf" :: Nil) | ("index.list" :: Nil) | ("dependencies" :: Nil) ⇒
+              MergeStrategy.discard
+            case ps @ (x :: _) if ps.last.endsWith(".sf") || ps.last.endsWith(".dsa") ⇒
+              MergeStrategy.discard
+            case "plexus" :: _ ⇒
+              MergeStrategy.discard
+            case "services" :: _ ⇒
+              MergeStrategy.filterDistinctLines
+            case ("spring.schemas" :: Nil) | ("spring.handlers" :: Nil) ⇒
+              MergeStrategy.filterDistinctLines
+            case ("maven" :: rest ) if rest.lastOption.exists(_.startsWith("pom")) ⇒
+              MergeStrategy.discard
+            case _ ⇒ MergeStrategy.deduplicate
+          }
+
+        case _ ⇒ MergeStrategy.deduplicate
+      }
     )
   }
 }
