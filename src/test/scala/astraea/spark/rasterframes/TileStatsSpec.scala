@@ -137,7 +137,7 @@ class TileStatsSpec extends TestEnvironment with TestData  {
     }
 
     it("should compute aggregate mean") {
-      val ds = Seq.fill[Tile](10)(randomTile(5, 5, "float32")).toDF("tiles")
+      val ds = (Seq.fill[Tile](10)(randomTile(5, 5, "float32")) :+ null).toDF("tiles")
       val agg = ds.select(aggMean($"tiles"))
       val stats = ds.select(aggStats($"tiles") as "stats").select($"stats.mean".as[Double])
       assert(agg.first() === stats.first())

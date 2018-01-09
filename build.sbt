@@ -1,23 +1,20 @@
-
-import sbt._
-import sbt.Keys._
-import sbtassembly.AssemblyKeys.assembly
-
 lazy val `raster-frames` = project
   .in(file("."))
-  .enablePlugins(SiteScaladocPlugin, ParadoxSitePlugin, TutPlugin, GhpagesPlugin)
+  .enablePlugins(
+    SiteScaladocPlugin,
+    ParadoxSitePlugin,
+    TutPlugin,
+    GhpagesPlugin,
+    BuildInfoPlugin
+  )
   .settings(name := "RasterFrames")
   .settings(moduleName := "raster-frames")
   .settings(releaseSettings)
-  .settings(spSettings)
   .settings(docSettings)
+  .settings(buildInfoSettings)
 
 lazy val bench = project
   .dependsOn(`raster-frames`)
-  .disablePlugins(
-    SparkPackagePlugin, ScoverageSbtPlugin, SitePlugin, BintrayPlugin,
-    ReleasePlugin, AssemblyPlugin, SitePreviewPlugin
-  )
 
 initialCommands in console := """
   |import astraea.spark.rasterframes._

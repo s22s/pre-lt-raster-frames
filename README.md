@@ -12,8 +12,6 @@ as we continue to improve it.
 
 ## Getting Started
 
-RasterFrames™ is currently available for Scala 2.11 + Spark 2.1.0 and is published via Bintray's JCenter, one of the default sbt resolvers. To use, just add the following library dependency:
-
 ## Quick Start
 
 ### macOS

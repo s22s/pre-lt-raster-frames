@@ -18,6 +18,7 @@ package astraea.spark.rasterframes
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local._
 import geotrellis.raster._
+import geotrellis.raster.render.ascii.AsciiArtEncoder
 
 import scala.reflect.runtime.universe._
 
@@ -37,9 +38,10 @@ package object functions {
       else if (o2 == null) o1
       else op(o1, o2)
     }
-
+  @inline
   private[rasterframes] def safeEval[P, R](f: P ⇒ R): P ⇒ R =
     (p) ⇒ if (p == null) null.asInstanceOf[R] else f(p)
+  @inline
   private[rasterframes] def safeEval[P1, P2, R](f: (P1, P2) ⇒ R): (P1, P2) ⇒ R =
     (p1, p2) ⇒ if (p1 == null || p2 == null) null.asInstanceOf[R] else f(p1, p2)
 
@@ -209,7 +211,7 @@ package object functions {
   private[rasterframes] val localDivide: (Tile, Tile) ⇒ Tile = safeEval(Divide.apply)
 
   /** Render tile as ASCII string. */
-  private[rasterframes] val renderAscii: (Tile) ⇒ String = safeEval(_.asciiDraw)
+  private[rasterframes] val renderAscii: (Tile) ⇒ String = safeEval(_.renderAscii(AsciiArtEncoder.Palette.NARROW))
 
   /** Constructor for constant tiles */
   private[rasterframes] val makeConstantTile: (Number, Int, Int, String) ⇒ Tile = (value, cols, rows, cellTypeName) ⇒ {

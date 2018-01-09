@@ -1,9 +1,29 @@
 # Release Notes
 
+## 0.5.12
+
+* Added `withSpatialIndex` to introduce a column assigning a z-curve index value based on the tile's centroid in EPSG:4326. 
+* Added column-appending convenience methods: `withExtent`, `withCenter`,  `withCenterLatLng`
+* Documented example of creating a GeoTrellis layer from a RasterFrame.
+* Added Spark 2.2.0 forward-compatibility
+* Upgraded to GeoTrellis 1.2.0-RC2
+
+## 0.5.11
+
+* Significant performance improvement in `explodeTiles` (1-2 orders of magnitude). See [#38](https://github.com/s22s/raster-frames/issues/38)
+* Fixed bugs in `NoData` handling when converting to `Double` tiles.
+
+## 0.5.10
+
+* Upgraded to shapeless 2.3.2
+* Fixed [#36](https://github.com/s22s/raster-frames/issues/36), [#37](https://github.com/s22s/raster-frames/issues/37)
+
 ## 0.5.9
 
-* Deprecated `rfIinit` in favor of `SparkSession.withRasterFrames` or `SQLContext.withRasterFrames` extension methods.
-
+* Ported to sbt 1.0.3
+* Added sbt-generated `astraea.spark.rasterframes.RFBuildInfo`
+* Fixed bug in computing `aggMean` when one or more tiles are `null` 
+* Deprecated `rfIinit` in favor of `SparkSession.withRasterFrames` or `SQLContext.withRasterFrames` extension methods
 
 ## 0.5.8
 
