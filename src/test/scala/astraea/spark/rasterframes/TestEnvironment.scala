@@ -23,7 +23,7 @@ import geotrellis.spark.testkit.{TestEnvironment ⇒ GeoTrellisTestEnvironment}
 import geotrellis.util.LazyLogging
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.functions.col
-import org.apache.spark.sql.{DataFrame, Dataset, SQLContext, SaveMode}
+import org.apache.spark.sql._
 import org.scalactic.Tolerance
 import org.scalatest._
 
@@ -33,7 +33,7 @@ trait TestEnvironment extends FunSpec with GeoTrellisTestEnvironment
   override implicit def sc: SparkContext = { _sc.setLogLevel("ERROR"); _sc }
 
   lazy val sqlContext: SQLContext = {
-    val ctx = SQLContext.getOrCreate(_sc).withRasterFrames
+    val ctx = SparkSession.builder.config(_sc.getConf).getOrCreate().sqlContext.withRasterFrames
     ctx
   }
 

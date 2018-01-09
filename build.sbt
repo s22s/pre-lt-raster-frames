@@ -5,13 +5,15 @@ lazy val `raster-frames` = project
     ParadoxSitePlugin,
     TutPlugin,
     GhpagesPlugin,
-    BuildInfoPlugin
+    BuildInfoPlugin,
+    AssemblyPlugin
   )
   .settings(name := "RasterFrames")
   .settings(moduleName := "raster-frames")
   .settings(releaseSettings)
   .settings(docSettings)
   .settings(buildInfoSettings)
+  .settings(assemblySettings)
 
 lazy val bench = project
   .dependsOn(`raster-frames`)
