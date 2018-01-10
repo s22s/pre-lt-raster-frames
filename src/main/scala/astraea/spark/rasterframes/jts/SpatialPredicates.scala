@@ -33,8 +33,10 @@ import org.apache.spark.sql.gt._
  */
 trait SpatialPredicates {
   import astraea.spark.rasterframes.encoders.SparkDefaultEncoders._
-  def intersects(left: Column, right: Column) = Intersects(left.expr, right.expr).asColumn
-  def contains(left: Column, right: Column) = Contains(left.expr, right.expr).asColumn
+  def intersects(left: Column, right: Column) =
+    Intersects(left.expr, right.expr).asColumn.as[Boolean]
+  def contains(left: Column, right: Column) =
+    Contains(left.expr, right.expr).asColumn.as[Boolean]
   def covers(left: Column, right: Column) = withAlias("covers", left, right)(
     udf(ST_Covers).apply(left, right)
   ).as[Boolean]
@@ -58,6 +60,6 @@ trait SpatialPredicates {
   ).as[Boolean]
 }
 
-object SpatialPredicates {
+object SpatialPredicates extends SpatialPredicates  {
 
 }

@@ -54,8 +54,7 @@ trait SpatialConverters {
     udf(() ⇒ ST_PointFromText(wkt)).apply().as("pointFromWKT")
   }.as[Point]
   def makePoint(x: Double, y: Double): TypedColumn[Any, Point] = {
-    udf(() ⇒ ST_MakePoint(x, y)).apply().as("makePoint()")
-    //geomlit(ST_MakePoint(x, y))
+      geomlit(ST_MakePoint(x, y))
   }.as[Point]
   def makePoint(x: Column, y: Column) = withAlias("makePoint", x, y) {
     udf(ST_MakePoint).apply(x, y)
@@ -75,6 +74,5 @@ trait SpatialConverters {
   }
 }
 
-object SpatialConverters {
-
+object SpatialConverters extends SpatialConverters {
 }
