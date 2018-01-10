@@ -1,5 +1,4 @@
 from __future__ import absolute_import
-from pyspark import SparkContext
 from pyspark.sql import SparkSession, DataFrame
 from pyspark.sql.types import *
 from pyspark.sql.column import Column, _to_java_column
@@ -18,7 +17,17 @@ _rf_functions = {
     'aggMean': 'Computes the column aggregate mean',
     'aggDataCells': 'Computes the number of non-NoData cells in a column',
     'aggNoDataCells': 'Computes the number of NoData cells in a column',
-    'tileMean': 'Compute the Tile-wise mean'
+    'tileMean': 'Compute the Tile-wise mean',
+    'tileSum': 'Compute the Tile-wise sum',
+    'tileMin': 'Compute the Tile-wise minimum',
+    'tileMax': 'Compute the Tile-wise maximum',
+    'localAdd': 'Add two Tiles',
+    'localSubtract': 'Subtract two Tiles',
+    'localMultiply': 'Multiply two Tiles',
+    'localDivide': 'Divide two Tiles',
+    'renderAscii': 'Render ASCII art of tile',
+    'noDataCells': 'Count of NODATA cells',
+    'dataCells': 'Count of cells with valid data',
 }
 
 
@@ -35,7 +44,7 @@ def _create_function(rfctx, name, doc=""):
 
 def _register():
     from pyrasterframes import _rf_init
-    spark = SparkSession._instantiatedContext
+    spark = SparkSession.builder.getOrCreate()
     _rf_init(spark)
     for name, doc in _rf_functions.items():
         globals()[name] = _create_function(spark.rf._jrfctx, name, doc)
