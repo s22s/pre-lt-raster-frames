@@ -134,9 +134,9 @@ object TestData extends TestData {
       ) (
         z ⇒ if (isNoData(z)) rnd.nextGaussian() else z
       )
-    } while (F.nodataCells(result) != 0L)
+    } while (F.noDataCells(result) != 0L)
 
-    assert(F.nodataCells(result) == 0L,
+    assert(F.noDataCells(result) == 0L,
       s"Should not have any NoData cells for $cellTypeName:\n${result.asciiDraw()}")
     result
   }
