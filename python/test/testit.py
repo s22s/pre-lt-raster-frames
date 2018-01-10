@@ -1,20 +1,18 @@
-# Try this script in a `pyscript` REPL
+# Try this script in a `pyscript` REPL or submit with `spark-submit` as in the README
 from pyspark.sql import SparkSession
-from pyrasterframes import *
+# Get access to Raster Frames goodies. (this works fine with local master)
+from pyrasterframes.functions import *
 
 # you can also tweak app name and master here.
 spark = SparkSession.builder.getOrCreate()
-spark.sparkContext.setLogLevel('WARN')
-
-# Get access to Raster Frames goodies.
-spark.withRasterFrames()
-from pyrasterframes.functions import *
+spark.sparkContext.setLogLevel('ERROR')
 
 # Read a local file
 rf = spark.rf.readGeoTiff("src/test/resources/L8-B8-Robinson-IL.tiff")
 print("Tile columns: ", rf.tileColumns())
 print("Spatial key column: ", rf.spatialKeyColumn())
 print("Temporal key column: ", rf.temporalKeyColumn())
+
 rf.select(
     rf.spatialKeyColumn(),
     tileDimensions("tile"),

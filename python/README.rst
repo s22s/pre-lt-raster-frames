@@ -15,13 +15,13 @@ Install the python package (for development / local use)
 
 Get a Spark REPL
 
-    $ pyspark --jars target/scala-2.11/RasterFrames-assembly-$VERSION.jar --master spark://myhome.io:7077 --num-executors 4
+    $ pyspark --jars target/scala-2.11/RasterFrames-assembly-$VERSION.jar --master local[2]
 
 You can then try for example some of the commands in `test/testit.py`.
 
 Submit a script
 
-    $ spark-submit --jars target/scala-2.11/RasterFrames-assembly-$VERSION.jar --master spark://foo.io:7077 \
+    $ spark-submit --jars target/scala-2.11/RasterFrames-assembly-$VERSION.jar --master local[2] \
         python/test/testit.py
 
 
