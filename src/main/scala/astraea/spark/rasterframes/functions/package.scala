@@ -58,7 +58,7 @@ package object functions {
   })
 
   /** Count tile cells that have a no-data value. */
-  private[rasterframes] val nodataCells: (Tile) ⇒ Long = safeEval((t: Tile) ⇒ {
+  private[rasterframes] val noDataCells: (Tile) ⇒ Long = safeEval((t: Tile) ⇒ {
     var count: Long = 0
     t.dualForeach(
       z ⇒ if(isNoData(z)) count = count + 1
