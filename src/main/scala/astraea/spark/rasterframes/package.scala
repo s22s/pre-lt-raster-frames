@@ -37,7 +37,7 @@ import org.apache.spark.sql.functions._
  * @since 7/18/17
  */
 package object rasterframes extends ColumnFunctions
-  with Implicits with GeoTrellisEncoders with SpatialEncoders {
+  with Implicits with jts.Implicits with GeoTrellisEncoders with SpatialEncoders {
   type Statistics = astraea.spark.rasterframes.functions.CellStatsAggregateFunction.Statistics
   import astraea.spark.rasterframes.encoders.SparkDefaultEncoders._
 

@@ -29,7 +29,9 @@ import geotrellis.spark.io.index.ZCurveKeyIndexMethod
 import geotrellis.spark.tiling.ZoomedLayoutScheme
 import geotrellis.vector._
 import org.apache.hadoop.fs.FileUtil
-import org.apache.spark.sql.SQLGeometricConstructorFunctions
+import org.apache.spark.sql.functions._
+import org.apache.spark.sql.SQLGeometricConstructorFunctions.ST_MakePoint
+import org.apache.spark.sql.{DataFrame, SQLGeometricConstructorFunctions}
 import org.apache.spark.sql.execution.datasources.LogicalRelation
 import org.scalatest.BeforeAndAfter
 
@@ -66,7 +68,7 @@ class GeoTrellisDataSourceSpec extends TestEnvironment with TestData with Before
     writer.write(LayerId("all-ones", 0), testRdd, ZCurveKeyIndexMethod)
   }
 
-  describe("GeoTrellis DataSource reading") {
+  describe("DataSource reading") {
     val layerReader = sqlContext.read
       .format("geotrellis")
       .option("path", outputLocal.toUri.toString)
@@ -93,43 +95,68 @@ class GeoTrellisDataSourceSpec extends TestEnvironment with TestData with Before
       df.count() should be (boundKeys.toGridBounds.sizeLong)
     }
 
-    it("should respect predicate push-down") {
-      val pt = SQLGeometricConstructorFunctions.ST_MakePoint(-88, 60)
-
-      val targetKey = testRdd.metadata.mapTransform(Point(pt))
-
-      withClue("using geomlit") {
-        val df = layerReader.load()
-          .where(intersects(EXTENT_COLUMN, geomlit(pt)))
-          .asRF
-
-        //df.explain(true)
-
-        val plan = df.queryExecution.optimizedPlan
-        val filters = plan.children.collect {
-          case LogicalRelation(gt: GeoTrellisRelation, _, _) ⇒ gt.filters
-        }.flatten
-        assert(df.count() === 1)
-        assert(df.select(SPATIAL_KEY_COLUMN).first === targetKey)
-        assert(filters.length === 1)
-      }
-
-      withClue("using udf") {
-        val df = layerReader.load()
-          .where(intersects(EXTENT_COLUMN, makePoint(pt.getX, pt.getY)))
-          .asRF
-
-        assert(df.count() === 1)
-        assert(df.select(SPATIAL_KEY_COLUMN).first === targetKey)
-      }
-    }
-
     it("should invoke Encoder[Extent]"){
       val df = layerReader.load().asRF.withExtent()
       df.show()
       assert(df.count > 0)
       assert(df.first.length === 3)
       assert(df.first.getAs[Extent](1) !== null)
+    }
+  }
+   describe("Predicate push-down support") {
+
+     def extractFilters(df: DataFrame) = {
+       val plan = df.queryExecution.optimizedPlan
+       plan.children.collect {
+         case LogicalRelation(gt: GeoTrellisRelation, _, _) ⇒ gt.filters
+       }.flatten
+     }
+
+     val layerReader = sqlContext.read
+       .format("geotrellis")
+       .option("path", outputLocal.toUri.toString)
+       .option("layer", "all-ones")
+       .option("zoom", "0")
+
+     val pt1 = ST_MakePoint(-88, 60)
+     val pt2 = ST_MakePoint(-78, 38)
+
+     val targetKey = testRdd.metadata.mapTransform(Point(pt1))
+
+    it("should support extent against a geometry literal") {
+      val df = layerReader.load()
+        .where(EXTENT_COLUMN intersects pt1)
+        .asRF
+
+      val filters = extractFilters(df)
+      assert(filters.length === 1)
+
+      assert(df.count() === 1)
+      assert(df.select(SPATIAL_KEY_COLUMN).first === targetKey)
+    }
+
+    it("should not support extent against a UDF") {
+      val targetKey = testRdd.metadata.mapTransform(Point(pt1))
+      // Do we even want this to be thing???
+
+      val mkPtFcn = udf(() ⇒ ST_MakePoint(1, 1)).apply().as("makePoint()")
+
+      val df = layerReader.load()
+        .where(intersects(EXTENT_COLUMN, mkPtFcn))
+        .asRF
+
+      val filters = extractFilters(df)
+      assert(filters.length === 0)
+
+      assert(df.count() === 1)
+      assert(df.select(SPATIAL_KEY_COLUMN).first === targetKey)
+    }
+
+    it("should support nested predicates") {
+      val df = layerReader.load()
+        .where(intersects(EXTENT_COLUMN, geomlit(pt1)) || intersects(EXTENT_COLUMN, geomlit(pt2)))
+        .asRF
+
     }
   }
 }
