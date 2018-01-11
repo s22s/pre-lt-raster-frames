@@ -19,10 +19,15 @@
 
 package astraea.spark.rasterframes.jts
 
-import com.vividsolutions.jts.geom.{Point ⇒ jtsPoint}
+import java.sql.Timestamp
+import java.time.ZonedDateTime
+
+import com.vividsolutions.jts.geom.{Geometry ⇒ jtsGeometry, Point ⇒ jtsPoint}
 import geotrellis.util.MethodExtensions
 import geotrellis.vector.{Extent, Point ⇒ gtPoint}
 import org.apache.spark.sql.TypedColumn
+import org.apache.spark.sql.functions._
+
 
 /**
  *
@@ -30,14 +35,32 @@ import org.apache.spark.sql.TypedColumn
  * @since 1/10/18
  */
 trait Implicits {
-  implicit class ExtentColumnWithIntersects(val self: TypedColumn[Any, Extent])
+  import astraea.spark.rasterframes.encoders.SparkDefaultEncoders._
+  implicit class ExtentColumnMethods(val self: TypedColumn[Any, Extent])
     extends MethodExtensions[TypedColumn[Any, Extent]] {
 
-    def intersects(pt: jtsPoint): TypedColumn[Any, Boolean] =
-      SpatialPredicates.intersects(self, SpatialConverters.geomlit(pt))
+    def intersects(geom: jtsGeometry): TypedColumn[Any, Boolean] =
+      SpatialPredicates.intersects(self, SpatialConverters.geomlit(geom))
+
+    def contains(geom: jtsGeometry): TypedColumn[Any, Boolean] =
+      SpatialPredicates.contains(self, SpatialConverters.geomlit(geom))
 
     def intersects(pt: gtPoint): TypedColumn[Any, Boolean] =
       SpatialPredicates.intersects(self, SpatialConverters.geomlit(pt.jtsGeom))
+  }
+
+  implicit class PointColumnMethods(val self: TypedColumn[Any, jtsPoint])
+    extends MethodExtensions[TypedColumn[Any, jtsPoint]] {
+
+    def intersects(geom: jtsGeometry): TypedColumn[Any, Boolean] =
+      SpatialPredicates.intersects(self, SpatialConverters.geomlit(geom))
+  }
+
+  implicit class TimestampColumnMethods(val self: TypedColumn[Any, Timestamp])
+    extends MethodExtensions[TypedColumn[Any, Timestamp]] {
+    def after(time: Timestamp): TypedColumn[Any, Boolean] = (self > lit(time)).as[Boolean]
+    def before(time: Timestamp): TypedColumn[Any, Boolean] = (self < lit(time)).as[Boolean]
+    def at(time: Timestamp): TypedColumn[Any, Boolean] = (self === lit(time)).as[Boolean]
   }
 }
 

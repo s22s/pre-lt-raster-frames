@@ -19,6 +19,7 @@
 package astraea.spark.rasterframes.datasource.geotrellis
 
 import java.io.File
+import java.sql.Timestamp
 
 import astraea.spark.rasterframes._
 import geotrellis.proj4.LatLng
@@ -29,10 +30,10 @@ import geotrellis.spark.io.index.ZCurveKeyIndexMethod
 import geotrellis.spark.tiling.ZoomedLayoutScheme
 import geotrellis.vector._
 import org.apache.hadoop.fs.FileUtil
-import org.apache.spark.sql.functions._
 import org.apache.spark.sql.SQLGeometricConstructorFunctions.ST_MakePoint
-import org.apache.spark.sql.{DataFrame, SQLGeometricConstructorFunctions}
 import org.apache.spark.sql.execution.datasources.LogicalRelation
+import org.apache.spark.sql.functions._
+import org.apache.spark.sql.{DataFrame, Row}
 import org.scalatest.BeforeAndAfter
 
 /**
@@ -41,16 +42,16 @@ import org.scalatest.BeforeAndAfter
 class GeoTrellisDataSourceSpec extends TestEnvironment with TestData with BeforeAndAfter with IntelliJPresentationCompilerHack {
 
   lazy val testRdd = {
-    val recs: Seq[(SpatialKey, Tile)] = for {
+    val recs: Seq[(SpaceTimeKey, Tile)] = for {
       col <- 2 to 5
       row <- 2 to 5
-    } yield SpatialKey(col,row) -> ArrayTile.alloc(DoubleConstantNoDataCellType, 3, 3)
+    } yield SpaceTimeKey(col,row, 15) -> ArrayTile.alloc(DoubleConstantNoDataCellType, 3, 3)
 
     val rdd = sc.parallelize(recs)
     val scheme = ZoomedLayoutScheme(LatLng, tileSize = 3)
     val layerLayout = scheme.levelForZoom(4).layout
-    val layerBounds = KeyBounds(SpatialKey(2,2), SpatialKey(5,5))
-    val md = TileLayerMetadata[SpatialKey](
+    val layerBounds = KeyBounds(SpaceTimeKey(2,2,10), SpaceTimeKey(5,5, 20))
+    val md = TileLayerMetadata[SpaceTimeKey](
       cellType = DoubleConstantNoDataCellType,
       crs = LatLng,
       bounds = layerBounds,
@@ -65,7 +66,7 @@ class GeoTrellisDataSourceSpec extends TestEnvironment with TestData with Before
     outputDir.deleteOnExit()
     lazy val writer = LayerWriter(outputDir.toURI)
     // TestEnvironment will clean this up
-    writer.write(LayerId("all-ones", 0), testRdd, ZCurveKeyIndexMethod)
+    writer.write(LayerId("all-ones", 4), testRdd, ZCurveKeyIndexMethod.bySecond())
   }
 
   describe("DataSource reading") {
@@ -73,7 +74,7 @@ class GeoTrellisDataSourceSpec extends TestEnvironment with TestData with Before
       .format("geotrellis")
       .option("path", outputLocal.toUri.toString)
       .option("layer", "all-ones")
-      .option("zoom", "0")
+      .option("zoom", "4")
 
     it("should read tiles") {
       val df = layerReader.load()
@@ -83,7 +84,6 @@ class GeoTrellisDataSourceSpec extends TestEnvironment with TestData with Before
 
     it("used produce tile UDT that we can manipulate"){
       val df = layerReader.load().select(SPATIAL_KEY_COLUMN, tileStats(TILE_COLUMN))
-      df.show()
       assert(df.count() > 0)
     }
 
@@ -91,16 +91,16 @@ class GeoTrellisDataSourceSpec extends TestEnvironment with TestData with Before
       val boundKeys = KeyBounds(SpatialKey(3,4),SpatialKey(4,4))
       val bbox = testRdd.metadata.layout
         .mapTransform(boundKeys.toGridBounds()).jtsGeom
-      val df = layerReader.load().asRF.withCenter().where(intersects(CENTER_COLUMN, geomlit(bbox)))
-      df.count() should be (boundKeys.toGridBounds.sizeLong)
+      val df = layerReader.load().asRF.withCenter().where(CENTER_COLUMN intersects bbox)
+      assert(df.count() === boundKeys.toGridBounds.sizeLong)
     }
 
     it("should invoke Encoder[Extent]"){
       val df = layerReader.load().asRF.withExtent()
       df.show()
       assert(df.count > 0)
-      assert(df.first.length === 3)
-      assert(df.first.getAs[Extent](1) !== null)
+      assert(df.first.length === 5)
+      assert(df.first.getAs[Extent](2) !== null)
     }
   }
    describe("Predicate push-down support") {
@@ -116,7 +116,7 @@ class GeoTrellisDataSourceSpec extends TestEnvironment with TestData with Before
        .format("geotrellis")
        .option("path", outputLocal.toUri.toString)
        .option("layer", "all-ones")
-       .option("zoom", "0")
+       .option("zoom", "4")
 
      val pt1 = ST_MakePoint(-88, 60)
      val pt2 = ST_MakePoint(-78, 38)
@@ -135,14 +135,13 @@ class GeoTrellisDataSourceSpec extends TestEnvironment with TestData with Before
       assert(df.select(SPATIAL_KEY_COLUMN).first === targetKey)
     }
 
-    it("should not support extent against a UDF") {
+    it("should *not* support extent filter against a UDF") {
       val targetKey = testRdd.metadata.mapTransform(Point(pt1))
-      // Do we even want this to be thing???
 
-      val mkPtFcn = udf(() ⇒ ST_MakePoint(1, 1)).apply().as("makePoint()")
+      val mkPtFcn = udf((_: Row) ⇒ {ST_MakePoint(-88, 60)})
 
       val df = layerReader.load()
-        .where(intersects(EXTENT_COLUMN, mkPtFcn))
+        .where(intersects(EXTENT_COLUMN, mkPtFcn(SPATIAL_KEY_COLUMN)))
         .asRF
 
       val filters = extractFilters(df)
@@ -154,9 +153,15 @@ class GeoTrellisDataSourceSpec extends TestEnvironment with TestData with Before
 
     it("should support nested predicates") {
       val df = layerReader.load()
-        .where(intersects(EXTENT_COLUMN, geomlit(pt1)) || intersects(EXTENT_COLUMN, geomlit(pt2)))
+        .where(((EXTENT_COLUMN intersects pt1) || (EXTENT_COLUMN intersects pt2)) &&
+          (TIMESTAMP_COLUMN at new Timestamp(15)))
         .asRF
 
+
+      val filters = extractFilters(df)
+      println(filters)
+
+      df.show(false)
     }
   }
 }
