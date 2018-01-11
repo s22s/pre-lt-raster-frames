@@ -16,6 +16,8 @@
 
 package astraea.spark
 
+import java.sql.Timestamp
+
 import astraea.spark.rasterframes.encoders.GeoTrellisEncoders
 import astraea.spark.rasterframes.jts.SpatialEncoders
 import com.vividsolutions.jts.geom.{Point ⇒ jtsPoint}
@@ -53,6 +55,9 @@ package object rasterframes extends ColumnFunctions
 
   /** Default RasterFrame temporal column name. */
   val TEMPORAL_KEY_COLUMN = col("temporal_key").as[TemporalKey]
+
+  /** Default RasterFrame timestamp column name */
+  val TIMESTAMP_COLUMN = col("timestamp").as[Timestamp]
 
   /** Default RasterFrame column name for an tile extent value. */
   val EXTENT_COLUMN = col("extent").as[Extent]

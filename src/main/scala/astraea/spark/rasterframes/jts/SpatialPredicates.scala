@@ -23,7 +23,9 @@ import org.apache.spark.sql.Column
 import org.apache.spark.sql.SQLSpatialFunctions._
 import org.apache.spark.sql.functions.udf
 import astraea.spark.rasterframes.util._
+import com.vividsolutions.jts.geom.Geometry
 import org.apache.spark.sql.gt._
+import org.apache.spark.sql.sources.Filter
 
 /**
  * UDF wrappers around JTS spark relations.

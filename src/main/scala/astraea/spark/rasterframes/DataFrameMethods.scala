@@ -59,11 +59,6 @@ trait DataFrameMethods extends MethodExtensions[DataFrame] {
     analyzed.find(selector(column)).map(reader)
   }
 
-//  /** Set column role tag for subsequent interpretation. */
-//  private[astraea] def setColumnRole(column: Column, roleName: String): DataFrame =
-//    addColumnMetadata(column, _.putString(SPATIAL_ROLE_KEY, roleName))
-
-
   private[astraea]
   def setSpatialColumnRole[K: SpatialComponent: JsonFormat](
     column: Column, md: TileLayerMetadata[K]) =

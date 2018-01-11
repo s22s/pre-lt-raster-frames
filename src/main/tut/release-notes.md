@@ -4,6 +4,7 @@
 
 * Upgraded to Spark 2.2.0 (now required)
 * <<Predicate pushdown in GeoTrellis Data Source>>
+* Added `withTemporalComponent` convenince method for creating appending a temporal key column with constant value.
 
 ## 0.5.12
 

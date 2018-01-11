@@ -16,6 +16,8 @@
 
 package astraea.spark.rasterframes
 
+import java.time.ZonedDateTime
+
 import geotrellis.raster.resample.{Bilinear, ResampleMethod}
 import geotrellis.raster.{ProjectedRaster, Tile, TileLayout}
 import geotrellis.spark._
@@ -94,12 +96,15 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with RFSpatialCol
       Left(extract[TileLayerMetadata[SpatialKey]](CONTEXT_METADATA_KEY)(spatialMD))
   }
 
-  /** Add a temporal component to the RasterFrame, assigning the same temporal key to all rows. */
+  /** Add a temporal key to the RasterFrame, assigning the same temporal key to all rows. */
   def addTemporalComponent(value: TemporalKey): RasterFrame = {
     require(temporalKeyColumn.isEmpty, "RasterFrame already has a temporal component")
     val tlm = tileLayerMetadata.left.get
     val newTlm = tlm.map(k ⇒ SpaceTimeKey(k, value))
 
+    // I wish there was a better way than this....
+    // can't do `lit(value)` because you get
+    // "Unsupported literal type class geotrellis.spark.TemporalKey" error
     val litKey = udf(() ⇒ value)
 
     val df = self.withColumn(TEMPORAL_KEY_COLUMN.columnName, litKey())
@@ -108,6 +113,9 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with RFSpatialCol
       .setTemporalColumnRole(TEMPORAL_KEY_COLUMN)
       .certify
   }
+
+  /** Create a temporal key from the given time and assign it as thea temporal key for all rows. */
+  def addTemporalComponent(value: ZonedDateTime): RasterFrame = addTemporalComponent(TemporalKey(value))
 
   /**
    * Perform a spatial join between two raster frames. Currently ignores a temporal column if there is one.

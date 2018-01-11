@@ -20,12 +20,13 @@
 package astraea.spark.rasterframes.datasource.geotrellis
 
 import java.net.URI
+import java.sql.Timestamp
+import java.time.{ZoneId, ZoneOffset, ZonedDateTime}
 
 import astraea.spark.rasterframes._
-import GeoTrellisRelation.FilterPredicate
+import astraea.spark.rasterframes.datasource.SpatialFilters.{Contains ⇒ sfContains, Intersects ⇒ sfIntersects}
 import astraea.spark.rasterframes.util._
 import com.vividsolutions.jts.geom
-import com.vividsolutions.jts.geom.Geometry
 import geotrellis.raster.Tile
 import geotrellis.spark.io._
 import geotrellis.spark.{LayerId, SpatialKey, TileLayerMetadata, _}
@@ -39,6 +40,7 @@ import org.apache.spark.sql.types._
 import org.apache.spark.sql.{Row, SQLContext}
 import spray.json.DefaultJsonProtocol._
 import spray.json.JsValue
+import org.apache.spark.sql.sources
 
 import scala.reflect.runtime.universe._
 
@@ -46,11 +48,11 @@ import scala.reflect.runtime.universe._
  * @author echeipesh
  * @author sfitch
  */
-case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId, filters: Seq[FilterPredicate] = Seq.empty)
+case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId, filters: Seq[Filter] = Seq.empty)
     extends BaseRelation with PrunedScan with LazyLogging {
 
   /** Convenience to create new relation with the give filter added. */
-  def withFilter(value: FilterPredicate): GeoTrellisRelation =
+  def withFilter(value: Filter): GeoTrellisRelation =
     copy(filters = filters :+ value)
 
   @transient
@@ -85,6 +87,14 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
       )
     }
 
+  private object Cols {
+    lazy val SK = SPATIAL_KEY_COLUMN.columnName
+    lazy val TK = TEMPORAL_KEY_COLUMN.columnName
+    lazy val TS = TIMESTAMP_COLUMN.columnName
+    lazy val TL = TILE_COLUMN.columnName
+    lazy val EX = EXTENT_COLUMN.columnName
+  }
+
   override def schema: StructType = {
     val skSchema = ExpressionEncoder[SpatialKey]().schema
 
@@ -97,40 +107,59 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
         val tkSchema = ExpressionEncoder[TemporalKey]().schema
         val tkMetadata = Metadata.empty.append.tagTemporalKey.build
         List(
-          StructField(SPATIAL_KEY_COLUMN.columnName, skSchema, nullable = false, skMetadata),
-          StructField(TEMPORAL_KEY_COLUMN.columnName, tkSchema, nullable = false, tkMetadata)
+          StructField(Cols.SK, skSchema, nullable = false, skMetadata),
+          StructField(Cols.TK, tkSchema, nullable = false, tkMetadata),
+          StructField(Cols.TS, TimestampType, nullable = false)
         )
       case t if t =:= typeOf[SpatialKey] ⇒
         List(
-          StructField(SPATIAL_KEY_COLUMN.columnName, skSchema, nullable = false, skMetadata)
+          StructField(Cols.SK, skSchema, nullable = false, skMetadata)
         )
     }
 
     val tileFields = tileClass match {
       case t if t =:= typeOf[Tile]  ⇒
         List(
-          StructField(TILE_COLUMN.columnName, TileUDT, nullable = true)
+          StructField(Cols.TL, TileUDT, nullable = true)
         )
     }
 
     val extentSchema = ExpressionEncoder[Extent]().schema
-    val extentField = StructField(EXTENT_COLUMN.columnName, extentSchema, false)
+    val extentField = StructField(Cols.EX, extentSchema, false)
     StructType((keyFields :+ extentField) ++ tileFields)
   }
 
-  def applyFilter[K: Boundable: SpatialComponent](q: BoundLayerQuery[K, TileLayerMetadata[K], TileLayerRDD[K]], predicate: FilterPredicate) =
+  type BLQ[K] = BoundLayerQuery[K, TileLayerMetadata[K], TileLayerRDD[K]]
+
+  def applyFilter[K: Boundable: SpatialComponent](q: BLQ[K], predicate: Filter): BLQ[K] = {
     predicate match {
-      case FilterPredicate("extent", "intersects", rhs: geom.Point) ⇒
+      // GT limits disjunctions to a single type
+      case sources.Or(sfIntersects(Cols.EX, left), sfIntersects(Cols.EX, right)) ⇒
+        q.where(LayerFilter.Or(
+          Intersects(Extent(left.getEnvelopeInternal)),
+          Intersects(Extent(right.getEnvelopeInternal))
+        ))
+      case sfIntersects(Cols.EX, rhs: geom.Point) ⇒
         q.where(Contains(Point(rhs)))
-      case FilterPredicate("extent", "intersects", rhs) ⇒
+      case sfContains(Cols.EX, rhs: geom.Point) ⇒
+        q.where(Contains(Point(rhs)))
+      case sfIntersects(Cols.EX, rhs) ⇒
         q.where(Intersects(Extent(rhs.getEnvelopeInternal)))
-      case _ ⇒ q
     }
+  }
+
+  def applyFilter2[K: Boundable: SpatialComponent: TemporalComponent](q: BLQ[K], predicate: Filter): BLQ[K] = {
+    predicate match {
+      case sources.EqualTo(Cols.TS, ts: Timestamp) ⇒
+        q.where(At(ZonedDateTime.ofInstant(ts.toInstant, ZoneOffset.UTC)))
+      case _ ⇒ applyFilter(q, predicate)
+    }
+  }
 
   override def buildScan(requiredColumns: Array[String]): RDD[Row] = {
     logger.debug(s"Reading: $layerId from $uri")
-    logger.debug(s"Required columns: ${requiredColumns.mkString(", ")}")
-    logger.debug(s"Filters: $filters")
+    logger.trace(s"Required columns: ${requiredColumns.mkString(", ")}")
+    logger.trace(s"Filters: $filters")
 
     implicit val sc = sqlContext.sparkContext
     lazy val reader = LayerReader(uri)
@@ -164,7 +193,7 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
 
         val query = filters.foldLeft(
           reader.query[SpaceTimeKey, Tile, TileLayerMetadata[SpaceTimeKey]](layerId)
-        )(applyFilter(_, _))
+        )(applyFilter2(_, _))
 
         val rdd = query.result
 
@@ -174,8 +203,9 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
             val entries = columnIndexes.map {
               case 0 ⇒ sk
               case 1 ⇒ stk.temporalKey
-              case 2 ⇒ trans.keyToExtent(stk)
-              case 3 ⇒ tile
+              case 2 ⇒ new Timestamp(stk.temporalKey.instant)
+              case 3 ⇒ trans.keyToExtent(stk)
+              case 4 ⇒ tile
             }
             Row(entries: _*)
           }
@@ -190,8 +220,6 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
 }
 
 object GeoTrellisRelation {
-  case class FilterPredicate(colName: String, relation: String, geom: Geometry)
-
   def extentBuilder(tlm: TileLayerMetadata[_]) = {
     val trans = tlm.mapTransform
     (sk: SpatialKey) ⇒ trans.keyToExtent(sk)

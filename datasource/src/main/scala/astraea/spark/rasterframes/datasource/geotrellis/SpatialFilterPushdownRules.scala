@@ -20,15 +20,19 @@
 package astraea.spark.rasterframes.datasource.geotrellis
 
 import astraea.spark.rasterframes._
-import astraea.spark.rasterframes.datasource.geotrellis.GeoTrellisRelation.FilterPredicate
+import astraea.spark.rasterframes.datasource.SpatialFilters
 import astraea.spark.rasterframes.expressions.SpatialExpression.Intersects
 import com.vividsolutions.jts.geom.Geometry
 import geotrellis.util.LazyLogging
 import org.apache.spark.sql.SQLRules.GeometryLiteral
-import org.apache.spark.sql.catalyst.expressions.{AttributeReference, Literal}
+import org.apache.spark.sql.catalyst.expressions.{Attribute, AttributeReference, Literal, PredicateHelper}
 import org.apache.spark.sql.catalyst.plans.logical.{Filter, LogicalPlan}
 import org.apache.spark.sql.catalyst.rules.Rule
 import org.apache.spark.sql.execution.datasources.LogicalRelation
+import geotrellis.spark.io.{LayerFilter, Contains ⇒ gtContains, Intersects ⇒ gtIntersects}
+import com.vividsolutions.jts.geom.{Point ⇒ jtsPoint}
+import geotrellis.vector.{Extent, Point}
+import org.apache.spark.sql.rf.FilterTranslator
 
 /**
  * Logical plan manipulations to handle spatial queries on tile components.
@@ -42,7 +46,7 @@ import org.apache.spark.sql.execution.datasources.LogicalRelation
  * @author sfitch 
  * @since 12/21/17
  */
-object SpatialFilterPushdownRules extends Rule[LogicalPlan] with LazyLogging {
+object SpatialFilterPushdownRules extends Rule[LogicalPlan] with PredicateHelper with LazyLogging {
   import astraea.spark.rasterframes.encoders.GeoTrellisEncoders._
 
   val EXTENT_COL_NAME = EXTENT_COLUMN.columnName
@@ -53,24 +57,23 @@ object SpatialFilterPushdownRules extends Rule[LogicalPlan] with LazyLogging {
       in.dataType == extentEncoder.schema
   }
 
+  def extentIntersects(g: Geometry): LayerFilter.Value[_, _] = g match {
+    case p: jtsPoint ⇒ gtContains(Point(p))
+    case _ ⇒ gtIntersects(Extent(g.getEnvelopeInternal))
+  }
+
   def apply(plan: LogicalPlan): LogicalPlan = {
     plan.transform {
       case f @ Filter(condition, lr @ LogicalRelation(gt: GeoTrellisRelation, _, _)) ⇒
-        val newFilter = condition match  {
-          case i @ Intersects(ExtentAttr(), g: GeometryLiteral) ⇒
-            Some(FilterPredicate(EXTENT_COL_NAME, i.nodeName, g.geom))
-          case i @ Intersects(ExtentAttr(), Literal(geom: Geometry, _)) ⇒
-            Some(FilterPredicate(EXTENT_COL_NAME, i.nodeName, geom))
-          case _ ⇒ None
-        }
 
-        // Only add the filter if it doesn't already exist.
-        // Lenses would clean this up a bit.
-        newFilter.filterNot(gt.filters.contains)
-          .map(gt.withFilter)
-          .map(r ⇒ lr.copy(relation = r))
-          .map(lr ⇒ Filter(condition, lr))
-          .getOrElse(f)
+        val preds = splitConjunctivePredicates(condition)
+          .flatMap(FilterTranslator.translateFilter)
+          .filterNot(gt.filters.contains)
+
+        if(preds.nonEmpty) {
+          val newGt = preds.foldLeft(gt)((r, f) ⇒ r.withFilter(f))
+          Filter(condition, lr.copy(relation = newGt))
+        } else f
     }
   }
 }
