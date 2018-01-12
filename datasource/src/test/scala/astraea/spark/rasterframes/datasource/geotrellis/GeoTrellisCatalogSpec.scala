@@ -43,30 +43,7 @@ class GeoTrellisCatalogSpec
     extends TestEnvironment with TestData with BeforeAndAfter
     with IntelliJPresentationCompilerHack {
 
-  val now = ZonedDateTime.now()
-  val tileCoordRange = 2 to 5
-
-//  lazy val testRdd = {
-//    val recs: Seq[(SpaceTimeKey, Tile)] = for {
-//      col ← tileCoordRange
-//      row ← tileCoordRange
-//    } yield SpaceTimeKey(col, row, now) -> ArrayTile.alloc(DoubleConstantNoDataCellType, 3, 3)
-//
-//    val rdd = sc.parallelize(recs)
-//    val scheme = ZoomedLayoutScheme(LatLng, tileSize = 3)
-//    val layerLayout = scheme.levelForZoom(4).layout
-//    val layerBounds = KeyBounds(SpaceTimeKey(2, 2, now.minusMonths(1)), SpaceTimeKey(5, 5, now.plusMonths(1)))
-//    val md = TileLayerMetadata[SpaceTimeKey](
-//      cellType = DoubleConstantNoDataCellType,
-//      crs = LatLng,
-//      bounds = layerBounds,
-//      layout = layerLayout,
-//      extent = layerLayout.mapTransform(layerBounds.toGridBounds()))
-//    ContextRDD(rdd, md)
-//  }
-
   lazy val testRdd = TestData.randomSpatioTemporalTileLayerRDD(10, 12, 5, 6)
-
 
   before {
     val outputDir = new File(outputLocalPath)
@@ -79,12 +56,10 @@ class GeoTrellisCatalogSpec
   }
 
   describe("Catalog reading") {
-    val catalogReader = sqlContext.read
-      .format("geotrellis-catalog")
-      .option("path", outputLocal.toUri.toString)
-
     it("should show two zoom levels") {
-      val cat = catalogReader.load()
+      val cat = sqlContext.read
+        .format("geotrellis-catalog")
+        .load(outputLocal.toUri.toString)
       cat.show()
       assert(cat.schema.length > 4)
       assert(cat.count() === 2)

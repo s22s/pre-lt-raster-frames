@@ -22,6 +22,7 @@ package astraea.spark.rasterframes.datasource.geotrellis
 import java.net.URI
 
 import astraea.spark.rasterframes.datasource.geotrellis.GeoTrellisCatalog.GeoTrellisCatalogRelation
+import geotrellis.spark.LayerId
 import geotrellis.spark.io.AttributeStore
 import org.apache.spark.annotation.Experimental
 import org.apache.spark.rdd.RDD
@@ -30,7 +31,7 @@ import org.apache.spark.sql.sources._
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.{StringType, StructField, StructType}
 import spray.json.DefaultJsonProtocol._
-import spray.json.JsValue
+import spray.json._
 
 /**
  *
@@ -54,34 +55,38 @@ object GeoTrellisCatalog {
 
     private lazy val attributes = AttributeStore(uri)
 
-    lazy val layerIds = attributes.layerIds
     // NB: It is expected that the number of layers is going to be small enough that
     // doing all this in-core generation of the catalog table will be negligible.
     // If this becomes a problem then re-write it starting off with an RDD of layerIds
     // and flow from there.
-    lazy val layers = layerIds.toDF
-    lazy val headers = sqlContext.read.json(
-      layerIds
-        .map(attributes.readHeader[JsValue])
-        .map(_.compactPrint)
-        .toDS
-    )
-    lazy val metadata = sqlContext.read.json(
-      layerIds
-        .map(attributes.readMetadata[JsValue])
-        .map(_.compactPrint)
-        .toDS
-    )
-
-    def schema: StructType = StructType(
-      layers.schema.fields ++ headers.schema.fields ++ metadata.schema.fields
-    )
-
-    def buildScan(): RDD[Row] = {
-      layers.rdd.zip(headers.rdd).zip(metadata.rdd).map { case ((l, h), m) ⇒
-          val elements = l.toSeq ++ h.toSeq ++ m.toSeq
-          Row(elements: _*)
+    private lazy val layers = {
+      // The attribute groups are processed separately and joined at the end to
+      // maintain a semblance of separation in the resulting schema.
+      val mergeId = (id: Int, json: JsObject) ⇒ {
+        val jid = id.toJson
+        json.copy(fields = json.fields + ("id" -> jid) )
       }
+      val layerIds = attributes.layerIds.zipWithIndex.map(_.swap)
+      val indexedLayers = layerIds.toDS.select($"_1" as "id", $"_2.*")
+      val headers = sqlContext.read.json(
+        layerIds
+          .map(id ⇒ (id._1, attributes.readHeader[JsObject](id._2)))
+          .map(mergeId.tupled)
+          .map(_.compactPrint)
+          .toDS
+      )
+      val metadata = sqlContext.read.json(
+        layerIds
+          .map(id ⇒ (id._1, attributes.readMetadata[JsObject](id._2)))
+          .map(mergeId.tupled)
+          .map(_.compactPrint)
+          .toDS
+      )
+      indexedLayers.join(headers, Seq("id")).join(metadata, Seq("id"))
     }
+
+    def schema: StructType = layers.schema
+
+    def buildScan(): RDD[Row] = layers.rdd
   }
 }
