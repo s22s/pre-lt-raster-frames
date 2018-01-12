@@ -19,6 +19,8 @@
 
 package astraea.spark.rasterframes.datasource
 
+import java.sql.Timestamp
+
 import com.vividsolutions.jts.geom.Geometry
 import org.apache.spark.sql.sources.Filter
 
@@ -36,4 +38,7 @@ object SpatialFilters {
     def references: Array[String] = Array(attribute)
   }
 
+  case class BetweenTimes(attribute: String, start: Timestamp, end: Timestamp) extends Filter {
+    def references: Array[String] = Array(attribute)
+  }
 }

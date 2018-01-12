@@ -29,13 +29,15 @@ import org.apache.spark.sql.TypedColumn
 import org.apache.spark.sql.functions._
 
 
+
 /**
- *
+ * Extension methods on typed columns allowing for DSL-like queries over JTS types.
  * @author sfitch 
  * @since 1/10/18
  */
 trait Implicits {
   import astraea.spark.rasterframes.encoders.SparkDefaultEncoders._
+
   implicit class ExtentColumnMethods(val self: TypedColumn[Any, Extent])
     extends MethodExtensions[TypedColumn[Any, Extent]] {
 
@@ -58,9 +60,19 @@ trait Implicits {
 
   implicit class TimestampColumnMethods(val self: TypedColumn[Any, Timestamp])
     extends MethodExtensions[TypedColumn[Any, Timestamp]] {
-    def after(time: Timestamp): TypedColumn[Any, Boolean] = (self > lit(time)).as[Boolean]
-    def before(time: Timestamp): TypedColumn[Any, Boolean] = (self < lit(time)).as[Boolean]
+
+    import scala.language.implicitConversions
+    private implicit def zdt2ts(time: ZonedDateTime): Timestamp =
+      new Timestamp(time.toInstant.toEpochMilli)
+
+    def betweenTimes(start: Timestamp, end: Timestamp): TypedColumn[Any, Boolean] =
+      self.between(lit(start), lit(end)).as[Boolean]
+
+    def betweenTimes(start: ZonedDateTime, end: ZonedDateTime): TypedColumn[Any, Boolean] =
+      betweenTimes(start: Timestamp, end: Timestamp)
+
     def at(time: Timestamp): TypedColumn[Any, Boolean] = (self === lit(time)).as[Boolean]
+    def at(time: ZonedDateTime): TypedColumn[Any, Boolean] = at(time: Timestamp)
   }
 }
 

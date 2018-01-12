@@ -3,7 +3,8 @@
 ## 0.6.0
 
 * Upgraded to Spark 2.2.0 (now required)
-* <<Predicate pushdown in GeoTrellis Data Source>>
+* Introduced separate `rasterframes-datasource` library for hosting sources from which to read RasterFrames.
+* Implemented basic temporal and spatial filter predicate push-down feature for the GeoTrellis layer datasource.
 * Added `withTemporalComponent` convenince method for creating appending a temporal key column with constant value.
 
 ## 0.5.12
