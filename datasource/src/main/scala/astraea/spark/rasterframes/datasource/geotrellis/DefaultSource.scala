@@ -28,6 +28,8 @@ import org.apache.spark.sql._
 import org.apache.spark.sql.sources._
 
 /**
+ * DataSource over a GeoTrellis layer store.
+ *
  * @author echeipesh
  * @author sfitch
  */
@@ -45,8 +47,6 @@ class DefaultSource extends DataSourceRegister with RelationProvider {
     val uri: URI = URI.create(parameters("path"))
     val layerId: LayerId = LayerId(parameters("layer"), parameters("zoom").toInt)
 
-    // here would be the place to read the layer metadata
-    // and dispatch based on key type to spatial or spacetime relation
     GeoTrellisRelation(sqlContext, uri, layerId)
   }
 }
