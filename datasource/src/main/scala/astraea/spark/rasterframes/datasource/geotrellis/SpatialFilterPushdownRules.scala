@@ -19,19 +19,10 @@
 
 package astraea.spark.rasterframes.datasource.geotrellis
 
-import astraea.spark.rasterframes._
-import astraea.spark.rasterframes.datasource.SpatialFilters
-import astraea.spark.rasterframes.expressions.SpatialExpression.Intersects
-import com.vividsolutions.jts.geom.Geometry
 import geotrellis.util.LazyLogging
-import org.apache.spark.sql.SQLRules.GeometryLiteral
-import org.apache.spark.sql.catalyst.expressions.{Attribute, AttributeReference, Literal, PredicateHelper}
 import org.apache.spark.sql.catalyst.plans.logical.{Filter, LogicalPlan}
 import org.apache.spark.sql.catalyst.rules.Rule
 import org.apache.spark.sql.execution.datasources.LogicalRelation
-import geotrellis.spark.io.{LayerFilter, Contains ⇒ gtContains, Intersects ⇒ gtIntersects}
-import com.vividsolutions.jts.geom.{Point ⇒ jtsPoint}
-import geotrellis.vector.{Extent, Point}
 import org.apache.spark.sql.rf.FilterTranslator
 
 /**
@@ -46,34 +37,18 @@ import org.apache.spark.sql.rf.FilterTranslator
  * @author sfitch 
  * @since 12/21/17
  */
-object SpatialFilterPushdownRules extends Rule[LogicalPlan] with PredicateHelper with LazyLogging {
-  import astraea.spark.rasterframes.encoders.GeoTrellisEncoders._
-
-  val EXTENT_COL_NAME = EXTENT_COLUMN.columnName
-
-  object ExtentAttr {
-    def unapply(in: AttributeReference): Boolean =
-      in.name == EXTENT_COL_NAME &&
-      in.dataType == extentEncoder.schema
-  }
-
-  def extentIntersects(g: Geometry): LayerFilter.Value[_, _] = g match {
-    case p: jtsPoint ⇒ gtContains(Point(p))
-    case _ ⇒ gtIntersects(Extent(g.getEnvelopeInternal))
-  }
+object SpatialFilterPushdownRules extends Rule[LogicalPlan] with LazyLogging {
 
   def apply(plan: LogicalPlan): LogicalPlan = {
     plan.transform {
       case f @ Filter(condition, lr @ LogicalRelation(gt: GeoTrellisRelation, _, _)) ⇒
 
-        val preds = splitConjunctivePredicates(condition)
-          .flatMap(FilterTranslator.translateFilter)
-          .filterNot(gt.filters.contains)
+        val preds = FilterTranslator.translateFilter(condition)
 
-        if(preds.nonEmpty) {
+        preds.filterNot(gt.filters.contains).map(p ⇒ {
           val newGt = preds.foldLeft(gt)((r, f) ⇒ r.withFilter(f))
           Filter(condition, lr.copy(relation = newGt))
-        } else f
+        }).getOrElse(f)
     }
   }
 }

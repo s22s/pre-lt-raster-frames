@@ -93,5 +93,4 @@ object SpatialExpression {
     override def nodeName = "contains"
     val relation = SQLSpatialFunctions.ST_Contains
   }
-
 }

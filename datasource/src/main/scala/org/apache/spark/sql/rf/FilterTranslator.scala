@@ -17,16 +17,18 @@
 
 package org.apache.spark.sql.rf
 
+import java.sql.Timestamp
+
 import astraea.spark.rasterframes.datasource.SpatialFilters
 import astraea.spark.rasterframes.expressions.SpatialExpression.Intersects
 import com.vividsolutions.jts.geom.Geometry
 import org.apache.spark.sql.SQLRules.GeometryLiteral
-import org.apache.spark.sql.catalyst.CatalystTypeConverters.convertToScala
+import org.apache.spark.sql.catalyst.CatalystTypeConverters.{convertToScala, createToScalaConverter}
+import org.apache.spark.sql.catalyst.expressions
 import org.apache.spark.sql.catalyst.expressions.{Attribute, EmptyRow, Expression, Literal}
-import org.apache.spark.sql.catalyst.{CatalystTypeConverters, expressions}
 import org.apache.spark.sql.sources
 import org.apache.spark.sql.sources.Filter
-import org.apache.spark.sql.types.StringType
+import org.apache.spark.sql.types.{StringType, TimestampType}
 import org.apache.spark.unsafe.types.UTF8String
 
 /**
@@ -48,6 +50,12 @@ object FilterTranslator {
         Some(SpatialFilters.Intersects(a.name, v))
       case Intersects(a: Attribute, g: GeometryLiteral) ⇒
         Some(SpatialFilters.Intersects(a.name, g.geom))
+      case expressions.And(
+      expressions.GreaterThanOrEqual(a: Attribute, Literal(start, TimestampType)),
+      expressions.LessThanOrEqual(b: Attribute, Literal(end, TimestampType))
+      ) if a.name == b.name ⇒
+        val toScala = createToScalaConverter(TimestampType)(_: Any).asInstanceOf[Timestamp]
+        Some(SpatialFilters.BetweenTimes(a.name, toScala(start), toScala(end)))
 
       case expressions.EqualTo(a: Attribute, Literal(v, t)) =>
         Some(sources.EqualTo(a.name, convertToScala(v, t)))
@@ -80,7 +88,7 @@ object FilterTranslator {
         Some(sources.GreaterThanOrEqual(a.name, convertToScala(v, t)))
 
       case expressions.InSet(a: Attribute, set) =>
-        val toScala = CatalystTypeConverters.createToScalaConverter(a.dataType)
+        val toScala = createToScalaConverter(a.dataType)
         Some(sources.In(a.name, set.toArray.map(toScala)))
 
       // Because we only convert In to InSet in Optimizer when there are more than certain
@@ -88,7 +96,7 @@ object FilterTranslator {
       // down.
       case expressions.In(a: Attribute, list) if list.forall(_.isInstanceOf[Literal]) =>
         val hSet = list.map(e => e.eval(EmptyRow))
-        val toScala = CatalystTypeConverters.createToScalaConverter(a.dataType)
+        val toScala = createToScalaConverter(a.dataType)
         Some(sources.In(a.name, hSet.toArray.map(toScala)))
 
       case expressions.IsNull(a: Attribute) =>

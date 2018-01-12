@@ -21,10 +21,10 @@ package astraea.spark.rasterframes.datasource.geotrellis
 
 import java.net.URI
 import java.sql.Timestamp
-import java.time.{ZoneId, ZoneOffset, ZonedDateTime}
+import java.time.{ZoneOffset, ZonedDateTime}
 
 import astraea.spark.rasterframes._
-import astraea.spark.rasterframes.datasource.SpatialFilters.{Contains ⇒ sfContains, Intersects ⇒ sfIntersects}
+import astraea.spark.rasterframes.datasource.SpatialFilters.{BetweenTimes, Contains ⇒ sfContains, Intersects ⇒ sfIntersects}
 import astraea.spark.rasterframes.util._
 import com.vividsolutions.jts.geom
 import geotrellis.raster.Tile
@@ -37,10 +37,9 @@ import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 import org.apache.spark.sql.gt.types.TileUDT
 import org.apache.spark.sql.sources._
 import org.apache.spark.sql.types._
-import org.apache.spark.sql.{Row, SQLContext}
+import org.apache.spark.sql.{Row, SQLContext, sources}
 import spray.json.DefaultJsonProtocol._
 import spray.json.JsValue
-import org.apache.spark.sql.sources
 
 import scala.reflect.runtime.universe._
 
@@ -54,6 +53,17 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
   /** Convenience to create new relation with the give filter added. */
   def withFilter(value: Filter): GeoTrellisRelation =
     copy(filters = filters :+ value)
+
+  /** Separate And conditions into separate filters. */
+  def splitFilters = {
+    def splitConjunctives(f: Filter): Seq[Filter] =
+    f match {
+      case And(cond1, cond2) =>
+        splitConjunctives(cond1) ++ splitConjunctives(cond2)
+      case other => other :: Nil
+    }
+    filters.flatMap(splitConjunctives)
+  }
 
   @transient
   private implicit val spark = sqlContext.sparkSession
@@ -148,10 +158,13 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
     }
   }
 
-  def applyFilter2[K: Boundable: SpatialComponent: TemporalComponent](q: BLQ[K], predicate: Filter): BLQ[K] = {
+  def applyFilterTemporal[K: Boundable: SpatialComponent: TemporalComponent](q: BLQ[K], predicate: Filter): BLQ[K] = {
+    def toZDT(ts: Timestamp) = ZonedDateTime.ofInstant(ts.toInstant, ZoneOffset.UTC)
     predicate match {
       case sources.EqualTo(Cols.TS, ts: Timestamp) ⇒
-        q.where(At(ZonedDateTime.ofInstant(ts.toInstant, ZoneOffset.UTC)))
+        q.where(At(toZDT(ts)))
+      case BetweenTimes(Cols.TS, start: Timestamp, end: Timestamp) ⇒
+        q.where(Between(toZDT(start), toZDT(end)))
       case _ ⇒ applyFilter(q, predicate)
     }
   }
@@ -171,7 +184,7 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
       (tlm: TileLayerMetadata[SpatialKey]) ⇒ {
         val trans = tlm.mapTransform
 
-        val query = filters.foldLeft(
+        val query = splitFilters.foldLeft(
           reader.query[SpatialKey, Tile, TileLayerMetadata[SpatialKey]](layerId)
         )(applyFilter(_, _))
 
@@ -191,9 +204,9 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
       (tlm: TileLayerMetadata[SpaceTimeKey]) ⇒ {
         val trans = tlm.mapTransform
 
-        val query = filters.foldLeft(
+        val query = splitFilters.foldLeft(
           reader.query[SpaceTimeKey, Tile, TileLayerMetadata[SpaceTimeKey]](layerId)
-        )(applyFilter2(_, _))
+        )(applyFilterTemporal(_, _))
 
         val rdd = query.result
 
