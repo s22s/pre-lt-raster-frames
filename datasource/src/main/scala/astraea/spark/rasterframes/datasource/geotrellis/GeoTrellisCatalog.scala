@@ -22,14 +22,12 @@ package astraea.spark.rasterframes.datasource.geotrellis
 import java.net.URI
 
 import astraea.spark.rasterframes.datasource.geotrellis.GeoTrellisCatalog.GeoTrellisCatalogRelation
-import geotrellis.spark.LayerId
 import geotrellis.spark.io.AttributeStore
 import org.apache.spark.annotation.Experimental
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql._
 import org.apache.spark.sql.sources._
-import org.apache.spark.sql.functions._
-import org.apache.spark.sql.types.{StringType, StructField, StructType}
+import org.apache.spark.sql.types.StructType
 import spray.json.DefaultJsonProtocol._
 import spray.json._
 
@@ -64,25 +62,28 @@ object GeoTrellisCatalog {
       // maintain a semblance of separation in the resulting schema.
       val mergeId = (id: Int, json: JsObject) ⇒ {
         val jid = id.toJson
-        json.copy(fields = json.fields + ("id" -> jid) )
+        json.copy(fields = json.fields + ("index" -> jid) )
       }
-      val layerIds = attributes.layerIds.zipWithIndex.map(_.swap)
-      val indexedLayers = layerIds.toDS.select($"_1" as "id", $"_2.*")
+
+      val layerSpecs = attributes.layerIds.zipWithIndex.map {
+        case (id, index) ⇒ (index, Layer(uri.toASCIIString, id))
+      }
+      val indexedLayers = layerSpecs.toDF("index", "layer")
       val headers = sqlContext.read.json(
-        layerIds
-          .map(id ⇒ (id._1, attributes.readHeader[JsObject](id._2)))
+        layerSpecs
+          .map{case (index, layer) ⇒ (index, attributes.readHeader[JsObject](layer.id))}
           .map(mergeId.tupled)
           .map(_.compactPrint)
           .toDS
       )
       val metadata = sqlContext.read.json(
-        layerIds
-          .map(id ⇒ (id._1, attributes.readMetadata[JsObject](id._2)))
+        layerSpecs
+          .map{case (index, layer) ⇒ (index, attributes.readMetadata[JsObject](layer.id))}
           .map(mergeId.tupled)
           .map(_.compactPrint)
           .toDS
       )
-      indexedLayers.join(headers, Seq("id")).join(metadata, Seq("id"))
+      indexedLayers.join(headers, Seq("index")).join(metadata, Seq("index"))
     }
 
     def schema: StructType = layers.schema

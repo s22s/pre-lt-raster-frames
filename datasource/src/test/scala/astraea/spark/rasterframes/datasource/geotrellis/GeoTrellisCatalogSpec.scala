@@ -19,21 +19,12 @@
 package astraea.spark.rasterframes.datasource.geotrellis
 
 import java.io.File
-import java.time.ZonedDateTime
 
 import astraea.spark.rasterframes._
-import geotrellis.proj4.LatLng
-import geotrellis.raster._
 import geotrellis.spark._
 import geotrellis.spark.io._
 import geotrellis.spark.io.index.ZCurveKeyIndexMethod
-import geotrellis.spark.tiling.ZoomedLayoutScheme
-import geotrellis.vector._
 import org.apache.hadoop.fs.FileUtil
-import org.apache.spark.sql.SQLGeometricConstructorFunctions.ST_MakePoint
-import org.apache.spark.sql.execution.datasources.LogicalRelation
-import org.apache.spark.sql.functions._
-import org.apache.spark.sql.{DataFrame, Row}
 import org.scalatest.BeforeAndAfter
 
 /**
@@ -44,6 +35,8 @@ class GeoTrellisCatalogSpec
     with IntelliJPresentationCompilerHack {
 
   lazy val testRdd = TestData.randomSpatioTemporalTileLayerRDD(10, 12, 5, 6)
+
+  import sqlContext.implicits._
 
   before {
     val outputDir = new File(outputLocalPath)
@@ -63,6 +56,17 @@ class GeoTrellisCatalogSpec
       cat.show()
       assert(cat.schema.length > 4)
       assert(cat.count() === 2)
+    }
+
+    it("should support loading a layer in a nice way") {
+      val cat = sqlContext.read
+        .format("geotrellis-catalog")
+        .load(outputLocal.toUri.toString)
+
+      cat.limit(2)
+        .select(catalog_layer).readRF
+        .show(false)
+
     }
   }
 }

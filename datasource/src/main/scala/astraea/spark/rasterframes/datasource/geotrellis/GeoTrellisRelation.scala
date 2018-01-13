@@ -233,9 +233,5 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
 }
 
 object GeoTrellisRelation {
-  def extentBuilder(tlm: TileLayerMetadata[_]) = {
-    val trans = tlm.mapTransform
-    (sk: SpatialKey) ⇒ trans.keyToExtent(sk)
-  }
 }
 
