@@ -76,6 +76,9 @@ package object rasterframes extends ColumnFunctions
   /** Default RasterFrame [[TileFeature.data]] column name. */
   val TILE_FEATURE_DATA_COLUMN = col("tile_data")
 
+  /** Default GeoTiff tags column. */
+  val METADATA_COLUMN = col("metadata").as[Map[String, String]]
+
   /** Default column index column for the cells of exploded tiles. */
   val COLUMN_INDEX_COLUMN = col("column_index").as[Int]
 

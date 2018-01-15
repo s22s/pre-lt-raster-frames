@@ -20,13 +20,10 @@
 package astraea.spark.rasterframes
 
 import geotrellis.raster.mapalgebra.local.LocalTileBinaryOp
-import org.apache.spark.sql.{Column, Encoder, SQLContext}
-import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 import org.apache.spark.sql.catalyst.plans.logical.LogicalPlan
 import org.apache.spark.sql.catalyst.rules.Rule
 import org.apache.spark.sql.gt.analyzer
-
-import scala.reflect.runtime.universe._
+import org.apache.spark.sql.{Column, SQLContext}
 
 
 /**

@@ -232,7 +232,3 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
     super.sizeInBytes
   }
 }
-
-object GeoTrellisRelation {
-}
-
