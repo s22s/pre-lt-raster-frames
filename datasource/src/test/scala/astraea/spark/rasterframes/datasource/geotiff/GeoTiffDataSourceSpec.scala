@@ -20,7 +20,6 @@ package astraea.spark.rasterframes.datasource.geotiff
 
 import astraea.spark.rasterframes._
 import org.scalatest.BeforeAndAfter
-
 /**
  * @author sfitch
  * @since 1/14/18
@@ -32,12 +31,12 @@ class GeoTiffDataSourceSpec
   describe("GeoTiff reading") {
 
     it("should read sample GeoTiff") {
-      val layerReader = sqlContext.read
+      val rf = sqlContext.read
         .format("geotiff")
-        .load("datasource/src/test/resources/LC08_B7_Memphis_COG.tiff")
+        .load("src/test/resources/LC08_RGB_Norfok_COG.tiff")
+        .asRF
 
-      layerReader.printSchema()
-      layerReader.show(false)
+      assert(rf.count() > 10)
     }
   }
 }

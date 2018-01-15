@@ -22,7 +22,6 @@ package astraea.spark.rasterframes.datasource.geotiff
 import java.net.URI
 
 import astraea.spark.rasterframes._
-import geotrellis.raster.Tile
 import geotrellis.raster.io.geotiff.reader.GeoTiffReader
 import geotrellis.spark._
 import geotrellis.spark.io._
@@ -67,21 +66,32 @@ case class GeoTiffRelation(sqlContext: SQLContext, uri: URI) extends BaseRelatio
 
   def schema: StructType = {
     val skSchema = ExpressionEncoder[SpatialKey]().schema
-    val skMetadata = tileLayerMetadata.asColumnMetadata
+    val skMetadata = Metadata.empty.append
+      .attachContext(tileLayerMetadata.asColumnMetadata)
+      .tagSpatialKey.build
+
     val extentSchema = ExpressionEncoder[Extent]().schema
+
+    val baseName = TILE_COLUMN.columnName
+    val tileCols = (if (info.bandCount == 1) Seq(baseName)
+    else {
+      for (i <- 0 until info.bandCount) yield s"${baseName}_${i + 1}"
+    }).map(name ⇒
+      StructField(name, TileUDT, nullable = false)
+    )
 
     StructType(Seq(
       StructField(SPATIAL_KEY_COLUMN.columnName, skSchema, nullable = false, skMetadata),
       StructField(EXTENT_COLUMN.columnName, extentSchema, nullable = false),
-      StructField(TILE_COLUMN.columnName, TileUDT, nullable = true),
-      StructField(TILE_FEATURE_DATA_COLUMN.columnName,
+      StructField(METADATA_COLUMN.columnName,
         DataTypes.createMapType(StringType, StringType, false)
       )
-    ))
+    ) ++ tileCols)
   }
 
-
   override def buildScan(requiredColumns: Array[String]): RDD[Row] = {
+    logger.trace(s"Required columns: ${requiredColumns.mkString(", ")}")
+
     implicit val sc = sqlContext.sparkContext
     implicit val session = sqlContext.sparkSession
     val columnIndexes = requiredColumns.map(schema.fieldIndex)
@@ -89,18 +99,18 @@ case class GeoTiffRelation(sqlContext: SQLContext, uri: URI) extends BaseRelatio
     val tlm = tileLayerMetadata
     val mapTransform = tlm.mapTransform
     val metadata = info.tags.headTags
-    println(info)
+    //println(info)
 
-    HadoopGeoTiffRDD.spatial(new Path(uri), HadoopGeoTiffRDD.Options.DEFAULT)
-      .map { case (pe, tile) ⇒
+    HadoopGeoTiffRDD.spatialMultiband(new Path(uri), HadoopGeoTiffRDD.Options.DEFAULT)
+      .map { case (pe, tiles) ⇒
         // NB: I think it's safe to take the min coord of the
         // transform result because the layout is directly from the TIFF
         val gb = mapTransform.extentToBounds(pe.extent)
         val entries = columnIndexes.map {
           case 0 ⇒ SpatialKey(gb.colMin, gb.rowMin)
           case 1 ⇒ pe.extent
-          case 2 ⇒ tile
-          case 3 ⇒ metadata
+          case 2 ⇒ metadata
+          case n ⇒ tiles.band(n - 3)
         }
         Row(entries: _*)
       }
