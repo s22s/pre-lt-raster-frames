@@ -5,6 +5,8 @@
 * Upgraded to Spark 2.2.0 (now required)
 * Introduced separate `rasterframes-datasource` library for hosting sources from which to read RasterFrames.
 * Implemented basic temporal and spatial filter predicate push-down feature for the GeoTrellis layer datasource.
+* Added a GeoTrellis "Catalog" DataSource for inspecting available layers and associated metadata at a URI.
+* Addd a GeoTiff DataSource for directly loading a (Cloud Optimized) GeoTiff as a RasterFrame its internally tiled format.
 * Added `withTemporalComponent` convenince method for creating appending a temporal key column with constant value.
 
 ## 0.5.12

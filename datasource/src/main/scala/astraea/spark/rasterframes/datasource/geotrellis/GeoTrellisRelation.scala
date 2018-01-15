@@ -44,6 +44,7 @@ import spray.json.JsValue
 import scala.reflect.runtime.universe._
 
 /**
+ * A Spark SQL `Relation` over a standard GeoTrellis layer.
  * @author echeipesh
  * @author sfitch
  */
