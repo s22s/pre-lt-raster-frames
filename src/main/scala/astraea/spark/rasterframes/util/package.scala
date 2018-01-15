@@ -41,6 +41,19 @@ package object util {
     def |>[B](f: A ⇒ B): B = f(a)
   }
 
+  /** Anything that structurally has a close method. */
+  type CloseLike = { def close(): Unit }
+
+  /** Applies the given thunk to the closable resource. */
+  def withResource[T <: CloseLike, R](t: T)(thunk: T ⇒ R): R = {
+    import scala.language.reflectiveCalls
+    try { thunk(t) } finally { t.close() }
+  }
+
+  implicit class Conditionalize[T](left: T) {
+    def when(pred: T ⇒ Boolean): Option[T] = Option(left).filter(pred)
+  }
+
   /** Tags output column with a nicer name. */
   private[rasterframes]
   def withAlias(name: String, inputs: Column*)(output: Column) = {
