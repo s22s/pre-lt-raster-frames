@@ -51,7 +51,7 @@ class GeoTrellisCatalogSpec
   describe("Catalog reading") {
     it("should show two zoom levels") {
       val cat = sqlContext.read
-        .format("geotrellis-catalog")
+        .geotrellisCatalog
         .load(outputLocal.toUri.toString)
       cat.show()
       assert(cat.schema.length > 4)
@@ -59,14 +59,16 @@ class GeoTrellisCatalogSpec
     }
 
     it("should support loading a layer in a nice way") {
+      val layers = outputLocal.toUri.toString
       val cat = sqlContext.read
-        .format("geotrellis-catalog")
-        .load(outputLocal.toUri.toString)
+        .geotrellisCatalog
+        .load(layers)
 
-      cat.limit(2)
-        .select(catalog_layer).readRF
-        .show(false)
+      // Select two layers. They should get joined
+      val rf = cat.limit(2)
+        .select(geotrellis_layer).readRF
 
+      assert(rf.tileColumns.length === 2)
     }
   }
 }

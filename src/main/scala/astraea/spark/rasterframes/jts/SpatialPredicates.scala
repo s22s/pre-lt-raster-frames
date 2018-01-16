@@ -19,13 +19,12 @@
 
 package astraea.spark.rasterframes.jts
 import astraea.spark.rasterframes.expressions.SpatialExpression._
-import org.apache.spark.sql.Column
-import org.apache.spark.sql.SQLSpatialFunctions._
-import org.apache.spark.sql.functions.udf
 import astraea.spark.rasterframes.util._
-import com.vividsolutions.jts.geom.Geometry
+import org.apache.spark.sql.Column
+import org.apache.spark.sql.functions.udf
 import org.apache.spark.sql.gt._
-import org.apache.spark.sql.sources.Filter
+import org.locationtech.geomesa.spark.SQLSpatialFunctions._
+
 
 /**
  * UDF wrappers around JTS spark relations.

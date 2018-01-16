@@ -28,12 +28,14 @@ class GeoTiffDataSourceSpec
     extends TestEnvironment with TestData with BeforeAndAfter
     with IntelliJPresentationCompilerHack {
 
+  val cogPath = getClass.getResource("/LC08_RGB_Norfok_COG.tiff").toURI.toASCIIString
+
   describe("GeoTiff reading") {
 
     it("should read sample GeoTiff") {
       val rf = sqlContext.read
         .format("geotiff")
-        .load("src/test/resources/LC08_RGB_Norfok_COG.tiff")
+        .load(cogPath)
         .asRF
 
       assert(rf.count() > 10)

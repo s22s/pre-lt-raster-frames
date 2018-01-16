@@ -99,8 +99,9 @@ case class GeoTiffRelation(sqlContext: SQLContext, uri: URI) extends BaseRelatio
     val tlm = tileLayerMetadata
     val mapTransform = tlm.mapTransform
     val metadata = info.tags.headTags
-    //println(info)
 
+    // TODO: Figure out how to do tile filtering via the range reader.
+    // Something with geotrellis.spark.io.GeoTiffInfoReader#windowsByPartition?
     HadoopGeoTiffRDD.spatialMultiband(new Path(uri), HadoopGeoTiffRDD.Options.DEFAULT)
       .map { case (pe, tiles) ⇒
         // NB: I think it's safe to take the min coord of the
