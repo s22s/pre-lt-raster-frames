@@ -164,7 +164,7 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with RFSpatialCol
 
       left.temporalKeyColumn.tupleWith(leftTemporalKey).combine(spatialFix) {
         case ((orig, updated), rf) ⇒ rf
-          .withColumnRenamed(orig.columnName, updated.columnName)
+          .withColumnRenamed(updated.columnName, orig.columnName)
           .drop(rightTemporalKey.get.columnName)
       }
     } else joined
