@@ -21,7 +21,6 @@ package astraea.spark.rasterframes.datasource.geotrellis
 import java.io.File
 import java.time.ZonedDateTime
 
-import astraea.spark.rasterframes._
 import geotrellis.proj4.LatLng
 import geotrellis.raster._
 import geotrellis.spark._
@@ -30,11 +29,12 @@ import geotrellis.spark.io.index.ZCurveKeyIndexMethod
 import geotrellis.spark.tiling.ZoomedLayoutScheme
 import geotrellis.vector._
 import org.apache.hadoop.fs.FileUtil
-import org.apache.spark.sql.SQLGeometricConstructorFunctions.ST_MakePoint
 import org.apache.spark.sql.execution.datasources.LogicalRelation
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{DataFrame, Row}
+import org.locationtech.geomesa.spark.SQLGeometricConstructorFunctions._
 import org.scalatest.BeforeAndAfter
+import astraea.spark.rasterframes._
 
 /**
  * @author echeipesh
@@ -75,8 +75,7 @@ class GeoTrellisDataSourceSpec
   }
 
   describe("DataSource reading") {
-    val layerReader = sqlContext.read
-      .format("geotrellis")
+    val layerReader = sqlContext.read.geotrellis
       .option("path", outputLocal.toUri.toString)
       .option("layer", "all-ones")
       .option("zoom", "4")

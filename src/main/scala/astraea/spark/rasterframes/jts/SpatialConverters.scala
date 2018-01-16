@@ -20,13 +20,14 @@
 package astraea.spark.rasterframes.jts
 
 import com.vividsolutions.jts.geom.{Geometry, Point, Polygon}
-import org.apache.spark.sql.SQLGeometricOutputFunctions._
-import org.apache.spark.sql.SQLGeometricConstructorFunctions._
 import org.apache.spark.sql._
 import org.apache.spark.sql.functions.udf
 import astraea.spark.rasterframes.util._
 import org.apache.spark.annotation.Experimental
 import org.apache.spark.sql.catalyst.expressions.Literal
+import org.apache.spark.sql.jts.{PointUDT, PolygonUDT}
+import org.locationtech.geomesa.spark.SQLGeometricOutputFunctions._
+import org.locationtech.geomesa.spark.SQLGeometricConstructorFunctions._
 
 /**
  * UDFs providing conversion to/from JTS types.

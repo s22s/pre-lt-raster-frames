@@ -22,11 +22,12 @@ import astraea.spark.rasterframes._
 import _root_.geotrellis.spark.LayerId
 import astraea.spark.rasterframes.RasterFrame
 import org.apache.spark.annotation.Experimental
-import org.apache.spark.sql.Dataset
+import org.apache.spark.sql.{DataFrameReader, Dataset}
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 import org.apache.spark.sql.functions.col
 
 /**
+ * Module utilities.
  *
  * @author sfitch 
  * @since 1/12/18
@@ -35,7 +36,23 @@ package object geotrellis {
   case class Layer(base: String, id: LayerId)
 
   implicit def layerIdEncoder = ExpressionEncoder[Layer]
-  def catalog_layer = col("layer").as[Layer]
+  /** Convenience column selector for a geotrellis layer. */
+  def geotrellis_layer = col("layer").as[Layer]
+
+  /** Set of convenience extension methods on [[org.apache.spark.sql.DataFrameReader]]
+   * for querying the geotrellis catalog and loading layers from it. */
+  implicit class DataFrameReaderHasGeotrellisFormat(val reader: DataFrameReader) {
+    def geotrellisCatalog: DataFrameReader = reader.format("geotrellis-catalog")
+    def geotrellis: DataFrameReader = reader.format("geotrellis")
+    def geotrellis(id: LayerId): DataFrameReader =
+      reader.format("geotrellis")
+        .option("layer", id.name)
+        .option("zoom", id.zoom.toString)
+    def geotrellis(layer: Layer): DataFrameReader =
+      reader.format("geotrellis")
+        .geotrellis(layer.id)
+        .option("path", layer.base)
+  }
 
   /** Extension method on a Dataset[Layer] for loading one or more RasterFrames*/
   implicit class CatalogEntryReader(val selection: Dataset[Layer]) {
@@ -44,10 +61,8 @@ package object geotrellis {
       selection.collect().map { layer ⇒
         val df = selection.sqlContext
           .read
-          .format("geotrellis")
-          .option("layer", layer.id.name)
-          .option("zoom", layer.id.zoom.toString)
-        df.load(layer.base).asRF
+          .geotrellis(layer)
+        df.load().asRF
       }.reduce(_ spatialJoin _)
     }
   }

@@ -22,10 +22,10 @@ import java.sql.Timestamp
 import astraea.spark.rasterframes.datasource.SpatialFilters
 import astraea.spark.rasterframes.expressions.SpatialExpression.Intersects
 import com.vividsolutions.jts.geom.Geometry
-import org.apache.spark.sql.SQLRules.GeometryLiteral
 import org.apache.spark.sql.catalyst.CatalystTypeConverters.{convertToScala, createToScalaConverter}
 import org.apache.spark.sql.catalyst.expressions
 import org.apache.spark.sql.catalyst.expressions.{Attribute, EmptyRow, Expression, Literal}
+import org.apache.spark.sql.jts.SQLRules.GeometryLiteral
 import org.apache.spark.sql.sources
 import org.apache.spark.sql.sources.Filter
 import org.apache.spark.sql.types.{StringType, TimestampType}
