@@ -43,6 +43,7 @@ class GeoTrellisDataSourceSpec
     extends TestEnvironment with TestData with BeforeAndAfter
     with IntelliJPresentationCompilerHack {
 
+  lazy val layer = Layer(new File(outputLocalPath).toURI, LayerId("all-ones", 4))
   val now = ZonedDateTime.now()
   val tileCoordRange = 2 to 5
 
@@ -66,27 +67,25 @@ class GeoTrellisDataSourceSpec
   }
 
   before {
-    val outputDir = new File(outputLocalPath)
+    val outputDir = new File(layer.base)
     FileUtil.fullyDelete(outputDir)
     outputDir.deleteOnExit()
     lazy val writer = LayerWriter(outputDir.toURI)
     // TestEnvironment will clean this up
-    writer.write(LayerId("all-ones", 4), testRdd, ZCurveKeyIndexMethod.byDay())
+    writer.write(layer.id, testRdd, ZCurveKeyIndexMethod.byDay())
   }
 
-  describe("DataSource reading") {
-    val layerReader = sqlContext.read.geotrellis
-      .option("path", outputLocal.toUri.toString)
-      .option("layer", "all-ones")
-      .option("zoom", "4")
 
+  describe("DataSource reading") {
+    def layerReader = spark.read.geotrellis
     it("should read tiles") {
-      val df = layerReader.load()
+      val df = layerReader.loadRF(layer)
       assert(df.count === tileCoordRange.length * tileCoordRange.length)
     }
 
     it("used produce tile UDT that we can manipulate") {
-      val df = layerReader.load().select(SPATIAL_KEY_COLUMN, tileStats(TILE_COLUMN))
+      val df = layerReader.loadRF(layer)
+        .select(SPATIAL_KEY_COLUMN, tileStats(TILE_COLUMN))
       assert(df.count() > 0)
     }
 
@@ -95,18 +94,20 @@ class GeoTrellisDataSourceSpec
       val bbox = testRdd.metadata.layout
         .mapTransform(boundKeys.toGridBounds())
         .jtsGeom
-      val df = layerReader.load().asRF.withCenter().where(CENTER_COLUMN intersects bbox)
+      val df = layerReader.loadRF(layer)
+        .withCenter().where(CENTER_COLUMN intersects bbox)
       assert(df.count() === boundKeys.toGridBounds.sizeLong)
     }
 
     it("should invoke Encoder[Extent]") {
-      val df = layerReader.load().asRF.withExtent()
+      val df = layerReader.loadRF(layer).withExtent()
       assert(df.count > 0)
       assert(df.first.length === 5)
       assert(df.first.getAs[Extent](2) !== null)
     }
   }
   describe("Predicate push-down support") {
+    def layerReader = spark.read.geotrellis
 
     def extractRelation(df: DataFrame) = {
       val plan = df.queryExecution.optimizedPlan
@@ -115,12 +116,6 @@ class GeoTrellisDataSourceSpec
       }.head
     }
 
-    val layerReader = sqlContext.read
-      .format("geotrellis")
-      .option("path", outputLocal.toUri.toString)
-      .option("layer", "all-ones")
-      .option("zoom", "4")
-
     val pt1 = ST_MakePoint(-88, 60)
     val pt2 = ST_MakePoint(-78, 38)
 
@@ -128,7 +123,7 @@ class GeoTrellisDataSourceSpec
 
     it("should support extent against a geometry literal") {
       val df = layerReader
-        .load()
+        .loadRF(layer)
         .where(EXTENT_COLUMN intersects pt1)
 
       val rel = extractRelation(df)
@@ -144,7 +139,7 @@ class GeoTrellisDataSourceSpec
       val mkPtFcn = udf((_: Row) ⇒ { ST_MakePoint(-88, 60) })
 
       val df = layerReader
-        .load()
+        .loadRF(layer)
         .where(intersects(EXTENT_COLUMN, mkPtFcn(SPATIAL_KEY_COLUMN)))
 
       assert(extractRelation(df).filters.length === 0)
@@ -156,7 +151,7 @@ class GeoTrellisDataSourceSpec
     it("should support temporal predicats") {
       withClue("at now") {
         val df = layerReader
-          .load()
+          .loadRF(layer)
           .where(TIMESTAMP_COLUMN at now)
 
         assert(extractRelation(df).filters.length == 1)
@@ -165,7 +160,7 @@ class GeoTrellisDataSourceSpec
 
       withClue("at earlier") {
         val df = layerReader
-          .load()
+          .loadRF(layer)
           .where(TIMESTAMP_COLUMN at now.minusDays(1))
 
         assert(extractRelation(df).filters.length == 1)
@@ -174,7 +169,7 @@ class GeoTrellisDataSourceSpec
 
       withClue("between now") {
         val df = layerReader
-          .load()
+          .loadRF(layer)
           .where(TIMESTAMP_COLUMN betweenTimes (now.minusDays(1), now.plusDays(1)))
 
         assert(extractRelation(df).filters.length == 1)
@@ -183,7 +178,7 @@ class GeoTrellisDataSourceSpec
 
       withClue("between later") {
         val df = layerReader
-          .load()
+          .loadRF(layer)
           .where(TIMESTAMP_COLUMN betweenTimes (now.plusDays(1), now.plusDays(2)))
 
         assert(extractRelation(df).filters.length == 1)
@@ -193,7 +188,7 @@ class GeoTrellisDataSourceSpec
 
     it("should support nested predicates") {
       val df = layerReader
-        .load()
+        .loadRF(layer)
         .where(
           ((EXTENT_COLUMN intersects pt1) ||
             (EXTENT_COLUMN intersects pt2)) &&

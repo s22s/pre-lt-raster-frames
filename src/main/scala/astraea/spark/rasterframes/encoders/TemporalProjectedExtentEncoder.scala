@@ -33,14 +33,12 @@ import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
  * @author sfitch
  * @since 8/2/17
  */
-object TemporalProjectedExtentEncoder extends DelegatingSubfieldEncoder {
+object TemporalProjectedExtentEncoder {
   def apply(): ExpressionEncoder[TemporalProjectedExtent] = {
-    create(
-      Seq(
-        "extent" -> extentEncoder,
-        "crs" -> crsEncoder,
-        "instant" -> Encoders.scalaLong.asInstanceOf[ExpressionEncoder[Long]]
-      )
+    DelegatingSubfieldEncoder(
+      "extent" -> extentEncoder,
+      "crs" -> crsEncoder,
+      "instant" -> Encoders.scalaLong.asInstanceOf[ExpressionEncoder[Long]]
     )
   }
 }

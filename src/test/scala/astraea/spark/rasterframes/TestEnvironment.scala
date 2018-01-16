@@ -19,6 +19,8 @@ package astraea.spark.rasterframes
 
 import java.nio.file.{Files, Paths}
 
+import astraea.spark.rasterframes
+import astraea.spark.rasterframes.util.toParquetFriendlyColumnName
 import geotrellis.spark.testkit.{TestEnvironment ⇒ GeoTrellisTestEnvironment}
 import geotrellis.util.LazyLogging
 import org.apache.spark.SparkContext
@@ -44,7 +46,7 @@ trait TestEnvironment extends FunSpec with GeoTrellisTestEnvironment
 
   /** This is here so we can test writing UDF generated/modified GeoTrellis types to ensure they are Parquet compliant. */
   def write(df: Dataset[_]): Unit = {
-    val sanitized = df.select(df.columns.map(c ⇒ col(c).as(c.replaceAll("[ ,;{}()\n\t=]", "_"))): _*)
+    val sanitized = df.select(df.columns.map(c ⇒ col(c).as(toParquetFriendlyColumnName(c))): _*)
     val dest = Files.createTempFile(Paths.get(outputLocalPath), "GTSQL", ".parquet")
     logger.debug(s"Writing '${sanitized.columns.mkString(", ")}' to '$dest'...")
     sanitized.write.mode(SaveMode.Overwrite).parquet(dest.toString)

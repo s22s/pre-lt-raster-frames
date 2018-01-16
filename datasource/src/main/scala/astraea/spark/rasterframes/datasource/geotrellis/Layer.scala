@@ -16,28 +16,27 @@
  * the License.
  *
  */
-package astraea.spark.rasterframes.datasource.geotiff
 
-import astraea.spark.rasterframes._
+package astraea.spark.rasterframes.datasource.geotrellis
+
+import java.net.URI
+
+import astraea.spark.rasterframes
+import astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder
+import geotrellis.spark.LayerId
+import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 
 /**
- * @author sfitch
- * @since 1/14/18
+ *   /** Connector between a GT `LayerId` and the path in which it lives. */
+
+ * @author sfitch 
+ * @since 1/16/18
  */
-class GeoTiffDataSourceSpec
-    extends TestEnvironment with TestData
-    with IntelliJPresentationCompilerHack {
+case class Layer(base: URI, id: LayerId)
 
-  val cogPath = getClass.getResource("/LC08_RGB_Norfok_COG.tiff").toURI.toASCIIString
-
-  describe("GeoTiff reading") {
-
-    it("should read sample GeoTiff") {
-      val rf = spark.read
-        .geotiff
-        .loadRF(cogPath)
-
-      assert(rf.count() > 10)
-    }
-  }
+object Layer {
+  implicit def layerEncoder: ExpressionEncoder[Layer] = DelegatingSubfieldEncoder[Layer](
+    "base" -> rasterframes.uriEncoder,
+    "id" -> ExpressionEncoder[LayerId]()
+  )
 }

@@ -51,6 +51,9 @@ package object util {
     def when(pred: T ⇒ Boolean): Option[T] = Option(left).filter(pred)
   }
 
+  private[rasterframes]
+  def toParquetFriendlyColumnName(name: String) = name.replaceAll("[ ,;{}()\n\t=]", "_")
+
   /** Tags output column with a nicer name. */
   private[rasterframes]
   def withAlias(name: String, inputs: Column*)(output: Column) = {

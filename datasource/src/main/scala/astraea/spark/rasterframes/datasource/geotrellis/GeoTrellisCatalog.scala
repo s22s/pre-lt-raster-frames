@@ -65,9 +65,14 @@ object GeoTrellisCatalog {
         json.copy(fields = json.fields + ("index" -> jid) )
       }
 
+      implicit val layerStuffEncoder: Encoder[(Int, Layer)] = Encoders.tuple(
+        Encoders.scalaInt, layerEncoder
+      )
+
       val layerSpecs = attributes.layerIds.zipWithIndex.map {
-        case (id, index) ⇒ (index, Layer(uri.toASCIIString, id))
+        case (id, index) ⇒ (index: Int, Layer(uri, id))
       }
+
       val indexedLayers = layerSpecs.toDF("index", "layer")
       val headers = sqlContext.read.json(
         layerSpecs
@@ -83,6 +88,7 @@ object GeoTrellisCatalog {
           .map(_.compactPrint)
           .toDS
       )
+
       indexedLayers.join(headers, Seq("index")).join(metadata, Seq("index"))
     }
 
