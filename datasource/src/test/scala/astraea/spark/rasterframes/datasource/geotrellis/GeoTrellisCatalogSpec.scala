@@ -21,6 +21,7 @@ package astraea.spark.rasterframes.datasource.geotrellis
 import java.io.File
 
 import astraea.spark.rasterframes._
+import geotrellis.proj4.{CRS, LatLng, Sinusoidal}
 import geotrellis.spark._
 import geotrellis.spark.io._
 import geotrellis.spark.io.index.ZCurveKeyIndexMethod
@@ -51,22 +52,22 @@ class GeoTrellisCatalogSpec
   describe("Catalog reading") {
     it("should show two zoom levels") {
       val cat = sqlContext.read
-        .geotrellisCatalog
-        .load(outputLocal.toUri.toString)
+        .geotrellisCatalog(outputLocal.toUri)
       cat.show()
       assert(cat.schema.length > 4)
       assert(cat.count() === 2)
     }
 
     it("should support loading a layer in a nice way") {
-      val layers = outputLocal.toUri.toString
       val cat = sqlContext.read
-        .geotrellisCatalog
-        .load(layers)
+        .geotrellisCatalog(outputLocal.toUri)
+
+      cat.show(false)
 
       // Select two layers. They should get joined
-      val rf = cat.limit(2)
-        .select(geotrellis_layer).readRF
+      val rf = cat
+        .where($"crs" === LatLng.toProj4String)
+        .select(geotrellis_layer).loadRF
 
       assert(rf.tileColumns.length === 2)
     }

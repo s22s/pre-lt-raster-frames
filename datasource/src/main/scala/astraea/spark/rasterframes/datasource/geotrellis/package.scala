@@ -18,13 +18,16 @@
  */
 
 package astraea.spark.rasterframes.datasource
-import astraea.spark.rasterframes._
+import java.net.URI
+
 import _root_.geotrellis.spark.LayerId
-import astraea.spark.rasterframes.RasterFrame
-import org.apache.spark.annotation.Experimental
-import org.apache.spark.sql.{DataFrameReader, Dataset}
-import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
+import astraea.spark.rasterframes
+import astraea.spark.rasterframes.util.toParquetFriendlyColumnName
+import astraea.spark.rasterframes.{RasterFrame, _}
 import org.apache.spark.sql.functions.col
+import org.apache.spark.sql.{DataFrame, DataFrameReader, Dataset}
+import shapeless.tag.@@
+import shapeless.tag
 
 /**
  * Module utilities.
@@ -33,37 +36,70 @@ import org.apache.spark.sql.functions.col
  * @since 1/12/18
  */
 package object geotrellis {
-  case class Layer(base: String, id: LayerId)
+  implicit val layerEncoder = Layer.layerEncoder
 
-  implicit def layerIdEncoder = ExpressionEncoder[Layer]
-  /** Convenience column selector for a geotrellis layer. */
+  /** Convenience column selector for a GeoTrellis layer. */
   def geotrellis_layer = col("layer").as[Layer]
 
+  /** Tagged type construction for enabling type-safe extension methods for loading
+   * a RasterFrame from a GeoTrellis layer. */
+  type GeoTrellisRasterFrameReader = DataFrameReader @@ GeoTrellisRasterFrameReaderTag
+  trait GeoTrellisRasterFrameReaderTag
+
+//  /** Tagged type construction for enabling type-safe extension methods for loading
+//   * a DataFrame describing DataFrame layers. */
+//  type GeoTrellisCatalogReader = DataFrameReader @@ GeoTrellisCatalogDataFrameReaderTag
+//  trait GeoTrellisCatalogDataFrameReaderTag
+
   /** Set of convenience extension methods on [[org.apache.spark.sql.DataFrameReader]]
-   * for querying the geotrellis catalog and loading layers from it. */
+   * for querying the GeoTrellis catalog and loading layers from it. */
   implicit class DataFrameReaderHasGeotrellisFormat(val reader: DataFrameReader) {
-    def geotrellisCatalog: DataFrameReader = reader.format("geotrellis-catalog")
-    def geotrellis: DataFrameReader = reader.format("geotrellis")
-    def geotrellis(id: LayerId): DataFrameReader =
-      reader.format("geotrellis")
+    /** Read the GeoTrellis Catalog of layers from a base path. */
+    def geotrellisCatalog(base: URI): DataFrame =
+      reader.format("geotrellis-catalog").load(base.toASCIIString)
+
+    def geotrellis: GeoTrellisRasterFrameReader =
+      tag[GeoTrellisRasterFrameReaderTag][DataFrameReader](reader.format("geotrellis"))
+  }
+
+  /** Extension methods for loading a RasterFrame from a tagged `DataFrameReader`. */
+  implicit class GeoTrellisReaderWithRF(val reader: GeoTrellisRasterFrameReader) {
+    def loadRF(uriPath: String, id: LayerId): RasterFrame =
+      reader
         .option("layer", id.name)
         .option("zoom", id.zoom.toString)
-    def geotrellis(layer: Layer): DataFrameReader =
-      reader.format("geotrellis")
-        .geotrellis(layer.id)
-        .option("path", layer.base)
+        .load(uriPath)
+        .asRF
+
+    def loadRF(layer: Layer): RasterFrame = loadRF(layer.base.toASCIIString, layer.id)
   }
 
   /** Extension method on a Dataset[Layer] for loading one or more RasterFrames*/
   implicit class CatalogEntryReader(val selection: Dataset[Layer]) {
-    @Experimental
-    def readRF: RasterFrame = {
-      selection.collect().map { layer ⇒
-        val df = selection.sqlContext
+    def loadRF: RasterFrame = {
+      val TC = TILE_COLUMN.columnName
+      val layers = selection.collect()
+
+      val rfs = layers.map { layer ⇒
+        selection.sparkSession
           .read
-          .geotrellis(layer)
-        df.load().asRF
-      }.reduce(_ spatialJoin _)
+          .geotrellis
+          .loadRF(layer)
+      }
+
+      val renamed = if(layers.length > 1) {
+        rfs.zip(layers).map { case (rf, layer) ⇒
+          val newName = toParquetFriendlyColumnName(s"${TC}_${layer.id.name}")
+          rf
+            .withColumnRenamed(TC, newName)
+            .certify
+        }
+      }
+      else rfs
+
+      renamed
+        .reduceOption(_ spatialJoin _)
+        .getOrElse(throw new IllegalArgumentException("Cannot load empty selection."))
     }
   }
 }

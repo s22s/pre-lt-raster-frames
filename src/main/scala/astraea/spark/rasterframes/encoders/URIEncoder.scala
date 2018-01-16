@@ -16,28 +16,22 @@
  * the License.
  *
  */
-package astraea.spark.rasterframes.datasource.geotiff
 
-import astraea.spark.rasterframes._
+package astraea.spark.rasterframes.encoders
+
+import java.net.URI
+
+import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 
 /**
- * @author sfitch
- * @since 1/14/18
+ * Custom Encoder for allowing friction-free use of URIs in DataFrames.
+ *
+ * @author sfitch 
+ * @since 1/16/18
  */
-class GeoTiffDataSourceSpec
-    extends TestEnvironment with TestData
-    with IntelliJPresentationCompilerHack {
-
-  val cogPath = getClass.getResource("/LC08_RGB_Norfok_COG.tiff").toURI.toASCIIString
-
-  describe("GeoTiff reading") {
-
-    it("should read sample GeoTiff") {
-      val rf = spark.read
-        .geotiff
-        .loadRF(cogPath)
-
-      assert(rf.count() > 10)
-    }
-  }
+object URIEncoder {
+  def apply(): ExpressionEncoder[URI] =
+    StringBackedEncoder[URI]("uri", "toASCIIString", (URIEncoder.getClass, "fromString"))
+  // Not sure why this delegate is necessary, but doGenCode fails without it.
+  def fromString(str: String): URI = URI.create(str)
 }

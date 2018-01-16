@@ -19,7 +19,7 @@
 
 package astraea.spark.rasterframes.expressions
 
-import astraea.spark.rasterframes.encoders.GeoTrellisEncoders._
+import astraea.spark.rasterframes.encoders.StandardEncoders._
 import astraea.spark.rasterframes.expressions.SpatialExpression.RelationPredicate
 import astraea.spark.rasterframes.jts.SpatialEncoders._
 import com.vividsolutions.jts.geom._

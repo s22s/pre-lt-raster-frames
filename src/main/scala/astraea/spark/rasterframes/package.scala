@@ -18,7 +18,7 @@ package astraea.spark
 
 import java.sql.Timestamp
 
-import astraea.spark.rasterframes.encoders.GeoTrellisEncoders
+import astraea.spark.rasterframes.encoders.StandardEncoders
 import astraea.spark.rasterframes.jts.SpatialEncoders
 import com.vividsolutions.jts.geom.{Point ⇒ jtsPoint}
 import geotrellis.raster.{Tile, TileFeature}
@@ -27,8 +27,8 @@ import geotrellis.util.GetComponent
 import geotrellis.vector.Extent
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql._
-import shapeless.tag.@@
 import shapeless.tag
+import shapeless.tag.@@
 import org.apache.spark.sql.functions._
 
 /**
@@ -39,7 +39,9 @@ import org.apache.spark.sql.functions._
  * @since 7/18/17
  */
 package object rasterframes extends ColumnFunctions
-  with Implicits with jts.Implicits with GeoTrellisEncoders with SpatialEncoders {
+  with Implicits with jts.Implicits
+  with StandardEncoders
+  with SpatialEncoders {
   type Statistics = astraea.spark.rasterframes.functions.CellStatsAggregateFunction.Statistics
   import astraea.spark.rasterframes.encoders.SparkDefaultEncoders._
 

@@ -50,21 +50,21 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with RFSpatialCol
   def tileColumns: Seq[TileColumn] =
     self.schema.fields
       .filter(_.dataType.typeName.equalsIgnoreCase(TileUDT.typeName))
-      .map(f ⇒ self(f.name).as[Tile])
+      .map(f ⇒ col(f.name).as[Tile])
 
   /** Get the spatial column. */
   def spatialKeyColumn: TypedColumn[Any, SpatialKey] = {
     val key = findSpatialKeyField
     key
       .map(_.name)
-      .map(self(_).as[SpatialKey])
+      .map(col(_).as[SpatialKey])
       .getOrElse(throw new IllegalArgumentException("All RasterFrames must have a column tagged with context"))
   }
 
   /** Get the temporal column, if any. */
   def temporalKeyColumn: Option[TypedColumn[Any, TemporalKey]] = {
     val key = findTemporalKeyField
-    key.map(_.name).map(self(_).as[TemporalKey])
+    key.map(_.name).map(col(_).as[TemporalKey])
   }
 
   private[rasterframes] def findRoleField(role: String): Option[StructField] =
