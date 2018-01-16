@@ -28,7 +28,7 @@ class GeoTiffDataSourceSpec
     extends TestEnvironment with TestData
     with IntelliJPresentationCompilerHack {
 
-  val cogPath = getClass.getResource("/LC08_RGB_Norfok_COG.tiff").toURI.toASCIIString
+  val cogPath = getClass.getResource("/LC08_RGB_Norfolk_COG.tiff").toURI
 
   describe("GeoTiff reading") {
 

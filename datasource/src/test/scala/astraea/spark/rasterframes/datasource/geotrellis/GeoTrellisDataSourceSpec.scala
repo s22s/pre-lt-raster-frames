@@ -79,7 +79,7 @@ class GeoTrellisDataSourceSpec
   describe("DataSource reading") {
     def layerReader = spark.read.geotrellis
     it("should read tiles") {
-      val df = layerReader.loadRF(layer)
+      val df = spark.read.geotrellis.loadRF(layer)
       assert(df.count === tileCoordRange.length * tileCoordRange.length)
     }
 
@@ -148,7 +148,7 @@ class GeoTrellisDataSourceSpec
       assert(df.select(SPATIAL_KEY_COLUMN).first === targetKey)
     }
 
-    it("should support temporal predicats") {
+    it("should support temporal predicates") {
       withClue("at now") {
         val df = layerReader
           .loadRF(layer)

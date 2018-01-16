@@ -19,6 +19,8 @@
 
 package astraea.spark.rasterframes.datasource
 
+import java.net.URI
+
 import astraea.spark.rasterframes._
 import org.apache.spark.sql.DataFrameReader
 import shapeless.tag
@@ -44,6 +46,6 @@ package object geotiff {
 
   /** Adds `loadRF` to appropriately tagged `DataFrameReader` */
   implicit class GeoTiffReaderWithRF(val reader: GeoTiffRasterFrameReader) {
-    def loadRF(path: String): RasterFrame = reader.load(path).asRF
+    def loadRF(path: URI): RasterFrame = reader.load(path.toASCIIString).asRF
   }
 }

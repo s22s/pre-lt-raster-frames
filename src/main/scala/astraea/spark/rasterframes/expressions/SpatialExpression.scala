@@ -94,4 +94,28 @@ object SpatialExpression {
     override def nodeName = "contains"
     val relation = SQLSpatialFunctions.ST_Contains
   }
+  case class Covers(left: Expression, right: Expression) extends SpatialExpression {
+    override def nodeName = "covers"
+    val relation = SQLSpatialFunctions.ST_Covers
+  }
+  case class Crosses(left: Expression, right: Expression) extends SpatialExpression {
+    override def nodeName = "crosses"
+    val relation = SQLSpatialFunctions.ST_Crosses
+  }
+  case class Disjoint(left: Expression, right: Expression) extends SpatialExpression {
+    override def nodeName = "disjoint"
+    val relation = SQLSpatialFunctions.ST_Disjoint
+  }
+  case class Overlaps(left: Expression, right: Expression) extends SpatialExpression {
+    override def nodeName = "overlaps"
+    val relation = SQLSpatialFunctions.ST_Overlaps
+  }
+  case class Touches(left: Expression, right: Expression) extends SpatialExpression {
+    override def nodeName = "touches"
+    val relation = SQLSpatialFunctions.ST_Touches
+  }
+  case class Within(left: Expression, right: Expression) extends SpatialExpression {
+    override def nodeName = "within"
+    val relation = SQLSpatialFunctions.ST_Within
+  }
 }

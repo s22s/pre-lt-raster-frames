@@ -19,7 +19,6 @@ package astraea.spark.rasterframes
 
 import java.nio.file.{Files, Paths}
 
-import astraea.spark.rasterframes
 import astraea.spark.rasterframes.util.toParquetFriendlyColumnName
 import geotrellis.spark.testkit.{TestEnvironment ⇒ GeoTrellisTestEnvironment}
 import geotrellis.util.LazyLogging
@@ -35,8 +34,7 @@ trait TestEnvironment extends FunSpec with GeoTrellisTestEnvironment
   override implicit def sc: SparkContext = { _sc.setLogLevel("ERROR"); _sc }
 
   lazy val sqlContext: SQLContext = {
-    val ctx = SparkSession.builder.config(_sc.getConf).getOrCreate().sqlContext.withRasterFrames
-    ctx
+    SparkSession.builder.config(_sc.getConf).getOrCreate().sqlContext.withRasterFrames
   }
 
   lazy val sql: (String) ⇒ DataFrame = sqlContext.sql
