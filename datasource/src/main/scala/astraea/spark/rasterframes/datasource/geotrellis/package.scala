@@ -64,14 +64,14 @@ package object geotrellis {
 
   /** Extension methods for loading a RasterFrame from a tagged `DataFrameReader`. */
   implicit class GeoTrellisReaderWithRF(val reader: GeoTrellisRasterFrameReader) {
-    def loadRF(uriPath: String, id: LayerId): RasterFrame =
+    def loadRF(uri: URI, id: LayerId): RasterFrame =
       reader
         .option("layer", id.name)
         .option("zoom", id.zoom.toString)
-        .load(uriPath)
+        .load(uri.toASCIIString)
         .asRF
 
-    def loadRF(layer: Layer): RasterFrame = loadRF(layer.base.toASCIIString, layer.id)
+    def loadRF(layer: Layer): RasterFrame = loadRF(layer.base, layer.id)
   }
 
   /** Extension method on a Dataset[Layer] for loading one or more RasterFrames*/

@@ -1,9 +1,5 @@
 # Getting Started
 
-@@@ note
-Most of the examples are shown using the Spark DataFrames API. However, many could also be rewritten to use the Spark SQL API instead. We hope to add more examples in that form in the future.
-@@@
-
 ## Quick Start
 
 ### macOS
@@ -32,7 +28,7 @@ resolvers += Resolver.jcenterRepo
 
 See [this](https://bintray.com/bintray/jcenter) for other build tools.
 
-To use RasterFrames, add the following library dependency:
+To use RasterFrames, add the following library dependencies:
 
 @@dependency[sbt,Maven,Gradle] {
   group="io.astraea"
@@ -40,10 +36,20 @@ To use RasterFrames, add the following library dependency:
   version="x.y.z"
 }
 
-It assumes that SparkSQL 2.1.1 is available in the runtime classpath. Here's how to add it explicitly:
+@@dependency[sbt,Maven,Gradle] {
+  group="io.astraea"
+  artifact="raster-frames-datasource_2.11"
+  version="x.y.z"
+}
+
+It assumes that SparkSQL 2.2.x is available in the runtime classpath. Here's how to add it explicitly:
 
 @@dependency[sbt,Maven,Gradle] {
   group="org.apache.spark"
   artifact="spark-sql"
-  version="2.1.1"
+  version="2.2.0"
 }
+
+@@@ note
+Most of the following examples are shown using the Spark DataFrames API. However, many could also be rewritten to use the Spark SQL API instead. We hope to add more examples in that form in the future.
+@@@

@@ -38,29 +38,23 @@ trait SpatialPredicates {
     Intersects(left.expr, right.expr).asColumn.as[Boolean]
   def contains(left: Column, right: Column) =
     Contains(left.expr, right.expr).asColumn.as[Boolean]
-  def covers(left: Column, right: Column) = withAlias("covers", left, right)(
-    udf(ST_Covers).apply(left, right)
-  ).as[Boolean]
-  def crosses(left: Column, right: Column) = withAlias("crosses", left, right)(
-    udf(ST_Crosses).apply(left, right)
-  ).as[Boolean]
-  def disjoint(left: Column, right: Column) = withAlias("disjoint", left, right)(
-    udf(ST_Disjoint).apply(left, right)
-  ).as[Boolean]
-  def equals(left: Column, right: Column) = withAlias("equals", left, right)(
-    udf(ST_Equals).apply(left, right)
-  ).as[Boolean]
-  def overlaps(left: Column, right: Column) = withAlias("overlaps", left, right)(
-    udf(ST_Overlaps).apply(left, right)
-  ).as[Boolean]
-  def touches(left: Column, right: Column) = withAlias("touches", left, right)(
-    udf(ST_Touches).apply(left, right)
-  ).as[Boolean]
-  def within(left: Column, right: Column) = withAlias("within", left, right)(
-    udf(ST_Within).apply(left, right)
-  ).as[Boolean]
+  def covers(left: Column, right: Column) =
+    Covers(left.expr, right.expr).asColumn.as[Boolean]
+  def crosses(left: Column, right: Column) =
+    Crosses(left.expr, right.expr).asColumn.as[Boolean]
+  def disjoint(left: Column, right: Column) =
+    Disjoint(left.expr, right.expr).asColumn.as[Boolean]
+  def overlaps(left: Column, right: Column) =
+    Overlaps(left.expr, right.expr).asColumn.as[Boolean]
+  def touches(left: Column, right: Column) =
+    Touches(left.expr, right.expr).asColumn.as[Boolean]
+  def within(left: Column, right: Column) =
+    Within(left.expr, right.expr).asColumn.as[Boolean]
+
+
+//  def equals(left: Column, right: Column) = withAlias("equals", left, right)(
+//    udf(ST_Equals).apply(left, right)
+//  ).as[Boolean]
 }
 
-object SpatialPredicates extends SpatialPredicates  {
-
-}
+object SpatialPredicates extends SpatialPredicates
