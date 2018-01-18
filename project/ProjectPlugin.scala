@@ -155,7 +155,8 @@ object ProjectPlugin extends AutoPlugin {
         geotrellis("raster") % Tut
       ),
       fork in (Tut, runner) := true,
-      javaOptions in (Tut, runner) := Seq("-Xmx8G")
+      javaOptions in (Tut, runner) := Seq("-Xmx8G", "-Dspark.ui.enabled=false"),
+      unmanagedClasspath in Tut ++= (fullClasspath in (LocalProject("datasource"), Compile)).value
     )
 
     def buildInfoSettings: Seq[Def.Setting[_]] = Seq(

@@ -9,6 +9,7 @@ lazy val `raster-frames` = project
     BuildInfoPlugin,
     AssemblyPlugin
   )
+  .disablePlugins(LiteratorPlugin)
   .settings(name := "RasterFrames")
   .settings(moduleName := "raster-frames")
   .settings(releaseSettings)

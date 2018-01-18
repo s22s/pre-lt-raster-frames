@@ -20,6 +20,9 @@
 package examples
 
 import java.io.File
+import java.nio.file.Files
+
+import geotrellis.raster.{Raster, Tile}
 
 /**
  * Examples of creating RasterFrames
@@ -122,8 +125,35 @@ Before we show how all of this works we need to have a GeoTrellis layer to work 
 constructed above.
 
  */
+import astraea.spark.rasterframes.datasource.geotrellis._
 
-tiffRF.write
+val base = Files.createTempDirectory("rf-").toUri
+val layer = Layer(base, "sample", 0)
+tiffRF.write.geotrellis.asLayer(layer).save()
+
+/*
+Now we can point our catalog reader at the base directory and see what was saved:
+*/
+
+val cat = spark.read.geotrellisCatalog(base)
+cat.printSchema
+cat.show()
+
+/*
+As you can see, there's a lot of information stored in each row of the catalog. Most of this is associated with how the
+layer is discretized. However, there may be other application specific metadata serialized with a layer that can be use
+to filter the catalog entries or select a specific one. But for now, we're just going to load a RasterFrame in from the
+catalog using a convenience function.
+ */
+
+val rfAgain = cat.select(geotrellis_layer).loadRF
+rfAgain.show()
+
+/*
+If you already know the `LayerId` of what you're wanting to read, you can bypass working with the catalog:
+ */
+
+val anotherRF = spark.read.geotrellis.loadRF(layer)
 
 /*
 ## Using GeoTrellis APIs

@@ -70,7 +70,7 @@ class GeoTrellisDataSourceSpec
     FileUtil.fullyDelete(outputDir)
     outputDir.deleteOnExit()
 
-    testRdd.toRF.write.geotrellis(layer).save()
+    testRdd.toRF.write.geotrellis.asLayer(layer).save()
   }
 
 
