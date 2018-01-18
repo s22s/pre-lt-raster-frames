@@ -97,7 +97,7 @@ trait DataFrameMethods extends MethodExtensions[DataFrame] {
       "A RasterFrame requires a column identified as a spatial key"
     )
 
-    require(potentialRF.tileColumns.nonEmpty, "A RasterFrame requires at least one tile colulmn")
+    require(potentialRF.tileColumns.nonEmpty, "A RasterFrame requires at least one tile column")
 
     require(
       Try(potentialRF.tileLayerMetadata).isSuccess,

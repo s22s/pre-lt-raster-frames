@@ -35,6 +35,8 @@ import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 case class Layer(base: URI, id: LayerId)
 
 object Layer {
+  def apply(base: URI, name: String, zoom: Int) = new Layer(base, LayerId(name, zoom))
+
   implicit def layerEncoder: ExpressionEncoder[Layer] = DelegatingSubfieldEncoder[Layer](
     "base" -> rasterframes.uriEncoder,
     "id" -> ExpressionEncoder[LayerId]()

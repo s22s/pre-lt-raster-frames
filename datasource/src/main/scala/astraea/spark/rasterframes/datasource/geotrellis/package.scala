@@ -45,11 +45,10 @@ package object geotrellis {
    * a RasterFrame from a GeoTrellis layer. */
   type GeoTrellisRasterFrameReader = DataFrameReader @@ GeoTrellisRasterFrameReaderTag
   trait GeoTrellisRasterFrameReaderTag
-
-//  /** Tagged type construction for enabling type-safe extension methods for loading
-//   * a DataFrame describing DataFrame layers. */
-//  type GeoTrellisCatalogReader = DataFrameReader @@ GeoTrellisCatalogDataFrameReaderTag
-//  trait GeoTrellisCatalogDataFrameReaderTag
+  /** Tagged type construction for enabling type-safe extension methods for writing
+   * a RasterFrame to a GeoTrellis layer. */
+  type GeoTrellisRasterFrameWriter[T] = DataFrameWriter[T] @@ GeoTrellisRasterFrameWriterTag
+  trait GeoTrellisRasterFrameWriterTag
 
   /** Set of convenience extension methods on [[org.apache.spark.sql.DataFrameReader]]
    * for querying the GeoTrellis catalog and loading layers from it. */
@@ -63,18 +62,23 @@ package object geotrellis {
   }
 
   implicit class DataFrameWriterHasGeotrellisFormat[T](val writer: DataFrameWriter[T]) {
-    def geotrellis(id: LayerId): DataFrameWriter[T] =
+    def geotrellis: GeoTrellisRasterFrameWriter[T] =
+      tag[GeoTrellisRasterFrameWriterTag][DataFrameWriter[T]](writer.format("geotrellis"))
+  }
+
+  implicit class GeoTrellisWriterAddLayer[T](val writer: GeoTrellisRasterFrameWriter[T]) {
+    def asLayer(id: LayerId): DataFrameWriter[T] =
       writer
-        .format("geotrellis")
         .option("layer", id.name)
         .option("zoom", id.zoom.toString)
 
-    def geotrellis(layer: Layer): DataFrameWriter[T] =
-      geotrellis(layer.id)
+    def asLayer(layer: Layer): DataFrameWriter[T] =
+      asLayer(layer.id)
         .option("path", layer.base.toASCIIString)
   }
 
-  /** Extension methods for loading a RasterFrame from a tagged `DataFrameReader`. */
+
+    /** Extension methods for loading a RasterFrame from a tagged `DataFrameReader`. */
   implicit class GeoTrellisReaderWithRF(val reader: GeoTrellisRasterFrameReader) {
     def loadRF(uri: URI, id: LayerId): RasterFrame =
       reader

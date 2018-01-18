@@ -27,9 +27,10 @@ import astraea.spark.rasterframes._
 import astraea.spark.rasterframes.datasource.SpatialFilters.{BetweenTimes, Contains ⇒ sfContains, Intersects ⇒ sfIntersects}
 import astraea.spark.rasterframes.util._
 import com.vividsolutions.jts.geom
-import geotrellis.raster.Tile
+import geotrellis.raster.{CellGrid, MultibandTile, Tile}
 import geotrellis.spark.io._
-import geotrellis.spark.{LayerId, SpatialKey, TileLayerMetadata, _}
+import geotrellis.spark.io.avro.AvroRecordCodec
+import geotrellis.spark.{LayerId, Metadata, SpatialKey, TileLayerMetadata, _}
 import geotrellis.util.LazyLogging
 import geotrellis.vector._
 import org.apache.spark.rdd.RDD
@@ -41,6 +42,7 @@ import org.apache.spark.sql.{Row, SQLContext, sources}
 import spray.json.DefaultJsonProtocol._
 import spray.json.JsValue
 
+import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
 
 /**
@@ -50,6 +52,8 @@ import scala.reflect.runtime.universe._
  */
 case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId, filters: Seq[Filter] = Seq.empty)
     extends BaseRelation with PrunedScan with LazyLogging {
+
+  implicit val sc = sqlContext.sparkContext
 
   /** Convenience to create new relation with the give filter added. */
   def withFilter(value: Filter): GeoTrellisRelation =
@@ -82,6 +86,7 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
       }
       val tt = Class.forName(h.valueClass) match {
         case c if c.isAssignableFrom(classOf[Tile]) ⇒ typeOf[Tile]
+        case c if c.isAssignableFrom(classOf[MultibandTile]) ⇒ typeOf[MultibandTile]
         case c ⇒ throw new UnsupportedOperationException("Unsupported tile type " + c)
       }
       (kt, tt)
@@ -104,6 +109,25 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
     lazy val TS = TIMESTAMP_COLUMN.columnName
     lazy val TL = TILE_COLUMN.columnName
     lazy val EX = EXTENT_COLUMN.columnName
+  }
+
+  /** This unfortunate routine is here because the number bands in a  multiband layer isn't written
+   * in the metadata anywhere. This is potentially an expensive hack, which needs further quantifying of impact.
+   * Another option is to force the user to specify the number of bands. */
+  private lazy val peekBandCount = {
+    tileClass match {
+      case t if t =:= typeOf[MultibandTile] ⇒
+        val reader = keyType match {
+          case k if k =:= typeOf[SpatialKey] ⇒
+            LayerReader(uri).read[SpatialKey, MultibandTile, TileLayerMetadata[SpatialKey]](layerId)
+          case k if k =:= typeOf[SpaceTimeKey] ⇒
+            LayerReader(uri).read[SpaceTimeKey, MultibandTile, TileLayerMetadata[SpaceTimeKey]](layerId)
+        }
+        // We're counting on `first` to read a minimal amount of data.
+        val tile = reader.first()
+        tile._2.bandCount
+      case _ ⇒ 1
+    }
   }
 
   override def schema: StructType = {
@@ -133,6 +157,9 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
         List(
           StructField(Cols.TL, TileUDT, nullable = true)
         )
+      case t if t =:= typeOf[MultibandTile] ⇒
+        for(b ← 1 to peekBandCount) yield
+          StructField(Cols.TL + "_" + b, TileUDT, nullable = true)
     }
 
     val extentSchema = ExpressionEncoder[Extent]().schema
@@ -140,9 +167,9 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
     StructType((keyFields :+ extentField) ++ tileFields)
   }
 
-  type BLQ[K] = BoundLayerQuery[K, TileLayerMetadata[K], TileLayerRDD[K]]
+  type BLQ[K, T] = BoundLayerQuery[K, TileLayerMetadata[K], RDD[(K, T)] with Metadata[TileLayerMetadata[K]]]
 
-  def applyFilter[K: Boundable: SpatialComponent](q: BLQ[K], predicate: Filter): BLQ[K] = {
+  def applyFilter[K: Boundable: SpatialComponent, T](q: BLQ[K, T], predicate: Filter): BLQ[K, T] = {
     predicate match {
       // GT limits disjunctions to a single type
       case sources.Or(sfIntersects(Cols.EX, left), sfIntersects(Cols.EX, right)) ⇒
@@ -159,7 +186,7 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
     }
   }
 
-  def applyFilterTemporal[K: Boundable: SpatialComponent: TemporalComponent](q: BLQ[K], predicate: Filter): BLQ[K] = {
+  def applyFilterTemporal[K: Boundable: SpatialComponent: TemporalComponent, T](q: BLQ[K, T], predicate: Filter): BLQ[K, T] = {
     def toZDT(ts: Timestamp) = ZonedDateTime.ofInstant(ts.toInstant, ZoneOffset.UTC)
     predicate match {
       case sources.EqualTo(Cols.TS, ts: Timestamp) ⇒
@@ -175,29 +202,40 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
     logger.trace(s"Required columns: ${requiredColumns.mkString(", ")}")
     logger.trace(s"Filters: $filters")
 
-    implicit val sc = sqlContext.sparkContext
-    lazy val reader = LayerReader(uri)
+    val reader = LayerReader(uri)
 
     val columnIndexes = requiredColumns.map(schema.fieldIndex)
+    tileClass match {
+      case t if t =:= typeOf[Tile] ⇒ query[Tile](reader, columnIndexes)
+      case t if t =:= typeOf[MultibandTile] ⇒ query[MultibandTile](reader, columnIndexes)
+    }
+  }
 
+  def query[T: AvroRecordCodec: ClassTag](reader: FilteringLayerReader[LayerId], columnIndexes: Seq[Int]) = {
     tileLayerMetadata.fold(
       // Without temporal key case
       (tlm: TileLayerMetadata[SpatialKey]) ⇒ {
         val trans = tlm.mapTransform
 
         val query = splitFilters.foldLeft(
-          reader.query[SpatialKey, Tile, TileLayerMetadata[SpatialKey]](layerId)
+          reader.query[SpatialKey, T, TileLayerMetadata[SpatialKey]](layerId)
         )(applyFilter(_, _))
 
         val rdd = query.result
 
         rdd
-          .map { case (sk: SpatialKey, tile: Tile) ⇒
+          .map { case (sk: SpatialKey, tile: T) ⇒
 
             val entries = columnIndexes.map {
               case 0 ⇒ sk
               case 1 ⇒ trans.keyToExtent(sk)
-              case 2 ⇒ tile
+              case 2 ⇒ tile match {
+                case t: Tile ⇒ t
+                case m: MultibandTile ⇒ m.bands.head
+              }
+              case i if i > 2 ⇒ tile match {
+                case m: MultibandTile ⇒ m.bands(i - 2)
+              }
             }
             Row(entries: _*)
           }
@@ -206,27 +244,32 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
         val trans = tlm.mapTransform
 
         val query = splitFilters.foldLeft(
-          reader.query[SpaceTimeKey, Tile, TileLayerMetadata[SpaceTimeKey]](layerId)
+          reader.query[SpaceTimeKey, T, TileLayerMetadata[SpaceTimeKey]](layerId)
         )(applyFilterTemporal(_, _))
 
         val rdd = query.result
 
         rdd
-          .map { case (stk: SpaceTimeKey, tile: Tile) ⇒
+          .map { case (stk: SpaceTimeKey, tile: T) ⇒
             val sk = stk.spatialKey
             val entries = columnIndexes.map {
               case 0 ⇒ sk
               case 1 ⇒ stk.temporalKey
               case 2 ⇒ new Timestamp(stk.temporalKey.instant)
               case 3 ⇒ trans.keyToExtent(stk)
-              case 4 ⇒ tile
+              case 4 ⇒ tile match {
+                case t: Tile ⇒ t
+                case m: MultibandTile ⇒ m.bands.head
+              }
+              case i if i > 4 ⇒ tile match {
+                case m: MultibandTile ⇒ m.bands(i - 4)
+              }
             }
             Row(entries: _*)
           }
       }
     )
   }
-
   // TODO: Is there size speculation we can do?
   override def sizeInBytes = {
     super.sizeInBytes
