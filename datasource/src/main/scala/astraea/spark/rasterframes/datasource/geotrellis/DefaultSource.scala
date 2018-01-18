@@ -22,10 +22,16 @@ package astraea.spark.rasterframes.datasource.geotrellis
 import java.net.URI
 
 import astraea.spark.rasterframes.util.registerOptimization
+import astraea.spark.rasterframes._
 import geotrellis.spark._
+import geotrellis.spark.io._
+import geotrellis.spark.io.index.ZCurveKeyIndexMethod
 import org.apache.spark.annotation.Experimental
 import org.apache.spark.sql._
 import org.apache.spark.sql.sources._
+
+import scala.util.Try
+
 
 /**
  * DataSource over a GeoTrellis layer store.
@@ -34,7 +40,7 @@ import org.apache.spark.sql.sources._
  * @author sfitch
  */
 @Experimental
-class DefaultSource extends DataSourceRegister with RelationProvider {
+class DefaultSource extends DataSourceRegister with RelationProvider with CreatableRelationProvider {
   def shortName(): String = "geotrellis"
 
   def createRelation(sqlContext: SQLContext, parameters: Map[String, String]): BaseRelation = {
@@ -48,5 +54,42 @@ class DefaultSource extends DataSourceRegister with RelationProvider {
     val layerId: LayerId = LayerId(parameters("layer"), parameters("zoom").toInt)
 
     GeoTrellisRelation(sqlContext, uri, layerId)
+  }
+
+  def createRelation(sqlContext: SQLContext, mode: SaveMode, parameters: Map[String, String], data: DataFrame): BaseRelation = {
+    val zoom = parameters.get("zoom").flatMap(p ⇒ Try(p.toInt).toOption)
+    val path = parameters.get("path").flatMap(p ⇒ Try(new URI(p)).toOption)
+    val layerName = parameters.get("layer")
+
+    require(path.isDefined, "Valid URI 'path' parameter required.")
+    require(layerName.isDefined, "'layer' parameter for raster layer name required.")
+    require(zoom.isDefined, "Integer 'zoom' parameter for raster layer zoom level required.")
+
+    val rf = data.asRFSafely.getOrElse(throw new IllegalArgumentException("Only a valid RasterFrame can be saved as a GeoTrellis layer"))
+
+    val tileColumn = parameters.get("tileColumn").map(c ⇒ rf(c))
+
+    val layerId = for {
+      name ← layerName
+      z ← zoom
+    } yield LayerId(name, z)
+
+    lazy val writer = LayerWriter(path.get)
+
+    if(tileColumn.isDefined || rf.tileColumns.length == 1) {
+      val eitherRDD = tileColumn.orElse(rf.tileColumns.headOption).map(rf.toTileLayerRDD).get
+      eitherRDD.fold(
+        skLayer ⇒ writer.write(layerId.get, skLayer, ZCurveKeyIndexMethod),
+        stkLayer ⇒ writer.write(layerId.get, stkLayer, ZCurveKeyIndexMethod.byDay())
+      )
+    }
+    else {
+      rf.toMultibandTileLayerRDD.fold(
+        skLayer ⇒ writer.write(layerId.get, skLayer, ZCurveKeyIndexMethod),
+        stkLayer ⇒ writer.write(layerId.get, stkLayer, ZCurveKeyIndexMethod.byDay())
+      )
+    }
+
+    createRelation(sqlContext, parameters)
   }
 }

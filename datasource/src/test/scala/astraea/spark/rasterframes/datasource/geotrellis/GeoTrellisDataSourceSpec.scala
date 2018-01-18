@@ -21,11 +21,10 @@ package astraea.spark.rasterframes.datasource.geotrellis
 import java.io.File
 import java.time.ZonedDateTime
 
+import astraea.spark.rasterframes._
 import geotrellis.proj4.LatLng
 import geotrellis.raster._
 import geotrellis.spark._
-import geotrellis.spark.io._
-import geotrellis.spark.io.index.ZCurveKeyIndexMethod
 import geotrellis.spark.tiling.ZoomedLayoutScheme
 import geotrellis.vector._
 import org.apache.hadoop.fs.FileUtil
@@ -34,10 +33,10 @@ import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{DataFrame, Row}
 import org.locationtech.geomesa.spark.SQLGeometricConstructorFunctions._
 import org.scalatest.BeforeAndAfter
-import astraea.spark.rasterframes._
 
 /**
  * @author echeipesh
+ * @author sfitch
  */
 class GeoTrellisDataSourceSpec
     extends TestEnvironment with TestData with BeforeAndAfter
@@ -70,9 +69,8 @@ class GeoTrellisDataSourceSpec
     val outputDir = new File(layer.base)
     FileUtil.fullyDelete(outputDir)
     outputDir.deleteOnExit()
-    lazy val writer = LayerWriter(outputDir.toURI)
-    // TestEnvironment will clean this up
-    writer.write(layer.id, testRdd, ZCurveKeyIndexMethod.byDay())
+
+    testRdd.toRF.write.geotrellis(layer).save()
   }
 
 

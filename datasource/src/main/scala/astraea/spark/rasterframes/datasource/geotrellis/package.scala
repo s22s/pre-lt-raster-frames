@@ -25,7 +25,7 @@ import astraea.spark.rasterframes
 import astraea.spark.rasterframes.util.toParquetFriendlyColumnName
 import astraea.spark.rasterframes.{RasterFrame, _}
 import org.apache.spark.sql.functions.col
-import org.apache.spark.sql.{DataFrame, DataFrameReader, Dataset}
+import org.apache.spark.sql._
 import shapeless.tag.@@
 import shapeless.tag
 
@@ -60,6 +60,18 @@ package object geotrellis {
 
     def geotrellis: GeoTrellisRasterFrameReader =
       tag[GeoTrellisRasterFrameReaderTag][DataFrameReader](reader.format("geotrellis"))
+  }
+
+  implicit class DataFrameWriterHasGeotrellisFormat[T](val writer: DataFrameWriter[T]) {
+    def geotrellis(id: LayerId): DataFrameWriter[T] =
+      writer
+        .format("geotrellis")
+        .option("layer", id.name)
+        .option("zoom", id.zoom.toString)
+
+    def geotrellis(layer: Layer): DataFrameWriter[T] =
+      geotrellis(layer.id)
+        .option("path", layer.base.toASCIIString)
   }
 
   /** Extension methods for loading a RasterFrame from a tagged `DataFrameReader`. */
