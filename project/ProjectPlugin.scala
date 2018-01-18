@@ -38,8 +38,9 @@ object ProjectPlugin extends AutoPlugin {
     scmInfo := Some(ScmInfo(url("https://github.com/s22s/raster-frames"), "git@github.com:s22s/raster-frames.git")),
     description := "RasterFrames brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer operations of GeoTrellis",
     licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html")),
-    scalaVersion := "2.11.11",
-    scalacOptions ++= Seq("-feature", "-deprecation"),
+    scalaVersion := "2.11.12",
+    scalacOptions ++= Seq("-target:jvm-1.8", "-feature", "-deprecation"),
+    javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
     cancelable in Global := true,
     resolvers ++= Seq(
       "locationtech-releases" at "https://repo.locationtech.org/content/groups/releases",

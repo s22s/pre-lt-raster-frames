@@ -19,7 +19,7 @@ package astraea.spark.rasterframes
 import java.time.ZonedDateTime
 
 import geotrellis.raster.resample.{Bilinear, ResampleMethod}
-import geotrellis.raster.{ProjectedRaster, Tile, TileLayout}
+import geotrellis.raster.{MultibandTile, ProjectedRaster, Tile, TileLayout}
 import geotrellis.spark._
 import geotrellis.spark.io._
 import geotrellis.spark.tiling.{LayoutDefinition, Tiler}
@@ -216,7 +216,7 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with RFSpatialCol
   }
 
   /**
-   * Convert from RasterFrame to a GeoTrellis [[TileLayerMetadata]]
+   * Convert a single tile column from RasterFrame to a GeoTrellis [[TileLayerRDD]]
    * @param tileCol column with tiles to be the
    */
   def toTileLayerRDD(tileCol: Column): Either[TileLayerRDD[SpatialKey], TileLayerRDD[SpaceTimeKey]] =
@@ -227,6 +227,27 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with RFSpatialCol
           .select(spatialKeyColumn, temporalKeyColumn.get, tileCol.as[Tile])
           .rdd
           .map { case (sk, tk, v) ⇒ (SpaceTimeKey(sk, tk), v) }
+        Right(ContextRDD(rdd, tlm))
+      }
+    )
+
+  /** Convert all the tile columns in a Rasterrame to a GeoTrellis [[MultibandTileLayerRDD]] */
+  def toMultibandTileLayerRDD: Either[MultibandTileLayerRDD[SpatialKey], MultibandTileLayerRDD[SpaceTimeKey]] =
+    tileLayerMetadata.fold(
+      tlm ⇒ {
+        val rdd = self
+          .select(spatialKeyColumn, array(self.tileColumns: _*)).as[(SpatialKey, Array[Tile])]
+          .rdd
+          .map { case (sk, tiles) ⇒
+            (sk, MultibandTile(tiles))
+          }
+        Left(ContextRDD(rdd, tlm))
+      },
+      tlm ⇒ {
+        val rdd = self
+          .select(spatialKeyColumn, temporalKeyColumn.get, array(self.tileColumns: _*)).as[(SpatialKey, TemporalKey, Array[Tile])]
+          .rdd
+          .map { case (sk, tk, tiles) ⇒ (SpaceTimeKey(sk, tk), MultibandTile(tiles)) }
         Right(ContextRDD(rdd, tlm))
       }
     )
