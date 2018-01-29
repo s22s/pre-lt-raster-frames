@@ -115,6 +115,24 @@ class RasterFrameSpec extends TestEnvironment with TestData {
       assert(joined.columns.count(_.contains(SPATIAL_KEY_COLUMN)) === 2)
     }
 
+    it("should have correct schema on inner spatial joins") {
+      val left = sampleGeoTiff.projectedRaster.toRF(256, 256)
+        .addTemporalComponent(TemporalKey(34))
+
+      val right = left.withColumnRenamed(left.tileColumns.head.columnName, "rightTile")
+        .asRF
+
+      val joined = left.spatialJoin(right, "inner")
+      joined.printSchema
+
+      // Should use left's key column names
+      assert(joined.spatialKeyColumn.columnName === left.spatialKeyColumn.columnName)
+      assert(joined.temporalKeyColumn.map(_.columnName) === left.temporalKeyColumn.map(_.columnName))
+      // since right is a copy of left, should not drop any rows with inner join
+      assert(joined.count === left.count)
+
+    }
+
     it("should convert a GeoTiff to RasterFrame") {
       val praster: ProjectedRaster[Tile] = sampleGeoTiff.projectedRaster
       val (cols, rows) = praster.raster.dimensions
