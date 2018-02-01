@@ -63,6 +63,9 @@ object ProjectPlugin extends AutoPlugin {
       ),
       scalaTest
     ),
+    bintrayOrganization := Some("s22s"),
+    bintrayReleaseOnPublish in ThisBuild := false,
+    publishArtifact in (Compile, packageDoc) := false,
     publishArtifact in Test := false,
     fork in Test := true,
     javaOptions in Test := Seq("-Xmx2G"),
@@ -97,9 +100,6 @@ object ProjectPlugin extends AutoPlugin {
       val publishSite: (State) ⇒ State = releaseStepTask(ghpagesPushSite)
       val releaseArtifacts = releaseStepTask(bintrayRelease)
       Seq(
-        bintrayOrganization := Some("s22s"),
-        bintrayReleaseOnPublish in ThisBuild := false,
-        publishArtifact in (Compile, packageDoc) := false,
         releaseIgnoreUntrackedFiles := true,
         releaseTagName := s"${version.value}",
         releaseProcess := Seq[ReleaseStep](
