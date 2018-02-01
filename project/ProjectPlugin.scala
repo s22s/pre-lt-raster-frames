@@ -154,8 +154,8 @@ object ProjectPlugin extends AutoPlugin {
         geotrellis("spark") % Tut,
         geotrellis("raster") % Tut
       ),
-      fork in (Tut, runner) := true,
-      javaOptions in (Tut, runner) := Seq("-Xmx8G", "-Dspark.ui.enabled=false"),
+      fork in (Tut, run) := true,
+      javaOptions in (Tut, run) := Seq("-Xmx8G", "-Dspark.ui.enabled=false"),
       unmanagedClasspath in Tut ++= (fullClasspath in (LocalProject("datasource"), Compile)).value
     )
 
@@ -163,7 +163,7 @@ object ProjectPlugin extends AutoPlugin {
       buildInfoKeys ++= Seq[BuildInfoKey](
         name, version, scalaVersion, sbtVersion
       ) ++ versions.toSeq.map(p => (p._1 + "Version", p._2): BuildInfoKey),
-      buildInfoPackage := "astraea.rasterframes",
+      buildInfoPackage := "astraea.spark.rasterframes",
       buildInfoObject := "RFBuildInfo",
       buildInfoOptions := Seq(
         BuildInfoOption.ToMap,
