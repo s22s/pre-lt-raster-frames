@@ -6,8 +6,7 @@ import sbtassembly.AssemblyPlugin.autoImport.{ShadeRule, _}
 import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 import sbtrelease.ReleasePlugin.autoImport._
 import com.servicerocket.sbt.release.git.flow.Steps._
-
-import _root_.bintray.BintrayPlugin.autoImport._
+import xerial.sbt.Sonatype.autoImport._
 import com.typesafe.sbt.SbtGit.git
 import com.typesafe.sbt.sbtghpages.GhpagesPlugin
 import com.typesafe.sbt.site.SitePlugin.autoImport._
@@ -63,8 +62,8 @@ object ProjectPlugin extends AutoPlugin {
       ),
       scalaTest
     ),
-    bintrayOrganization := Some("s22s"),
-    bintrayReleaseOnPublish in ThisBuild := false,
+    publishTo := sonatypePublishTo.value,
+    publishMavenStyle := true,
     publishArtifact in (Compile, packageDoc) := false,
     publishArtifact in Test := false,
     fork in Test := true,
@@ -98,7 +97,7 @@ object ProjectPlugin extends AutoPlugin {
     def releaseSettings: Seq[Def.Setting[_]] = {
       val buildSite: (State) ⇒ State = releaseStepTask(makeSite)
       val publishSite: (State) ⇒ State = releaseStepTask(ghpagesPushSite)
-      val releaseArtifacts = releaseStepTask(bintrayRelease)
+      val releaseArtifacts = releaseStepCommand("publishSigned")
       Seq(
         releaseIgnoreUntrackedFiles := true,
         releaseTagName := s"${version.value}",
