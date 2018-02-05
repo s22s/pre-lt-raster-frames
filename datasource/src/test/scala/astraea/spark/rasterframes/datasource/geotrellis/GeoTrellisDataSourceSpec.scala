@@ -25,14 +25,21 @@ import astraea.spark.rasterframes._
 import geotrellis.proj4.LatLng
 import geotrellis.raster._
 import geotrellis.spark._
+import geotrellis.spark.io._
+import geotrellis.spark.io.avro.AvroRecordCodec
+import geotrellis.spark.io.avro.codecs.Implicits._
+import geotrellis.spark.io.index.ZCurveKeyIndexMethod
 import geotrellis.spark.tiling.ZoomedLayoutScheme
 import geotrellis.vector._
+import org.apache.avro.{Schema, SchemaBuilder}
 import org.apache.hadoop.fs.FileUtil
 import org.apache.spark.sql.execution.datasources.LogicalRelation
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{DataFrame, Row}
 import org.locationtech.geomesa.spark.SQLGeometricConstructorFunctions._
 import org.scalatest.BeforeAndAfter
+import spray.json.DefaultJsonProtocol._
+import org.apache.avro.generic._
 
 /**
  * @author echeipesh
@@ -42,7 +49,8 @@ class GeoTrellisDataSourceSpec
     extends TestEnvironment with TestData with BeforeAndAfter
     with IntelliJPresentationCompilerHack {
 
-  lazy val layer = Layer(new File(outputLocalPath).toURI, LayerId("all-ones", 4))
+  lazy val layer = Layer(new File(outputLocalPath).toURI, LayerId("test-layer", 4))
+  lazy val tfLayer = Layer(new File(outputLocalPath).toURI, LayerId("test-tf-layer", 4))
   val now = ZonedDateTime.now()
   val tileCoordRange = 2 to 5
 
@@ -70,14 +78,38 @@ class GeoTrellisDataSourceSpec
     FileUtil.fullyDelete(outputDir)
     outputDir.deleteOnExit()
 
+    // Test layer writing via RF
     testRdd.toRF.write.geotrellis.asLayer(layer).save()
+
+    val tfRdd = testRdd.withContext(_.map { case (stk, tile) ⇒
+      val md = Map("col" -> stk.col,"row" -> stk.row)
+      (stk, TileFeature(tile, md))
+    })
+
+    implicit val mdCodec = new AvroRecordCodec[Map[String, Int]]() {
+      def schema: Schema = SchemaBuilder.record("metadata")
+        .fields()
+        .name("map").`type`().map().values().intType().noDefault()
+        .endRecord()
+
+      def encode(thing: Map[String, Int], rec: GenericRecord): Unit = {
+        import scala.collection.JavaConverters._
+        rec.put(0, thing.asJava)
+      }
+
+      def decode(rec: GenericRecord): Map[String, Int] = ???
+    }
+
+    // We don't currently support writing TileFeature-based layers in RF.
+    val writer = LayerWriter(tfLayer.base)
+    writer.write(tfLayer.id, tfRdd, ZCurveKeyIndexMethod.byDay())
   }
 
 
   describe("DataSource reading") {
     def layerReader = spark.read.geotrellis
     it("should read tiles") {
-      val df = spark.read.geotrellis.loadRF(layer)
+      val df = layerReader.loadRF(layer)
       assert(df.count === tileCoordRange.length * tileCoordRange.length)
     }
 
@@ -198,6 +230,14 @@ class GeoTrellisDataSourceSpec
       assert(rel.splitFilters.length === 2, rel.splitFilters.toString)
 
       assert(df.count === 2)
+    }
+  }
+
+  describe("TileFeature support") {
+    def layerReader = spark.read.geotrellis
+    it("should resolve TileFeature-based RasterFrame") {
+      val rf = layerReader.loadRF(tfLayer)
+      assert(rf.collect().length === testRdd.count())
     }
   }
 }

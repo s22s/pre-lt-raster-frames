@@ -19,20 +19,25 @@
 
 package astraea.spark.rasterframes.datasource.geotrellis
 
+import java.io.UnsupportedEncodingException
 import java.net.URI
 import java.sql.Timestamp
 import java.time.{ZoneOffset, ZonedDateTime}
 
 import astraea.spark.rasterframes._
 import astraea.spark.rasterframes.datasource.SpatialFilters.{BetweenTimes, Contains ⇒ sfContains, Intersects ⇒ sfIntersects}
+import astraea.spark.rasterframes.datasource.geotrellis.GeoTrellisRelation.TileFeatureData
 import astraea.spark.rasterframes.util._
 import com.vividsolutions.jts.geom
-import geotrellis.raster.{CellGrid, MultibandTile, Tile}
+import geotrellis.raster.{MultibandTile, Tile, TileFeature}
 import geotrellis.spark.io._
 import geotrellis.spark.io.avro.AvroRecordCodec
+import geotrellis.spark.util.KryoWrapper
 import geotrellis.spark.{LayerId, Metadata, SpatialKey, TileLayerMetadata, _}
 import geotrellis.util.LazyLogging
 import geotrellis.vector._
+import org.apache.avro.Schema
+import org.apache.avro.generic.GenericRecord
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 import org.apache.spark.sql.gt.types.TileUDT
@@ -87,6 +92,7 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
       val tt = Class.forName(h.valueClass) match {
         case c if c.isAssignableFrom(classOf[Tile]) ⇒ typeOf[Tile]
         case c if c.isAssignableFrom(classOf[MultibandTile]) ⇒ typeOf[MultibandTile]
+        case c if c.isAssignableFrom(classOf[TileFeature[_, _]]) ⇒ typeOf[TileFeature[Tile, _]]
         case c ⇒ throw new UnsupportedOperationException("Unsupported tile type " + c)
       }
       (kt, tt)
@@ -108,6 +114,7 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
     lazy val TK = TEMPORAL_KEY_COLUMN.columnName
     lazy val TS = TIMESTAMP_COLUMN.columnName
     lazy val TL = TILE_COLUMN.columnName
+    lazy val TF = TILE_FEATURE_DATA_COLUMN.columnName
     lazy val EX = EXTENT_COLUMN.columnName
   }
 
@@ -160,6 +167,11 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
       case t if t =:= typeOf[MultibandTile] ⇒
         for(b ← 1 to peekBandCount) yield
           StructField(Cols.TL + "_" + b, TileUDT, nullable = true)
+      case t if t =:= typeOf[TileFeature[Tile, _]] ⇒
+        List(
+          StructField(Cols.TL, TileUDT, nullable = true)
+          //StructField(Cols.TF, DataTypes.BinaryType, nullable = true)
+        )
     }
 
     val extentSchema = ExpressionEncoder[Extent]().schema
@@ -207,6 +219,18 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
     val columnIndexes = requiredColumns.map(schema.fieldIndex)
     tileClass match {
       case t if t =:= typeOf[Tile] ⇒ query[Tile](reader, columnIndexes)
+      case t if t =:= typeOf[TileFeature[Tile, _]] ⇒
+        val baseSchema = attributes.readSchema(layerId)
+        val schema = scala.util.Try(baseSchema
+            .getField("pairs").schema()
+            .getElementType
+            .getField("_2").schema()
+            .getField("data").schema()
+        ).getOrElse(
+          throw new UnsupportedEncodingException("Embedded TileFeature schema is of unknown/unexpected structure: " + baseSchema.toString(true))
+        )
+        implicit val codec = GeoTrellisRelation.tfDataCodec(KryoWrapper(schema))
+        query[TileFeature[Tile, TileFeatureData]](reader, columnIndexes)
       case t if t =:= typeOf[MultibandTile] ⇒ query[MultibandTile](reader, columnIndexes)
     }
   }
@@ -231,6 +255,7 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
               case 1 ⇒ trans.keyToExtent(sk)
               case 2 ⇒ tile match {
                 case t: Tile ⇒ t
+                case t: TileFeature[Tile @unchecked, TileFeatureData @unchecked] ⇒ t.tile
                 case m: MultibandTile ⇒ m.bands.head
               }
               case i if i > 2 ⇒ tile match {
@@ -259,6 +284,7 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
               case 3 ⇒ trans.keyToExtent(stk)
               case 4 ⇒ tile match {
                 case t: Tile ⇒ t
+                case t: TileFeature[Tile @unchecked, TileFeatureData @unchecked] ⇒ t.tile
                 case m: MultibandTile ⇒ m.bands.head
               }
               case i if i > 4 ⇒ tile match {
@@ -273,5 +299,17 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
   // TODO: Is there size speculation we can do?
   override def sizeInBytes = {
     super.sizeInBytes
+  }
+}
+
+object GeoTrellisRelation {
+  /** A dummy type used as a stand-in for ignored TileFeature data. */
+  private sealed trait TileFeatureData
+
+  /** Constructor for Avro codec for TileFeature data stand-in. */
+  private def tfDataCodec(dataSchema: KryoWrapper[Schema]) = new AvroRecordCodec[TileFeatureData]() {
+    def schema: Schema = dataSchema.value
+    def encode(thing: TileFeatureData, rec: GenericRecord): Unit = ()
+    def decode(rec: GenericRecord): TileFeatureData = null
   }
 }

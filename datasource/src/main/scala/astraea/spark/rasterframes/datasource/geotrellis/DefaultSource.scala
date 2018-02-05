@@ -77,7 +77,8 @@ class DefaultSource extends DataSourceRegister with RelationProvider with Creata
     lazy val writer = LayerWriter(path.get)
 
     if(tileColumn.isDefined || rf.tileColumns.length == 1) {
-      val eitherRDD = tileColumn.orElse(rf.tileColumns.headOption).map(rf.toTileLayerRDD).get
+      val tileCol: Column = tileColumn.getOrElse(rf.tileColumns.head)
+      val eitherRDD = rf.toTileLayerRDD(tileCol)
       eitherRDD.fold(
         skLayer ⇒ writer.write(layerId.get, skLayer, ZCurveKeyIndexMethod),
         stkLayer ⇒ writer.write(layerId.get, stkLayer, ZCurveKeyIndexMethod.byDay())

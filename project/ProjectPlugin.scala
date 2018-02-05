@@ -64,7 +64,7 @@ object ProjectPlugin extends AutoPlugin {
     ),
     publishTo := sonatypePublishTo.value,
     publishMavenStyle := true,
-    publishArtifact in (Compile, packageDoc) := false,
+    publishArtifact in (Compile, packageDoc) := true,
     publishArtifact in Test := false,
     fork in Test := true,
     javaOptions in Test := Seq("-Xmx2G"),
@@ -97,7 +97,6 @@ object ProjectPlugin extends AutoPlugin {
     def releaseSettings: Seq[Def.Setting[_]] = {
       val buildSite: (State) ⇒ State = releaseStepTask(makeSite)
       val publishSite: (State) ⇒ State = releaseStepTask(ghpagesPushSite)
-      val releaseArtifacts = releaseStepCommand("publishSigned")
       Seq(
         releaseIgnoreUntrackedFiles := true,
         releaseTagName := s"${version.value}",
@@ -111,11 +110,12 @@ object ProjectPlugin extends AutoPlugin {
           buildSite,
           publishSite,
           commitReleaseVersion,
-          publishArtifacts,
-          releaseArtifacts,
+          tagRelease,
+          releaseStepCommand("publishSigned"),
           gitFlowReleaseFinish,
           setNextVersion,
-          commitNextVersion
+          commitNextVersion,
+          releaseStepCommand("sonatypeReleaseAll")
         ),
         commands += Command.command("bumpVersion"){ st ⇒
           val extracted = Project.extract(st)

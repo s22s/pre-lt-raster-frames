@@ -7,6 +7,7 @@
 * Implemented basic temporal and spatial filter predicate push-down feature for the GeoTrellis layer datasource.
 * Added a GeoTrellis "Catalog" DataSource for inspecting available layers and associated metadata at a URI.
 * Addd a GeoTiff DataSource for directly loading a (preferably Cloud Optimized) GeoTiff as a RasterFrame, each row containing tiles as they are internally organized.
+* Fleshed out support for `MultibandTile` and `TileFeature` support in datasource.
 * Added `withTemporalComponent` convenince method for creating appending a temporal key column with constant value.
 
 ## 0.5.x
