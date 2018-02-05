@@ -169,8 +169,8 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
           StructField(Cols.TL + "_" + b, TileUDT, nullable = true)
       case t if t =:= typeOf[TileFeature[Tile, _]] ⇒
         List(
-          StructField(Cols.TL, TileUDT, nullable = true)
-          //StructField(Cols.TF, DataTypes.BinaryType, nullable = true)
+          StructField(Cols.TL, TileUDT, nullable = true),
+          StructField(Cols.TF, DataTypes.StringType, nullable = true)
         )
     }
 
@@ -259,6 +259,7 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
                 case m: MultibandTile ⇒ m.bands.head
               }
               case i if i > 2 ⇒ tile match {
+                case t: TileFeature[Tile @unchecked, TileFeatureData @unchecked] ⇒ t.data
                 case m: MultibandTile ⇒ m.bands(i - 2)
               }
             }
@@ -288,6 +289,7 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
                 case m: MultibandTile ⇒ m.bands.head
               }
               case i if i > 4 ⇒ tile match {
+                case t: TileFeature[Tile @unchecked, TileFeatureData @unchecked] ⇒ t.data
                 case m: MultibandTile ⇒ m.bands(i - 4)
               }
             }
@@ -304,12 +306,12 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
 
 object GeoTrellisRelation {
   /** A dummy type used as a stand-in for ignored TileFeature data. */
-  private sealed trait TileFeatureData
+  private type TileFeatureData = String
 
   /** Constructor for Avro codec for TileFeature data stand-in. */
   private def tfDataCodec(dataSchema: KryoWrapper[Schema]) = new AvroRecordCodec[TileFeatureData]() {
     def schema: Schema = dataSchema.value
     def encode(thing: TileFeatureData, rec: GenericRecord): Unit = ()
-    def decode(rec: GenericRecord): TileFeatureData = null
+    def decode(rec: GenericRecord): TileFeatureData = rec.toString
   }
 }

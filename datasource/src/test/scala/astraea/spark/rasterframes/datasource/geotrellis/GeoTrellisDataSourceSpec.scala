@@ -237,6 +237,7 @@ class GeoTrellisDataSourceSpec
     def layerReader = spark.read.geotrellis
     it("should resolve TileFeature-based RasterFrame") {
       val rf = layerReader.loadRF(tfLayer)
+      //rf.show(false)
       assert(rf.collect().length === testRdd.count())
     }
   }
