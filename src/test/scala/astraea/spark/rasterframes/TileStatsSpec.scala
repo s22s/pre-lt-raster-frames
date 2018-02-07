@@ -197,7 +197,7 @@ class TileStatsSpec extends TestEnvironment with TestData  {
 
     it("should compute accurate statistics") {
       val completeTile = squareIncrementingTile(4).convert(IntConstantNoDataCellType)
-      val incompleteTile = injectND(2)(completeTile)
+      val incompleteTile = injectND(2)(completeTile).convert(IntConstantNoDataCellType)
 
       val ds = (Seq.fill(20)(completeTile) :+ null).toDF("tiles")
       val dsNd = (Seq.fill(20)(completeTile) ++ Seq(incompleteTile)).toDF("tiles")
