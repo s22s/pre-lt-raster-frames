@@ -77,7 +77,6 @@ package object geotrellis {
         .option("path", layer.base.toASCIIString)
   }
 
-
     /** Extension methods for loading a RasterFrame from a tagged `DataFrameReader`. */
   implicit class GeoTrellisReaderWithRF(val reader: GeoTrellisRasterFrameReader) {
     def loadRF(uri: URI, id: LayerId): RasterFrame =
@@ -90,32 +89,33 @@ package object geotrellis {
     def loadRF(layer: Layer): RasterFrame = loadRF(layer.base, layer.id)
   }
 
-  /** Extension method on a Dataset[Layer] for loading one or more RasterFrames*/
-  implicit class CatalogEntryReader(val selection: Dataset[Layer]) {
-    def loadRF: RasterFrame = {
-      val TC = TILE_COLUMN.columnName
-      val layers = selection.collect()
-
-      val rfs = layers.map { layer ⇒
-        selection.sparkSession
-          .read
-          .geotrellis
-          .loadRF(layer)
-      }
-
-      val renamed = if(layers.length > 1) {
-        rfs.zip(layers).map { case (rf, layer) ⇒
-          val newName = toParquetFriendlyColumnName(s"${TC}_${layer.id.name}")
-          rf
-            .withColumnRenamed(TC, newName)
-            .certify
-        }
-      }
-      else rfs
-
-      renamed
-        .reduceOption(_ spatialJoin _)
-        .getOrElse(throw new IllegalArgumentException("Cannot load empty selection."))
-    }
-  }
+// This code deemed dangerous....
+//  /** Extension method on a Dataset[Layer] for loading one or more RasterFrames*/
+//  implicit class CatalogEntryReader(val selection: Dataset[Layer]) {
+//    def loadRF: RasterFrame = {
+//      val TC = TILE_COLUMN.columnName
+//      val layers = selection.collect()
+//
+//      val rfs = layers.map { layer ⇒
+//        selection.sparkSession
+//          .read
+//          .geotrellis
+//          .loadRF(layer)
+//      }
+//
+//      val renamed = if(layers.length > 1) {
+//        rfs.zip(layers).map { case (rf, layer) ⇒
+//          val newName = toParquetFriendlyColumnName(s"${TC}_${layer.id.name}")
+//          rf
+//            .withColumnRenamed(TC, newName)
+//            .certify
+//        }
+//      }
+//      else rfs
+//
+//      renamed
+//        .reduceOption(_ spatialJoin _)
+//        .getOrElse(throw new IllegalArgumentException("Cannot load empty selection."))
+//    }
+//  }
 }

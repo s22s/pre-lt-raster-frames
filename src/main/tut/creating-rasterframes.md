@@ -116,7 +116,8 @@ to filter the catalog entries or select a specific one. But for now, we're just 
 catalog using a convenience function.
 
 ```tut
-val rfAgain = cat.select(geotrellis_layer).loadRF
+val firstLayer = cat.select(geotrellis_layer).first
+val rfAgain = spark.read.geotrellis.loadRF(firstLayer)
 rfAgain.show()
 ```
 

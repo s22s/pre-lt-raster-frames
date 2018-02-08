@@ -61,12 +61,15 @@ class GeoTrellisCatalogSpec
       val cat = sqlContext.read
         .geotrellisCatalog(outputLocal.toUri)
 
-      // Select two layers. They should get joined
-      val rf = cat
+      // Select two layers.
+      val layer = cat
         .where($"crs" === LatLng.toProj4String)
-        .select(geotrellis_layer).loadRF
+        .select(geotrellis_layer)
+        .collect
+      assert(layer.length === 2)
 
-      assert(rf.tileColumns.length === 2)
+      val lots = layer.map(sqlContext.read.geotrellis.loadRF).map(_.toDF).reduce(_ union _)
+      assert(lots.count === 60)
     }
   }
 }
