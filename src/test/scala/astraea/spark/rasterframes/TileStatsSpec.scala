@@ -197,10 +197,10 @@ class TileStatsSpec extends TestEnvironment with TestData  {
 
     it("should compute accurate statistics") {
       val completeTile = squareIncrementingTile(4).convert(IntConstantNoDataCellType)
-      val incompleteTile = injectND(2)(completeTile).convert(IntConstantNoDataCellType)
+      val incompleteTile = injectND(2)(completeTile)
 
       val ds = (Seq.fill(20)(completeTile) :+ null).toDF("tiles")
-      val dsNd = (Seq.fill(20)(completeTile) ++ Seq(incompleteTile)).toDF("tiles")
+      val dsNd = (Seq.fill(20)(completeTile) :+ incompleteTile :+ null).toDF("tiles")
 
       // counted everything properly
       val countTile = ds.select(localAggDataCells($"tiles")).first()
@@ -212,18 +212,19 @@ class TileStatsSpec extends TestEnvironment with TestData  {
       assert(countArray === expectedCount)
 
       val countNodataArray = dsNd.select((localAggNoDataCells($"tiles"))).first().toArray
-//      val expectedNDCount = (completeTile.localUndefined().toArray zip incompleteTile.localUndefined().toArray())
-//        .toSeq.map(pr ⇒ pr._1 * 20 + pr._2)
-      assert( countNodataArray === incompleteTile.localUndefined().toArray)
+      assert(countNodataArray === incompleteTile.localUndefined().toArray)
 
+      // GeoTrellis docs do not say how NODATA is treated, but NODATA values are ignored
       val meanTile = dsNd.select(localAggMean($"tiles")).first()
       assert(meanTile.toArray() === completeTile.toArray())
 
+      // GeoTrellis docs state that Min(1.0, NODATA) = NODATA
       val minTile = dsNd.select(localAggMin($"tiles")).first()
-      assert(minTile.toArray() === completeTile.toArray())
+      assert(minTile.toArray() === incompleteTile.toArray())
 
+      // GeoTrellis docs state that Max(1.0, NODATA) = NODATA
       val maxTile = dsNd.select(localAggMax($"tiles")).first()
-      assert(maxTile.toArray() === completeTile.toArray())
+      assert(maxTile.toArray() === incompleteTile.toArray())
     }
 
     it("should count cells by no-data state") {
