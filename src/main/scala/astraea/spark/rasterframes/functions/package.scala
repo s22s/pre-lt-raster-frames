@@ -198,6 +198,9 @@ package object functions {
   /** Compute the cell-wise count of non-NA across tiles. */
   private[rasterframes] val localAggCount = new LocalCountAggregateFunction(true)
 
+  /** Compute the cell-wise count of non-NA across tiles. */
+  private[rasterframes] val localAggNodataCount = new LocalCountAggregateFunction(false)
+
   /** Cell-wise addition between tiles. */
   private[rasterframes] val localAdd: (Tile, Tile) ⇒ Tile = safeEval(Add.apply)
 

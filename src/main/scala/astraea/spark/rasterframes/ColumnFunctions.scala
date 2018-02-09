@@ -216,7 +216,7 @@ trait ColumnFunctions {
   @Experimental
   def localAggNoDataCells(col: Column): TypedColumn[Any, Tile] =
   withAlias("localCount", col)(
-    F.localAggCount(col)
+    F.localAggNodataCount(col)
   ).as[Tile]
 
   /** Cellwise addition between two Tiles. */
