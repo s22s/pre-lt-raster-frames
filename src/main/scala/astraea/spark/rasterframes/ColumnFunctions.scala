@@ -215,7 +215,7 @@ trait ColumnFunctions {
   /** Compute the cellwise/local count of NoData cells for all Tiles in a column. */
   @Experimental
   def localAggNoDataCells(col: Column): TypedColumn[Any, Tile] =
-  withAlias("localCount", col)(
+  withAlias("localNodataCount", col)(
     F.localAggNodataCount(col)
   ).as[Tile]
 
