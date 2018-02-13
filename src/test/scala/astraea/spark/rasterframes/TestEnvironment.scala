@@ -23,8 +23,8 @@ import astraea.spark.rasterframes.util.toParquetFriendlyColumnName
 import geotrellis.spark.testkit.{TestEnvironment ⇒ GeoTrellisTestEnvironment}
 import geotrellis.util.LazyLogging
 import org.apache.spark.SparkContext
-import org.apache.spark.sql.functions.col
 import org.apache.spark.sql._
+import org.apache.spark.sql.functions.col
 import org.scalactic.Tolerance
 import org.scalatest._
 
@@ -51,7 +51,6 @@ trait TestEnvironment extends FunSpec with GeoTrellisTestEnvironment
     val rows = df.sparkSession.read.parquet(dest.toString).count()
     logger.debug(s" it has $rows row(s)")
   }
-
 }
 
 /** IntelliJ incorrectly indicates that `withFixture` needs to be implemented, resulting

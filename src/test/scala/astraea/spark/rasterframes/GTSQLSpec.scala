@@ -21,7 +21,6 @@ package astraea.spark.rasterframes
 
 import geotrellis.raster._
 import geotrellis.raster.mapalgebra.local._
-import org.apache.spark.sql._
 import org.apache.spark.sql.functions._
 
 /**
@@ -78,7 +77,7 @@ class GTSQLSpec extends TestEnvironment with TestData  {
     }
 
     it("should list supported cell types") {
-      import gt.types.cellTypes
+      import astraea.spark.rasterframes.functions.cellTypes
       val ct = sql("select explode(rf_cellTypes())").as[String].collect
       forEvery(cellTypes()) { c ⇒
         assert(ct.contains(c))

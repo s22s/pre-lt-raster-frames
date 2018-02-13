@@ -30,7 +30,7 @@ import geotrellis.raster.{CellType, Tile}
 import org.apache.spark.annotation.Experimental
 import org.apache.spark.sql._
 import org.apache.spark.sql.functions.udf
-import org.apache.spark.sql.gt._
+import org.apache.spark.sql.rf._
 
 import scala.reflect.runtime.universe._
 

@@ -26,6 +26,7 @@ import geotrellis.spark.io.AttributeStore
 import org.apache.spark.annotation.Experimental
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql._
+import org.apache.spark.sql.rf.VersionShims
 import org.apache.spark.sql.sources._
 import org.apache.spark.sql.types.StructType
 import spray.json.DefaultJsonProtocol._
@@ -48,6 +49,7 @@ class GeoTrellisCatalog extends DataSourceRegister with RelationProvider {
 }
 
 object GeoTrellisCatalog {
+
   case class GeoTrellisCatalogRelation(sqlContext: SQLContext, uri: URI) extends BaseRelation with TableScan {
     import sqlContext.implicits._
 
@@ -74,14 +76,14 @@ object GeoTrellisCatalog {
       }
 
       val indexedLayers = layerSpecs.toDF("index", "layer")
-      val headers = sqlContext.read.json(
+      val headers = VersionShims.readJson(sqlContext,
         layerSpecs
           .map{case (index, layer) ⇒ (index, attributes.readHeader[JsObject](layer.id))}
           .map(mergeId.tupled)
           .map(_.compactPrint)
           .toDS
       )
-      val metadata = sqlContext.read.json(
+      val metadata = VersionShims.readJson(sqlContext,
         layerSpecs
           .map{case (index, layer) ⇒ (index, attributes.readMetadata[JsObject](layer.id))}
           .map(mergeId.tupled)

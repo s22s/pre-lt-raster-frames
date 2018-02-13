@@ -21,7 +21,7 @@ package astraea.spark.rasterframes
 
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.analysis.FunctionRegistry
-import org.apache.spark.sql.{SQLContext, gt}
+import org.apache.spark.sql.{SQLContext, rf}
 
 /**
  * Module of Catalyst expressions for efficiently working with tiles.
@@ -38,7 +38,7 @@ package object expressions {
   def register(sqlContext: SQLContext): Unit = {
     // Expression-oriented functions have a different registration scheme
     // Currently have to register with the `builtin` registry due to Spark data hiding.
-    val registry: FunctionRegistry = gt.registry(sqlContext)
+    val registry: FunctionRegistry = rf.registry(sqlContext)
 
     registry.registerFunction("rf_explodeTiles", ExplodeTileExpression.apply(1.0, _))
     registry.registerFunction("rf_cellType", ub(CellTypeExpression.apply))

@@ -26,7 +26,7 @@ import org.apache.spark.sql.catalyst.expressions.BoundReference
 import org.apache.spark.sql.catalyst.expressions.objects.NewInstance
 import geotrellis.vector.{Geometry ⇒ GTGeom}
 import org.apache.spark.annotation.Experimental
-
+import org.apache.spark.sql.rf.VersionShims.InvokeSafely
 import scala.reflect.runtime.universe._
 
 /**

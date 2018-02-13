@@ -20,9 +20,10 @@
 package astraea.spark.rasterframes
 
 import geotrellis.raster.mapalgebra.local.LocalTileBinaryOp
+import geotrellis.util.LazyLogging
 import org.apache.spark.sql.catalyst.plans.logical.LogicalPlan
 import org.apache.spark.sql.catalyst.rules.Rule
-import org.apache.spark.sql.gt.analyzer
+import org.apache.spark.sql.rf._
 import org.apache.spark.sql.{Column, SQLContext}
 
 
@@ -32,7 +33,7 @@ import org.apache.spark.sql.{Column, SQLContext}
  * @author sfitch 
  * @since 12/18/17
  */
-package object util {
+package object util extends LazyLogging {
   private[rasterframes]
   implicit class Pipeable[A](val a: A) extends AnyVal {
     def |>[B](f: A ⇒ B): B = f(a)
@@ -72,6 +73,7 @@ package object util {
       sqlContext.experimental.extraOptimizations :+= rule
   }
   def registerResolution(sqlContext: SQLContext, rule: Rule[LogicalPlan]): Unit = {
+    logger.error("Extended rule resolution not available in this version of Spark")
     analyzer(sqlContext).extendedResolutionRules
   }
 }

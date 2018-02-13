@@ -239,6 +239,25 @@ package object functions {
     }
   }
 
+  private[rasterframes] val cellTypes: () ⇒ Seq[String] = () ⇒
+    Seq(
+      BitCellType,
+      ByteCellType,
+      ByteConstantNoDataCellType,
+      UByteCellType,
+      UByteConstantNoDataCellType,
+      ShortCellType,
+      ShortConstantNoDataCellType,
+      UShortCellType,
+      UShortConstantNoDataCellType,
+      IntCellType,
+      IntConstantNoDataCellType,
+      FloatCellType,
+      FloatConstantNoDataCellType,
+      DoubleCellType,
+      DoubleConstantNoDataCellType
+    ).map(_.toString).distinct
+
   def register(sqlContext: SQLContext): Unit = {
     sqlContext.udf.register("rf_makeConstantTile", makeConstantTile)
     sqlContext.udf.register("rf_tileToArrayInt", tileToArray[Int])
@@ -262,7 +281,7 @@ package object functions {
     sqlContext.udf.register("rf_localSubtract", localSubtract)
     sqlContext.udf.register("rf_localMultiply", localMultiply)
     sqlContext.udf.register("rf_localDivide", localDivide)
-    sqlContext.udf.register("rf_cellTypes", types.cellTypes)
+    sqlContext.udf.register("rf_cellTypes", cellTypes)
     sqlContext.udf.register("rf_renderAscii", renderAscii)
   }
 }

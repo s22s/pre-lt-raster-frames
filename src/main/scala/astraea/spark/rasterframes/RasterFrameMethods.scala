@@ -41,13 +41,11 @@ import scala.reflect.runtime.universe._
  * @since 7/18/17
  */
 trait RasterFrameMethods extends MethodExtensions[RasterFrame] with RFSpatialColumnMethods with LazyLogging {
-  type TileColumn = TypedColumn[Any, Tile]
-
-  private val _df = self
-  import _df.sqlContext.implicits._
+  private val _stableDF = self
+  import _stableDF.sqlContext.implicits._
 
   /** Get the names of the columns that are of type `Tile` */
-  def tileColumns: Seq[TileColumn] =
+  def tileColumns: Seq[TypedColumn[Any, Tile]] =
     self.schema.fields
       .filter(_.dataType.typeName.equalsIgnoreCase(TileUDT.typeName))
       .map(f ⇒ col(f.name).as[Tile])

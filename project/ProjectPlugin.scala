@@ -22,11 +22,6 @@ import com.lightbend.paradox.sbt.ParadoxPlugin.autoImport._
 object ProjectPlugin extends AutoPlugin {
   override def trigger: PluginTrigger = allRequirements
 
-  val versions = Map(
-    "geotrellis" -> "1.2.0",
-    "spark" -> "2.2.1"
-  )
-
   import autoImport._
 
   override def projectSettings = Seq(
@@ -47,16 +42,18 @@ object ProjectPlugin extends AutoPlugin {
       Resolver.bintrayRepo("s22s", "maven"),
       "osgeo-releases" at "http://download.osgeo.org/webdav/geotools/"
     ),
+    sparkVersion := "2.2.1",
+    geotrellisVersion := "1.2.0",
     libraryDependencies ++= Seq(
       "com.chuusai" %% "shapeless" % "2.3.2",
       "org.locationtech.geomesa" %% "geomesa-z3" % "1.3.5",
       "org.locationtech.geomesa" %% "geomesa-spark-jts" % "1.4.0-astraea.2",
-      spark("core") % Provided,
-      spark("mllib") % Provided,
-      spark("sql") % Provided,
-      geotrellis("spark"),
-      geotrellis("raster"),
-      geotrellis("spark-testkit") % Test excludeAll (
+      spark("core").value % Provided,
+      spark("mllib").value % Provided,
+      spark("sql").value % Provided,
+      geotrellis("spark").value,
+      geotrellis("raster").value,
+      geotrellis("spark-testkit").value % Test excludeAll (
         ExclusionRule(organization = "org.scalastic"),
         ExclusionRule(organization = "org.scalatest")
       ),
@@ -86,11 +83,15 @@ object ProjectPlugin extends AutoPlugin {
   )
 
   object autoImport {
+    val sparkVersion = settingKey[String]("Apache Spark version")
+    val geotrellisVersion = settingKey[String]("GeoTrellis version")
 
-    def geotrellis(module: String) =
-      "org.locationtech.geotrellis" %% s"geotrellis-$module" % versions("geotrellis")
-    def spark(module: String) =
-      "org.apache.spark" %% s"spark-$module" % versions("spark")
+    def geotrellis(module: String) = Def.setting {
+      "org.locationtech.geotrellis" %% s"geotrellis-$module" % geotrellisVersion.value
+    }
+    def spark(module: String) = Def.setting {
+      "org.apache.spark" %% s"spark-$module" % sparkVersion.value
+    }
 
     val scalaTest = "org.scalatest" %% "scalatest" % "3.0.3" % Test
 
@@ -148,10 +149,10 @@ object ProjectPlugin extends AutoPlugin {
         "-no-link-warnings"
       ),
       libraryDependencies ++= Seq(
-        spark("mllib") % Tut,
-        spark("sql") % Tut,
-        geotrellis("spark") % Tut,
-        geotrellis("raster") % Tut
+        spark("mllib").value % Tut,
+        spark("sql").value % Tut,
+        geotrellis("spark").value % Tut,
+        geotrellis("raster").value % Tut
       ),
       fork in (Tut, run) := true,
       javaOptions in (Tut, run) := Seq("-Xmx8G", "-Dspark.ui.enabled=false"),
@@ -160,8 +161,8 @@ object ProjectPlugin extends AutoPlugin {
 
     def buildInfoSettings: Seq[Def.Setting[_]] = Seq(
       buildInfoKeys ++= Seq[BuildInfoKey](
-        name, version, scalaVersion, sbtVersion
-      ) ++ versions.toSeq.map(p => (p._1 + "Version", p._2): BuildInfoKey),
+        name, version, scalaVersion, sbtVersion, geotrellisVersion, sparkVersion
+      ),
       buildInfoPackage := "astraea.spark.rasterframes",
       buildInfoObject := "RFBuildInfo",
       buildInfoOptions := Seq(
@@ -179,7 +180,7 @@ object ProjectPlugin extends AutoPlugin {
         case PathList(ps @ _*) if Assembly.isReadme(ps.last) || Assembly.isLicenseFile(ps.last) ⇒
           MergeStrategy.rename
         case PathList("META-INF", xs @ _*) ⇒
-          (xs map { _.toLowerCase }) match {
+          xs map {_.toLowerCase} match {
             case ("manifest.mf" :: Nil) | ("index.list" :: Nil) | ("dependencies" :: Nil) ⇒
               MergeStrategy.discard
             case ps @ (x :: _) if ps.last.endsWith(".sf") || ps.last.endsWith(".dsa") ⇒

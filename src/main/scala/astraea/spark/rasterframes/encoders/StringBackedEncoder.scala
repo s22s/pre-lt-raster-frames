@@ -26,6 +26,7 @@ import org.apache.spark.sql.catalyst.expressions.objects.StaticInvoke
 import org.apache.spark.sql.catalyst.expressions.{BoundReference, Expression}
 import org.apache.spark.sql.types._
 import org.apache.spark.unsafe.types.UTF8String
+import org.apache.spark.sql.rf.VersionShims.InvokeSafely
 
 import scala.reflect.runtime.universe._
 

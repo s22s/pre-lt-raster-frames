@@ -21,7 +21,7 @@ package astraea.spark.rasterframes
 
 import geotrellis.util.MethodExtensions
 import org.apache.spark.sql.jts.SQLTypes
-import org.apache.spark.sql.{SQLContext, gt}
+import org.apache.spark.sql.{SQLContext, rf}
 
 /**
  * Extension methods on [[SQLContext]] for initializing RasterFrames support in Catalyst.
@@ -32,7 +32,7 @@ import org.apache.spark.sql.{SQLContext, gt}
 trait SQLContextMethods extends MethodExtensions[SQLContext] {
   def withRasterFrames: SQLContext = {
     SQLTypes.init(self) // <-- JTS types.
-    gt.register(self)
+    rf.register(self)
     functions.register(self)
     expressions.register(self)
     self

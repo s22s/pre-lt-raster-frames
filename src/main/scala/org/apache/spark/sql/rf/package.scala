@@ -14,50 +14,61 @@
  * limitations under the License.
  */
 
-package org.apache.spark.sql.gt
+package org.apache.spark.sql
 
-import geotrellis.raster._
-import org.apache.spark.sql.catalyst.analysis.MultiAlias
+import org.apache.spark.sql.catalyst.InternalRow
+import org.apache.spark.sql.catalyst.analysis.{Analyzer, FunctionRegistry, MultiAlias}
+import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 import org.apache.spark.sql.catalyst.expressions.{CreateArray, Expression, Inline}
 import org.apache.spark.sql.types.{StructType, UDTRegistration, UserDefinedType}
-
-import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
 
 /**
- * Module of GeoTrellis UDTs for Spark/Catalyst.
+ * Module providing support for Spark SQL UDTs.
  *
  * @author sfitch
- * @since 4/12/17
+ * @since 3/30/17
  */
-package object types {
+package object rf {
+  implicit class CanBeColumn(expression: Expression) {
+    def asColumn: Column = Column(expression)
+  }
+
+  def register(sqlContext: SQLContext): Unit = {
+    gt.register()
+  }
+
+  def registry(sqlContext: SQLContext): FunctionRegistry = {
+    sqlContext.sessionState.functionRegistry
+  }
+
+  def analyzer(sqlContext: SQLContext): Analyzer = {
+    sqlContext.sessionState.analyzer
+  }
+
+  implicit class WithDecoder[T](enc: ExpressionEncoder[T]) {
+    def decode(row: InternalRow): T =
+      enc.resolveAndBind(enc.schema.toAttributes).fromRow(row)
+    def decode(row: InternalRow, ordinal: Int): T =
+      decode(row.getStruct(ordinal, enc.schema.length))
+
+    def pprint(): Unit = {
+      println(enc.getClass.getSimpleName + "{")
+      println("\tflat=" + enc.flat)
+      println("\tschema=" + enc.schema)
+      println("\tserializers=" + enc.serializer)
+      println("\tnamedExpressions=" + enc.namedExpressions)
+      println("\tdeserializer=" + enc.deserializer)
+      println("}")
+    }
+  }
 
   /** Lookup the registered Catalyst UDT for the given Scala type. */
   def udtOf[T >: Null: TypeTag]: UserDefinedType[T] =
     UDTRegistration.getUDTFor(typeTag[T].tpe.toString).map(_.newInstance().asInstanceOf[UserDefinedType[T]])
       .getOrElse(throw new IllegalArgumentException(typeTag[T].tpe + " doesn't have a corresponding UDT"))
 
-
   /** Creates a Catalyst expression for flattening the fields in a struct into columns. */
   def projectStructExpression(dataType: StructType, input: Expression) =
     MultiAlias(Inline(CreateArray(Seq(input))), dataType.fields.map(_.name))
-
-  val cellTypes: () ⇒ Seq[String] = () ⇒
-    Seq(
-      BitCellType,
-      ByteCellType,
-      ByteConstantNoDataCellType,
-      UByteCellType,
-      UByteConstantNoDataCellType,
-      ShortCellType,
-      ShortConstantNoDataCellType,
-      UShortCellType,
-      UShortConstantNoDataCellType,
-      IntCellType,
-      IntConstantNoDataCellType,
-      FloatCellType,
-      FloatConstantNoDataCellType,
-      DoubleCellType,
-      DoubleConstantNoDataCellType
-    ).map(_.toString).distinct
 }

@@ -1,7 +1,7 @@
 name := "raster-frames-datasource"
 
 libraryDependencies ++= Seq(
-  geotrellis("s3") % Provided
+  geotrellis("s3").value % Provided
 )
 
 // Run generateDocs to help convert examples to tut docs.

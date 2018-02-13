@@ -17,7 +17,7 @@
  *
  */
 
-package org.apache.spark.sql.gt
+package org.apache.spark.sql.rf
 
 import java.nio.ByteBuffer
 
@@ -252,7 +252,7 @@ object InternalRowTile {
 
   // Temporary, until GeoTrellis 1.2
   // See https://github.com/locationtech/geotrellis/pull/2401
-  private[gt] def constantTileFromBytes(bytes: Array[Byte], t: CellType, cols: Int, rows: Int): ConstantTile =
+  private[sql] def constantTileFromBytes(bytes: Array[Byte], t: CellType, cols: Int, rows: Int): ConstantTile =
     t match {
       case _: BitCells =>
         BitConstantTile(BitArrayTile.fromBytes(bytes, 1, 1).array(0), cols, rows)

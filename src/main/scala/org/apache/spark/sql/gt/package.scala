@@ -16,48 +16,19 @@
 
 package org.apache.spark.sql
 
-import org.apache.spark.sql.catalyst.InternalRow
-import org.apache.spark.sql.catalyst.analysis.{Analyzer, FunctionRegistry}
-import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
-import org.apache.spark.sql.catalyst.expressions.Expression
+import org.apache.spark.sql.gt.types.{HistogramUDT, TileUDT}
 
 /**
- * Module providing support for using GeoTrellis native types in Spark SQL.
+ * Module of GeoTrellis UDTs for Spark/Catalyst.
  *
  * @author sfitch
- * @since 3/30/17
+ * @since 2/13/18
  */
 package object gt {
-  implicit class CanBeColumn(expression: Expression) {
-    def asColumn: Column = Column(expression)
-  }
-
-  def register(sqlContext: SQLContext): Unit = {
-    gt.types.Registrator.register()
-  }
-
-  def registry(sqlContext: SQLContext): FunctionRegistry = {
-    sqlContext.sessionState.functionRegistry
-  }
-
-  def analyzer(sqlContext: SQLContext): Analyzer = {
-    sqlContext.sessionState.analyzer
-  }
-
-  implicit class WithDecoder[T](enc: ExpressionEncoder[T]) {
-    def decode(row: InternalRow): T =
-      enc.resolveAndBind(enc.schema.toAttributes).fromRow(row)
-    def decode(row: InternalRow, ordinal: Int): T =
-      decode(row.getStruct(ordinal, enc.schema.length))
-
-    def pprint(): Unit = {
-      println(enc.getClass.getSimpleName + "{")
-      println("\tflat=" + enc.flat)
-      println("\tschema=" + enc.schema)
-      println("\tserializers=" + enc.serializer)
-      println("\tnamedExpressions=" + enc.namedExpressions)
-      println("\tdeserializer=" + enc.deserializer)
-      println("}")
-    }
+  private[sql] def register(): Unit = {
+    // Referencing the companion objects here is intended to have it's constructor called,
+    // which is where the registration actually happens.
+    TileUDT
+    HistogramUDT
   }
 }

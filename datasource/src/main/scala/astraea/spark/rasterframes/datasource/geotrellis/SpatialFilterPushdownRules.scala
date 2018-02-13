@@ -23,7 +23,7 @@ import geotrellis.util.LazyLogging
 import org.apache.spark.sql.catalyst.plans.logical.{Filter, LogicalPlan}
 import org.apache.spark.sql.catalyst.rules.Rule
 import org.apache.spark.sql.execution.datasources.LogicalRelation
-import org.apache.spark.sql.rf.FilterTranslator
+import org.apache.spark.sql.rf.{FilterTranslator, VersionShims}
 
 /**
  * Logical plan manipulations to handle spatial queries on tile components.
@@ -47,7 +47,7 @@ object SpatialFilterPushdownRules extends Rule[LogicalPlan] with LazyLogging {
 
         preds.filterNot(gt.filters.contains).map(p ⇒ {
           val newGt = preds.foldLeft(gt)((r, f) ⇒ r.withFilter(f))
-          Filter(condition, lr.copy(relation = newGt))
+          Filter(condition, VersionShims.updateRelation(lr, newGt))
         }).getOrElse(f)
     }
   }

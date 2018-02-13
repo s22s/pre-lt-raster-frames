@@ -139,7 +139,7 @@ class GeoTrellisDataSourceSpec
   describe("Predicate push-down support") {
     def layerReader = spark.read.geotrellis
 
-    def extractRelation(df: DataFrame) = {
+    def extractRelation(df: DataFrame): GeoTrellisRelation = {
       val plan = df.queryExecution.optimizedPlan
       plan.children.collect {
         case LogicalRelation(gt: GeoTrellisRelation, _, _) ⇒ gt
@@ -152,7 +152,7 @@ class GeoTrellisDataSourceSpec
     val targetKey = testRdd.metadata.mapTransform(Point(pt1))
 
     it("should support extent against a geometry literal") {
-      val df = layerReader
+      val df: DataFrame = layerReader
         .loadRF(layer)
         .where(EXTENT_COLUMN intersects pt1)
 

@@ -17,6 +17,7 @@
 package org.apache.spark.sql.gt.types
 
 import geotrellis.raster.histogram.Histogram
+import org.apache.spark.sql.rf.KryoBackedUDT
 import org.apache.spark.sql.types._
 
 /**
