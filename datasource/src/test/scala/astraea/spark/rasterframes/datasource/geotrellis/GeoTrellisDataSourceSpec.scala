@@ -38,7 +38,6 @@ import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{DataFrame, Row}
 import org.locationtech.geomesa.spark.SQLGeometricConstructorFunctions._
 import org.scalatest.BeforeAndAfter
-import spray.json.DefaultJsonProtocol._
 import org.apache.avro.generic._
 
 /**
@@ -217,19 +216,34 @@ class GeoTrellisDataSourceSpec
     }
 
     it("should support nested predicates") {
-      val df = layerReader
-        .loadRF(layer)
-        .where(
-          ((EXTENT_COLUMN intersects pt1) ||
-            (EXTENT_COLUMN intersects pt2)) &&
-            (TIMESTAMP_COLUMN at now)
-        )
+      withClue("fully nested") {
+        val df = layerReader
+          .loadRF(layer)
+          .where(
+            ((EXTENT_COLUMN intersects pt1) ||
+              (EXTENT_COLUMN intersects pt2)) &&
+              (TIMESTAMP_COLUMN at now)
+          )
 
-      val rel = extractRelation(df)
-      assert(rel.filters.length === 1)
-      assert(rel.splitFilters.length === 2, rel.splitFilters.toString)
+        val rel = extractRelation(df)
+        assert(rel.filters.length === 1)
+        assert(rel.splitFilters.length === 2, rel.splitFilters.toString)
 
-      assert(df.count === 2)
+        assert(df.count === 2)
+      }
+
+      withClue("partially nested") {
+        val df = layerReader
+          .loadRF(layer)
+          .where((EXTENT_COLUMN intersects pt1) || (EXTENT_COLUMN intersects pt2))
+          .where(TIMESTAMP_COLUMN at now)
+
+        val rel = extractRelation(df)
+        assert(rel.filters.length === 1)
+        assert(rel.splitFilters.length === 2, rel.splitFilters.toString)
+
+        assert(df.count === 2)
+      }
     }
   }
 

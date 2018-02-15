@@ -18,6 +18,7 @@ package astraea.spark.rasterframes
 
 import java.time.ZonedDateTime
 
+import geotrellis.proj4.CRS
 import geotrellis.raster.resample.{Bilinear, ResampleMethod}
 import geotrellis.raster.{MultibandTile, ProjectedRaster, Tile, TileLayout}
 import geotrellis.spark._
@@ -93,6 +94,9 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame] with RFSpatialCol
     else
       Left(extract[TileLayerMetadata[SpatialKey]](CONTEXT_METADATA_KEY)(spatialMD))
   }
+
+  /** Get the CRS covering the RasterFrame. */
+  def crs: CRS = tileLayerMetadata.fold(_.crs, _.crs)
 
   /** Add a temporal key to the RasterFrame, assigning the same temporal key to all rows. */
   def addTemporalComponent(value: TemporalKey): RasterFrame = {

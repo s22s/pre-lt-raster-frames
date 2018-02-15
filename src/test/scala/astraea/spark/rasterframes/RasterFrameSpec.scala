@@ -286,5 +286,12 @@ class RasterFrameSpec extends TestEnvironment with TestData with IntelliJPresent
         equalized.asRF.toRaster($"equalized", 128, 128)
       }
     }
+
+    it("should fetch CRS") {
+      val praster: ProjectedRaster[Tile] = sampleGeoTiff.projectedRaster
+      val rf = praster.toRF
+
+      assert(rf.crs === praster.crs)
+    }
   }
 }
