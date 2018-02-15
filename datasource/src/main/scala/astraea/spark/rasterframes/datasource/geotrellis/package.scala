@@ -21,13 +21,11 @@ package astraea.spark.rasterframes.datasource
 import java.net.URI
 
 import _root_.geotrellis.spark.LayerId
-import astraea.spark.rasterframes
-import astraea.spark.rasterframes.util.toParquetFriendlyColumnName
 import astraea.spark.rasterframes.{RasterFrame, _}
-import org.apache.spark.sql.functions.col
 import org.apache.spark.sql._
-import shapeless.tag.@@
+import org.apache.spark.sql.functions.col
 import shapeless.tag
+import shapeless.tag.@@
 
 /**
  * Module utilities.

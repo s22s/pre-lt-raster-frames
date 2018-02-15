@@ -213,6 +213,8 @@ class GeoTrellisDataSourceSpec
         assert(extractRelation(df).filters.length == 1)
         assert(df.count() == 0)
       }
+
+
     }
 
     it("should support nested predicates") {
@@ -244,6 +246,16 @@ class GeoTrellisDataSourceSpec
 
         assert(df.count === 2)
       }
+    }
+
+    it("should support intersects with between times") {
+      val df = layerReader
+        .loadRF(layer)
+        .where(EXTENT_COLUMN intersects pt1)
+        .where(TIMESTAMP_COLUMN betweenTimes(now.minusDays(1), now.plusDays(1)))
+
+      df.show(true)
+      assert(extractRelation(df).filters.length == 1)
     }
   }
 

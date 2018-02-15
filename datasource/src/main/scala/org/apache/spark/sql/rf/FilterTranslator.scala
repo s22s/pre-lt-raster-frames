@@ -50,12 +50,25 @@ object FilterTranslator {
         Some(SpatialFilters.Intersects(a.name, v))
       case Intersects(a: Attribute, g: GeometryLiteral) ⇒
         Some(SpatialFilters.Intersects(a.name, g.geom))
+
       case expressions.And(
-      expressions.GreaterThanOrEqual(a: Attribute, Literal(start, TimestampType)),
-      expressions.LessThanOrEqual(b: Attribute, Literal(end, TimestampType))
+        expressions.GreaterThanOrEqual(a: Attribute, Literal(start, TimestampType)),
+        expressions.LessThanOrEqual(b: Attribute, Literal(end, TimestampType))
       ) if a.name == b.name ⇒
         val toScala = createToScalaConverter(TimestampType)(_: Any).asInstanceOf[Timestamp]
         Some(SpatialFilters.BetweenTimes(a.name, toScala(start), toScala(end)))
+
+      // TODO: Need to figure out how to generalize over capturing right-hand pairs
+      case expressions.And(expressions.And(left,
+        expressions.GreaterThanOrEqual(a: Attribute, Literal(start, TimestampType))),
+        expressions.LessThanOrEqual(b: Attribute, Literal(end, TimestampType))
+      ) if a.name == b.name ⇒
+        val toScala = createToScalaConverter(TimestampType)(_: Any).asInstanceOf[Timestamp]
+
+        for {
+          leftFilter ← translateFilter(left)
+          rightFilter = SpatialFilters.BetweenTimes(a.name, toScala(start), toScala(end))
+        } yield sources.And(leftFilter, rightFilter)
 
       case expressions.EqualTo(a: Attribute, Literal(v, t)) =>
         Some(sources.EqualTo(a.name, convertToScala(v, t)))

@@ -19,7 +19,6 @@
 
 package astraea.spark.rasterframes.datasource.geotrellis
 
-import geotrellis.util.LazyLogging
 import org.apache.spark.sql.catalyst.plans.logical.{Filter, LogicalPlan}
 import org.apache.spark.sql.catalyst.rules.Rule
 import org.apache.spark.sql.execution.datasources.LogicalRelation
@@ -37,7 +36,7 @@ import org.apache.spark.sql.rf.{FilterTranslator, VersionShims}
  * @author sfitch 
  * @since 12/21/17
  */
-object SpatialFilterPushdownRules extends Rule[LogicalPlan] with LazyLogging {
+object SpatialFilterPushdownRules extends Rule[LogicalPlan] {
 
   def apply(plan: LogicalPlan): LogicalPlan = {
     plan.transform {
