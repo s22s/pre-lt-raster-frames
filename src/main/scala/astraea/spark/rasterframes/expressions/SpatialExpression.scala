@@ -28,7 +28,8 @@ import org.apache.spark.sql.catalyst.expressions._
 import org.apache.spark.sql.catalyst.expressions.codegen.CodegenFallback
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.jts._
-import org.locationtech.geomesa.spark.SQLSpatialFunctions
+import org.locationtech.geomesa.spark.jts.udf.SpatialRelationFunctions
+
 
 
 /**
@@ -88,34 +89,34 @@ object SpatialExpression {
 
   case class Intersects(left: Expression, right: Expression) extends SpatialExpression {
     override def nodeName = "intersects"
-    val relation = SQLSpatialFunctions.ST_Intersects
+    val relation = SpatialRelationFunctions.ST_Intersects
   }
   case class Contains(left: Expression, right: Expression) extends SpatialExpression {
     override def nodeName = "contains"
-    val relation = SQLSpatialFunctions.ST_Contains
+    val relation = SpatialRelationFunctions.ST_Contains
   }
   case class Covers(left: Expression, right: Expression) extends SpatialExpression {
     override def nodeName = "covers"
-    val relation = SQLSpatialFunctions.ST_Covers
+    val relation = SpatialRelationFunctions.ST_Covers
   }
   case class Crosses(left: Expression, right: Expression) extends SpatialExpression {
     override def nodeName = "crosses"
-    val relation = SQLSpatialFunctions.ST_Crosses
+    val relation = SpatialRelationFunctions.ST_Crosses
   }
   case class Disjoint(left: Expression, right: Expression) extends SpatialExpression {
     override def nodeName = "disjoint"
-    val relation = SQLSpatialFunctions.ST_Disjoint
+    val relation = SpatialRelationFunctions.ST_Disjoint
   }
   case class Overlaps(left: Expression, right: Expression) extends SpatialExpression {
     override def nodeName = "overlaps"
-    val relation = SQLSpatialFunctions.ST_Overlaps
+    val relation = SpatialRelationFunctions.ST_Overlaps
   }
   case class Touches(left: Expression, right: Expression) extends SpatialExpression {
     override def nodeName = "touches"
-    val relation = SQLSpatialFunctions.ST_Touches
+    val relation = SpatialRelationFunctions.ST_Touches
   }
   case class Within(left: Expression, right: Expression) extends SpatialExpression {
     override def nodeName = "within"
-    val relation = SQLSpatialFunctions.ST_Within
+    val relation = SpatialRelationFunctions.ST_Within
   }
 }

@@ -47,7 +47,7 @@ object ProjectPlugin extends AutoPlugin {
     libraryDependencies ++= Seq(
       "com.chuusai" %% "shapeless" % "2.3.2",
       "org.locationtech.geomesa" %% "geomesa-z3" % "1.3.5",
-      "org.locationtech.geomesa" %% "geomesa-spark-jts" % "1.4.0-astraea.2",
+      "org.locationtech.geomesa" %% "geomesa-spark-jts" % "2.0.0-astraea.1",
       spark("core").value % Provided,
       spark("mllib").value % Provided,
       spark("sql").value % Provided,

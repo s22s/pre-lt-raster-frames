@@ -21,13 +21,11 @@ package astraea.spark.rasterframes.jts
 
 import com.vividsolutions.jts.geom.{Geometry, Point, Polygon}
 import org.apache.spark.sql._
-import org.apache.spark.sql.functions.udf
-import astraea.spark.rasterframes.util._
 import org.apache.spark.annotation.Experimental
 import org.apache.spark.sql.catalyst.expressions.Literal
-import org.apache.spark.sql.jts.{PointUDT, PolygonUDT}
-import org.locationtech.geomesa.spark.SQLGeometricOutputFunctions._
-import org.locationtech.geomesa.spark.SQLGeometricConstructorFunctions._
+import org.locationtech.geomesa.spark.jts._
+
+import org.apache.spark.sql.jts._
 
 /**
  * UDFs providing conversion to/from JTS types.
@@ -36,38 +34,6 @@ import org.locationtech.geomesa.spark.SQLGeometricConstructorFunctions._
  * @since 12/17/17
  */
 trait SpatialConverters {
-  import SpatialEncoders._
-  import astraea.spark.rasterframes.encoders.SparkDefaultEncoders._
-
-  def geomAsWKT(geom: Column) = withAlias("geomAsWKT", geom) {
-    udf(ST_AsText).apply(geom)
-  }.as[String]
-  def geomFromWKT(wkt: Column) = withAlias("geomFromWKT", wkt) {
-    udf(ST_GeomFromWKT).apply(wkt)
-  }.as[Geometry]
-  def geomAsGeoJSON(geom: Column) = withAlias("geomAsGeoJSON", geom) {
-    udf(ST_AsGeoJSON).apply(geom)
-  }.as[String]
-  def pointFromWKT(wkt: Column) = withAlias("pointFromWKT", wkt) {
-    udf(ST_PointFromText).apply(wkt)
-  }.as[Point]
-  def pointFromWKT(wkt: String) = {
-    udf(() ⇒ ST_PointFromText(wkt)).apply().as("pointFromWKT")
-  }.as[Point]
-  def makePoint(x: Double, y: Double): TypedColumn[Any, Point] = {
-      geomlit(ST_MakePoint(x, y))
-  }.as[Point]
-  def makePoint(x: Column, y: Column) = withAlias("makePoint", x, y) {
-    udf(ST_MakePoint).apply(x, y)
-  }.as[Point]
-  def makeBBox(lowerX: Column, lowerY: Column, upperX: Column, upperY: Column) =
-    withAlias("makeBBox", lowerX, lowerY, upperX, upperY)(
-      udf(ST_MakeBBOX).apply(lowerX, lowerY, upperX, upperY)
-    ).as[Geometry]
-  def makeBBox(lowerX: Double, lowerY: Double, upperX: Double, upperY: Double) = {
-    udf(() ⇒ ST_MakeBBOX(lowerX, lowerY, upperX, upperY)).apply().as("makeBBox()")
-  }.as[Geometry]
-
   @Experimental
   def geomlit(geom: Geometry) = geom match {
     case g: Point ⇒ new Column(Literal(g, PointUDT.sqlType)).as[Point]

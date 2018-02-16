@@ -25,7 +25,7 @@ import com.vividsolutions.jts.geom.Geometry
 import org.apache.spark.sql.catalyst.CatalystTypeConverters.{convertToScala, createToScalaConverter}
 import org.apache.spark.sql.catalyst.expressions
 import org.apache.spark.sql.catalyst.expressions.{Attribute, EmptyRow, Expression, Literal}
-import org.apache.spark.sql.jts.SQLRules.GeometryLiteral
+import org.locationtech.geomesa.spark.jts.rules.GeometryLiteral
 import org.apache.spark.sql.sources
 import org.apache.spark.sql.sources.Filter
 import org.apache.spark.sql.types.{StringType, TimestampType}

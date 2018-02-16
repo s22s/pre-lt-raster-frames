@@ -34,9 +34,9 @@ import geotrellis.vector._
 import org.apache.avro.{Schema, SchemaBuilder}
 import org.apache.hadoop.fs.FileUtil
 import org.apache.spark.sql.execution.datasources.LogicalRelation
-import org.apache.spark.sql.functions._
+import org.apache.spark.sql.functions.{udf ⇒ sparkUdf, _}
 import org.apache.spark.sql.{DataFrame, Row}
-import org.locationtech.geomesa.spark.SQLGeometricConstructorFunctions._
+import org.locationtech.geomesa.spark.jts._
 import org.scalatest.BeforeAndAfter
 import org.apache.avro.generic._
 
@@ -145,10 +145,10 @@ class GeoTrellisDataSourceSpec
       }.head
     }
 
-    val pt1 = ST_MakePoint(-88, 60)
-    val pt2 = ST_MakePoint(-78, 38)
+    val pt1 = Point(-88, 60)
+    val pt2 = Point(-78, 38)
 
-    val targetKey = testRdd.metadata.mapTransform(Point(pt1))
+    val targetKey = testRdd.metadata.mapTransform(pt1)
 
     it("should support extent against a geometry literal") {
       val df: DataFrame = layerReader
@@ -163,9 +163,9 @@ class GeoTrellisDataSourceSpec
     }
 
     it("should *not* support extent filter against a UDF") {
-      val targetKey = testRdd.metadata.mapTransform(Point(pt1))
+      val targetKey = testRdd.metadata.mapTransform(pt1)
 
-      val mkPtFcn = udf((_: Row) ⇒ { ST_MakePoint(-88, 60) })
+      val mkPtFcn = sparkUdf((_: Row) ⇒ { Point(-88, 60).jtsGeom })
 
       val df = layerReader
         .loadRF(layer)
