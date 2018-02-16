@@ -33,6 +33,8 @@ import org.apache.spark.sql.types.{DataType, _}
 class TileUDT extends UserDefinedType[Tile] {
   override def typeName = "rf_tile"
 
+  override def pyUDT: String = "pyrasterframes.TileUDT"
+
   def sqlType = InternalRowTile.schema
 
   override def serialize(obj: Tile): InternalRow = {
