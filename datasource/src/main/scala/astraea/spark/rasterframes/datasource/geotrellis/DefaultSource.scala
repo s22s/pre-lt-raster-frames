@@ -43,6 +43,14 @@ import scala.util.Try
 class DefaultSource extends DataSourceRegister with RelationProvider with CreatableRelationProvider {
   def shortName(): String = "geotrellis"
 
+  /**
+   * Create a GeoTrellis data source.
+   * @param sqlContext spark stuff
+   * @param parameters required parameters are:
+   *                   `path`-layer store URI (e.g. "s3://bucket/gt_layers;
+   *                   `layer`-layer name (e.g. "LC08_L1GT");
+   *                   `zoom`-positive integer zoom level (e.g. "8").
+   */
   def createRelation(sqlContext: SQLContext, parameters: Map[String, String]): BaseRelation = {
     require(parameters.contains("path"), "'path' parameter required.")
     require(parameters.contains("layer"), "'layer' parameter for raster layer name required.")
@@ -52,10 +60,12 @@ class DefaultSource extends DataSourceRegister with RelationProvider with Creata
 
     val uri: URI = URI.create(parameters("path"))
     val layerId: LayerId = LayerId(parameters("layer"), parameters("zoom").toInt)
+    val numPartitions = parameters.get("numPartitions").map(_.toInt)
 
-    GeoTrellisRelation(sqlContext, uri, layerId)
+    GeoTrellisRelation(sqlContext, uri, layerId, numPartitions)
   }
 
+  /** Write relation. */
   def createRelation(sqlContext: SQLContext, mode: SaveMode, parameters: Map[String, String], data: DataFrame): BaseRelation = {
     val zoom = parameters.get("zoom").flatMap(p ⇒ Try(p.toInt).toOption)
     val path = parameters.get("path").flatMap(p ⇒ Try(new URI(p)).toOption)

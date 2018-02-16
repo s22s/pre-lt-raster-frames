@@ -127,6 +127,10 @@ If you already know the `LayerId` of what you're wanting to read, you can bypass
 val anotherRF = spark.read.geotrellis.loadRF(layer)
 ```
 
+## Writing a GeoTrellis Layer
+
+**TODO**
+
 ## Using GeoTrellis APIs
 
 If you are used to working directly with the GeoTrellis APIs, there are a number of additional ways to create a `RasterFrame`, as enumerated in the sections below.
