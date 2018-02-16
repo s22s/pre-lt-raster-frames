@@ -42,8 +42,8 @@ object ProjectPlugin extends AutoPlugin {
       Resolver.bintrayRepo("s22s", "maven"),
       "osgeo-releases" at "http://download.osgeo.org/webdav/geotools/"
     ),
-    sparkVersion := "2.2.1",
-    geotrellisVersion := "1.2.0",
+    sparkVersion in ThisBuild := "2.2.1" ,
+    geotrellisVersion in ThisBuild := "1.2.0",
     libraryDependencies ++= Seq(
       "com.chuusai" %% "shapeless" % "2.3.2",
       "org.locationtech.geomesa" %% "geomesa-z3" % "1.3.5",

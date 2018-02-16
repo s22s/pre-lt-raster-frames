@@ -14,6 +14,8 @@ operations within and between RasterFrames to occur, while still maintaining nec
 
 To learn more, please see the @ref:[Getting Started](getting-started.md) section of this manual.
 
+<img src="RasterFramePipeline.svg" width="600px"/>
+
 @@@ note
 RasterFrames™ is a new project under active development. Feedback and contributions are welcomed as we look to improve it. 
 Please [submit an issue](https://github.com/s22s/raster-frames/issues) if there's a particular feature you think should be included.
@@ -49,6 +51,7 @@ Please [submit an issue](https://github.com/s22s/raster-frames/issues) if there'
 @@@ index
 * [Getting Started](getting-started.md)
 * [Creating RasterFrames](creating-rasterframes.md)
+* [Spatial Queries](spatial-queries.md)
 * [Applications](apps/index.md)
 * [Machine Learning](ml/index.md)
 * [Exporting Rasterframes](exporting-rasterframes.md)
