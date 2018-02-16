@@ -1,11 +1,13 @@
 # Try this script in a `pyscript` REPL or submit with `spark-submit` as in the README
 from pyspark.sql import SparkSession
 # Get access to Raster Frames goodies. (this works fine with local master)
+from pyrasterframes import *
 from pyrasterframes.functions import *
 
 # you can also tweak app name and master here, not necessary from pyspark REPL.
 spark = SparkSession.builder.getOrCreate()
 spark.sparkContext.setLogLevel('ERROR')
+spark.withRasterFrames()
 
 # Read a local file
 rf = spark.rf.readGeoTiff("src/test/resources/L8-B8-Robinson-IL.tiff")

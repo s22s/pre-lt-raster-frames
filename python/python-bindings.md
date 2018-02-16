@@ -42,9 +42,19 @@ We eventually want RasterFrames deployed via https://spark-packages.org/, in a f
 
 * [ ] Implement `asRF` on `Dataframe`
 * [ ] Expose RasterFrame extension methods
+* [ ] Add mirror for TileUDT (and update `pyUDT` field in Scala)
 * [ ] Properly (pythondoc) document wrapper classes
 * [ ] Enable language groups in Paradox
 * [ ] Implement Scala examples in Python, finding missing API bindings
 * [ ] Publish via spark-packages.org
 * [ ] Figure out how to unit test python code
 
+
+## References
+
+* https://www.py4j.org/
+* http://aseigneurin.github.io/2016/09/01/spark-calling-scala-code-from-pyspark.html
+* https://github.com/harsha2010/magellan/tree/master/python
+* https://github.com/locationtech/geomesa/tree/master/geomesa-spark/geomesa_pyspark/src/main/python/geomesa_pyspark
+* https://github.com/locationtech-labs/geopyspark
+* https://stackoverflow.com/a/36024707/296509

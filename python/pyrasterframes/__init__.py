@@ -2,14 +2,15 @@ from __future__ import absolute_import
 from pyspark import SparkContext
 from pyspark.sql import SparkSession, DataFrame
 from pyspark.sql.types import *
-from pyspark.sql.column import Column, _to_java_column
 
-__all__ = ['RFContext', 'RasterFrame']
 
-# Helpful info:
-# http://aseigneurin.github.io/2016/09/01/spark-calling-scala-code-from-pyspark.html
+
+__all__ = ['RFContext', 'types', 'functions']
 
 class RFContext(object):
+    """
+    Entrypoint in to RasterFrames services
+    """
     def __init__(self, spark_session):
         self._spark_session = spark_session
         self._gateway = spark_session.sparkContext._gateway
@@ -19,38 +20,7 @@ class RFContext(object):
 
     def readGeoTiff(self, path):
         rf = self._jrfctx.readSingleband(path)
-        return RasterFrame(self._jrfctx, rf, self._spark_session)
-
-
-class RasterFrame(DataFrame):
-    def __init__(self, jrfctx, jdf, sql_ctx):
-        DataFrame.__init__(self, jdf, sql_ctx)
-        self._jrfctx = jrfctx
-
-    def tileColumns(self):
-        """
-        Fetches columns of type Tile.
-        :return: One or more Column instances associated with Tiles.
-        """
-        cols = self._jrfctx.tileColumns(self._jdf)
-        return [Column(c) for c in cols]
-
-    def spatialKeyColumn(self):
-        """
-        Fetch the tagged spatial key column.
-        :return: Spatial key column
-        """
-        col = self._jrfctx.spatialKeyColumn(self._jdf)
-        return Column(col)
-
-    def temporalKeyColumn(self):
-        """
-        Fetch the temporal key column, if any.
-        :return: Temporal key column, or None.
-        """
-        col = self._jrfctx.temporalKeyColumn(self._jdf)
-        return col and Column(col)
-
+        return RasterFrame(rf, self._spark_session, self._jrfctx)
 
 def _rf_init(spark_session):
     """Patches in RasterFrames functionality to PySpark session."""
