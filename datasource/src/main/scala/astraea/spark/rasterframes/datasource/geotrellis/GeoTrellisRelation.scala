@@ -55,7 +55,7 @@ import scala.reflect.runtime.universe._
  * @author echeipesh
  * @author sfitch
  */
-case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId, numPartitions: Option[Int] = None, filters: Seq[Filter] = Seq.empty)
+case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId, numPartitions: Option[Int] = None, failOnUnrecognizedFilter: Boolean = false, filters: Seq[Filter] = Seq.empty)
     extends BaseRelation with PrunedScan with LazyLogging {
 
   implicit val sc = sqlContext.sparkContext
@@ -181,20 +181,27 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
 
   type BLQ[K, T] = BoundLayerQuery[K, TileLayerMetadata[K], RDD[(K, T)] with Metadata[TileLayerMetadata[K]]]
 
-  def applyFilter[K: Boundable: SpatialComponent, T](q: BLQ[K, T], predicate: Filter): BLQ[K, T] = {
+  def applyFilter[K: Boundable: SpatialComponent, T](query: BLQ[K, T], predicate: Filter): BLQ[K, T] = {
     predicate match {
       // GT limits disjunctions to a single type
       case sources.Or(sfIntersects(Cols.EX, left), sfIntersects(Cols.EX, right)) ⇒
-        q.where(LayerFilter.Or(
+        query.where(LayerFilter.Or(
           Intersects(Extent(left.getEnvelopeInternal)),
           Intersects(Extent(right.getEnvelopeInternal))
         ))
       case sfIntersects(Cols.EX, rhs: geom.Point) ⇒
-        q.where(Contains(Point(rhs)))
+        query.where(Contains(Point(rhs)))
       case sfContains(Cols.EX, rhs: geom.Point) ⇒
-        q.where(Contains(Point(rhs)))
+        query.where(Contains(Point(rhs)))
       case sfIntersects(Cols.EX, rhs) ⇒
-        q.where(Intersects(Extent(rhs.getEnvelopeInternal)))
+        query.where(Intersects(Extent(rhs.getEnvelopeInternal)))
+      case o ⇒
+        val msg = "Unable to convert filter into GeoTrellis query: " + predicate
+        if(failOnUnrecognizedFilter)
+          throw new UnsupportedOperationException(msg)
+        else
+          logger.warn(msg + ". Filtering defered to Spark.")
+        query
     }
   }
 

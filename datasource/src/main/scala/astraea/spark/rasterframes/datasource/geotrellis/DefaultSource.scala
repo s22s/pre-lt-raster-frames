@@ -49,7 +49,9 @@ class DefaultSource extends DataSourceRegister with RelationProvider with Creata
    * @param parameters required parameters are:
    *                   `path`-layer store URI (e.g. "s3://bucket/gt_layers;
    *                   `layer`-layer name (e.g. "LC08_L1GT");
-   *                   `zoom`-positive integer zoom level (e.g. "8").
+   *                   `zoom`-positive integer zoom level (e.g. "8");
+   *                   `numPartitions`-(optional) integer specifying initial number of partitions;
+   *                   `failOnUnrecognizedFilter`-(optional) if true, predicate push-down filters not translated into GeoTrellis query syntax are fatal.
    */
   def createRelation(sqlContext: SQLContext, parameters: Map[String, String]): BaseRelation = {
     require(parameters.contains("path"), "'path' parameter required.")
@@ -61,8 +63,9 @@ class DefaultSource extends DataSourceRegister with RelationProvider with Creata
     val uri: URI = URI.create(parameters("path"))
     val layerId: LayerId = LayerId(parameters("layer"), parameters("zoom").toInt)
     val numPartitions = parameters.get("numPartitions").map(_.toInt)
+    val failOnUnrecognizedFilter = parameters.get("failOnUnrecognizedFilter").exists(_.toBoolean)
 
-    GeoTrellisRelation(sqlContext, uri, layerId, numPartitions)
+    GeoTrellisRelation(sqlContext, uri, layerId, numPartitions, failOnUnrecognizedFilter)
   }
 
   /** Write relation. */
@@ -75,7 +78,8 @@ class DefaultSource extends DataSourceRegister with RelationProvider with Creata
     require(layerName.isDefined, "'layer' parameter for raster layer name required.")
     require(zoom.isDefined, "Integer 'zoom' parameter for raster layer zoom level required.")
 
-    val rf = data.asRFSafely.getOrElse(throw new IllegalArgumentException("Only a valid RasterFrame can be saved as a GeoTrellis layer"))
+    val rf = data.asRFSafely
+      .getOrElse(throw new IllegalArgumentException("Only a valid RasterFrame can be saved as a GeoTrellis layer"))
 
     val tileColumn = parameters.get("tileColumn").map(c ⇒ rf(c))
 
