@@ -25,7 +25,7 @@ import java.sql.Timestamp
 import java.time.{ZoneOffset, ZonedDateTime}
 
 import astraea.spark.rasterframes._
-import astraea.spark.rasterframes.datasource.SpatialFilters.{BetweenTimes, Contains ⇒ sfContains, Intersects ⇒ sfIntersects}
+import astraea.spark.rasterframes.jts.SpatialFilters.{BetweenTimes, Contains ⇒ sfContains, Intersects ⇒ sfIntersects}
 import astraea.spark.rasterframes.datasource.geotrellis.GeoTrellisRelation.TileFeatureData
 import astraea.spark.rasterframes.util._
 import com.vividsolutions.jts.geom

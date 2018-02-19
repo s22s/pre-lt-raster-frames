@@ -30,7 +30,7 @@ import org.apache.spark.sql.SparkSession
  */
 trait SparkSessionMethods extends MethodExtensions[SparkSession] {
   def withRasterFrames: SparkSession = {
-    self.sqlContext.withRasterFrames
+    initRF(self.sqlContext)
     self
   }
 }

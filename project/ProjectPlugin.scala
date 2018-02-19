@@ -113,10 +113,10 @@ object ProjectPlugin extends AutoPlugin {
           commitReleaseVersion,
           tagRelease,
           releaseStepCommand("publishSigned"),
+          releaseStepCommand("sonatypeReleaseAll"),
           gitFlowReleaseFinish,
           setNextVersion,
-          commitNextVersion,
-          releaseStepCommand("sonatypeReleaseAll")
+          commitNextVersion
         ),
         commands += Command.command("bumpVersion"){ st ⇒
           val extracted = Project.extract(st)

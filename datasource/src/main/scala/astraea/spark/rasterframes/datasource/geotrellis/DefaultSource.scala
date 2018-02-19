@@ -21,7 +21,7 @@ package astraea.spark.rasterframes.datasource.geotrellis
 
 import java.net.URI
 
-import astraea.spark.rasterframes.util.registerOptimization
+import astraea.spark.rasterframes.rules.registerOptimization
 import astraea.spark.rasterframes._
 import geotrellis.spark._
 import geotrellis.spark.io._

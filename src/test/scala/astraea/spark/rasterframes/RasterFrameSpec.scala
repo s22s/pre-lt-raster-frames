@@ -11,6 +11,7 @@ import geotrellis.spark._
 import geotrellis.spark.io._
 import geotrellis.spark.tiling._
 import geotrellis.vector.{Extent, ProjectedExtent}
+import org.apache.spark.sql.{SQLContext, SparkSession}
 import org.apache.spark.sql.functions._
 
 import scala.util.control.NonFatal
@@ -24,6 +25,17 @@ import scala.util.control.NonFatal
 class RasterFrameSpec extends TestEnvironment with TestData with IntelliJPresentationCompilerHack {
   import TestData.randomTile
   import spark.implicits._
+
+  describe("Runtime environment") {
+    it("should provide build info") {
+      assert(RFBuildInfo.toMap.nonEmpty)
+      assert(RFBuildInfo.toString.nonEmpty)
+    }
+    it("should provide Spark initialization methods") {
+      assert(spark.withRasterFrames.isInstanceOf[SparkSession])
+      assert(sqlContext.withRasterFrames.isInstanceOf[SQLContext])
+    }
+  }
 
   describe("RasterFrame") {
     it("should implicitly convert from spatial layer type") {

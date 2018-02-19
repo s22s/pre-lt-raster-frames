@@ -1,7 +1,7 @@
 /*
  * This software is licensed under the Apache 2 license, quoted below.
  *
- * Copyright 2017 Astraea, Inc.
+ * Copyright 2018 Astraea, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -17,13 +17,28 @@
  *
  */
 
-package astraea.spark.rasterframes
+package astraea.spark.rasterframes.jts
+
+import java.sql.Timestamp
+
+import com.vividsolutions.jts.geom.Geometry
+import org.apache.spark.sql.sources.Filter
 
 /**
- * Module support routines.
  *
  * @author sfitch 
- * @since 12/21/17
+ * @since 1/11/18
  */
-package object jts {
+object SpatialFilters {
+  case class Intersects(attribute: String, value: Geometry) extends Filter {
+    def references: Array[String] = Array(attribute)
+  }
+
+  case class Contains(attribute: String, value: Geometry) extends Filter {
+    def references: Array[String] = Array(attribute)
+  }
+
+  case class BetweenTimes(attribute: String, start: Timestamp, end: Timestamp) extends Filter {
+    def references: Array[String] = Array(attribute)
+  }
 }

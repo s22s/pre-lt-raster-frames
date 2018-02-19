@@ -46,6 +46,7 @@ package object rf {
     sqlContext.sessionState.analyzer
   }
 
+  // $COVERAGE-OFF$
   implicit class WithDecoder[T](enc: ExpressionEncoder[T]) {
     def decode(row: InternalRow): T =
       enc.resolveAndBind(enc.schema.toAttributes).fromRow(row)
@@ -71,4 +72,5 @@ package object rf {
   /** Creates a Catalyst expression for flattening the fields in a struct into columns. */
   def projectStructExpression(dataType: StructType, input: Expression) =
     MultiAlias(Inline(CreateArray(Seq(input))), dataType.fields.map(_.name))
+  // $COVERAGE-ON$
 }

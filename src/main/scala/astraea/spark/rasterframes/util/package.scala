@@ -30,31 +30,10 @@ import org.apache.spark.sql.{Column, SQLContext}
 /**
  * Internal utilities.
  *
- * @author sfitch 
+ * @author sfitch
  * @since 12/18/17
  */
 package object util extends LazyLogging {
-  private[rasterframes]
-  implicit class Pipeable[A](val a: A) extends AnyVal {
-    def |>[B](f: A ⇒ B): B = f(a)
-  }
-
-  /** Anything that structurally has a close method. */
-  type CloseLike = { def close(): Unit }
-
-  /** Applies the given thunk to the closable resource. */
-  def withResource[T <: CloseLike, R](t: T)(thunk: T ⇒ R): R = {
-    import scala.language.reflectiveCalls
-    try { thunk(t) } finally { t.close() }
-  }
-
-  implicit class Conditionalize[T](left: T) {
-    def when(pred: T ⇒ Boolean): Option[T] = Option(left).filter(pred)
-  }
-
-  private[rasterframes]
-  def toParquetFriendlyColumnName(name: String) = name.replaceAll("[ ,;{}()\n\t=]", "_")
-
   /** Tags output column with a nicer name. */
   private[rasterframes]
   def withAlias(name: String, inputs: Column*)(output: Column) = {
@@ -67,13 +46,32 @@ package object util extends LazyLogging {
   def opName(op: LocalTileBinaryOp) =
     op.getClass.getSimpleName.replace("$", "").toLowerCase
 
+
+  // $COVERAGE-OFF$
   private[rasterframes]
-  def registerOptimization(sqlContext: SQLContext, rule: Rule[LogicalPlan]): Unit = {
-    if(!sqlContext.experimental.extraOptimizations.contains(rule))
-      sqlContext.experimental.extraOptimizations :+= rule
+  implicit class Pipeable[A](val a: A) extends AnyVal {
+    def |>[B](f: A ⇒ B): B = f(a)
   }
+
+  /** Applies the given thunk to the closable resource. */
+  def withResource[T <: CloseLike, R](t: T)(thunk: T ⇒ R): R = {
+    import scala.language.reflectiveCalls
+    try { thunk(t) } finally { t.close() }
+  }
+
+  /** Anything that structurally has a close method. */
+  type CloseLike = { def close(): Unit }
+
+  implicit class Conditionalize[T](left: T) {
+    def when(pred: T ⇒ Boolean): Option[T] = Option(left).filter(pred)
+  }
+
+  private[rasterframes]
+  def toParquetFriendlyColumnName(name: String) = name.replaceAll("[ ,;{}()\n\t=]", "_")
+
   def registerResolution(sqlContext: SQLContext, rule: Rule[LogicalPlan]): Unit = {
     logger.error("Extended rule resolution not available in this version of Spark")
     analyzer(sqlContext).extendedResolutionRules
   }
+  // $COVERAGE-ON$
 }

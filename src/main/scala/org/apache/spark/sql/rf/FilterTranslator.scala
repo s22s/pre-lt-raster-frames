@@ -19,17 +19,17 @@ package org.apache.spark.sql.rf
 
 import java.sql.Timestamp
 
-import astraea.spark.rasterframes.datasource.SpatialFilters
+import astraea.spark.rasterframes.jts.SpatialFilters
 import astraea.spark.rasterframes.expressions.SpatialExpression.Intersects
 import com.vividsolutions.jts.geom.Geometry
 import org.apache.spark.sql.catalyst.CatalystTypeConverters.{convertToScala, createToScalaConverter}
 import org.apache.spark.sql.catalyst.expressions
 import org.apache.spark.sql.catalyst.expressions.{Attribute, EmptyRow, Expression, Literal}
-import org.locationtech.geomesa.spark.jts.rules.GeometryLiteral
 import org.apache.spark.sql.sources
 import org.apache.spark.sql.sources.Filter
 import org.apache.spark.sql.types.{StringType, TimestampType}
 import org.apache.spark.unsafe.types.UTF8String
+import org.locationtech.geomesa.spark.jts.rules.GeometryLiteral
 
 /**
  * This is a copy of [[org.apache.spark.sql.execution.datasources.DataSourceStrategy.translateFilter]], modified to add our spatial predicates.

@@ -19,7 +19,6 @@ package astraea.spark
 import java.sql.Timestamp
 
 import astraea.spark.rasterframes.encoders.StandardEncoders
-import astraea.spark.rasterframes.jts.SpatialEncoders
 import com.vividsolutions.jts.geom.{Point ⇒ jtsPoint}
 import geotrellis.raster.{Tile, TileFeature}
 import geotrellis.spark.{Bounds, ContextRDD, Metadata, SpatialKey, TemporalKey, TileLayerMetadata}
@@ -30,7 +29,9 @@ import org.apache.spark.sql._
 import shapeless.tag
 import shapeless.tag.@@
 import org.apache.spark.sql.functions._
-
+import org.locationtech.geomesa.spark.jts.DataFrameFunctions
+import org.locationtech.geomesa.spark.jts.encoders.SpatialEncoders
+import astraea.spark.rasterframes.jts.{Implicits ⇒ jtsImplicits}
 /**
  *  Module providing support for RasterFrames.
  * `import astraea.spark.rasterframes._`., and then call `rfInit(SQLContext)`.
@@ -39,9 +40,11 @@ import org.apache.spark.sql.functions._
  * @since 7/18/17
  */
 package object rasterframes extends ColumnFunctions
-  with Implicits with jts.Implicits
+  with Implicits
+  with jtsImplicits
   with StandardEncoders
-  with SpatialEncoders {
+  with SpatialEncoders
+  with DataFrameFunctions.Library {
   type Statistics = astraea.spark.rasterframes.functions.CellStatsAggregateFunction.Statistics
   import astraea.spark.rasterframes.encoders.SparkDefaultEncoders._
 
@@ -49,8 +52,14 @@ package object rasterframes extends ColumnFunctions
    * Initialization injection point. Must be called before any RasterFrame
    * types are used.
    */
-  @deprecated("Please use 'SparkSession.withRasterFrames' or 'SQLContext.withRasterFrames' instead.", "0.5.3")
-  def rfInit(sqlContext: SQLContext): Unit = sqlContext.withRasterFrames
+  def initRF(sqlContext: SQLContext): Unit = {
+    import org.locationtech.geomesa.spark.jts._
+    sqlContext.withJTS
+    rf.register(sqlContext)
+    rasterframes.functions.register(sqlContext)
+    rasterframes.expressions.register(sqlContext)
+    rasterframes.rules.register(sqlContext)
+  }
 
   /** Default RasterFrame spatial column name. */
   val SPATIAL_KEY_COLUMN = col("spatial_key").as[SpatialKey]

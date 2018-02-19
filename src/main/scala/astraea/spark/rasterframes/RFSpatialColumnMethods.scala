@@ -19,7 +19,7 @@
 
 package astraea.spark.rasterframes
 
-import com.vividsolutions.jts.geom.Point
+import com.vividsolutions.jts.geom.{Point, Polygon}
 import geotrellis.proj4.LatLng
 import geotrellis.spark.SpatialKey
 import geotrellis.spark.tiling.MapKeyTransform

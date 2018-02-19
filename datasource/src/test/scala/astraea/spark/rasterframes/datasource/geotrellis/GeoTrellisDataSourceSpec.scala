@@ -36,7 +36,6 @@ import org.apache.hadoop.fs.FileUtil
 import org.apache.spark.sql.execution.datasources.LogicalRelation
 import org.apache.spark.sql.functions.{udf ⇒ sparkUdf, _}
 import org.apache.spark.sql.{DataFrame, Row}
-import org.locationtech.geomesa.spark.jts._
 import org.scalatest.BeforeAndAfter
 import org.apache.avro.generic._
 
@@ -120,12 +119,19 @@ class GeoTrellisDataSourceSpec
 
     it("should respect bbox query") {
       val boundKeys = KeyBounds(SpatialKey(3, 4), SpatialKey(4, 4))
-      val bbox = testRdd.metadata.layout
+      val  bbox = testRdd.metadata.layout
         .mapTransform(boundKeys.toGridBounds())
         .jtsGeom
-      val df = layerReader.loadRF(layer)
-        .withCenter().where(CENTER_COLUMN intersects bbox)
-      assert(df.count() === boundKeys.toGridBounds.sizeLong)
+      val wc = layerReader.loadRF(layer).withCenter()
+
+      withClue("literate API") {
+        val df = wc.where(CENTER_COLUMN intersects bbox)
+        assert(df.count() === boundKeys.toGridBounds.sizeLong)
+      }
+      withClue("functional API") {
+        val df = wc.where(st_intersects(CENTER_COLUMN, geomlit(bbox)))
+        assert(df.count() === boundKeys.toGridBounds.sizeLong)
+      }
     }
 
     it("should invoke Encoder[Extent]") {
@@ -169,7 +175,7 @@ class GeoTrellisDataSourceSpec
 
       val df = layerReader
         .loadRF(layer)
-        .where(intersects(EXTENT_COLUMN, mkPtFcn(SPATIAL_KEY_COLUMN)))
+        .where(st_intersects(EXTENT_COLUMN, mkPtFcn(SPATIAL_KEY_COLUMN)))
 
       assert(extractRelation(df).filters.length === 0)
 

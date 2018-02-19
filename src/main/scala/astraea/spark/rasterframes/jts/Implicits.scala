@@ -22,41 +22,46 @@ package astraea.spark.rasterframes.jts
 import java.sql.Timestamp
 import java.time.ZonedDateTime
 
-import com.vividsolutions.jts.geom.{Geometry ⇒ jtsGeometry, Point ⇒ jtsPoint}
+import com.vividsolutions.jts.geom._
 import geotrellis.util.MethodExtensions
 import geotrellis.vector.{Extent, Point ⇒ gtPoint}
-import org.apache.spark.sql.TypedColumn
+import org.apache.spark.sql.catalyst.expressions.Literal
+import org.apache.spark.sql.{Column, TypedColumn}
 import org.apache.spark.sql.functions._
+import org.apache.spark.sql.jts._
+import org.locationtech.geomesa.spark.jts._
+
+import scala.reflect.ClassTag
 
 
 
 /**
  * Extension methods on typed columns allowing for DSL-like queries over JTS types.
- * @author sfitch 
+ * @author sfitch
  * @since 1/10/18
  */
-trait Implicits {
+trait Implicits extends SpatialFunctions {
   import astraea.spark.rasterframes.encoders.SparkDefaultEncoders._
 
   implicit class ExtentColumnMethods(val self: TypedColumn[Any, Extent])
     extends MethodExtensions[TypedColumn[Any, Extent]] {
 
-    def intersects(geom: jtsGeometry): TypedColumn[Any, Boolean] =
-      SpatialPredicates.intersects(self, SpatialConverters.geomlit(geom))
+    def intersects(geom: Geometry): TypedColumn[Any, Boolean] =
+      st_intersects(self, geomlit(geom)).as[Boolean]
 
-    def contains(geom: jtsGeometry): TypedColumn[Any, Boolean] =
-      SpatialPredicates.contains(self, SpatialConverters.geomlit(geom))
+    def contains(geom: Geometry): TypedColumn[Any, Boolean] =
+      st_contains(self, geomlit(geom)).as[Boolean]
 
     def intersects(pt: gtPoint): TypedColumn[Any, Boolean] =
-      SpatialPredicates.intersects(self, SpatialConverters.geomlit(pt.jtsGeom))
+      st_intersects(self, geomlit(pt.jtsGeom)).as[Boolean]
   }
 
-  implicit class PointColumnMethods(val self: TypedColumn[Any, jtsPoint])
-    extends MethodExtensions[TypedColumn[Any, jtsPoint]] {
+  implicit class PointColumnMethods(val self: TypedColumn[Any, Point])
+    extends MethodExtensions[TypedColumn[Any, Point]] {
 
-    def intersects(geom: jtsGeometry): TypedColumn[Any, Boolean] =
-      SpatialPredicates.intersects(self, SpatialConverters.geomlit(geom))
-  }
+    def intersects(geom: Geometry): TypedColumn[Any, Boolean] =
+      st_intersects(self, geomlit(geom)).as[Boolean]
+   }
 
   implicit class TimestampColumnMethods(val self: TypedColumn[Any, Timestamp])
     extends MethodExtensions[TypedColumn[Any, Timestamp]] {

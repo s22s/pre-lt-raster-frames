@@ -22,7 +22,6 @@ package astraea.spark.rasterframes
 import astraea.spark.rasterframes.encoders.SparkDefaultEncoders
 import astraea.spark.rasterframes.expressions.ExplodeTileExpression
 import astraea.spark.rasterframes.functions.{CellCountAggregateFunction, CellMeanAggregateFunction}
-import astraea.spark.rasterframes.jts.{SpatialConverters, SpatialPredicates}
 import astraea.spark.rasterframes.{functions ⇒ F}
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.LocalTileBinaryOp
@@ -40,7 +39,7 @@ import scala.reflect.runtime.universe._
  * @author sfitch
  * @since 4/3/17
  */
-trait ColumnFunctions extends SpatialPredicates with SpatialConverters {
+trait ColumnFunctions {
   import util._
   import SparkDefaultEncoders._
 

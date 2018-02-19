@@ -21,13 +21,13 @@ package astraea.spark.rasterframes.expressions
 
 import astraea.spark.rasterframes.encoders.StandardEncoders._
 import astraea.spark.rasterframes.expressions.SpatialExpression.RelationPredicate
-import astraea.spark.rasterframes.jts.SpatialEncoders._
 import com.vividsolutions.jts.geom._
 import org.apache.spark.sql.catalyst.InternalRow
+import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 import org.apache.spark.sql.catalyst.expressions._
 import org.apache.spark.sql.catalyst.expressions.codegen.CodegenFallback
-import org.apache.spark.sql.types._
 import org.apache.spark.sql.jts._
+import org.apache.spark.sql.types._
 import org.locationtech.geomesa.spark.jts.udf.SpatialRelationFunctions
 
 
@@ -35,10 +35,11 @@ import org.locationtech.geomesa.spark.jts.udf.SpatialRelationFunctions
 /**
  * Determine if two spatial constructs intersect each other.
  *
- * @author sfitch 
+ * @author sfitch
  * @since 12/28/17
  */
 abstract class SpatialExpression extends BinaryExpression with CodegenFallback {
+  lazy val jtsPointEncoder = ExpressionEncoder[Point]()
 
   override def toString: String = s"$nodeName($left, $right)"
 

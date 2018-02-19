@@ -37,7 +37,6 @@ import org.apache.spark.sql.rf.{FilterTranslator, VersionShims}
  * @since 12/21/17
  */
 object SpatialFilterPushdownRules extends Rule[LogicalPlan] {
-
   def apply(plan: LogicalPlan): LogicalPlan = {
     plan.transformUp {
       case f @ Filter(condition, lr @ LogicalRelation(gt: GeoTrellisRelation, _, _)) ⇒
