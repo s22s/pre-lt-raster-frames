@@ -31,7 +31,6 @@ import spire.syntax.cfor.cfor
 /**
  * Catalyst expression for converting a tile column into a pixel column, with each tile pixel occupying a separate row.
  *
- * @author sfitch
  * @since 4/12/17
  */
 private[rasterframes] case class ExplodeTileExpression(

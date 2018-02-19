@@ -11,7 +11,6 @@ import org.apache.spark.sql.types.{DataType, StructField, StructType}
  * Catalyst aggregate function that counts `NoData` values in a cell-wise fashion.
  *
  * @param isData true if count should be of non-NoData values, false for NoData values.
- * @author sfitch
  * @since 8/11/17
  */
 class LocalCountAggregateFunction(isData: Boolean) extends UserDefinedAggregateFunction {

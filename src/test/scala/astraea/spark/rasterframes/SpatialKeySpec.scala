@@ -26,7 +26,6 @@ import org.locationtech.geomesa.curve.{Z2SFC, Z3SFC}
 /**
  * Test rig associated with spatial key related extension methods
  *
- * @author sfitch 
  * @since 12/15/17
  */
 class SpatialKeySpec extends TestEnvironment with TestData {

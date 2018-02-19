@@ -26,7 +26,6 @@ import org.apache.spark.sql.SparkSession
 /**
  * Compute the cell mean value of an image.
  *
- * @author sfitch 
  * @since 10/23/17
  */
 object MeanValue extends App {

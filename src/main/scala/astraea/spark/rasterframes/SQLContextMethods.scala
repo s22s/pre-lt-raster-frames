@@ -26,7 +26,6 @@ import org.apache.spark.sql.{SQLContext, rf}
 /**
  * Extension methods on [[SQLContext]] for initializing RasterFrames support in Catalyst.
  *
- * @author sfitch
  * @since 10/30/17
  */
 trait SQLContextMethods extends MethodExtensions[SQLContext] {

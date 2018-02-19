@@ -27,7 +27,6 @@ import org.apache.spark.sql.types.{ShortType, StructField, StructType}
 
 /**
  * Extract a Tile's dimensions
- * @author sfitch 
  * @since 12/21/17
  */
 case class DimensionsExpression(child: Expression) extends UnaryExpression with RequiresTile {

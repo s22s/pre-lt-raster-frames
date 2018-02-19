@@ -33,7 +33,6 @@ import org.apache.spark.sql.rf.{FilterTranslator, VersionShims}
  * - [[org.apache.spark.sql.catalyst.analysis.Analyzer]]
  * - [[org.apache.spark.sql.catalyst.optimizer.Optimizer]]
  *
- * @author sfitch 
  * @since 12/21/17
  */
 object SpatialFilterPushdownRules extends Rule[LogicalPlan] {

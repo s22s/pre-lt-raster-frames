@@ -38,7 +38,6 @@ import scala.reflect.runtime.universe._
 
 /**
  * Extension methods on [[RasterFrame]] type.
- * @author sfitch
  * @since 7/18/17
  */
 trait RasterFrameMethods extends MethodExtensions[RasterFrame] with RFSpatialColumnMethods with LazyLogging {

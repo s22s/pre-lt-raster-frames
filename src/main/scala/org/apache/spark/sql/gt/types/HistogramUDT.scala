@@ -23,7 +23,6 @@ import org.apache.spark.sql.types._
 /**
  * Wraps up GT Histogram type.
  *
- * @author sfitch
  * @since 4/18/17
  */
 class HistogramUDT extends UserDefinedType[Histogram[Double]] with KryoBackedUDT[Histogram[Double]] {

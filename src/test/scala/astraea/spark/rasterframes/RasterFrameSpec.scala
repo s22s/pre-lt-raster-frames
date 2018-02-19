@@ -19,7 +19,6 @@ import scala.util.control.NonFatal
 /**
  * RasterFrame test rig.
  *
- * @author sfitch 
  * @since 7/10/17
  */
 class RasterFrameSpec extends TestEnvironment with TestData with IntelliJPresentationCompilerHack {

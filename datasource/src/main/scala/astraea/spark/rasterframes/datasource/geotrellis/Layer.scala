@@ -29,7 +29,6 @@ import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 /**
  *   /** Connector between a GT `LayerId` and the path in which it lives. */
 
- * @author sfitch 
  * @since 1/16/18
  */
 case class Layer(base: URI, id: LayerId)

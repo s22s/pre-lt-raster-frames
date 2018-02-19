@@ -34,7 +34,6 @@ import spray.json._
 
 /**
  *
- * @author sfitch 
  * @since 1/12/18
  */
 @Experimental

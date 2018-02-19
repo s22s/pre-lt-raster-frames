@@ -40,7 +40,6 @@ import scala.util.Random
 /**
  * Pre-configured data constructs for testing.
  *
- * @author sfitch 
  * @since 4/3/17
  */
 trait TestData {

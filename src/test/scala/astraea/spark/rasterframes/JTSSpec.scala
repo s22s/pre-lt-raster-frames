@@ -26,7 +26,6 @@ import org.locationtech.geomesa.spark.jts._
 /**
  * Test rig for operations providing interop with JTS types.
  *
- * @author sfitch
  * @since 12/16/17
  */
 class JTSSpec extends TestEnvironment with TestData with IntelliJPresentationCompilerHack {

@@ -26,7 +26,6 @@ import org.apache.spark.sql.sources.Filter
 
 /**
  *
- * @author sfitch 
  * @since 1/11/18
  */
 object SpatialFilters {

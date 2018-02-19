@@ -22,7 +22,6 @@ package astraea.spark.rasterframes
 /**
  * Tests type encoding for spatial types.
  *
- * @author sfitch 
  * @since 12/17/17
  */
 class SpatialEncodingSpec extends TestEnvironment with TestData with IntelliJPresentationCompilerHack {

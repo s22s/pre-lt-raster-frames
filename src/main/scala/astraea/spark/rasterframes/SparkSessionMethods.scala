@@ -25,7 +25,6 @@ import org.apache.spark.sql.SparkSession
 /**
  * Extension methods on [[SparkSession]].
  *
- * @author sfitch 
  * @since 10/30/17
  */
 trait SparkSessionMethods extends MethodExtensions[SparkSession] {

@@ -30,7 +30,6 @@ import shapeless.tag.@@
 /**
  * Module utilities.
  *
- * @author sfitch 
  * @since 1/12/18
  */
 package object geotrellis {

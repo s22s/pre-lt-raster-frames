@@ -28,7 +28,6 @@ import shapeless.tag.@@
 
 /**
  *
- * @author sfitch 
  * @since 1/16/18
  */
 package object geotiff {

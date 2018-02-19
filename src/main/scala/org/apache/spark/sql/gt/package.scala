@@ -21,7 +21,6 @@ import org.apache.spark.sql.gt.types.{HistogramUDT, TileUDT}
 /**
  * Module of GeoTrellis UDTs for Spark/Catalyst.
  *
- * @author sfitch
  * @since 2/13/18
  */
 package object gt {

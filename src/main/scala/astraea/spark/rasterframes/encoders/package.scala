@@ -25,7 +25,6 @@ import scala.reflect.runtime.universe._
 /**
  * Module utilities
  *
- * @author sfitch 
  * @since 9/25/17
  */
 package object encoders {

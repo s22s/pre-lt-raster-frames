@@ -32,7 +32,6 @@ import org.apache.spark.sql.functions._
 /**
  * Test rig for encoding GT types into Catalyst types.
  *
- * @author sfitch 
  * @since 9/18/17
  */
 class EncodingSpec extends TestEnvironment with TestData with IntelliJPresentationCompilerHack {

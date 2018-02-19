@@ -31,7 +31,6 @@ import astraea.spark.rasterframes.functions.cellTypes
 /**
  * RasterFrame test rig.
  *
- * @author sfitch 
  * @since 7/10/17
  */
 class TileUDTSpec extends TestEnvironment with TestData with Inspectors with IntelliJPresentationCompilerHack {

@@ -36,10 +36,9 @@ import scala.reflect.runtime.universe._
 /**
  * UDFs for working with Tiles in Spark DataFrames.
  *
- * @author sfitch
  * @since 4/3/17
  */
-trait ColumnFunctions {
+trait RasterFunctions {
   import util._
   import SparkDefaultEncoders._
 

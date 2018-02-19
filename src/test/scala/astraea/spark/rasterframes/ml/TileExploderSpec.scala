@@ -5,7 +5,6 @@ import geotrellis.raster.Tile
 import org.apache.spark.sql.functions.lit
 /**
  *
- * @author sfitch 
  * @since 2/16/18
  */
 class TileExploderSpec extends TestEnvironment with TestData {

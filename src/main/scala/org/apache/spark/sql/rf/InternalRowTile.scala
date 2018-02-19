@@ -34,7 +34,6 @@ import org.apache.spark.unsafe.types.UTF8String
  * @groupdesc COPIES Requires creating an intermediate copy of
  *           the complete `Tile` contents, and should be avoided.
  *
- * @author sfitch 
  * @since 11/29/17
  */
 class InternalRowTile(mem: InternalRow) extends ArrayTile {

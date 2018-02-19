@@ -32,7 +32,6 @@ import scala.reflect.classTag
 /**
  * Custom encoder for GT [[CellType]]. It's necessary since [[CellType]] is a type alias of
  * a type intersection.
- * @author sfitch
  * @since 7/21/17
  */
 object CellTypeEncoder {

@@ -28,7 +28,6 @@ import org.apache.spark.sql.types.{DataType, _}
 /**
  * UDT for singleband tiles.
  *
- * @author sfitch
  * @since 5/11/17
  */
 class TileUDT extends UserDefinedType[Tile] {

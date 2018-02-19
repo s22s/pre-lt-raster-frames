@@ -25,7 +25,6 @@ import org.apache.spark.sql.types.{DataType, _}
 /**
  * Statistics aggregation function for a full column of tiles.
  *
- * @author sfitch
  * @since 4/17/17
  */
 case class CellStatsAggregateFunction() extends UserDefinedAggregateFunction {

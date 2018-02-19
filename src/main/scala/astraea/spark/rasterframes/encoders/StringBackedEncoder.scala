@@ -33,7 +33,6 @@ import scala.reflect.runtime.universe._
 /**
  * Generalized operations for creating an encoder when the type can be represented as a Catalyst string.
  *
- * @author sfitch
  * @since 1/16/18
  */
 object StringBackedEncoder {

@@ -21,7 +21,6 @@ package astraea.spark.rasterframes.datasource.geotiff
 import astraea.spark.rasterframes._
 
 /**
- * @author sfitch
  * @since 1/14/18
  */
 class GeoTiffDataSourceSpec

@@ -8,7 +8,6 @@ import org.locationtech.geomesa.spark.jts.rules.GeometryLiteral
 /**
  * Spatial type support functions.
  *
- * @author sfitch 
  * @since 2/19/18
  */
 trait SpatialFunctions {

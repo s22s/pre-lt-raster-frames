@@ -7,7 +7,6 @@ import org.locationtech.geomesa.spark.jts.rules.GeometryLiteral
 
 /**
  *
- * @author sfitch
  * @since 2/19/18
  */
 object SpatialUDFSubstitutionRules extends Rule[LogicalPlan] {

@@ -14,7 +14,6 @@ import org.apache.spark.sql.types.DataType
 /**
  * Collection of Spark version compatibility adapters.
  *
- * @author sfitch 
  * @since 2/13/18
  */
 object VersionShims {

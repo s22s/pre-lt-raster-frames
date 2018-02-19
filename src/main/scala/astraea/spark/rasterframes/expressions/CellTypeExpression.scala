@@ -26,7 +26,6 @@ import org.apache.spark.sql.types.{DataType, StringType}
 
 /**
  * Extract a Tile's cell type
- * @author sfitch 
  * @since 12/21/17
  */
 case class CellTypeExpression(child: Expression) extends UnaryExpression with RequiresTile {

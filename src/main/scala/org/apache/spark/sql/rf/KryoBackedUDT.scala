@@ -9,7 +9,6 @@ import scala.reflect.ClassTag
 /**
  * Base class for UDTs who's contents is encoded using kryo
  *
- * @author sfitch
  * @since 4/18/17
  */
 trait KryoBackedUDT[T >: Null] { self: UserDefinedType[T] ⇒

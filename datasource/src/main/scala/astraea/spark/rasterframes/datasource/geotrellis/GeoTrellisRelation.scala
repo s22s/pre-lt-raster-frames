@@ -41,6 +41,7 @@ import org.apache.avro.generic.GenericRecord
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 import org.apache.spark.sql.gt.types.TileUDT
+import org.apache.spark.sql.jts.PolygonUDT
 import org.apache.spark.sql.sources._
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.{Row, SQLContext, sources}
@@ -52,8 +53,6 @@ import scala.reflect.runtime.universe._
 
 /**
  * A Spark SQL `Relation` over a standard GeoTrellis layer.
- * @author echeipesh
- * @author sfitch
  */
 case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId, numPartitions: Option[Int] = None, failOnUnrecognizedFilter: Boolean = false, filters: Seq[Filter] = Seq.empty)
     extends BaseRelation with PrunedScan with LazyLogging {
@@ -174,8 +173,7 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
         )
     }
 
-    val extentSchema = ExpressionEncoder[Extent]().schema
-    val extentField = StructField(Cols.EX, extentSchema, false)
+    val extentField = StructField(Cols.EX, PolygonUDT, false)
     StructType((keyFields :+ extentField) ++ tileFields)
   }
 
@@ -195,7 +193,7 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
         query.where(Contains(Point(rhs)))
       case sfIntersects(Cols.EX, rhs) ⇒
         query.where(Intersects(Extent(rhs.getEnvelopeInternal)))
-      case o ⇒
+      case _ ⇒
         val msg = "Unable to convert filter into GeoTrellis query: " + predicate
         if(failOnUnrecognizedFilter)
           throw new UnsupportedOperationException(msg)
@@ -261,7 +259,7 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
 
             val entries = columnIndexes.map {
               case 0 ⇒ sk
-              case 1 ⇒ trans.keyToExtent(sk)
+              case 1 ⇒ trans.keyToExtent(sk).jtsGeom
               case 2 ⇒ tile match {
                 case t: Tile ⇒ t
                 case t: TileFeature[Tile @unchecked, TileFeatureData @unchecked] ⇒ t.tile
@@ -291,7 +289,7 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
               case 0 ⇒ sk
               case 1 ⇒ stk.temporalKey
               case 2 ⇒ new Timestamp(stk.temporalKey.instant)
-              case 3 ⇒ trans.keyToExtent(stk)
+              case 3 ⇒ trans.keyToExtent(stk).jtsGeom
               case 4 ⇒ tile match {
                 case t: Tile ⇒ t
                 case t: TileFeature[Tile @unchecked, TileFeatureData @unchecked] ⇒ t.tile
@@ -315,7 +313,7 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
 
 object GeoTrellisRelation {
   /** A dummy type used as a stand-in for ignored TileFeature data. */
-  private type TileFeatureData = String
+  type TileFeatureData = String
 
   /** Constructor for Avro codec for TileFeature data stand-in. */
   private def tfDataCodec(dataSchema: KryoWrapper[Schema]) = new AvroRecordCodec[TileFeatureData]() {

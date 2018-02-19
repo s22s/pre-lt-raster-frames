@@ -26,7 +26,6 @@ import org.apache.spark.sql.types.{Metadata, MetadataBuilder}
  * Convenience to deal with boilerplate associated with adding
  * additional metadata to a column.
  *
- * @author sfitch 
  * @since 12/21/17
  */
 private[astraea]

@@ -24,7 +24,7 @@ import java.time.ZonedDateTime
 
 import com.vividsolutions.jts.geom._
 import geotrellis.util.MethodExtensions
-import geotrellis.vector.{Extent, Point ⇒ gtPoint}
+import geotrellis.vector.{Point ⇒ gtPoint}
 import org.apache.spark.sql.catalyst.expressions.Literal
 import org.apache.spark.sql.{Column, TypedColumn}
 import org.apache.spark.sql.functions._
@@ -37,14 +37,13 @@ import scala.reflect.ClassTag
 
 /**
  * Extension methods on typed columns allowing for DSL-like queries over JTS types.
- * @author sfitch
  * @since 1/10/18
  */
 trait Implicits extends SpatialFunctions {
   import astraea.spark.rasterframes.encoders.SparkDefaultEncoders._
 
-  implicit class ExtentColumnMethods(val self: TypedColumn[Any, Extent])
-    extends MethodExtensions[TypedColumn[Any, Extent]] {
+  implicit class ExtentColumnMethods(val self: TypedColumn[Any, Polygon])
+    extends MethodExtensions[TypedColumn[Any, Polygon]] {
 
     def intersects(geom: Geometry): TypedColumn[Any, Boolean] =
       st_intersects(self, geomlit(geom)).as[Boolean]

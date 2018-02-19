@@ -27,7 +27,6 @@ import scala.reflect.runtime.universe._
 /**
  * Module utils.
  *
- * @author sfitch 
  * @since 9/7/17
  */
 package object functions {

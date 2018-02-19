@@ -40,7 +40,6 @@ import org.apache.spark.sql.{Row, SQLContext}
 /**
  * Spark SQL data source over a single GeoTiff file. Works best with CoG compliant ones.
  *
- * @author sfitch 
  * @since 1/14/18
  */
 case class GeoTiffRelation(sqlContext: SQLContext, uri: URI) extends BaseRelation with PrunedScan with LazyLogging  {

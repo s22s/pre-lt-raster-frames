@@ -12,7 +12,6 @@ import org.apache.spark.sql.SparkSession
 /**
  * Extension methods on [[ProjectedRaster]] for creating [[RasterFrame]]s.
  *
- * @author sfitch
  * @since 8/10/17
  */
 trait ProjectedRasterMethods extends MethodExtensions[ProjectedRaster[Tile]] {

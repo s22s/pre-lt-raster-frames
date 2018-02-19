@@ -27,7 +27,6 @@ import org.apache.spark.sql.sources.{DataSourceRegister, RelationProvider}
 
 /**
  *
- * @author sfitch 
  * @since 1/14/18
  */
 @Experimental

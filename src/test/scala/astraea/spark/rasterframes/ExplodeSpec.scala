@@ -28,7 +28,6 @@ import org.apache.spark.sql.functions._
  * Test rig for Tile operations associated with converting to/from
  * exploded/long form representations of the tile's data.
  *
- * @author sfitch 
  * @since 9/18/17
  */
 class ExplodeSpec extends TestEnvironment with TestData {

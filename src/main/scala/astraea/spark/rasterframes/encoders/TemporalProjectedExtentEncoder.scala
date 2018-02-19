@@ -30,7 +30,6 @@ import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 /**
  * Custom encoder for [[ProjectedExtent]]. Necessary because [[geotrellis.proj4.CRS]] within [[ProjectedExtent]] isn't a case class, and [[ZonedDateTime]] doesn't have a natural encoder.
  *
- * @author sfitch
  * @since 8/2/17
  */
 object TemporalProjectedExtentEncoder {

@@ -34,7 +34,6 @@ import org.locationtech.geomesa.spark.jts.rules.GeometryLiteral
 /**
  * This is a copy of [[org.apache.spark.sql.execution.datasources.DataSourceStrategy.translateFilter]], modified to add our spatial predicates.
  *
- * @author sfitch 
  * @since 1/11/18
  */
 object FilterTranslator {

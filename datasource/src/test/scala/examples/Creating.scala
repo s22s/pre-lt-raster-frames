@@ -27,7 +27,6 @@ import geotrellis.raster.{Raster, Tile}
 /**
  * Examples of creating RasterFrames
  *
- * @author sfitch
  * @since 1/16/18
  */
 object Creating extends App {

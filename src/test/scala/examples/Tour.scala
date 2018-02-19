@@ -33,7 +33,6 @@ import org.apache.spark.ml.feature.VectorAssembler
 /**
  * Example tour of some general features in RasterFrames
  *
- * @author sfitch 
  * @since 10/24/17
  */
 object Tour extends App {

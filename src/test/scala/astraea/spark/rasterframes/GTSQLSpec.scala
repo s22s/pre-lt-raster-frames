@@ -30,7 +30,6 @@ import org.apache.spark.sql.functions._
  *   import org.apache.spark.sql.execution.debug._
  * }}}
  *
- * @author sfitch
  * @since 3/30/17
  */
 class GTSQLSpec extends TestEnvironment with TestData  {

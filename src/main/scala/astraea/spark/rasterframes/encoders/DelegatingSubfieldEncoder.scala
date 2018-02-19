@@ -32,7 +32,6 @@ import scala.reflect.runtime.universe.TypeTag
 /**
  * Encoder builder for types composed of other fields with {{ExpressionEncoder}}s.
  *
- * @author sfitch
  * @since 8/2/17
  */
 object DelegatingSubfieldEncoder {

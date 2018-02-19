@@ -20,7 +20,6 @@
 package astraea.spark.rasterframes
 /**
  *
- * @author sfitch 
  * @since 1/13/18
  */
 package object datasource {

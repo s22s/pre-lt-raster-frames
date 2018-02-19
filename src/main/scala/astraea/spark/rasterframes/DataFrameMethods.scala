@@ -29,7 +29,6 @@ import scala.util.Try
 /**
  * Extension methods over [[DataFrame]].
  *
- * @author sfitch
  * @since 7/18/17
  */
 trait DataFrameMethods extends MethodExtensions[DataFrame] {

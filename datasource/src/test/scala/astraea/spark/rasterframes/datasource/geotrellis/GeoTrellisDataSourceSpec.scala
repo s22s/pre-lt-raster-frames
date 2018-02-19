@@ -39,10 +39,6 @@ import org.apache.spark.sql.{DataFrame, Row}
 import org.scalatest.BeforeAndAfter
 import org.apache.avro.generic._
 
-/**
- * @author echeipesh
- * @author sfitch
- */
 class GeoTrellisDataSourceSpec
     extends TestEnvironment with TestData with BeforeAndAfter
     with IntelliJPresentationCompilerHack {

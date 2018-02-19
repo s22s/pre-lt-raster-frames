@@ -35,7 +35,6 @@ import org.locationtech.geomesa.spark.jts.udf.SpatialRelationFunctions
 /**
  * Determine if two spatial constructs intersect each other.
  *
- * @author sfitch
  * @since 12/28/17
  */
 abstract class SpatialExpression extends BinaryExpression with CodegenFallback {

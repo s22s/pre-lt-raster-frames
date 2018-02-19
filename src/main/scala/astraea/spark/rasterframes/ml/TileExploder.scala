@@ -32,7 +32,6 @@ import org.apache.spark.sql.types._
  * SparkML Transformer for expanding tiles into single cell rows with
  * additional columns containing source row/column indexes.
  *
- * @author sfitch
  * @since 9/21/17
  */
 class TileExploder(override val uid: String) extends Transformer with DefaultParamsWritable {

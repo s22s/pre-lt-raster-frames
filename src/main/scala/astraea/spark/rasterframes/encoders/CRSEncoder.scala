@@ -25,7 +25,6 @@ import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 /**
  * Custom encoder for GT `CRS`.
  *
- * @author sfitch
  * @since 7/21/17
  */
 object CRSEncoder {

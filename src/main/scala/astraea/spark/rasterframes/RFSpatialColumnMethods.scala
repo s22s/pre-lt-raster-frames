@@ -33,7 +33,6 @@ import org.locationtech.geomesa.curve.Z2SFC
 /**
  * RasterFrame extension methods associated with adding spatially descriptive columns.
  *
- * @author sfitch 
  * @since 12/15/17
  */
 trait RFSpatialColumnMethods extends MethodExtensions[RasterFrame] {

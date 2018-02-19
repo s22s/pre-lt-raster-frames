@@ -35,9 +35,6 @@ import scala.util.Try
 
 /**
  * DataSource over a GeoTrellis layer store.
- *
- * @author echeipesh
- * @author sfitch
  */
 @Experimental
 class DefaultSource extends DataSourceRegister with RelationProvider with CreatableRelationProvider {

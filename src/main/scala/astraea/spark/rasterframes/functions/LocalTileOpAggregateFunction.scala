@@ -26,7 +26,6 @@ import org.apache.spark.sql.types._
 /**
  * Aggregation function for applying a [[LocalTileBinaryOp]] pairwise across all tiles. Assumes Monoid algebra.
  *
- * @author sfitch
  * @since 4/17/17
  */
 class LocalTileOpAggregateFunction(op: LocalTileBinaryOp) extends UserDefinedAggregateFunction {

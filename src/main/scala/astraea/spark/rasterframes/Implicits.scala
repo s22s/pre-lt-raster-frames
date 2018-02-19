@@ -36,7 +36,6 @@ import scala.reflect.runtime.universe._
 /**
  * Library-wide implicit class definitions.
  *
- * @author sfitch
  * @since 12/21/17
  */
 trait Implicits {

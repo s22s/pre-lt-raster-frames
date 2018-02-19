@@ -29,7 +29,6 @@ import org.apache.spark.sql.functions._
  * Test rig associated with computing statistics and other descriptive
  * information over tiles.
  *
- * @author sfitch 
  * @since 9/18/17
  */
 class TileStatsSpec extends TestEnvironment with TestData  {

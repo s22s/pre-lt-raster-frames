@@ -27,7 +27,6 @@ import org.apache.spark.sql.gt.types.TileUDT
 /**
  * Mixin for indicating an expression requires a Tile for input.
  *
- * @author sfitch 
  * @since 12/28/17
  */
 trait RequiresTile { self: UnaryExpression ⇒

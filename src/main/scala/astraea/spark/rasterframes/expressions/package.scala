@@ -26,7 +26,6 @@ import org.apache.spark.sql.{SQLContext, rf}
 /**
  * Module of Catalyst expressions for efficiently working with tiles.
  *
- * @author sfitch
  * @since 10/10/17
  */
 package object expressions {

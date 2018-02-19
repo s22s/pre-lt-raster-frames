@@ -28,7 +28,6 @@ import scala.reflect.runtime.universe._
  * Specialized encoder for [[TileLayerMetadata]], necessary to be able to delegate to the
  * speciallized cell type and crs encoders.
  *
- * @author sfitch
  * @since 7/21/17
  */
 object TileLayerMetadataEncoder {

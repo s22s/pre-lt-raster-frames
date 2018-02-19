@@ -16,37 +16,30 @@
 
 package astraea.spark
 
-import java.sql.Timestamp
-
 import astraea.spark.rasterframes.encoders.StandardEncoders
-import com.vividsolutions.jts.geom.{Point ⇒ jtsPoint}
+import astraea.spark.rasterframes.jts.{Implicits ⇒ jtsImplicits}
 import geotrellis.raster.{Tile, TileFeature}
-import geotrellis.spark.{Bounds, ContextRDD, Metadata, SpatialKey, TemporalKey, TileLayerMetadata}
+import geotrellis.spark.{Bounds, ContextRDD, Metadata, TileLayerMetadata}
 import geotrellis.util.GetComponent
-import geotrellis.vector.Extent
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql._
-import shapeless.tag
-import shapeless.tag.@@
-import org.apache.spark.sql.functions._
 import org.locationtech.geomesa.spark.jts.DataFrameFunctions
 import org.locationtech.geomesa.spark.jts.encoders.SpatialEncoders
-import astraea.spark.rasterframes.jts.{Implicits ⇒ jtsImplicits}
+import shapeless.tag.@@
 /**
  *  Module providing support for RasterFrames.
  * `import astraea.spark.rasterframes._`., and then call `rfInit(SQLContext)`.
  *
- * @author sfitch
  * @since 7/18/17
  */
-package object rasterframes extends ColumnFunctions
+package object rasterframes extends StandardColumns
+  with RasterFunctions
   with Implicits
   with jtsImplicits
   with StandardEncoders
   with SpatialEncoders
   with DataFrameFunctions.Library {
   type Statistics = astraea.spark.rasterframes.functions.CellStatsAggregateFunction.Statistics
-  import astraea.spark.rasterframes.encoders.SparkDefaultEncoders._
 
   /**
    * Initialization injection point. Must be called before any RasterFrame
@@ -60,41 +53,6 @@ package object rasterframes extends ColumnFunctions
     rasterframes.expressions.register(sqlContext)
     rasterframes.rules.register(sqlContext)
   }
-
-  /** Default RasterFrame spatial column name. */
-  val SPATIAL_KEY_COLUMN = col("spatial_key").as[SpatialKey]
-
-  /** Default RasterFrame temporal column name. */
-  val TEMPORAL_KEY_COLUMN = col("temporal_key").as[TemporalKey]
-
-  /** Default RasterFrame timestamp column name */
-  val TIMESTAMP_COLUMN = col("timestamp").as[Timestamp]
-
-  /** Default RasterFrame column name for an tile extent value. */
-  val EXTENT_COLUMN = col("extent").as[Extent]
-
-  /** Default RasterFrame column name for the center coordinates of the tile's extent. */
-  // This is a `def` because `PointUDT` needs to be initialized first.
-  def CENTER_COLUMN = col("center").as[jtsPoint]
-
-  /** Default RasterFrame column name for an added spatial index. */
-  val SPATIAL_INDEX_COLUMN = col("spatial_index").as[Long]
-
-  /** Default RasterFrame tile column name. */
-  // This is a `def` because `TileUDT` needs to be initialized first.
-  def TILE_COLUMN = col("tile").as[Tile]
-
-  /** Default RasterFrame [[TileFeature.data]] column name. */
-  val TILE_FEATURE_DATA_COLUMN = col("tile_data")
-
-  /** Default GeoTiff tags column. */
-  val METADATA_COLUMN = col("metadata").as[Map[String, String]]
-
-  /** Default column index column for the cells of exploded tiles. */
-  val COLUMN_INDEX_COLUMN = col("column_index").as[Int]
-
-  /** Default teil column index column for the cells of exploded tiles. */
-  val ROW_INDEX_COLUMN = col("row_index").as[Int]
 
   /** Key under which ContextRDD metadata is stored. */
   private[rasterframes] val CONTEXT_METADATA_KEY = "_context"
@@ -115,7 +73,7 @@ package object rasterframes extends ColumnFunctions
 
   /** Internal method for slapping the RasterFreame seal of approval on a DataFrame. */
   private[rasterframes] def certifyRasterframe(df: DataFrame): RasterFrame =
-    tag[RasterFrameTag][DataFrame](df)
+    shapeless.tag[RasterFrameTag][DataFrame](df)
 
   /**
    * Type lambda alias for components that have bounds with parameterized key.

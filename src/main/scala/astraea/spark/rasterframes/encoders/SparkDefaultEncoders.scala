@@ -27,7 +27,6 @@ import scala.reflect.runtime.universe._
 /**
  * Container for primitive Spark encoders, pulled into implicit scope.
  *
- * @author sfitch 
  * @since 12/28/17
  */
 private[rasterframes] trait SparkDefaultEncoders {

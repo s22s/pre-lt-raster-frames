@@ -32,7 +32,6 @@ import spray.json.DefaultJsonProtocol._
 /**
  * Utility for creating a target
  *
- * @author sfitch 
  * @since 9/21/17
  */
 object MakeTargetRaster extends App {

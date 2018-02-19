@@ -30,7 +30,6 @@ import org.apache.spark.sql.{Column, SQLContext}
 /**
  * Internal utilities.
  *
- * @author sfitch
  * @since 12/18/17
  */
 package object util extends LazyLogging {

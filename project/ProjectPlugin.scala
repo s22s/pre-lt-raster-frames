@@ -16,7 +16,6 @@ import GhpagesPlugin.autoImport._
 import com.lightbend.paradox.sbt.ParadoxPlugin.autoImport._
 
 /**
- * @author sfitch
  * @since 8/20/17
  */
 object ProjectPlugin extends AutoPlugin {

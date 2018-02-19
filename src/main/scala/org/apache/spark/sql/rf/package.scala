@@ -26,7 +26,6 @@ import scala.reflect.runtime.universe._
 /**
  * Module providing support for Spark SQL UDTs.
  *
- * @author sfitch
  * @since 3/30/17
  */
 package object rf {

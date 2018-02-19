@@ -26,7 +26,6 @@ import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 /**
  * Custom Encoder for allowing friction-free use of URIs in DataFrames.
  *
- * @author sfitch 
  * @since 1/16/18
  */
 object URIEncoder {

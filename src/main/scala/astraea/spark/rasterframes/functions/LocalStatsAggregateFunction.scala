@@ -28,7 +28,6 @@ import DataBiasedOp._
 /**
  * Aggregation function for computing multiple local (cell-wise) statistics across all tiles.
  *
- * @author sfitch
  * @since 4/17/17
  */
 class LocalStatsAggregateFunction() extends UserDefinedAggregateFunction {

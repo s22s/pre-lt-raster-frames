@@ -26,7 +26,6 @@ import org.apache.spark.sql.types.{DataType, StructField, StructType}
 /**
  * Histogram aggregation function for a full column of tiles.
  *
- * @author sfitch
  * @since 4/24/17
  */
 case class HistogramAggregateFunction() extends UserDefinedAggregateFunction {

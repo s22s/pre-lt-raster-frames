@@ -28,7 +28,6 @@ import geotrellis.raster.render._
 
 /**
  *
- * @author sfitch 
  * @since 9/25/17
  */
 object NaturalColorComposite extends App {
