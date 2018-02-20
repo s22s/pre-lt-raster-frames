@@ -22,13 +22,12 @@ package org.apache.spark.sql.gt.types
 
 import geotrellis.raster._
 import org.apache.spark.sql.catalyst.InternalRow
-import org.apache.spark.sql.gt.InternalRowTile
+import org.apache.spark.sql.rf.InternalRowTile
 import org.apache.spark.sql.types.{DataType, _}
 
 /**
  * UDT for singleband tiles.
  *
- * @author sfitch
  * @since 5/11/17
  */
 class TileUDT extends UserDefinedType[Tile] {

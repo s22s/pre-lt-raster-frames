@@ -24,7 +24,6 @@ import org.apache.spark.ml.param.{Params, StringArrayParam}
 /**
  * Mix-ins for common SparkML transformer parameters
  *
- * @author sfitch
  * @since 9/21/17
  */
 object Parameters {

@@ -25,7 +25,6 @@ import astraea.spark.rasterframes._
 import org.scalatest.BeforeAndAfter
 
 /**
- * @author sfitch
  * @since 11/21/17
  */
 class NoDataFilterSpec extends TestEnvironment with TestData with BeforeAndAfter {

@@ -28,10 +28,9 @@ import scala.reflect.runtime.universe._
  * Specialized encoder for [[TileLayerMetadata]], necessary to be able to delegate to the
  * speciallized cell type and crs encoders.
  *
- * @author sfitch
  * @since 7/21/17
  */
-object TileLayerMetadataEncoder extends DelegatingSubfieldEncoder {
+object TileLayerMetadataEncoder {
   import astraea.spark.rasterframes._
 
   private def fieldEncoders = Seq[(String, ExpressionEncoder[_])](
@@ -44,6 +43,6 @@ object TileLayerMetadataEncoder extends DelegatingSubfieldEncoder {
   def apply[K: TypeTag](): Encoder[TileLayerMetadata[K]] = {
     val boundsEncoder = ExpressionEncoder[KeyBounds[K]]()
     val fEncoders = fieldEncoders :+ ("bounds" -> boundsEncoder)
-    create(fEncoders)
+    DelegatingSubfieldEncoder(fEncoders: _*)
   }
 }

@@ -30,7 +30,6 @@ import scala.collection.mutable
 /**
  * Aggregator for reassembling tiles from from exploded form
  *
- * @author sfitch 
  * @since 9/24/17
  */
 case class TileAssemblerFunction(cols: Int, rows: Int, ct: CellType) extends UserDefinedAggregateFunction {

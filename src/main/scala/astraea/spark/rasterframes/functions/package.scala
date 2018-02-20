@@ -19,13 +19,14 @@ import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local._
 import geotrellis.raster._
 import geotrellis.raster.render.ascii.AsciiArtEncoder
+import org.apache.spark.sql.SQLContext
+import org.apache.spark.sql.gt.types
 
 import scala.reflect.runtime.universe._
 
 /**
  * Module utils.
  *
- * @author sfitch 
  * @since 9/7/17
  */
 package object functions {
@@ -39,8 +40,14 @@ package object functions {
       else op(o1, o2)
     }
   @inline
-  private[rasterframes] def safeEval[P, R](f: P ⇒ R): P ⇒ R =
+  private[rasterframes] def safeEval[P, R <: AnyRef](f: P ⇒ R): P ⇒ R =
     (p) ⇒ if (p == null) null.asInstanceOf[R] else f(p)
+  @inline
+  private[rasterframes] def safeEval[P](f: P ⇒ Double)(implicit d: DummyImplicit): P ⇒ Double =
+    (p) ⇒ if (p == null) Double.NaN else f(p)
+  @inline
+  private[rasterframes] def safeEval[P](f: P ⇒ Long)(implicit d1: DummyImplicit, d2: DummyImplicit): P ⇒ Long =
+    (p) ⇒ if (p == null) 0l else f(p)
   @inline
   private[rasterframes] def safeEval[P1, P2, R](f: (P1, P2) ⇒ R): (P1, P2) ⇒ R =
     (p1, p2) ⇒ if (p1 == null || p2 == null) null.asInstanceOf[R] else f(p1, p2)
@@ -229,5 +236,51 @@ package object functions {
       case ct: FloatCells ⇒ FloatConstantTile(value.floatValue(), cols, rows, ct)
       case ct: DoubleCells ⇒ DoubleConstantTile(value.doubleValue(), cols, rows, ct)
     }
+  }
+
+  private[rasterframes] val cellTypes: () ⇒ Seq[String] = () ⇒
+    Seq(
+      BitCellType,
+      ByteCellType,
+      ByteConstantNoDataCellType,
+      UByteCellType,
+      UByteConstantNoDataCellType,
+      ShortCellType,
+      ShortConstantNoDataCellType,
+      UShortCellType,
+      UShortConstantNoDataCellType,
+      IntCellType,
+      IntConstantNoDataCellType,
+      FloatCellType,
+      FloatConstantNoDataCellType,
+      DoubleCellType,
+      DoubleConstantNoDataCellType
+    ).map(_.toString).distinct
+
+  def register(sqlContext: SQLContext): Unit = {
+    sqlContext.udf.register("rf_makeConstantTile", makeConstantTile)
+    sqlContext.udf.register("rf_tileToArrayInt", tileToArray[Int])
+    sqlContext.udf.register("rf_tileToArrayDouble", tileToArray[Double])
+    sqlContext.udf.register("rf_aggHistogram", aggHistogram)
+    sqlContext.udf.register("rf_aggStats", aggStats)
+    sqlContext.udf.register("rf_tileMin", tileMean)
+    sqlContext.udf.register("rf_tileMax", tileMean)
+    sqlContext.udf.register("rf_tileMean", tileMean)
+    sqlContext.udf.register("rf_tileSum", tileSum)
+    sqlContext.udf.register("rf_tileHistogram", tileHistogram)
+    sqlContext.udf.register("rf_tileStats", tileStats)
+    sqlContext.udf.register("rf_dataCells", dataCells)
+    sqlContext.udf.register("rf_nodataCells", dataCells)
+    sqlContext.udf.register("rf_localAggStats", localAggStats)
+    sqlContext.udf.register("rf_localAggMax", localAggMax)
+    sqlContext.udf.register("rf_localAggMin", localAggMin)
+    sqlContext.udf.register("rf_localAggMean", localAggMean)
+    sqlContext.udf.register("rf_localAggCount", localAggCount)
+    sqlContext.udf.register("rf_localAdd", localAdd)
+    sqlContext.udf.register("rf_localSubtract", localSubtract)
+    sqlContext.udf.register("rf_localMultiply", localMultiply)
+    sqlContext.udf.register("rf_localDivide", localDivide)
+    sqlContext.udf.register("rf_cellTypes", cellTypes)
+    sqlContext.udf.register("rf_renderAscii", renderAscii)
   }
 }

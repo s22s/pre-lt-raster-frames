@@ -9,7 +9,6 @@ import org.apache.spark.sql.types.DataType
  * [[LocalStatsAggregateFunction]] for computation and just
  * selects the mean result tile.
  *
- * @author sfitch
  * @since 8/11/17
  */
 class LocalMeanAggregateFunction extends LocalStatsAggregateFunction {

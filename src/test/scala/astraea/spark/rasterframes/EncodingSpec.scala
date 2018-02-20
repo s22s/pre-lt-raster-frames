@@ -19,8 +19,11 @@
 
 package astraea.spark.rasterframes
 
+import java.io.File
+import java.net.URI
+
 import geotrellis.proj4._
-import geotrellis.raster.{CellType, MultibandTile, Tile, TileFeature}
+import geotrellis.raster.{CellType, Tile, TileFeature}
 import geotrellis.spark.{SpaceTimeKey, SpatialKey, TemporalProjectedExtent, TileLayerMetadata}
 import geotrellis.vector.{Extent, ProjectedExtent}
 import org.apache.spark.sql.Row
@@ -29,10 +32,9 @@ import org.apache.spark.sql.functions._
 /**
  * Test rig for encoding GT types into Catalyst types.
  *
- * @author sfitch 
  * @since 9/18/17
  */
-class EncodingSpec extends TestEnvironment with TestData  {
+class EncodingSpec extends TestEnvironment with TestData with IntelliJPresentationCompilerHack {
 
   import sqlContext.implicits._
 
@@ -112,8 +114,12 @@ class EncodingSpec extends TestEnvironment with TestData  {
       write(ds)
       assert(ds.toDF.as[CRS].first === LatLng)
     }
+    it("should code RDD[URI]") {
+      val ds = Seq[URI](new URI("http://astraea.earth/"), new File("/tmp/humbug").toURI).toDS()
+      ds.printSchema
+      ds.show
+      write(ds)
+    }
   }
-
-  protected def withFixture(test: Any) = ???
 }
 

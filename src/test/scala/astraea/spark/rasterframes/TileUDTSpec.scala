@@ -21,21 +21,19 @@
 
 package astraea.spark.rasterframes
 
-import geotrellis.raster.{ByteArrayTile, Tile}
+import geotrellis.raster.Tile
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
-import org.apache.spark.sql.gt.{InternalRowTile, types}
 import org.apache.spark.sql.gt.types.TileUDT
+import org.apache.spark.sql.rf.InternalRowTile
 import org.scalatest.Inspectors
+import astraea.spark.rasterframes.functions.cellTypes
 
 /**
  * RasterFrame test rig.
  *
- * @author sfitch 
  * @since 7/10/17
  */
-class TileUDTSpec extends TestEnvironment with TestData with Inspectors {
-  // This is to avoid an IntelliJ error
-  protected def withFixture(test: Any) = ???
+class TileUDTSpec extends TestEnvironment with TestData with Inspectors with IntelliJPresentationCompilerHack {
   import TestData.randomTile
 
   spark.version
@@ -43,12 +41,12 @@ class TileUDTSpec extends TestEnvironment with TestData with Inspectors {
 
   describe("TileUDT") {
     val tileSizes = Seq(2, 64, 128, 222, 511)
-    val cellTypes = types.cellTypes().filter(_ != "bool")
+    val ct = cellTypes().filter(_ != "bool")
 
     def forEveryConfig(test: (Tile) ⇒ Unit): Unit = {
       forEvery(tileSizes.combinations(2).toSeq) { case Seq(cols, rows) ⇒
-        forEvery(cellTypes) { ct ⇒
-          val tile = randomTile(cols, rows, ct)
+        forEvery(ct) { c ⇒
+          val tile = randomTile(cols, rows, c)
           test(tile)
         }
       }

@@ -11,19 +11,31 @@ import geotrellis.spark._
 import geotrellis.spark.io._
 import geotrellis.spark.tiling._
 import geotrellis.vector.{Extent, ProjectedExtent}
+import org.apache.spark.sql.{SQLContext, SparkSession}
 import org.apache.spark.sql.functions._
+import astraea.spark.rasterframes.util._
+import scala.util.control.NonFatal
 
 /**
  * RasterFrame test rig.
  *
- * @author sfitch 
  * @since 7/10/17
  */
-class RasterFrameSpec extends TestEnvironment with TestData {
-  // This is to avoid an IntelliJ error
-  protected def withFixture(test: Any) = ???
+class RasterFrameSpec extends TestEnvironment with MetadataKeys
+  with TestData with IntelliJPresentationCompilerHack {
   import TestData.randomTile
   import spark.implicits._
+
+  describe("Runtime environment") {
+    it("should provide build info") {
+      assert(RFBuildInfo.toMap.nonEmpty)
+      assert(RFBuildInfo.toString.nonEmpty)
+    }
+    it("should provide Spark initialization methods") {
+      assert(spark.withRasterFrames.isInstanceOf[SparkSession])
+      assert(sqlContext.withRasterFrames.isInstanceOf[SQLContext])
+    }
+  }
 
   describe("RasterFrame") {
     it("should implicitly convert from spatial layer type") {
@@ -57,10 +69,17 @@ class RasterFrameSpec extends TestEnvironment with TestData {
 
       //rf.printSchema()
       //rf.show()
-
-      assert(rf.tileColumns.nonEmpty)
-      assert(rf.spatialKeyColumn.columnName === "spatial_key")
-      assert(rf.temporalKeyColumn.map(_.columnName) === Some("temporal_key"))
+      try {
+        assert(rf.tileColumns.nonEmpty)
+        assert(rf.spatialKeyColumn.columnName === "spatial_key")
+        assert(rf.temporalKeyColumn.map(_.columnName) === Some("temporal_key"))
+      }
+      catch {
+        case NonFatal(ex) ⇒
+          rf.printSchema()
+          println(rf.schema.prettyJson)
+          throw ex
+      }
     }
 
     it("should implicitly convert layer of TileFeature") {
@@ -79,7 +98,7 @@ class RasterFrameSpec extends TestEnvironment with TestData {
 
       val rf = tileLayerRDD.toRF
 
-      assert(rf.columns.toSet === Set(SPATIAL_KEY_COLUMN, TILE_COLUMN, TILE_FEATURE_DATA_COLUMN))
+      assert(rf.columns.toSet === Set(SPATIAL_KEY_COLUMN, TILE_COLUMN, TILE_FEATURE_DATA_COLUMN).map(_.columnName))
     }
 
     it("should implicitly convert spatiotemporal layer of TileFeature") {
@@ -98,21 +117,21 @@ class RasterFrameSpec extends TestEnvironment with TestData {
 
       val rf = tileLayerRDD.toRF
 
-      assert(rf.columns.toSet === Set(SPATIAL_KEY_COLUMN, TEMPORAL_KEY_COLUMN, TILE_COLUMN, TILE_FEATURE_DATA_COLUMN))
+      assert(rf.columns.toSet === Set(SPATIAL_KEY_COLUMN, TEMPORAL_KEY_COLUMN, TILE_COLUMN, TILE_FEATURE_DATA_COLUMN).map(_.columnName))
     }
 
     it("should support spatial joins") {
       val rf = sampleGeoTiff.projectedRaster.toRF(256, 256)
       val wt = rf.addTemporalComponent(TemporalKey(34))
 
-      assert(wt.columns.contains(TEMPORAL_KEY_COLUMN))
+      assert(wt.columns.contains(TEMPORAL_KEY_COLUMN.columnName))
 
       val joined = wt.spatialJoin(wt, "outer")
       joined.printSchema
 
       // Should be both left and right column names.
-      assert(joined.columns.count(_.contains(TEMPORAL_KEY_COLUMN)) === 2)
-      assert(joined.columns.count(_.contains(SPATIAL_KEY_COLUMN)) === 2)
+      assert(joined.columns.count(_.contains(TEMPORAL_KEY_COLUMN.columnName)) === 2)
+      assert(joined.columns.count(_.contains(SPATIAL_KEY_COLUMN.columnName)) === 2)
     }
 
     it("should have correct schema on inner spatial joins") {
@@ -278,6 +297,13 @@ class RasterFrameSpec extends TestEnvironment with TestData {
         // spatial_key is lost
         equalized.asRF.toRaster($"equalized", 128, 128)
       }
+    }
+
+    it("should fetch CRS") {
+      val praster: ProjectedRaster[Tile] = sampleGeoTiff.projectedRaster
+      val rf = praster.toRF
+
+      assert(rf.crs === praster.crs)
     }
   }
 }

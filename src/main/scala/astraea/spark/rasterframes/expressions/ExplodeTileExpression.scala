@@ -19,19 +19,19 @@
 
 package astraea.spark.rasterframes.expressions
 
-import astraea.spark.rasterframes
+import astraea.spark.rasterframes._
 import geotrellis.raster._
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.expressions.codegen.CodegenFallback
 import org.apache.spark.sql.catalyst.expressions.{Expression, Generator, GenericInternalRow}
-import org.apache.spark.sql.gt.InternalRowTile
+import org.apache.spark.sql.rf.InternalRowTile
 import org.apache.spark.sql.types._
 import spire.syntax.cfor.cfor
+import astraea.spark.rasterframes.util._
 
 /**
  * Catalyst expression for converting a tile column into a pixel column, with each tile pixel occupying a separate row.
  *
- * @author sfitch
  * @since 4/12/17
  */
 private[rasterframes] case class ExplodeTileExpression(
@@ -45,8 +45,8 @@ private[rasterframes] case class ExplodeTileExpression(
 
     StructType(
       Seq(
-        StructField(rasterframes.COLUMN_INDEX_COLUMN, IntegerType, false),
-        StructField(rasterframes.ROW_INDEX_COLUMN, IntegerType, false)) ++ names
+        StructField(COLUMN_INDEX_COLUMN.columnName, IntegerType, false),
+        StructField(ROW_INDEX_COLUMN.columnName, IntegerType, false)) ++ names
         .map(n ⇒ StructField(n, DoubleType, false)))
   }
 

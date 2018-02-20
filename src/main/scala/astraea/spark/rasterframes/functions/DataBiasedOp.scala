@@ -26,7 +26,6 @@ import geotrellis.raster.mapalgebra.local.LocalTileBinaryOp
 /**
  * Variations of the GeoTrellis local algebra operations, except that
  * NoData combined with a value results in the value being returned.
- * @author sfitch 
  * @since 10/5/17
  */
 object DataBiasedOp {

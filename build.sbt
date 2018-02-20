@@ -1,5 +1,6 @@
 lazy val `raster-frames` = project
   .in(file("."))
+  .aggregate(LocalProject("datasource"))
   .enablePlugins(
     SiteScaladocPlugin,
     ParadoxSitePlugin,
@@ -8,12 +9,16 @@ lazy val `raster-frames` = project
     BuildInfoPlugin,
     AssemblyPlugin
   )
+  .disablePlugins(LiteratorPlugin)
   .settings(name := "RasterFrames")
   .settings(moduleName := "raster-frames")
   .settings(releaseSettings)
   .settings(docSettings)
   .settings(buildInfoSettings)
   .settings(assemblySettings)
+
+lazy val datasource = project
+  .dependsOn(`raster-frames` % "test->test;compile->compile")
 
 lazy val bench = project
   .dependsOn(`raster-frames`)

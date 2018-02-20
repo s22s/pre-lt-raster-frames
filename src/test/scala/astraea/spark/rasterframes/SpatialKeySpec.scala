@@ -19,19 +19,19 @@
 
 package astraea.spark.rasterframes
 
+import com.vividsolutions.jts.geom.Polygon
 import geotrellis.proj4.LatLng
-import geotrellis.vector.{Extent, Point}
-import org.locationtech.geomesa.curve.{Z2SFC, Z3SFC}
+import geotrellis.vector.Point
+import org.locationtech.geomesa.curve.Z2SFC
 
 /**
  * Test rig associated with spatial key related extension methods
  *
- * @author sfitch 
  * @since 12/15/17
  */
-class SpatialKeySpec  extends TestEnvironment with TestData {
-  // This is to avoid an IntelliJ error
-  protected def withFixture(test: Any) = ???
+class SpatialKeySpec extends TestEnvironment with TestData {
+  assert(!spark.sparkContext.isStopped)
+
   import spark.implicits._
 
   describe("Spatial key conversions") {
@@ -40,15 +40,15 @@ class SpatialKeySpec  extends TestEnvironment with TestData {
     val rf = raster.toRF(raster.tile.cols, raster.tile.rows)
 
     it("should add an extent column") {
-      val expected = raster.extent
-      val result = rf.withExtent().select($"extent".as[Extent]).first
+      val expected = raster.extent.jtsGeom
+      val result = rf.withExtent().select($"extent".as[Polygon]).first
       assert(result === expected)
     }
 
     it("should add a center value") {
       val expected = raster.extent.center
-      val result = rf.withCenter().select($"center".as[(Double, Double)]).first
-      assert(Point(result._1, result._2) === expected)
+      val result = rf.withCenter().select(CENTER_COLUMN).first
+      assert(result === expected.jtsGeom)
     }
 
     it("should add a center lat/lng value") {
@@ -64,5 +64,6 @@ class SpatialKeySpec  extends TestEnvironment with TestData {
       assert(result === expected)
     }
   }
-
+  // This is to avoid an IntelliJ error
+  protected def withFixture(test: Any) = ???
 }

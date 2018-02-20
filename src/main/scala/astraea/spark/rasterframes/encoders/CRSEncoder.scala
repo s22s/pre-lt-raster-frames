@@ -20,51 +20,17 @@
 package astraea.spark.rasterframes.encoders
 
 import geotrellis.proj4.CRS
-import org.apache.spark.sql.catalyst.ScalaReflection
-import org.apache.spark.sql.catalyst.analysis.GetColumnByOrdinal
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
-import org.apache.spark.sql.catalyst.expressions._
-import org.apache.spark.sql.catalyst.expressions.objects._
-import org.apache.spark.sql.types._
-import org.apache.spark.unsafe.types.UTF8String
-
-import scala.reflect.classTag
 
 /**
  * Custom encoder for GT `CRS`.
  *
- * @author sfitch
  * @since 7/21/17
  */
 object CRSEncoder {
-  def apply(): ExpressionEncoder[CRS] = {
-
-    val ctType = ScalaReflection.dataTypeFor[CRS]
-    val schema = StructType(Seq(StructField("crsProj4", StringType, false)))
-    val inputObject = BoundReference(0, ctType, nullable = false)
-
-    val intermediateType = ObjectType(classOf[String])
-    val serializer: Expression =
-      StaticInvoke(
-        classOf[UTF8String],
-        StringType,
-        "fromString",
-        InvokeSafely(inputObject, "toProj4String", intermediateType) :: Nil
-      )
-
-    val inputRow = GetColumnByOrdinal(0, schema)
-    val deserializer: Expression =
-      StaticInvoke(
-        CRSEncoder.getClass,
-        ctType,
-        "fromString",
-        InvokeSafely(inputRow, "toString", intermediateType) :: Nil
-      )
-
-    ExpressionEncoder[CRS](schema, flat = false, Seq(serializer), deserializer, classTag[CRS])
-  }
-
+  def apply(): ExpressionEncoder[CRS] = StringBackedEncoder[CRS](
+    "crsProj4", "toProj4String", (CRSEncoder.getClass, "fromString")
+  )
   // Not sure why this delegate is necessary, but doGenCode fails without it.
   def fromString(str: String): CRS = CRS.fromString(str)
-
 }

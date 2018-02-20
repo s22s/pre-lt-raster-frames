@@ -26,11 +26,10 @@ import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 /**
  * Custom encoder for [[ProjectedExtent]]. Necessary because CRS isn't a case class.
  *
- * @author sfitch
  * @since 8/2/17
  */
-object ProjectedExtentEncoder extends DelegatingSubfieldEncoder {
+object ProjectedExtentEncoder {
   def apply(): ExpressionEncoder[ProjectedExtent] = {
-    create(Seq("extent" -> extentEncoder, "crs" -> crsEncoder))
+    DelegatingSubfieldEncoder("extent" -> extentEncoder, "crs" -> crsEncoder)
   }
 }

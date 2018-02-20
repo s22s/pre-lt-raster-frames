@@ -26,12 +26,11 @@ import org.apache.spark.sql.types.{DoubleType, LongType}
 import org.apache.spark.sql.catalyst.dsl.expressions._
 import org.apache.spark.sql.catalyst.expressions._
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.gt._
+import org.apache.spark.sql.rf._
 
 /**
  * Cell mean aggregate function
  * 
- * @author sfitch 
  * @since 10/5/17
  */
 case class CellMeanAggregateFunction(child: Expression) extends DeclarativeAggregate {

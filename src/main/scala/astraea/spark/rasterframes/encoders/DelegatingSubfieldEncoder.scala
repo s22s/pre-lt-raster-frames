@@ -22,19 +22,21 @@ package astraea.spark.rasterframes.encoders
 import org.apache.spark.sql.catalyst.ScalaReflection
 import org.apache.spark.sql.catalyst.analysis.{GetColumnByOrdinal, UnresolvedAttribute, UnresolvedExtractValue}
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
-import org.apache.spark.sql.catalyst.expressions.objects.{Invoke, NewInstance}
-import org.apache.spark.sql.catalyst.expressions.{BoundReference, CreateNamedStruct, CreateStruct, Expression, GetStructField, If, IsNull, Literal}
+import org.apache.spark.sql.catalyst.expressions.objects.NewInstance
+import org.apache.spark.sql.catalyst.expressions._
 import org.apache.spark.sql.types.{StructField, StructType}
-import scala.reflect.runtime.universe._
+import org.apache.spark.sql.rf.VersionShims.InvokeSafely
+
+import scala.reflect.runtime.universe.TypeTag
 
 /**
  * Encoder builder for types composed of other fields with {{ExpressionEncoder}}s.
  *
- * @author sfitch
  * @since 8/2/17
  */
-trait DelegatingSubfieldEncoder {
-  protected def create[T: TypeTag](fieldEncoders: Seq[(String, ExpressionEncoder[_])]): ExpressionEncoder[T] = {
+object DelegatingSubfieldEncoder {
+  def apply[T: TypeTag](
+    fieldEncoders: (String, ExpressionEncoder[_])*): ExpressionEncoder[T] = {
     val schema = StructType(fieldEncoders.map {
       case (name, encoder) ⇒
         StructField(name, encoder.schema, false)

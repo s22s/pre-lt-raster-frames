@@ -30,7 +30,6 @@ import org.apache.spark.sql.types.StructType
  * Transformer filtering out rows containing NoData/NA values in
  * any of the specified columns.
  *
- * @author sfitch 
  * @since 9/21/17
  */
 class NoDataFilter (override val uid: String) extends Transformer

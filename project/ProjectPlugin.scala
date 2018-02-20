@@ -6,8 +6,7 @@ import sbtassembly.AssemblyPlugin.autoImport.{ShadeRule, _}
 import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 import sbtrelease.ReleasePlugin.autoImport._
 import com.servicerocket.sbt.release.git.flow.Steps._
-
-import _root_.bintray.BintrayPlugin.autoImport._
+import xerial.sbt.Sonatype.autoImport._
 import com.typesafe.sbt.SbtGit.git
 import com.typesafe.sbt.sbtghpages.GhpagesPlugin
 import com.typesafe.sbt.site.SitePlugin.autoImport._
@@ -17,16 +16,10 @@ import GhpagesPlugin.autoImport._
 import com.lightbend.paradox.sbt.ParadoxPlugin.autoImport._
 
 /**
- * @author sfitch
  * @since 8/20/17
  */
 object ProjectPlugin extends AutoPlugin {
   override def trigger: PluginTrigger = allRequirements
-
-  val versions = Map(
-    "geotrellis" -> "1.2.0-RC2",
-    "spark" -> "2.1.0"
-  )
 
   import autoImport._
 
@@ -38,28 +31,36 @@ object ProjectPlugin extends AutoPlugin {
     scmInfo := Some(ScmInfo(url("https://github.com/s22s/raster-frames"), "git@github.com:s22s/raster-frames.git")),
     description := "RasterFrames brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer operations of GeoTrellis",
     licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html")),
-    scalaVersion := "2.11.11",
-    scalacOptions ++= Seq("-feature", "-deprecation"),
+    scalaVersion := "2.11.12",
+    scalacOptions ++= Seq("-target:jvm-1.8", "-feature", "-deprecation"),
+    javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
     cancelable in Global := true,
     resolvers ++= Seq(
-      "locationtech-releases" at "https://repo.locationtech.org/content/groups/releases"
+      "locationtech-releases" at "https://repo.locationtech.org/content/groups/releases",
+      "boundless-releases" at "https://repo.boundlessgeo.com/main/",
+      Resolver.bintrayRepo("s22s", "maven"),
+      "osgeo-releases" at "http://download.osgeo.org/webdav/geotools/"
     ),
+    sparkVersion in ThisBuild := "2.2.1" ,
+    geotrellisVersion in ThisBuild := "1.2.0",
     libraryDependencies ++= Seq(
       "com.chuusai" %% "shapeless" % "2.3.2",
-      //"org.locationtech.sfcurve" %% "sfcurve-zorder" % "0.2.0",
-      //"org.locationtech.geomesa" %% "geomesa-jts-spark" % "astraea.1",
       "org.locationtech.geomesa" %% "geomesa-z3" % "1.3.5",
-      spark("core") % Provided,
-      spark("mllib") % Provided,
-      spark("sql") % Provided,
-      geotrellis("spark") % Provided,
-      geotrellis("raster") % Provided,
-      geotrellis("spark-testkit") % Test excludeAll (
+      "org.locationtech.geomesa" %% "geomesa-spark-jts" % "2.0.0-astraea.1",
+      spark("core").value % Provided,
+      spark("mllib").value % Provided,
+      spark("sql").value % Provided,
+      geotrellis("spark").value,
+      geotrellis("raster").value,
+      geotrellis("spark-testkit").value % Test excludeAll (
         ExclusionRule(organization = "org.scalastic"),
         ExclusionRule(organization = "org.scalatest")
       ),
-      "org.scalatest" %% "scalatest" % "3.0.3" % Test
+      scalaTest
     ),
+    publishTo := sonatypePublishTo.value,
+    publishMavenStyle := true,
+    publishArtifact in (Compile, packageDoc) := true,
     publishArtifact in Test := false,
     fork in Test := true,
     javaOptions in Test := Seq("-Xmx2G"),
@@ -81,20 +82,22 @@ object ProjectPlugin extends AutoPlugin {
   )
 
   object autoImport {
+    val sparkVersion = settingKey[String]("Apache Spark version")
+    val geotrellisVersion = settingKey[String]("GeoTrellis version")
 
-    def geotrellis(module: String) =
-      "org.locationtech.geotrellis" %% s"geotrellis-$module" % versions("geotrellis")
-    def spark(module: String) =
-      "org.apache.spark" %% s"spark-$module" % versions("spark")
+    def geotrellis(module: String) = Def.setting {
+      "org.locationtech.geotrellis" %% s"geotrellis-$module" % geotrellisVersion.value
+    }
+    def spark(module: String) = Def.setting {
+      "org.apache.spark" %% s"spark-$module" % sparkVersion.value
+    }
+
+    val scalaTest = "org.scalatest" %% "scalatest" % "3.0.3" % Test
 
     def releaseSettings: Seq[Def.Setting[_]] = {
       val buildSite: (State) ⇒ State = releaseStepTask(makeSite)
       val publishSite: (State) ⇒ State = releaseStepTask(ghpagesPushSite)
-      val releaseArtifacts = releaseStepTask(bintrayRelease)
       Seq(
-        bintrayOrganization := Some("s22s"),
-        bintrayReleaseOnPublish in ThisBuild := false,
-        publishArtifact in (Compile, packageDoc) := false,
         releaseIgnoreUntrackedFiles := true,
         releaseTagName := s"${version.value}",
         releaseProcess := Seq[ReleaseStep](
@@ -107,8 +110,9 @@ object ProjectPlugin extends AutoPlugin {
           buildSite,
           publishSite,
           commitReleaseVersion,
-          publishArtifacts,
-          releaseArtifacts,
+          tagRelease,
+          releaseStepCommand("publishSigned"),
+          releaseStepCommand("sonatypeReleaseAll"),
           gitFlowReleaseFinish,
           setNextVersion,
           commitNextVersion
@@ -144,20 +148,21 @@ object ProjectPlugin extends AutoPlugin {
         "-no-link-warnings"
       ),
       libraryDependencies ++= Seq(
-        spark("mllib") % Tut,
-        spark("sql") % Tut,
-        geotrellis("spark") % Tut,
-        geotrellis("raster") % Tut
+        spark("mllib").value % Tut,
+        spark("sql").value % Tut,
+        geotrellis("spark").value % Tut,
+        geotrellis("raster").value % Tut
       ),
-      fork in (Tut, runner) := true,
-      javaOptions in (Tut, runner) := Seq("-Xmx8G")
+      fork in (Tut, run) := true,
+      javaOptions in (Tut, run) := Seq("-Xmx8G", "-Dspark.ui.enabled=false"),
+      unmanagedClasspath in Tut ++= (fullClasspath in (LocalProject("datasource"), Compile)).value
     )
 
     def buildInfoSettings: Seq[Def.Setting[_]] = Seq(
       buildInfoKeys ++= Seq[BuildInfoKey](
-        name, version, scalaVersion, sbtVersion
-      ) ++ versions.toSeq.map(p => (p._1 + "Version", p._2): BuildInfoKey),
-      buildInfoPackage := "astraea.rasterframes",
+        name, version, scalaVersion, sbtVersion, geotrellisVersion, sparkVersion
+      ),
+      buildInfoPackage := "astraea.spark.rasterframes",
       buildInfoObject := "RFBuildInfo",
       buildInfoOptions := Seq(
         BuildInfoOption.ToMap,
@@ -174,7 +179,7 @@ object ProjectPlugin extends AutoPlugin {
         case PathList(ps @ _*) if Assembly.isReadme(ps.last) || Assembly.isLicenseFile(ps.last) ⇒
           MergeStrategy.rename
         case PathList("META-INF", xs @ _*) ⇒
-          (xs map { _.toLowerCase }) match {
+          xs map {_.toLowerCase} match {
             case ("manifest.mf" :: Nil) | ("index.list" :: Nil) | ("dependencies" :: Nil) ⇒
               MergeStrategy.discard
             case ps @ (x :: _) if ps.last.endsWith(".sf") || ps.last.endsWith(".dsa") ⇒

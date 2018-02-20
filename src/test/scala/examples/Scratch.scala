@@ -27,7 +27,6 @@ import org.apache.spark.sql._
 /**
  * Boilerplate test run file
  *
- * @author sfitch 
  * @since 10/8/17
  */
 object Scratch extends App {

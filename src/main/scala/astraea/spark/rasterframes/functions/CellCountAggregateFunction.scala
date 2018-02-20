@@ -23,14 +23,13 @@ import org.apache.spark.sql.catalyst.dsl.expressions._
 import org.apache.spark.sql.catalyst.expressions.aggregate.DeclarativeAggregate
 import org.apache.spark.sql.catalyst.expressions.{AttributeReference, Expression, _}
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.gt._
+import org.apache.spark.sql.rf._
 import org.apache.spark.sql.gt.types.TileUDT
 import org.apache.spark.sql.types.LongType
 
 /**
  * Cell count (data or NoData) aggregate function.
  *
- * @author sfitch
  * @since 10/5/17
  * @param isData true if count should be of non-NoData cells, false if count should be of NoData cells.
  */

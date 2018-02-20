@@ -19,11 +19,13 @@ package astraea.spark.rasterframes
 
 import java.nio.file.{Files, Paths}
 
+import astraea.spark.rasterframes.util.toParquetFriendlyColumnName
 import geotrellis.spark.testkit.{TestEnvironment ⇒ GeoTrellisTestEnvironment}
 import geotrellis.util.LazyLogging
 import org.apache.spark.SparkContext
-import org.apache.spark.sql.functions.col
 import org.apache.spark.sql._
+import org.apache.spark.sql.functions.col
+import org.apache.spark.sql.types.StructType
 import org.scalactic.Tolerance
 import org.scalatest._
 
@@ -33,18 +35,18 @@ trait TestEnvironment extends FunSpec with GeoTrellisTestEnvironment
   override implicit def sc: SparkContext = { _sc.setLogLevel("ERROR"); _sc }
 
   lazy val sqlContext: SQLContext = {
-    val ctx = SparkSession.builder.config(_sc.getConf).getOrCreate().sqlContext.withRasterFrames
-    ctx
+    val session = SparkSession.builder.config(_sc.getConf).getOrCreate()
+    session.sqlContext.withRasterFrames
   }
 
   lazy val sql: (String) ⇒ DataFrame = sqlContext.sql
-  implicit lazy val spark = sqlContext.sparkSession
+  implicit val spark = sqlContext.sparkSession
 
   def isCI: Boolean = sys.env.get("CI").contains("true")
 
   /** This is here so we can test writing UDF generated/modified GeoTrellis types to ensure they are Parquet compliant. */
   def write(df: Dataset[_]): Unit = {
-    val sanitized = df.select(df.columns.map(c ⇒ col(c).as(c.replaceAll("[ ,;{}()\n\t=]", "_"))): _*)
+    val sanitized = df.select(df.columns.map(c ⇒ col(c).as(toParquetFriendlyColumnName(c))): _*)
     val dest = Files.createTempFile(Paths.get(outputLocalPath), "GTSQL", ".parquet")
     logger.debug(s"Writing '${sanitized.columns.mkString(", ")}' to '$dest'...")
     sanitized.write.mode(SaveMode.Overwrite).parquet(dest.toString)
@@ -52,4 +54,18 @@ trait TestEnvironment extends FunSpec with GeoTrellisTestEnvironment
     logger.debug(s" it has $rows row(s)")
   }
 
+  /**
+   * Constructor for creating a DataFrame with a single row and no columns.
+   * Useful for testing the invocation of data constructing UDFs.
+   */
+  def dfBlank(implicit spark: SparkSession): DataFrame = {
+    spark.createDataFrame(spark.sparkContext.makeRDD(Seq(Row())), StructType(Seq.empty))
+  }
+}
+
+/** IntelliJ incorrectly indicates that `withFixture` needs to be implemented, resulting
+ * in a distracting error. This for whatever reason gets it to quiet down. */
+trait IntelliJPresentationCompilerHack { this: Suite ⇒
+  // This is to avoid an IntelliJ error
+  protected def withFixture(test: Any) = ???
 }

@@ -30,17 +30,14 @@ import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 /**
  * Custom encoder for [[ProjectedExtent]]. Necessary because [[geotrellis.proj4.CRS]] within [[ProjectedExtent]] isn't a case class, and [[ZonedDateTime]] doesn't have a natural encoder.
  *
- * @author sfitch
  * @since 8/2/17
  */
-object TemporalProjectedExtentEncoder extends DelegatingSubfieldEncoder {
+object TemporalProjectedExtentEncoder {
   def apply(): ExpressionEncoder[TemporalProjectedExtent] = {
-    create(
-      Seq(
-        "extent" -> extentEncoder,
-        "crs" -> crsEncoder,
-        "instant" -> Encoders.scalaLong.asInstanceOf[ExpressionEncoder[Long]]
-      )
+    DelegatingSubfieldEncoder(
+      "extent" -> extentEncoder,
+      "crs" -> crsEncoder,
+      "instant" -> Encoders.scalaLong.asInstanceOf[ExpressionEncoder[Long]]
     )
   }
 }

@@ -5,7 +5,6 @@ import org.apache.spark.sql.types.MetadataBuilder
 /**
  * Test rig for column metadata management.
  *
- * @author sfitch 
  * @since 9/6/17
  */
 class MetadataSpec extends TestEnvironment with TestData  {
