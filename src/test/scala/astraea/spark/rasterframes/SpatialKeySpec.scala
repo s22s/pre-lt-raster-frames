@@ -19,9 +19,10 @@
 
 package astraea.spark.rasterframes
 
+import com.vividsolutions.jts.geom.Polygon
 import geotrellis.proj4.LatLng
-import geotrellis.vector.{Extent, Point}
-import org.locationtech.geomesa.curve.{Z2SFC, Z3SFC}
+import geotrellis.vector.Point
+import org.locationtech.geomesa.curve.Z2SFC
 
 /**
  * Test rig associated with spatial key related extension methods
@@ -39,8 +40,8 @@ class SpatialKeySpec extends TestEnvironment with TestData {
     val rf = raster.toRF(raster.tile.cols, raster.tile.rows)
 
     it("should add an extent column") {
-      val expected = raster.extent
-      val result = rf.withExtent().select($"extent".as[Extent]).first
+      val expected = raster.extent.jtsGeom
+      val result = rf.withExtent().select($"extent".as[Polygon]).first
       assert(result === expected)
     }
 

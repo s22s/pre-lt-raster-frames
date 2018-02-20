@@ -1,9 +1,9 @@
 package astraea.spark.rasterframes.jts
 
 import com.vividsolutions.jts.geom._
+import org.apache.spark.sql.catalyst.expressions.Literal
 import org.apache.spark.sql.jts._
 import org.apache.spark.sql.{Column, Encoder, TypedColumn}
-import org.locationtech.geomesa.spark.jts.rules.GeometryLiteral
 
 /**
  * Spatial type support functions.
@@ -15,7 +15,7 @@ trait SpatialFunctions {
 
   def geomlit(geom: Geometry): TypedColumn[Any, _ <: Geometry] = {
     def udtlit[T >: Null <: Geometry: Encoder, U <: AbstractGeometryUDT[T]](t: T, u: U): TypedColumn[Any, T] =
-      new Column(GeometryLiteral(u.serialize(t), t)).as[T]
+      new Column(Literal.create(u.serialize(t), u)).as[T]
 
     geom match {
       case g: Point ⇒ udtlit(g, PointUDT)

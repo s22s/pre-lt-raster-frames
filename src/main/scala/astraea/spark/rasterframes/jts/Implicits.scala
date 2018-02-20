@@ -25,15 +25,9 @@ import java.time.ZonedDateTime
 import com.vividsolutions.jts.geom._
 import geotrellis.util.MethodExtensions
 import geotrellis.vector.{Point ⇒ gtPoint}
-import org.apache.spark.sql.catalyst.expressions.Literal
-import org.apache.spark.sql.{Column, TypedColumn}
+import org.apache.spark.sql.TypedColumn
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.jts._
 import org.locationtech.geomesa.spark.jts._
-
-import scala.reflect.ClassTag
-
-
 
 /**
  * Extension methods on typed columns allowing for DSL-like queries over JTS types.

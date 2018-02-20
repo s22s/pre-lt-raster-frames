@@ -19,10 +19,9 @@
 
 package astraea.spark.rasterframes
 
+import astraea.spark.rasterframes.util._
 import geotrellis.proj4.LatLng
 import geotrellis.vector.Point
-import org.locationtech.geomesa.spark.jts._
-import astraea.spark.rasterframes.util._
 
 /**
  * Test rig for operations providing interop with JTS types.

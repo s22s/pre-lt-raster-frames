@@ -24,11 +24,13 @@ import astraea.spark.rasterframes.expressions.SpatialExpression.RelationPredicat
 import com.vividsolutions.jts.geom._
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
-import org.apache.spark.sql.catalyst.expressions._
+import org.apache.spark.sql.catalyst.expressions.{ScalaUDF, _}
 import org.apache.spark.sql.catalyst.expressions.codegen.CodegenFallback
 import org.apache.spark.sql.jts._
 import org.apache.spark.sql.types._
-import org.locationtech.geomesa.spark.jts.udf.SpatialRelationFunctions
+import org.locationtech.geomesa.spark.jts.udf.SpatialRelationFunctions._
+
+import scala.util.Try
 
 
 
@@ -89,34 +91,52 @@ object SpatialExpression {
 
   case class Intersects(left: Expression, right: Expression) extends SpatialExpression {
     override def nodeName = "intersects"
-    val relation = SpatialRelationFunctions.ST_Intersects
+    val relation = ST_Intersects
   }
   case class Contains(left: Expression, right: Expression) extends SpatialExpression {
     override def nodeName = "contains"
-    val relation = SpatialRelationFunctions.ST_Contains
+    val relation = ST_Contains
   }
   case class Covers(left: Expression, right: Expression) extends SpatialExpression {
     override def nodeName = "covers"
-    val relation = SpatialRelationFunctions.ST_Covers
+    val relation = ST_Covers
   }
   case class Crosses(left: Expression, right: Expression) extends SpatialExpression {
     override def nodeName = "crosses"
-    val relation = SpatialRelationFunctions.ST_Crosses
+    val relation = ST_Crosses
   }
   case class Disjoint(left: Expression, right: Expression) extends SpatialExpression {
     override def nodeName = "disjoint"
-    val relation = SpatialRelationFunctions.ST_Disjoint
+    val relation = ST_Disjoint
   }
   case class Overlaps(left: Expression, right: Expression) extends SpatialExpression {
     override def nodeName = "overlaps"
-    val relation = SpatialRelationFunctions.ST_Overlaps
+    val relation = ST_Overlaps
   }
   case class Touches(left: Expression, right: Expression) extends SpatialExpression {
     override def nodeName = "touches"
-    val relation = SpatialRelationFunctions.ST_Touches
+    val relation = ST_Touches
   }
   case class Within(left: Expression, right: Expression) extends SpatialExpression {
     override def nodeName = "within"
-    val relation = SpatialRelationFunctions.ST_Within
+    val relation = ST_Within
+  }
+
+  private val predicateMap = Map(
+    ST_Intersects -> Intersects,
+    ST_Contains -> Contains,
+    ST_Covers -> Covers,
+    ST_Crosses -> Crosses,
+    ST_Disjoint -> Disjoint,
+    ST_Overlaps -> Overlaps,
+    ST_Touches -> Touches,
+    ST_Within -> Within
+  )
+
+  def fromUDF(udf: ScalaUDF) = {
+    val ScalaUDF(function, _, children, _, _) = udf
+    Try(function.asInstanceOf[RelationPredicate]).toOption
+      .flatMap(predicateMap.get)
+      .map(_.apply(children.head, children.last))
   }
 }

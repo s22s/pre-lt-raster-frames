@@ -19,17 +19,16 @@ package org.apache.spark.sql.rf
 
 import java.sql.Timestamp
 
+import astraea.spark.rasterframes.expressions.SpatialExpression.{Contains, Intersects}
 import astraea.spark.rasterframes.jts.SpatialFilters
-import astraea.spark.rasterframes.expressions.SpatialExpression.Intersects
-import com.vividsolutions.jts.geom.Geometry
 import org.apache.spark.sql.catalyst.CatalystTypeConverters.{convertToScala, createToScalaConverter}
 import org.apache.spark.sql.catalyst.expressions
 import org.apache.spark.sql.catalyst.expressions.{Attribute, EmptyRow, Expression, Literal}
+import org.apache.spark.sql.jts.AbstractGeometryUDT
 import org.apache.spark.sql.sources
 import org.apache.spark.sql.sources.Filter
 import org.apache.spark.sql.types.{StringType, TimestampType}
 import org.apache.spark.unsafe.types.UTF8String
-import org.locationtech.geomesa.spark.jts.rules.GeometryLiteral
 
 /**
  * This is a copy of [[org.apache.spark.sql.execution.datasources.DataSourceStrategy.translateFilter]], modified to add our spatial predicates.
@@ -45,10 +44,11 @@ object FilterTranslator {
    */
   def translateFilter(predicate: Expression): Option[Filter] = {
     predicate match {
-      case Intersects(a: Attribute, Literal(v: Geometry, _)) ⇒
-        Some(SpatialFilters.Intersects(a.name, v))
-      case Intersects(a: Attribute, g: GeometryLiteral) ⇒
-        Some(SpatialFilters.Intersects(a.name, g.geom))
+      case Intersects(a: Attribute, Literal(geom, udt: AbstractGeometryUDT[_])) ⇒
+        Some(SpatialFilters.Intersects(a.name, udt.deserialize(geom)))
+
+      case Contains(a: Attribute, Literal(geom, udt: AbstractGeometryUDT[_])) ⇒
+        Some(SpatialFilters.Contains(a.name, udt.deserialize(geom)))
 
       case expressions.And(
         expressions.GreaterThanOrEqual(a: Attribute, Literal(start, TimestampType)),

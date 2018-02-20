@@ -19,18 +19,17 @@
 
 package astraea.spark.rasterframes.extensions
 
+import astraea.spark.rasterframes.util._
 import astraea.spark.rasterframes.{RasterFrame, StandardColumns}
 import com.vividsolutions.jts.geom.{Point, Polygon}
 import geotrellis.proj4.LatLng
 import geotrellis.spark.SpatialKey
 import geotrellis.spark.tiling.MapKeyTransform
 import geotrellis.util.MethodExtensions
-import geotrellis.vector.Extent
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.functions.{asc, udf ⇒ sparkUdf}
 import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
 import org.locationtech.geomesa.curve.Z2SFC
-import astraea.spark.rasterframes.util._
 
 /**
  * RasterFrame extension methods associated with adding spatially descriptive columns.
@@ -38,16 +37,15 @@ import astraea.spark.rasterframes.util._
  * @since 12/15/17
  */
 trait RFSpatialColumnMethods extends MethodExtensions[RasterFrame] with StandardColumns {
-  import Implicits.WithDataFrameMethods
-  import Implicits.WithRasterFrameMethods
+  import Implicits.{WithDataFrameMethods, WithRasterFrameMethods}
   import org.locationtech.geomesa.spark.jts._
 
   /** Returns the key-space to map-space coordinate transform. */
   def mapTransform: MapKeyTransform = self.tileLayerMetadata.widen.mapTransform
 
-  private def keyCol2Extent: Row ⇒ Extent = {
+  private def keyCol2Extent: Row ⇒ Polygon = {
     val transform = self.sparkSession.sparkContext.broadcast(mapTransform)
-    (r: Row) ⇒ transform.value.keyToExtent(SpatialKey(r.getInt(0), r.getInt(1)))
+    (r: Row) ⇒ transform.value.keyToExtent(SpatialKey(r.getInt(0), r.getInt(1))).jtsGeom
   }
 
   private def keyCol2LatLng: Row ⇒ (Double, Double) = {
@@ -77,7 +75,7 @@ trait RFSpatialColumnMethods extends MethodExtensions[RasterFrame] with Standard
    * @return updated RasterFrame
    */
   def withCenter(colName: String = CENTER_COLUMN.columnName): RasterFrame = {
-    val key2Center = sparkUdf(keyCol2Extent andThen (_.center.jtsGeom))
+    val key2Center = sparkUdf(keyCol2Extent andThen (_.getCentroid))
     self.withColumn(colName, key2Center(self.spatialKeyColumn).as[Point]).certify
   }
 
