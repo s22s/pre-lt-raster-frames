@@ -20,13 +20,7 @@
 
 ## General Setup
 
-*RasterFrames* is published via Bintray's JCenter server. In sbt you introduce it with this build setting: 
-
-```
-resolvers += Resolver.jcenterRepo
-``` 
-
-See [this](https://bintray.com/bintray/jcenter) for other build tools.
+*RasterFrames* is published via [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Craster-frames).
 
 To use RasterFrames, add the following library dependencies:
 
