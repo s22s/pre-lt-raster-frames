@@ -142,7 +142,7 @@ class ExplodeSpec extends TestEnvironment with TestData {
     }
 
     it("should reassemble multiple exploded tiles") {
-      val image = sampleGeoTiff
+      val image = sampleSmallGeoTiff
       val tinyTiles = image.projectedRaster.toRF(10, 10)
 
       val exploded = tinyTiles.select(tinyTiles.spatialKeyColumn, explodeTiles(tinyTiles.tileColumns.head))

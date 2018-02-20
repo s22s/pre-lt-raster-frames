@@ -89,7 +89,10 @@ trait TestData {
 
   def readSingleband(name: String) = SinglebandGeoTiff(IOUtils.toByteArray(getClass.getResourceAsStream("/" + name)))
 
+  /** 774 x 500 GeoTiff */
   def sampleGeoTiff = readSingleband("L8-B8-Robinson-IL.tiff")
+  /** 186 x 169 GeoTiff */
+  def sampleSmallGeoTiff = readSingleband("L8-B7-Elkton-VA.tiff")
 
   def l8Sample(band: Int) = {
     require((1 to 11).contains(band), "Invalid band number")

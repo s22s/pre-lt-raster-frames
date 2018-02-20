@@ -52,10 +52,10 @@ class GeoTrellisDataSourceSpec
     val recs: Seq[(SpaceTimeKey, Tile)] = for {
       col ← tileCoordRange
       row ← tileCoordRange
-    } yield SpaceTimeKey(col, row, now) -> ArrayTile.alloc(DoubleConstantNoDataCellType, 3, 3)
+    } yield SpaceTimeKey(col, row, now) -> ArrayTile.alloc(DoubleConstantNoDataCellType, 12, 12)
 
     val rdd = sc.parallelize(recs)
-    val scheme = ZoomedLayoutScheme(LatLng, tileSize = 3)
+    val scheme = ZoomedLayoutScheme(LatLng, tileSize = 12)
     val layerLayout = scheme.levelForZoom(4).layout
     val layerBounds = KeyBounds(SpaceTimeKey(2, 2, now.minusMonths(1)), SpaceTimeKey(5, 5, now.plusMonths(1)))
     val md = TileLayerMetadata[SpaceTimeKey](
@@ -137,6 +137,24 @@ class GeoTrellisDataSourceSpec
       assert(df.first.getAs[Extent](2) !== null)
     }
   }
+
+  describe("DataSource options") {
+    def layerReader = spark.read.geotrellis
+
+    it("should respect partitions 2") {
+      val expected = 2
+      val df = spark.read.option("numPartitions", expected)
+          .geotrellis.loadRF(layer)
+      assert(df.rdd.partitions.length === expected)
+    }
+    it("should respect partitions 20") {
+      val expected = 20
+      val df = spark.read.option("numPartitions", expected)
+        .geotrellis.loadRF(layer)
+      assert(df.rdd.partitions.length === expected)
+    }
+  }
+
   describe("Predicate push-down support") {
     def layerReader = spark.read.geotrellis
 

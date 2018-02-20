@@ -54,7 +54,12 @@ import scala.reflect.runtime.universe._
 /**
  * A Spark SQL `Relation` over a standard GeoTrellis layer.
  */
-case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId, numPartitions: Option[Int] = None, failOnUnrecognizedFilter: Boolean = false, filters: Seq[Filter] = Seq.empty)
+case class GeoTrellisRelation(sqlContext: SQLContext,
+                              uri: URI,
+                              layerId: LayerId,
+                              numPartitions: Option[Int] = None,
+                              failOnUnrecognizedFilter: Boolean = false,
+                              filters: Seq[Filter] = Seq.empty)
     extends BaseRelation with PrunedScan with LazyLogging {
 
   implicit val sc = sqlContext.sparkContext
@@ -276,8 +281,10 @@ case class GeoTrellisRelation(sqlContext: SQLContext, uri: URI, layerId: LayerId
       (tlm: TileLayerMetadata[SpaceTimeKey]) ⇒ {
         val trans = tlm.mapTransform
 
+        val parts = numPartitions.getOrElse(reader.defaultNumPartitions)
+
         val query = splitFilters.foldLeft(
-          reader.query[SpaceTimeKey, T, TileLayerMetadata[SpaceTimeKey]](layerId)
+          reader.query[SpaceTimeKey, T, TileLayerMetadata[SpaceTimeKey]](layerId, parts)
         )(applyFilterTemporal(_, _))
 
         val rdd = query.result
