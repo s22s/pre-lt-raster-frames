@@ -29,6 +29,7 @@ import org.apache.spark.sql.sources.Filter
  * @since 1/11/18
  */
 object SpatialFilters {
+  // $COVERAGE-OFF$
   case class Intersects(attribute: String, value: Geometry) extends Filter {
     def references: Array[String] = Array(attribute)
   }
@@ -40,4 +41,5 @@ object SpatialFilters {
   case class BetweenTimes(attribute: String, start: Timestamp, end: Timestamp) extends Filter {
     def references: Array[String] = Array(attribute)
   }
+  // $COVERAGE-ON$
 }

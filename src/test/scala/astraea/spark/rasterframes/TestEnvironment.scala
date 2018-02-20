@@ -25,6 +25,7 @@ import geotrellis.util.LazyLogging
 import org.apache.spark.SparkContext
 import org.apache.spark.sql._
 import org.apache.spark.sql.functions.col
+import org.apache.spark.sql.types.StructType
 import org.scalactic.Tolerance
 import org.scalatest._
 
@@ -51,6 +52,14 @@ trait TestEnvironment extends FunSpec with GeoTrellisTestEnvironment
     sanitized.write.mode(SaveMode.Overwrite).parquet(dest.toString)
     val rows = df.sparkSession.read.parquet(dest.toString).count()
     logger.debug(s" it has $rows row(s)")
+  }
+
+  /**
+   * Constructor for creating a DataFrame with a single row and no columns.
+   * Useful for testing the invocation of data constructing UDFs.
+   */
+  def dfBlank(implicit spark: SparkSession): DataFrame = {
+    spark.createDataFrame(spark.sparkContext.makeRDD(Seq(Row())), StructType(Seq.empty))
   }
 }
 

@@ -42,7 +42,7 @@ trait Implicits extends SpatialFunctions {
     def intersects(geom: Geometry): TypedColumn[Any, Boolean] =
       st_intersects(self, geomlit(geom)).as[Boolean]
 
-    def contains(geom: Geometry): TypedColumn[Any, Boolean] =
+    def containsGeom(geom: Geometry): TypedColumn[Any, Boolean] =
       st_contains(self, geomlit(geom)).as[Boolean]
 
     def intersects(pt: gtPoint): TypedColumn[Any, Boolean] =

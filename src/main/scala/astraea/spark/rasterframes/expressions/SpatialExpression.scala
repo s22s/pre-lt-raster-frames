@@ -53,25 +53,10 @@ abstract class SpatialExpression extends BinaryExpression with CodegenFallback {
       case g: Geometry ⇒ g
       case r: InternalRow ⇒
         expr.dataType match {
+          case udt: AbstractGeometryUDT[_] ⇒ udt.deserialize(r)
           case t if t == extentEncoder.schema ⇒
             val extent = extentEncoder.resolveAndBind().fromRow(r)
             extent.jtsGeom
-          case t if t == jtsPointEncoder.schema ⇒
-            jtsPointEncoder.resolveAndBind().fromRow(r)
-          case t if t.getClass.isAssignableFrom(PointUDT.getClass) ⇒
-            PointUDT.deserialize(r)
-          case t if t.getClass.isAssignableFrom(MultiPointUDT.getClass) ⇒
-            MultiPointUDT.deserialize(r)
-          case t if t.getClass.isAssignableFrom(LineStringUDT.getClass) ⇒
-            LineStringUDT.deserialize(r)
-          case t if t.getClass.isAssignableFrom(MultiLineStringUDT.getClass) ⇒
-            MultiLineStringUDT.deserialize(r)
-          case t if t.getClass.isAssignableFrom(PolygonUDT.getClass) ⇒
-            PolygonUDT.deserialize(r)
-          case t if t.getClass.isAssignableFrom(MultiPolygonUDT.getClass) ⇒
-            MultiPolygonUDT.deserialize(r)
-          case t if t.getClass.isAssignableFrom(GeometryUDT.getClass) ⇒
-            GeometryUDT.deserialize(r)
         }
     }
   }
@@ -83,7 +68,6 @@ abstract class SpatialExpression extends BinaryExpression with CodegenFallback {
   }
 
   val relation: RelationPredicate
-
 }
 
 object SpatialExpression {

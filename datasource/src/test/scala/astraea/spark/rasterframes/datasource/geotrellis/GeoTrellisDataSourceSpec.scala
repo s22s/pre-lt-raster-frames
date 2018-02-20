@@ -175,7 +175,6 @@ class GeoTrellisDataSourceSpec
         .loadRF(layer)
         .where(EXTENT_COLUMN intersects pt1)
 
-      df.explain(true)
       val rel = extractRelation(df)
       assert(rel.filters.length === 1)
 
