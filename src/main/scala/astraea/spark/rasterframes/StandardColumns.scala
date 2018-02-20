@@ -7,12 +7,14 @@ import geotrellis.spark.{SpatialKey, TemporalKey}
 import org.apache.spark.sql.functions.col
 import com.vividsolutions.jts.geom.{Point ⇒ jtsPoint, Polygon ⇒ jtsPolygon}
 import astraea.spark.rasterframes.encoders.SparkDefaultEncoders._
+import astraea.spark.rasterframes.encoders.StandardEncoders
 
 /**
+ * Constants identifying column in most RasterFrames.
  *
  * @since 2/19/18
  */
-trait StandardColumns {
+trait StandardColumns extends StandardEncoders {
   /** Default RasterFrame spatial column name. */
   val SPATIAL_KEY_COLUMN = col("spatial_key").as[SpatialKey]
 
@@ -49,3 +51,5 @@ trait StandardColumns {
   /** Default teil column index column for the cells of exploded tiles. */
   val ROW_INDEX_COLUMN = col("row_index").as[Int]
 }
+
+object StandardColumns extends StandardColumns

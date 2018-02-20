@@ -17,10 +17,12 @@
  *
  */
 
-package astraea.spark.rasterframes
+package astraea.spark.rasterframes.extensions
 
+import astraea.spark.rasterframes.{MetadataKeys, StandardColumns}
 import geotrellis.util.MethodExtensions
 import org.apache.spark.sql.types.{Metadata, MetadataBuilder}
+import astraea.spark.rasterframes.util._
 
 /**
  * Convenience to deal with boilerplate associated with adding
@@ -29,7 +31,7 @@ import org.apache.spark.sql.types.{Metadata, MetadataBuilder}
  * @since 12/21/17
  */
 private[astraea]
-abstract class MetadataBuilderMethods extends MethodExtensions[MetadataBuilder] {
+abstract class MetadataBuilderMethods extends MethodExtensions[MetadataBuilder] with MetadataKeys with StandardColumns {
   def attachContext(md: Metadata) = self.putMetadata(CONTEXT_METADATA_KEY, md)
   def tagSpatialKey = self.putString(SPATIAL_ROLE_KEY, SPATIAL_KEY_COLUMN.columnName)
   def tagTemporalKey = self.putString(SPATIAL_ROLE_KEY, TEMPORAL_KEY_COLUMN.columnName)

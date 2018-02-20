@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package astraea.spark.rasterframes
+package astraea.spark.rasterframes.extensions
 
 import geotrellis.spark.io._
 import geotrellis.spark.{SpaceTimeKey, SpatialComponent, SpatialKey, TemporalKey, TileLayerMetadata}
@@ -24,14 +24,21 @@ import org.apache.spark.sql.gt._
 import org.apache.spark.sql.types.MetadataBuilder
 import org.apache.spark.sql.{Column, DataFrame}
 import spray.json.JsonFormat
-
+import astraea.spark.rasterframes.util._
+import astraea.spark.rasterframes.{MetadataKeys, RasterFrame}
 import scala.util.Try
+
+
 /**
  * Extension methods over [[DataFrame]].
  *
  * @since 7/18/17
  */
-trait DataFrameMethods extends MethodExtensions[DataFrame] {
+trait DataFrameMethods extends MethodExtensions[DataFrame] with MetadataKeys {
+  import Implicits.WithMetadataBuilderMethods
+  import Implicits.WithMetadataMethods
+  import Implicits.WithRasterFrameMethods
+  import Implicits.WithDataFrameMethods
 
   private def selector(column: Column) = (attr: Attribute) ⇒
     attr.name == column.columnName || attr.semanticEquals(column.expr)
@@ -117,7 +124,7 @@ trait DataFrameMethods extends MethodExtensions[DataFrame] {
    */
   @throws[IllegalArgumentException]
   def asRF(spatialKey: Column, tlm: TileLayerMetadata[SpatialKey]): RasterFrame =
-    self.setSpatialColumnRole(spatialKey, tlm).asRF
+    setSpatialColumnRole(spatialKey, tlm).asRF
 
   /**
    * Convert DataFrame into a RasterFrame
@@ -131,7 +138,7 @@ trait DataFrameMethods extends MethodExtensions[DataFrame] {
    */
   @throws[IllegalArgumentException]
   def asRF(spatialKey: Column, temporalKey: Column, tlm: TileLayerMetadata[SpaceTimeKey]): RasterFrame =
-    self.setSpatialColumnRole(spatialKey, tlm)
+    setSpatialColumnRole(spatialKey, tlm)
       .setTemporalColumnRole(temporalKey)
       .asRF
 
@@ -146,7 +153,7 @@ trait DataFrameMethods extends MethodExtensions[DataFrame] {
    *
    * @return Some[RasterFrame] if constraints fulfilled, [[None]] otherwise.
    */
-  def asRFSafely: Option[RasterFrame] = Try(self.asRF).toOption
+  def asRFSafely: Option[RasterFrame] = Try(asRF).toOption
 
   /**
    * Tests for the following conditions on the [[DataFrame]]:
@@ -159,7 +166,7 @@ trait DataFrameMethods extends MethodExtensions[DataFrame] {
    *
    * @return true if all constraints are fulfilled, false otherwise.
    */
-  def isRF: Boolean = Try(self.asRF).isSuccess
+  def isRF: Boolean = Try(asRF).isSuccess
 
   /** Internal method for slapping the RasterFreame seal of approval on a DataFrame.
    * Only call if if you are sure it has a spatial key and tile columns and TileLayerMetadata. */

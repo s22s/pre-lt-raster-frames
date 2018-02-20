@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package astraea.spark.rasterframes
+package astraea.spark.rasterframes.extensions
 import geotrellis.util.MethodExtensions
 import spray.json.{JsObject, JsonFormat}
 import org.apache.spark.sql.types.{Metadata ⇒ SQLMetadata}

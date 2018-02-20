@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package astraea.spark.rasterframes
+package astraea.spark.rasterframes.extensions
 
 import java.time.ZonedDateTime
 
+import astraea.spark.rasterframes.{MetadataKeys, RasterFrame}
 import geotrellis.proj4.CRS
 import geotrellis.raster.resample.{Bilinear, ResampleMethod}
 import geotrellis.raster.{MultibandTile, ProjectedRaster, Tile, TileLayout}
@@ -33,6 +34,8 @@ import org.apache.spark.sql.functions._
 import org.apache.spark.sql.gt.types.TileUDT
 import org.apache.spark.sql.types.{Metadata, StructField}
 import spray.json._
+import astraea.spark.rasterframes.util._
+import astraea.spark.rasterframes.encoders.StandardEncoders._
 
 import scala.reflect.runtime.universe._
 
@@ -40,7 +43,11 @@ import scala.reflect.runtime.universe._
  * Extension methods on [[RasterFrame]] type.
  * @since 7/18/17
  */
-trait RasterFrameMethods extends MethodExtensions[RasterFrame] with RFSpatialColumnMethods with LazyLogging {
+trait RasterFrameMethods extends MethodExtensions[RasterFrame]
+  with RFSpatialColumnMethods with MetadataKeys with LazyLogging {
+  import Implicits.WithDataFrameMethods
+  import Implicits.WithRasterFrameMethods
+
   private val _stableDF = self
   import _stableDF.sqlContext.implicits._
 

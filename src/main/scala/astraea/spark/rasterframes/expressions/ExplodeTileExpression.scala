@@ -27,6 +27,7 @@ import org.apache.spark.sql.catalyst.expressions.{Expression, Generator, Generic
 import org.apache.spark.sql.rf.InternalRowTile
 import org.apache.spark.sql.types._
 import spire.syntax.cfor.cfor
+import astraea.spark.rasterframes.util._
 
 /**
  * Catalyst expression for converting a tile column into a pixel column, with each tile pixel occupying a separate row.

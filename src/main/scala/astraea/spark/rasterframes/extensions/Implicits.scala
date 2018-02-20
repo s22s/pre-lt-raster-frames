@@ -17,10 +17,12 @@
  *
  */
 
-package astraea.spark.rasterframes
+package astraea.spark.rasterframes.extensions
 
+import astraea.spark.rasterframes.RasterFrame
+import astraea.spark.rasterframes.extensions._
 import geotrellis.raster.{ProjectedRaster, Tile, TileFeature}
-import geotrellis.spark.{Metadata, SpaceTimeKey, SpatialComponent, TileLayerMetadata}
+import geotrellis.spark.{Metadata, SpaceTimeKey, SpatialComponent, SpatialKey, TileLayerMetadata}
 import geotrellis.util.MethodExtensions
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql._
@@ -50,15 +52,13 @@ trait Implicits {
 
   implicit class WithRasterFrameMethods(val self: RasterFrame) extends RasterFrameMethods
 
-  implicit class WithSpatialContextRDDMethods[K: SpatialComponent: JsonFormat: TypeTag](
-    val self: RDD[(K, Tile)] with Metadata[TileLayerMetadata[K]]
-  )(implicit spark: SparkSession)
-      extends SpatialContextRDDMethods[K]
+  implicit class WithSpatialContextRDDMethods(
+    val self: RDD[(SpatialKey, Tile)] with Metadata[TileLayerMetadata[SpatialKey]]
+  )(implicit spark: SparkSession) extends SpatialContextRDDMethods
 
   implicit class WithSpatioTemporalContextRDDMethods(
     val self: RDD[(SpaceTimeKey, Tile)] with Metadata[TileLayerMetadata[SpaceTimeKey]]
-  )(implicit spark: SparkSession)
-      extends SpatioTemporalContextRDDMethods
+  )(implicit spark: SparkSession) extends SpatioTemporalContextRDDMethods
 
   implicit class WithTFContextRDDMethods[K: SpatialComponent: JsonFormat: ClassTag: TypeTag,
                                          D: TypeTag](
@@ -82,25 +82,7 @@ trait Implicits {
 
   private[astraea] implicit class WithMetadataBuilderMethods(val self: MetadataBuilder)
       extends MetadataBuilderMethods
-
-  private[astraea] implicit class WithWiden[A, B](thing: Either[A, B]) {
-
-    /** Returns the value as a LUB of the Left & Right items. */
-    def widen[Out](implicit ev: Lub[A, B, Out]): Out =
-      thing.fold(identity, identity).asInstanceOf[Out]
-  }
-
-  private[astraea] implicit class WithCombine[T](left: Option[T]) {
-    def combine[A, R >: A](a: A)(f: (T, A) ⇒ R): R = left.map(f(_, a)).getOrElse(a)
-    def tupleWith[R](right: Option[R]): Option[(T, R)] = left.flatMap(l ⇒ right.map((l, _)))
-  }
-
-  implicit class NamedColumn(col: Column) {
-    def columnName: String = col.expr match {
-      case ua: UnresolvedAttribute ⇒ ua.name
-      case ar: AttributeReference ⇒ ar.name
-      case as: Alias ⇒ as.name
-      case o ⇒ o.prettyName
-    }
-  }
 }
+
+object Implicits extends Implicits
+

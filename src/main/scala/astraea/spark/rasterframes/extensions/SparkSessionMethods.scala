@@ -17,20 +17,19 @@
  *
  */
 
-package astraea.spark.rasterframes
+package astraea.spark.rasterframes.extensions
 
 import geotrellis.util.MethodExtensions
-import org.apache.spark.sql.{SQLContext, rf}
-
+import org.apache.spark.sql.SparkSession
 
 /**
- * Extension methods on [[SQLContext]] for initializing RasterFrames support in Catalyst.
+ * Extension methods on [[SparkSession]].
  *
  * @since 10/30/17
  */
-trait SQLContextMethods extends MethodExtensions[SQLContext] {
-  def withRasterFrames: SQLContext = {
-    initRF(self)
+trait SparkSessionMethods extends MethodExtensions[SparkSession] {
+  def withRasterFrames: SparkSession = {
+    astraea.spark.rasterframes.initRF(self.sqlContext)
     self
   }
 }

@@ -36,6 +36,7 @@ import org.apache.spark.sql.gt.types.TileUDT
 import org.apache.spark.sql.sources._
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.{Row, SQLContext}
+import astraea.spark.rasterframes.util._
 
 /**
  * Spark SQL data source over a single GeoTiff file. Works best with CoG compliant ones.

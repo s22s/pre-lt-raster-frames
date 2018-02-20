@@ -17,8 +17,9 @@
  *
  */
 
-package astraea.spark.rasterframes
+package astraea.spark.rasterframes.extensions
 
+import astraea.spark.rasterframes.{RasterFrame, StandardColumns}
 import com.vividsolutions.jts.geom.{Point, Polygon}
 import geotrellis.proj4.LatLng
 import geotrellis.spark.SpatialKey
@@ -26,16 +27,21 @@ import geotrellis.spark.tiling.MapKeyTransform
 import geotrellis.util.MethodExtensions
 import geotrellis.vector.Extent
 import org.apache.spark.sql.Row
-import org.apache.spark.sql.functions.{asc, udf}
+import org.apache.spark.sql.functions.{asc, udf ⇒ sparkUdf}
 import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
 import org.locationtech.geomesa.curve.Z2SFC
+import astraea.spark.rasterframes.util._
 
 /**
  * RasterFrame extension methods associated with adding spatially descriptive columns.
  *
  * @since 12/15/17
  */
-trait RFSpatialColumnMethods extends MethodExtensions[RasterFrame] {
+trait RFSpatialColumnMethods extends MethodExtensions[RasterFrame] with StandardColumns {
+  import Implicits.WithDataFrameMethods
+  import Implicits.WithRasterFrameMethods
+  import org.locationtech.geomesa.spark.jts._
+
   /** Returns the key-space to map-space coordinate transform. */
   def mapTransform: MapKeyTransform = self.tileLayerMetadata.widen.mapTransform
 
@@ -60,7 +66,7 @@ trait RFSpatialColumnMethods extends MethodExtensions[RasterFrame] {
    * @return updated RasterFrame
    */
   def withExtent(colName: String = EXTENT_COLUMN.columnName): RasterFrame = {
-    val key2Extent = udf(keyCol2Extent)
+    val key2Extent = sparkUdf(keyCol2Extent)
     self.withColumn(colName, key2Extent(self.spatialKeyColumn)).certify
   }
 
@@ -71,7 +77,7 @@ trait RFSpatialColumnMethods extends MethodExtensions[RasterFrame] {
    * @return updated RasterFrame
    */
   def withCenter(colName: String = CENTER_COLUMN.columnName): RasterFrame = {
-    val key2Center = udf(keyCol2Extent andThen (_.center.jtsGeom))
+    val key2Center = sparkUdf(keyCol2Extent andThen (_.center.jtsGeom))
     self.withColumn(colName, key2Center(self.spatialKeyColumn).as[Point]).certify
   }
 
@@ -82,7 +88,7 @@ trait RFSpatialColumnMethods extends MethodExtensions[RasterFrame] {
    * @return updated RasterFrame
    */
   def withCenterLatLng(colName: String = "center"): RasterFrame = {
-    val key2Center = udf(keyCol2LatLng)
+    val key2Center = sparkUdf(keyCol2LatLng)
     self.withColumn(colName, key2Center(self.spatialKeyColumn).cast(RFSpatialColumnMethods.LngLatStructType)).certify
   }
 
@@ -93,7 +99,7 @@ trait RFSpatialColumnMethods extends MethodExtensions[RasterFrame] {
    * @return RasterFrame with index column.
    */
   def withSpatialIndex(colName: String = SPATIAL_INDEX_COLUMN.columnName, applyOrdering: Boolean = true): RasterFrame = {
-    val zindex = udf(keyCol2LatLng andThen (p ⇒ Z2SFC.index(p._1, p._2).z))
+    val zindex = sparkUdf(keyCol2LatLng andThen (p ⇒ Z2SFC.index(p._1, p._2).z))
     self.withColumn(colName, zindex(self.spatialKeyColumn)) match {
       case rf if applyOrdering ⇒ rf.orderBy(asc(colName)).certify
       case rf ⇒ rf.certify

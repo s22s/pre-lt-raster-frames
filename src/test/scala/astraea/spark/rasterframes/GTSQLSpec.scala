@@ -22,6 +22,7 @@ package astraea.spark.rasterframes
 import geotrellis.raster._
 import geotrellis.raster.mapalgebra.local._
 import org.apache.spark.sql.functions._
+import astraea.spark.rasterframes.util._
 
 /**
  * Test rig for Spark UDTs and friends for GT.

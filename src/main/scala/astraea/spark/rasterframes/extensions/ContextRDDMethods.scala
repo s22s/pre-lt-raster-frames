@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-package astraea.spark.rasterframes
+package astraea.spark.rasterframes.extensions
 
+import astraea.spark.rasterframes.RasterFrame
+import astraea.spark.rasterframes.extensions.Implicits._
+import astraea.spark.rasterframes.StandardColumns._
 import geotrellis.raster.{Tile, TileFeature}
 import geotrellis.spark._
 import geotrellis.spark.io._
@@ -23,24 +26,24 @@ import geotrellis.util.MethodExtensions
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 import spray.json.JsonFormat
-
+import astraea.spark.rasterframes.util._
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
+
 
 /**
  * Extension method on `ContextRDD`-shaped [[Tile]] RDDs with appropriate context bounds to create a RasterFrame.
  * @since 7/18/17
  */
-abstract class SpatialContextRDDMethods[K: SpatialComponent: JsonFormat: TypeTag](implicit spark: SparkSession)
-    extends MethodExtensions[RDD[(K, Tile)]
-      with Metadata[TileLayerMetadata[K]]] {
+abstract class SpatialContextRDDMethods(implicit spark: SparkSession)
+    extends MethodExtensions[RDD[(SpatialKey, Tile)] with Metadata[TileLayerMetadata[SpatialKey]]] {
 
   def toRF: RasterFrame = toRF(TILE_COLUMN.columnName)
 
   def toRF(tileColumnName: String): RasterFrame = {
     import spark.implicits._
 
-    val rdd = self: RDD[(K, Tile)]
+    val rdd = self: RDD[(SpatialKey, Tile)]
     val df = rdd
       .toDF(SPATIAL_KEY_COLUMN.columnName, tileColumnName)
 

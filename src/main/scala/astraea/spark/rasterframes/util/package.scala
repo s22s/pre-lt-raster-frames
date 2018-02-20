@@ -21,10 +21,13 @@ package astraea.spark.rasterframes
 
 import geotrellis.raster.mapalgebra.local.LocalTileBinaryOp
 import geotrellis.util.LazyLogging
+import org.apache.spark.sql.catalyst.analysis.UnresolvedAttribute
+import org.apache.spark.sql.catalyst.expressions.{Alias, AttributeReference}
 import org.apache.spark.sql.catalyst.plans.logical.LogicalPlan
 import org.apache.spark.sql.catalyst.rules.Rule
 import org.apache.spark.sql.rf._
-import org.apache.spark.sql.{Column, SQLContext}
+import org.apache.spark.sql.{Column, DataFrame, SQLContext}
+import shapeless.Lub
 
 
 /**
@@ -33,6 +36,12 @@ import org.apache.spark.sql.{Column, SQLContext}
  * @since 12/18/17
  */
 package object util extends LazyLogging {
+
+  /** Internal method for slapping the RasterFrame seal of approval on a DataFrame. */
+  private[rasterframes] def certifyRasterframe(df: DataFrame): RasterFrame =
+    shapeless.tag[RasterFrameTag][DataFrame](df)
+
+
   /** Tags output column with a nicer name. */
   private[rasterframes]
   def withAlias(name: String, inputs: Column*)(output: Column) = {
@@ -47,6 +56,27 @@ package object util extends LazyLogging {
 
 
   // $COVERAGE-OFF$
+  implicit class WithWiden[A, B](thing: Either[A, B]) {
+
+    /** Returns the value as a LUB of the Left & Right items. */
+    def widen[Out](implicit ev: Lub[A, B, Out]): Out =
+      thing.fold(identity, identity).asInstanceOf[Out]
+  }
+
+  implicit class WithCombine[T](left: Option[T]) {
+    def combine[A, R >: A](a: A)(f: (T, A) ⇒ R): R = left.map(f(_, a)).getOrElse(a)
+    def tupleWith[R](right: Option[R]): Option[(T, R)] = left.flatMap(l ⇒ right.map((l, _)))
+  }
+
+  implicit class NamedColumn(col: Column) {
+    def columnName: String = col.expr match {
+      case ua: UnresolvedAttribute ⇒ ua.name
+      case ar: AttributeReference ⇒ ar.name
+      case as: Alias ⇒ as.name
+      case o ⇒ o.prettyName
+    }
+  }
+
   private[rasterframes]
   implicit class Pipeable[A](val a: A) extends AnyVal {
     def |>[B](f: A ⇒ B): B = f(a)

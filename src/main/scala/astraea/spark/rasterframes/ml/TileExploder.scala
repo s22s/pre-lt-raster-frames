@@ -27,6 +27,7 @@ import org.apache.spark.sql.Dataset
 import org.apache.spark.sql.functions.col
 import org.apache.spark.sql.gt.types.TileUDT
 import org.apache.spark.sql.types._
+import astraea.spark.rasterframes.util._
 
 /**
  * SparkML Transformer for expanding tiles into single cell rows with

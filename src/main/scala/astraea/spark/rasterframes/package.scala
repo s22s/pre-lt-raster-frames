@@ -17,7 +17,6 @@
 package astraea.spark
 
 import astraea.spark.rasterframes.encoders.StandardEncoders
-import astraea.spark.rasterframes.jts.{Implicits ⇒ jtsImplicits}
 import geotrellis.raster.{Tile, TileFeature}
 import geotrellis.spark.{Bounds, ContextRDD, Metadata, TileLayerMetadata}
 import geotrellis.util.GetComponent
@@ -26,6 +25,7 @@ import org.apache.spark.sql._
 import org.locationtech.geomesa.spark.jts.DataFrameFunctions
 import org.locationtech.geomesa.spark.jts.encoders.SpatialEncoders
 import shapeless.tag.@@
+
 /**
  *  Module providing support for RasterFrames.
  * `import astraea.spark.rasterframes._`., and then call `rfInit(SQLContext)`.
@@ -34,8 +34,8 @@ import shapeless.tag.@@
  */
 package object rasterframes extends StandardColumns
   with RasterFunctions
-  with Implicits
-  with jtsImplicits
+  with rasterframes.extensions.Implicits
+  with rasterframes.jts.Implicits
   with StandardEncoders
   with SpatialEncoders
   with DataFrameFunctions.Library {
@@ -54,12 +54,6 @@ package object rasterframes extends StandardColumns
     rasterframes.rules.register(sqlContext)
   }
 
-  /** Key under which ContextRDD metadata is stored. */
-  private[rasterframes] val CONTEXT_METADATA_KEY = "_context"
-
-  /** Key under which RasterFrame role a column plays. */
-  private[rasterframes] val SPATIAL_ROLE_KEY = "_stRole"
-
   /**
    * A RasterFrame is just a DataFrame with certain invariants, enforced via the methods that create and transform them:
    *   1. One column is a [[geotrellis.spark.SpatialKey]] or [[geotrellis.spark.SpaceTimeKey]]
@@ -70,10 +64,6 @@ package object rasterframes extends StandardColumns
 
   /** Tagged type for allowing compiler to help keep track of what has RasterFrame assurances applied to it. */
   trait RasterFrameTag
-
-  /** Internal method for slapping the RasterFreame seal of approval on a DataFrame. */
-  private[rasterframes] def certifyRasterframe(df: DataFrame): RasterFrame =
-    shapeless.tag[RasterFrameTag][DataFrame](df)
 
   /**
    * Type lambda alias for components that have bounds with parameterized key.

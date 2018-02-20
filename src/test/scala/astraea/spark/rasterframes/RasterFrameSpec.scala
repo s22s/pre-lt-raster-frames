@@ -13,7 +13,7 @@ import geotrellis.spark.tiling._
 import geotrellis.vector.{Extent, ProjectedExtent}
 import org.apache.spark.sql.{SQLContext, SparkSession}
 import org.apache.spark.sql.functions._
-
+import astraea.spark.rasterframes.util._
 import scala.util.control.NonFatal
 
 /**
@@ -21,7 +21,8 @@ import scala.util.control.NonFatal
  *
  * @since 7/10/17
  */
-class RasterFrameSpec extends TestEnvironment with TestData with IntelliJPresentationCompilerHack {
+class RasterFrameSpec extends TestEnvironment with MetadataKeys
+  with TestData with IntelliJPresentationCompilerHack {
   import TestData.randomTile
   import spark.implicits._
 
