@@ -38,15 +38,15 @@ object ProjectPlugin extends AutoPlugin {
     resolvers ++= Seq(
       "locationtech-releases" at "https://repo.locationtech.org/content/groups/releases",
       "boundless-releases" at "https://repo.boundlessgeo.com/main/",
-      Resolver.bintrayRepo("s22s", "maven"),
-      "osgeo-releases" at "http://download.osgeo.org/webdav/geotools/"
+      "osgeo-releases" at "http://download.osgeo.org/webdav/geotools/",
+      Resolver.bintrayRepo("s22s", "maven")
     ),
     sparkVersion in ThisBuild := "2.2.1" ,
     geotrellisVersion in ThisBuild := "1.2.0",
     libraryDependencies ++= Seq(
       "com.chuusai" %% "shapeless" % "2.3.2",
       "org.locationtech.geomesa" %% "geomesa-z3" % "1.3.5",
-      "org.locationtech.geomesa" %% "geomesa-spark-jts" % "2.0.0-astraea.1",
+      "org.locationtech.geomesa" %% "geomesa-spark-jts" % "2.0.0-astraea.1" exclude("jgridshift", "jgridshift"),
       spark("core").value % Provided,
       spark("mllib").value % Provided,
       spark("sql").value % Provided,

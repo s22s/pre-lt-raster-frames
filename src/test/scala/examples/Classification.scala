@@ -21,8 +21,8 @@ package examples
 
 import astraea.spark.rasterframes._
 import astraea.spark.rasterframes.ml.{NoDataFilter, TileExploder}
-import geotrellis.raster.{ByteConstantNoDataCellType, DoubleConstantNoDataCellType, IntConstantNoDataCellType, UByteConstantNoDataCellType}
-import geotrellis.raster.io.geotiff.SinglebandGeoTiff
+import geotrellis.raster._
+import geotrellis.raster.io.geotiff.reader.GeoTiffReader
 import geotrellis.raster.render.{ColorRamps, IndexedColorMap}
 import org.apache.spark.ml.Pipeline
 import org.apache.spark.ml.classification.DecisionTreeClassifier
@@ -30,13 +30,11 @@ import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
 import org.apache.spark.ml.feature.VectorAssembler
 import org.apache.spark.ml.tuning.{CrossValidator, ParamGridBuilder}
 import org.apache.spark.sql._
-import org.apache.spark.sql.types.IntegerType
 
 object Classification extends App {
 
-  // Utility for reading imagery from our test data set
-  def readTiff(name: String): SinglebandGeoTiff =
-    SinglebandGeoTiff(getClass.getResource(s"/$name").getPath)
+//  // Utility for reading imagery from our test data set
+  def readTiff(name: String) =  GeoTiffReader.readSingleband(getClass.getResource(s"/$name").getPath)
 
   implicit val spark = SparkSession.builder()
     .master("local[*]")

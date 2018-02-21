@@ -22,7 +22,7 @@ package examples
 import astraea.spark.rasterframes._
 import astraea.spark.rasterframes.ml.TileExploder
 import geotrellis.raster.ByteConstantNoDataCellType
-import geotrellis.raster.io.geotiff.SinglebandGeoTiff
+import geotrellis.raster.io.geotiff.reader.GeoTiffReader
 import geotrellis.raster.render.{ColorRamps, IndexedColorMap}
 import org.apache.spark.ml.Pipeline
 import org.apache.spark.ml.clustering.{KMeans, KMeansModel}
@@ -32,8 +32,7 @@ import org.apache.spark.sql._
 object Clustering extends App {
 
   // Utility for reading imagery from our test data set
-  def readTiff(name: String): SinglebandGeoTiff =
-    SinglebandGeoTiff(getClass.getResource(s"/$name").getPath)
+  def readTiff(name: String) = GeoTiffReader.readSingleband(getClass.getResource(s"/$name").getPath)
 
   implicit val spark = SparkSession.builder().master("local[*]").appName(getClass.getName).getOrCreate().withRasterFrames
 

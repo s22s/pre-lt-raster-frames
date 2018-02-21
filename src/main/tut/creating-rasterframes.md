@@ -19,6 +19,7 @@ Next, initialize the `SparkSession`, and call the `withRasterFrames` method on i
 ```tut:silent
 implicit val spark = SparkSession.builder().
   master("local").appName("RasterFrames").
+  config("spark.ui.enabled", "false").
   getOrCreate().
   withRasterFrames
 ```

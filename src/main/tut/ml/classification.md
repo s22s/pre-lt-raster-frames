@@ -12,8 +12,8 @@ First some setup:
 import astraea.spark.rasterframes._
 import astraea.spark.rasterframes.ml.{NoDataFilter, TileExploder}
 import geotrellis.raster._
-import geotrellis.raster.render._
-import geotrellis.raster.io.geotiff.SinglebandGeoTiff
+import geotrellis.raster.io.geotiff.reader.GeoTiffReader
+import geotrellis.raster.render.{ColorRamps, IndexedColorMap}
 import org.apache.spark.ml.Pipeline
 import org.apache.spark.ml.classification.DecisionTreeClassifier
 import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
@@ -21,15 +21,15 @@ import org.apache.spark.ml.feature.VectorAssembler
 import org.apache.spark.ml.tuning.{CrossValidator, ParamGridBuilder}
 import org.apache.spark.sql._
 
-implicit val spark = SparkSession.builder().
-  master("local[*]").appName(getClass.getName).getOrCreate()
+
+implicit val spark = SparkSession.builder().config("spark.ui.enabled", "false").
+  master("local[*]").appName(getClass.getName).getOrCreate().withRasterFrames
 spark.sparkContext.setLogLevel("ERROR")
 
-rfInit(spark.sqlContext)
 import spark.implicits._
 
 // Utility for reading imagery from our test data set
-def readTiff(name: String): SinglebandGeoTiff = SinglebandGeoTiff(s"src/test/resources/$name")
+def readTiff(name: String) = GeoTiffReader.readSingleband(s"src/test/resources/$name")
 ```
 
 ## Loading Data
@@ -215,7 +215,7 @@ raster.tile.renderPng(clusterColors).write("target/scala-2.11/tut/ml/classified.
 
 
 ```tut:invisible
-val raster = SinglebandGeoTiff("src/test/resources/L8-Labels-Elkton-VA.tiff").raster
+val raster = GeoTiffReader.readSingleband("src/test/resources/L8-Labels-Elkton-VA.tiff").raster
 
 val k = raster.findMinMax._2
 
