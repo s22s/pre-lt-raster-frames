@@ -45,14 +45,14 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <span class="name">ProjectedExtentEncoder</span><span class="result"> extends <a href="DelegatingSubfieldEncoder.html" class="extype" name="astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder">DelegatingSubfieldEncoder</a></span>
+        <span class="name">ProjectedExtentEncoder</span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Custom encoder for <span class="extype" name="ProjectedExtent">ProjectedExtent</span>. Necessary because CRS isn't a case class.
 </p></div><dl class="attributes block"> <dt>Since</dt><dd><p>8/2/17</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="DelegatingSubfieldEncoder.html" class="extype" name="astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder">DelegatingSubfieldEncoder</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -70,7 +70,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="astraea.spark.rasterframes.encoders.ProjectedExtentEncoder"><span>ProjectedExtentEncoder</span></li><li class="in" name="astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder"><span>DelegatingSubfieldEncoder</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="astraea.spark.rasterframes.encoders.ProjectedExtentEncoder"><span>ProjectedExtentEncoder</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -203,23 +203,6 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder#create" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="create[T](fieldEncoders:Seq[(String,org.apache.spark.sql.catalyst.encoders.ExpressionEncoder[_])])(implicitevidence$1:reflect.runtime.universe.TypeTag[T]):org.apache.spark.sql.catalyst.encoders.ExpressionEncoder[T]"></a>
-      <a id="create[T](Seq[(String,ExpressionEncoder[_])])(scala.reflect.api.JavaUniverse.TypeTag[T]):ExpressionEncoder[T]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">create</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="fieldEncoders">fieldEncoders: <span class="extype" name="scala.Seq">Seq</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="org.apache.spark.sql.catalyst.encoders.ExpressionEncoder">ExpressionEncoder</span>[_])]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.api.TypeTags.TypeTag">scala.reflect.api.JavaUniverse.TypeTag</span>[<span class="extype" name="astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder.create.T">T</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.sql.catalyst.encoders.ExpressionEncoder">ExpressionEncoder</span>[<span class="extype" name="astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder.create.T">T</span>]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.ProjectedExtentEncoder$@create[T](fieldEncoders:Seq[(String,org.apache.spark.sql.catalyst.encoders.ExpressionEncoder[_])])(implicitevidence$1:reflect.runtime.universe.TypeTag[T]):org.apache.spark.sql.catalyst.encoders.ExpressionEncoder[T]" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="DelegatingSubfieldEncoder.html" class="extype" name="astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder">DelegatingSubfieldEncoder</a></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -491,9 +474,7 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder">
-              <h3>Inherited from <a href="DelegatingSubfieldEncoder.html" class="extype" name="astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder">DelegatingSubfieldEncoder</a></h3>
-            </div><div class="parent" name="scala.AnyRef">
+        <div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">
               <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>

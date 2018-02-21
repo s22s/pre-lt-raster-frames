@@ -45,13 +45,14 @@ gtag('config', 'UA-106630615-1');
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.5.12
+0.6.0-RC4
 </div>
 </div>
 <div class="nav-toc">
 <ul>
   <li><a href="../getting-started.html" class="page">Getting Started</a></li>
   <li><a href="../creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
+  <li><a href="../spatial-queries.html" class="page">Spatial Queries</a></li>
   <li><a href="../apps/index.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/geotrellis-ops.html" class="active page">GeoTrellis Operations</a></li>
@@ -98,13 +99,14 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.5.12
+0.6.0-RC4
 </div>
 </div>
 <div class="nav-toc">
 <ul>
   <li><a href="../getting-started.html" class="page">Getting Started</a></li>
   <li><a href="../creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
+  <li><a href="../spatial-queries.html" class="page">Spatial Queries</a></li>
   <li><a href="../apps/index.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/geotrellis-ops.html" class="active page">GeoTrellis Operations</a></li>
@@ -149,7 +151,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 import geotrellis.raster.equalization._
 
 scala&gt; val equalizer = udf((t: Tile) =&gt; t.equalize())
-equalizer: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(&lt;function1&gt;,org.apache.spark.sql.gt.types.TileUDT@752a5f25,Some(List(org.apache.spark.sql.gt.types.TileUDT@752a5f25)))
+equalizer: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(&lt;function1&gt;,org.apache.spark.sql.gt.types.TileUDT@5f9e4832,Some(List(org.apache.spark.sql.gt.types.TileUDT@5f9e4832)))
 
 scala&gt; val equalized = rf.select(equalizer($&quot;tile&quot;) as &quot;equalized&quot;)
 equalized: org.apache.spark.sql.DataFrame = [equalized: rf_tile]
@@ -169,10 +171,10 @@ only showing top 5 rows
 </code></pre>
 <p>Here&rsquo;s an example downsampling a tile and rendering each tile as a matrix of numerical values.</p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; val downsample = udf((t: Tile) =&gt; t.resample(4, 4))
-downsample: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(&lt;function1&gt;,org.apache.spark.sql.gt.types.TileUDT@752a5f25,Some(List(org.apache.spark.sql.gt.types.TileUDT@752a5f25)))
+downsample: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(&lt;function1&gt;,org.apache.spark.sql.gt.types.TileUDT@5f9e4832,Some(List(org.apache.spark.sql.gt.types.TileUDT@5f9e4832)))
 
 scala&gt; val render = udf((t: Tile) =&gt; &quot;\n&quot; + t.asciiDraw() + &quot;\n&quot;)
-render: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(&lt;function1&gt;,StringType,Some(List(org.apache.spark.sql.gt.types.TileUDT@752a5f25)))
+render: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(&lt;function1&gt;,StringType,Some(List(org.apache.spark.sql.gt.types.TileUDT@5f9e4832)))
 
 scala&gt; val downsampled = rf.select(render(downsample($&quot;tile&quot;)) as &quot;minime&quot;)
 downsampled: org.apache.spark.sql.DataFrame = [minime: string]
@@ -264,7 +266,7 @@ only showing top 5 rows
 <div class="row site-footer-content">
 <div class="small-12 text-center large-9 column">
 <div class="copyright">
-<span class="text">&copy; 2017
+<span class="text">&copy; 2018
 <a href="http://www.astraea.earth/">Astraea, Inc.</a></span>
 </div>
 </div>

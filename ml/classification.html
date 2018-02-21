@@ -45,13 +45,14 @@ gtag('config', 'UA-106630615-1');
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.5.12
+0.6.0-RC4
 </div>
 </div>
 <div class="nav-toc">
 <ul>
   <li><a href="../getting-started.html" class="page">Getting Started</a></li>
   <li><a href="../creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
+  <li><a href="../spatial-queries.html" class="page">Spatial Queries</a></li>
   <li><a href="../apps/index.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
@@ -98,13 +99,14 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.5.12
+0.6.0-RC4
 </div>
 </div>
 <div class="nav-toc">
 <ul>
   <li><a href="../getting-started.html" class="page">Getting Started</a></li>
   <li><a href="../creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
+  <li><a href="../spatial-queries.html" class="page">Spatial Queries</a></li>
   <li><a href="../apps/index.html" class="page">Applications</a>
   <ul>
     <li><a href="../apps/geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
@@ -149,8 +151,8 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <pre class="prettyprint"><code class="language-scala">import astraea.spark.rasterframes._
 import astraea.spark.rasterframes.ml.{NoDataFilter, TileExploder}
 import geotrellis.raster._
-import geotrellis.raster.render._
-import geotrellis.raster.io.geotiff.SinglebandGeoTiff
+import geotrellis.raster.io.geotiff.reader.GeoTiffReader
+import geotrellis.raster.render.{ColorRamps, IndexedColorMap}
 import org.apache.spark.ml.Pipeline
 import org.apache.spark.ml.classification.DecisionTreeClassifier
 import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
@@ -158,15 +160,15 @@ import org.apache.spark.ml.feature.VectorAssembler
 import org.apache.spark.ml.tuning.{CrossValidator, ParamGridBuilder}
 import org.apache.spark.sql._
 
-implicit val spark = SparkSession.builder().
-  master(&quot;local[*]&quot;).appName(getClass.getName).getOrCreate()
+
+implicit val spark = SparkSession.builder().config(&quot;spark.ui.enabled&quot;, &quot;false&quot;).
+  master(&quot;local[*]&quot;).appName(getClass.getName).getOrCreate().withRasterFrames
 spark.sparkContext.setLogLevel(&quot;ERROR&quot;)
 
-rfInit(spark.sqlContext)
 import spark.implicits._
 
 // Utility for reading imagery from our test data set
-def readTiff(name: String): SinglebandGeoTiff = SinglebandGeoTiff(s&quot;src/test/resources/$name&quot;)
+def readTiff(name: String) = GeoTiffReader.readSingleband(s&quot;src/test/resources/$name&quot;)
 </code></pre>
 <h2><a href="#loading-data" name="loading-data" class="anchor"><span class="anchor-link"></span></a>Loading Data</h2>
 <p>The first step is to load multiple bands of imagery and construct a single RasterFrame from them. To do this we:</p>
@@ -192,8 +194,8 @@ val joinedRF = bandNumbers.
 <pre class="prettyprint"><code class="language-scala">scala&gt; joinedRF.printSchema()
 root
  |-- spatial_key: struct (nullable = true)
- |    |-- col: integer (nullable = true)
- |    |-- row: integer (nullable = true)
+ |    |-- col: integer (nullable = false)
+ |    |-- row: integer (nullable = false)
  |-- band_2: rf_tile (nullable = true)
  |-- band_3: rf_tile (nullable = true)
  |-- band_4: rf_tile (nullable = true)
@@ -261,7 +263,7 @@ val trainer = new CrossValidator().
 </code></pre>
 <p>Push the &ldquo;go&rdquo; button:</p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; val model = trainer.fit(abt)
-model: org.apache.spark.ml.tuning.CrossValidatorModel = cv_5a9a41b4bb43
+model: org.apache.spark.ml.tuning.CrossValidatorModel = cv_26d6ee57ee77
 </code></pre>
 <h2><a href="#model-evaluation" name="model-evaluation" class="anchor"><span class="anchor-link"></span></a>Model Evaluation</h2>
 <p>To view the model&rsquo;s performance we format the <code>paramGrid</code> settings used for each model and render the parameter/performance association.</p>
@@ -390,7 +392,7 @@ raster.tile.renderPng(clusterColors).write(&quot;target/scala-2.11/tut/ml/classi
 <div class="row site-footer-content">
 <div class="small-12 text-center large-9 column">
 <div class="copyright">
-<span class="text">&copy; 2017
+<span class="text">&copy; 2018
 <a href="http://www.astraea.earth/">Astraea, Inc.</a></span>
 </div>
 </div>

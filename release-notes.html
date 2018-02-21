@@ -45,13 +45,14 @@ gtag('config', 'UA-106630615-1');
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.5.12
+0.6.0-RC4
 </div>
 </div>
 <div class="nav-toc">
 <ul>
   <li><a href="getting-started.html" class="page">Getting Started</a></li>
   <li><a href="creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
+  <li><a href="spatial-queries.html" class="page">Spatial Queries</a></li>
   <li><a href="apps/index.html" class="page">Applications</a>
   <ul>
     <li><a href="apps/geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
@@ -98,13 +99,14 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.5.12
+0.6.0-RC4
 </div>
 </div>
 <div class="nav-toc">
 <ul>
   <li><a href="getting-started.html" class="page">Getting Started</a></li>
   <li><a href="creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
+  <li><a href="spatial-queries.html" class="page">Spatial Queries</a></li>
   <li><a href="apps/index.html" class="page">Applications</a>
   <ul>
     <li><a href="apps/geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
@@ -142,7 +144,18 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <div class="page-content row">
 <div class="small-12 large-9 column" id="docs">
 <h1><a href="#release-notes" name="release-notes" class="anchor"><span class="anchor-link"></span></a>Release Notes</h1>
-<h2><a href="#0-5-12" name="0-5-12" class="anchor"><span class="anchor-link"></span></a>0.5.12</h2>
+<h2><a href="#0-6-0" name="0-6-0" class="anchor"><span class="anchor-link"></span></a>0.6.0</h2>
+<ul>
+  <li>Upgraded to Spark 2.2.0 (now required)</li>
+  <li>Introduced separate <code>rasterframes-datasource</code> library for hosting sources from which to read RasterFrames.</li>
+  <li>Implemented basic temporal and spatial filter predicate push-down feature for the GeoTrellis layer datasource.</li>
+  <li>Added a GeoTrellis &ldquo;Catalog&rdquo; DataSource for inspecting available layers and associated metadata at a URI.</li>
+  <li>Addd a GeoTiff DataSource for directly loading a (preferably Cloud Optimized) GeoTiff as a RasterFrame, each row containing tiles as they are internally organized.</li>
+  <li>Fleshed out support for <code>MultibandTile</code> and <code>TileFeature</code> support in datasource.</li>
+  <li>Added <code>withTemporalComponent</code> convenince method for creating appending a temporal key column with constant value.</li>
+</ul>
+<h2><a href="#0-5-x" name="0-5-x" class="anchor"><span class="anchor-link"></span></a>0.5.x</h2>
+<h3><a href="#0-5-12" name="0-5-12" class="anchor"><span class="anchor-link"></span></a>0.5.12</h3>
 <ul>
   <li>Added <code>withSpatialIndex</code> to introduce a column assigning a z-curve index value based on the tile&rsquo;s centroid in EPSG:4326.</li>
   <li>Added column-appending convenience methods: <code>withExtent</code>, <code>withCenter</code>, <code>withCenterLatLng</code></li>
@@ -150,24 +163,24 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   <li>Added Spark 2.2.0 forward-compatibility</li>
   <li>Upgraded to GeoTrellis 1.2.0-RC2</li>
 </ul>
-<h2><a href="#0-5-11" name="0-5-11" class="anchor"><span class="anchor-link"></span></a>0.5.11</h2>
+<h3><a href="#0-5-11" name="0-5-11" class="anchor"><span class="anchor-link"></span></a>0.5.11</h3>
 <ul>
   <li>Significant performance improvement in <code>explodeTiles</code> (1-2 orders of magnitude). See <a href="https://github.com/s22s/raster-frames/issues/38">#38</a></li>
   <li>Fixed bugs in <code>NoData</code> handling when converting to <code>Double</code> tiles.</li>
 </ul>
-<h2><a href="#0-5-10" name="0-5-10" class="anchor"><span class="anchor-link"></span></a>0.5.10</h2>
+<h3><a href="#0-5-10" name="0-5-10" class="anchor"><span class="anchor-link"></span></a>0.5.10</h3>
 <ul>
   <li>Upgraded to shapeless 2.3.2</li>
   <li>Fixed <a href="https://github.com/s22s/raster-frames/issues/36">#36</a>, <a href="https://github.com/s22s/raster-frames/issues/37">#37</a></li>
 </ul>
-<h2><a href="#0-5-9" name="0-5-9" class="anchor"><span class="anchor-link"></span></a>0.5.9</h2>
+<h3><a href="#0-5-9" name="0-5-9" class="anchor"><span class="anchor-link"></span></a>0.5.9</h3>
 <ul>
   <li>Ported to sbt 1.0.3</li>
   <li>Added sbt-generated <code>astraea.spark.rasterframes.RFBuildInfo</code></li>
   <li>Fixed bug in computing <code>aggMean</code> when one or more tiles are <code>null</code></li>
   <li>Deprecated <code>rfIinit</code> in favor of <code>SparkSession.withRasterFrames</code> or <code>SQLContext.withRasterFrames</code> extension methods</li>
 </ul>
-<h2><a href="#0-5-8" name="0-5-8" class="anchor"><span class="anchor-link"></span></a>0.5.8</h2>
+<h3><a href="#0-5-8" name="0-5-8" class="anchor"><span class="anchor-link"></span></a>0.5.8</h3>
 <ul>
   <li>Upgraded to GeoTrellis 1.2.0-RC1</li>
   <li>Added <a href="https://github.com/marconilanna/REPLesent"><code>REPLsent</code>-based</a> tour of RasterFrames</li>
@@ -175,7 +188,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   <li>Updated <em>Getting Started</em> to reference new Giter8 repo</li>
   <li>Changed SQL function name <code>rf_stats</code> and <code>rf_histogram</code> to <code>rf_aggStats</code> and <code>rf_aggHistogram</code>  for consistency with DataFrames API</li>
 </ul>
-<h2><a href="#0-5-7" name="0-5-7" class="anchor"><span class="anchor-link"></span></a>0.5.7</h2>
+<h3><a href="#0-5-7" name="0-5-7" class="anchor"><span class="anchor-link"></span></a>0.5.7</h3>
 <ul>
   <li>Created faster implementation of aggregate statistics.</li>
   <li>Fixed bug in deserialization of <code>TileUDT</code>s originating from <code>ConstantTile</code>s</li>
@@ -184,11 +197,11 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   <li>Various documentation tweaks and updates</li>
   <li>Added Giter8 template</li>
 </ul>
-<h2><a href="#0-5-6" name="0-5-6" class="anchor"><span class="anchor-link"></span></a>0.5.6</h2>
+<h3><a href="#0-5-6" name="0-5-6" class="anchor"><span class="anchor-link"></span></a>0.5.6</h3>
 <ul>
   <li><code>TileUDF</code>s are encoded using directly into Catalyst&ndash;without Kryo&ndash;resulting in an insane  decrease in serialization time for small tiles (<code>int8</code>, &lt;= 128²), and pretty awesome speedup for  all other cell types other than <code>float32</code> (marginal slowing). While not measured, memory  footprint is expected to have gone down.</li>
 </ul>
-<h2><a href="#0-5-5" name="0-5-5" class="anchor"><span class="anchor-link"></span></a>0.5.5</h2>
+<h3><a href="#0-5-5" name="0-5-5" class="anchor"><span class="anchor-link"></span></a>0.5.5</h3>
 <ul>
   <li><code>aggStats</code> and <code>tileMean</code> functions rewritten to compute simple statistics directly rather than using <code>StreamingHistogram</code></li>
   <li><code>tileHistogramDouble</code> and <code>tileStatsDouble</code> were replaced by <code>tileHistogram</code> and <code>tileStats</code></li>
@@ -207,14 +220,8 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <ul>
   <li><a href="release-notes.html#release-notes" class="header">Release Notes</a>
   <ul>
-    <li><a href="release-notes.html#0-5-12" class="header">0.5.12</a></li>
-    <li><a href="release-notes.html#0-5-11" class="header">0.5.11</a></li>
-    <li><a href="release-notes.html#0-5-10" class="header">0.5.10</a></li>
-    <li><a href="release-notes.html#0-5-9" class="header">0.5.9</a></li>
-    <li><a href="release-notes.html#0-5-8" class="header">0.5.8</a></li>
-    <li><a href="release-notes.html#0-5-7" class="header">0.5.7</a></li>
-    <li><a href="release-notes.html#0-5-6" class="header">0.5.6</a></li>
-    <li><a href="release-notes.html#0-5-5" class="header">0.5.5</a></li>
+    <li><a href="release-notes.html#0-6-0" class="header">0.6.0</a></li>
+    <li><a href="release-notes.html#0-5-x" class="header">0.5.x</a></li>
   </ul></li>
 </ul>
 </div>
@@ -254,7 +261,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <div class="row site-footer-content">
 <div class="small-12 text-center large-9 column">
 <div class="copyright">
-<span class="text">&copy; 2017
+<span class="text">&copy; 2018
 <a href="http://www.astraea.earth/">Astraea, Inc.</a></span>
 </div>
 </div>

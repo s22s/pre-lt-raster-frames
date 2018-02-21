@@ -89,37 +89,19 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="DelegatingSubfieldEncoderextendsAnyRef"></a>
-      <a id="DelegatingSubfieldEncoder:DelegatingSubfieldEncoder"></a>
+              <ol><li name="astraea.spark.rasterframes.encoders.StandardEncoders" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="StandardEncodersextendsAnyRef"></a>
+      <a id="StandardEncoders:StandardEncoders"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="DelegatingSubfieldEncoder.html"><span class="name">DelegatingSubfieldEncoder</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="StandardEncoders.html"><span class="name">StandardEncoders</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.package@DelegatingSubfieldEncoderextendsAnyRef" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Encoder builder for types composed of other fields with {{ExpressionEncoder}}s.</p><div class="fullcomment"><div class="comment cmt"><p>Encoder builder for types composed of other fields with {{ExpressionEncoder}}s.
-</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>8/2/17</p></dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.encoders.EncoderImplicits" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="EncoderImplicitsextendsAnyRef"></a>
-      <a id="EncoderImplicits:EncoderImplicits"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">trait</span>
-      </span>
-      <span class="symbol">
-        <a href="EncoderImplicits.html"><span class="name">EncoderImplicits</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.package@EncoderImplicitsextendsAnyRef" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.package@StandardEncodersextendsAnyRef" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -167,23 +149,24 @@
     </span>
       <p class="shortcomment cmt">Custom encoder for GT <span class="extype" name="CellType">CellType</span>.</p><div class="fullcomment"><div class="comment cmt"><p>Custom encoder for GT <span class="extype" name="CellType">CellType</span>. It's necessary since <span class="extype" name="CellType">CellType</span> is a type alias of
 a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>7/21/17</p></dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.encoders#InvokeSafely" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="InvokeSafely(targetObject:org.apache.spark.sql.catalyst.expressions.Expression,functionName:String,dataType:org.apache.spark.sql.types.DataType):org.apache.spark.sql.catalyst.expressions.objects.InvokeLike"></a>
-      <a id="InvokeSafely(Expression,String,DataType):InvokeLike"></a>
+    </li><li name="astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="DelegatingSubfieldEncoder"></a>
+      <a id="DelegatingSubfieldEncoder:DelegatingSubfieldEncoder"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">def</span>
+        <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <span class="name">InvokeSafely</span><span class="params">(<span name="targetObject">targetObject: <span class="extype" name="org.apache.spark.sql.catalyst.expressions.Expression">Expression</span></span>, <span name="functionName">functionName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="dataType">dataType: <span class="extype" name="org.apache.spark.sql.types.DataType">DataType</span></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.sql.catalyst.expressions.objects.InvokeLike">InvokeLike</span></span>
+        <a href="DelegatingSubfieldEncoder$.html"><span class="name">DelegatingSubfieldEncoder</span></a>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.package@InvokeSafely(targetObject:org.apache.spark.sql.catalyst.expressions.Expression,functionName:String,dataType:org.apache.spark.sql.types.DataType):org.apache.spark.sql.catalyst.expressions.objects.InvokeLike" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.package@DelegatingSubfieldEncoder" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Spark 2.1.0 -&gt; 2.2.0 compatibility shim</p>
+      <p class="shortcomment cmt">Encoder builder for types composed of other fields with {{ExpressionEncoder}}s.</p><div class="fullcomment"><div class="comment cmt"><p>Encoder builder for types composed of other fields with {{ExpressionEncoder}}s.
+</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>8/2/17</p></dd></dl></div>
     </li><li name="astraea.spark.rasterframes.encoders.ProjectedExtentEncoder" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ProjectedExtentEncoder"></a>
       <a id="ProjectedExtentEncoder:ProjectedExtentEncoder"></a>
@@ -193,7 +176,7 @@ a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="ProjectedExtentEncoder$.html"><span class="name">ProjectedExtentEncoder</span></a><span class="result"> extends <a href="DelegatingSubfieldEncoder.html" class="extype" name="astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder">DelegatingSubfieldEncoder</a></span>
+        <a href="ProjectedExtentEncoder$.html"><span class="name">ProjectedExtentEncoder</span></a>
       </span>
       </h4><span class="permalink">
       <a href="../../../../index.html#astraea.spark.rasterframes.encoders.package@ProjectedExtentEncoder" title="Permalink" target="_top">
@@ -202,6 +185,41 @@ a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p
     </span>
       <p class="shortcomment cmt">Custom encoder for <span class="extype" name="ProjectedExtent">ProjectedExtent</span>.</p><div class="fullcomment"><div class="comment cmt"><p>Custom encoder for <span class="extype" name="ProjectedExtent">ProjectedExtent</span>. Necessary because CRS isn't a case class.
 </p></div><dl class="attributes block"> <dt>Since</dt><dd><p>8/2/17</p></dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.encoders.StandardEncoders" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="StandardEncoders"></a>
+      <a id="StandardEncoders:StandardEncoders"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="StandardEncoders$.html"><span class="name">StandardEncoders</span></a><span class="result"> extends <a href="StandardEncoders.html" class="extype" name="astraea.spark.rasterframes.encoders.StandardEncoders">StandardEncoders</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.package@StandardEncoders" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="astraea.spark.rasterframes.encoders.StringBackedEncoder" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="StringBackedEncoder"></a>
+      <a id="StringBackedEncoder:StringBackedEncoder"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="StringBackedEncoder$.html"><span class="name">StringBackedEncoder</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.package@StringBackedEncoder" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Generalized operations for creating an encoder when the type can be represented as a Catalyst string.</p><div class="fullcomment"><div class="comment cmt"><p>Generalized operations for creating an encoder when the type can be represented as a Catalyst string.
+</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>1/16/18</p></dd></dl></div>
     </li><li name="astraea.spark.rasterframes.encoders.TemporalProjectedExtentEncoder" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="TemporalProjectedExtentEncoder"></a>
       <a id="TemporalProjectedExtentEncoder:TemporalProjectedExtentEncoder"></a>
@@ -211,7 +229,7 @@ a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="TemporalProjectedExtentEncoder$.html"><span class="name">TemporalProjectedExtentEncoder</span></a><span class="result"> extends <a href="DelegatingSubfieldEncoder.html" class="extype" name="astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder">DelegatingSubfieldEncoder</a></span>
+        <a href="TemporalProjectedExtentEncoder$.html"><span class="name">TemporalProjectedExtentEncoder</span></a>
       </span>
       </h4><span class="permalink">
       <a href="../../../../index.html#astraea.spark.rasterframes.encoders.package@TemporalProjectedExtentEncoder" title="Permalink" target="_top">
@@ -229,7 +247,7 @@ a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="TileLayerMetadataEncoder$.html"><span class="name">TileLayerMetadataEncoder</span></a><span class="result"> extends <a href="DelegatingSubfieldEncoder.html" class="extype" name="astraea.spark.rasterframes.encoders.DelegatingSubfieldEncoder">DelegatingSubfieldEncoder</a></span>
+        <a href="TileLayerMetadataEncoder$.html"><span class="name">TileLayerMetadataEncoder</span></a>
       </span>
       </h4><span class="permalink">
       <a href="../../../../index.html#astraea.spark.rasterframes.encoders.package@TileLayerMetadataEncoder" title="Permalink" target="_top">
@@ -240,6 +258,24 @@ a type intersection.</p></div><dl class="attributes block"> <dt>Since</dt><dd><p
 speciallized cell type and crs encoders.</p><div class="fullcomment"><div class="comment cmt"><p>Specialized encoder for <span class="extype" name="TileLayerMetadata">TileLayerMetadata</span>, necessary to be able to delegate to the
 speciallized cell type and crs encoders.
 </p></div><dl class="attributes block"> <dt>Since</dt><dd><p>7/21/17</p></dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.encoders.URIEncoder" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="URIEncoder"></a>
+      <a id="URIEncoder:URIEncoder"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="URIEncoder$.html"><span class="name">URIEncoder</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#astraea.spark.rasterframes.encoders.package@URIEncoder" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Custom Encoder for allowing friction-free use of URIs in DataFrames.</p><div class="fullcomment"><div class="comment cmt"><p>Custom Encoder for allowing friction-free use of URIs in DataFrames.
+</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>1/16/18</p></dd></dl></div>
     </li></ol>
             </div>
 

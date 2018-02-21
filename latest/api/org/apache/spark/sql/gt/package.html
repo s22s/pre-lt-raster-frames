@@ -47,8 +47,8 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Module providing support for using GeoTrellis native types in Spark SQL.
-</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>3/30/17</p></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Module of GeoTrellis UDTs for Spark/Catalyst.
+</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>2/13/18</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -87,124 +87,13 @@
         <div id="allMembers">
         
 
-        <div id="types" class="types members">
-              <h3>Type Members</h3>
-              <ol><li name="org.apache.spark.sql.gt.CanBeColumn" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="CanBeColumnextendsAnyRef"></a>
-      <a id="CanBeColumn:CanBeColumn"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">class</span>
-      </span>
-      <span class="symbol">
-        <a href="package$$CanBeColumn.html"><span class="name">CanBeColumn</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../index.html#org.apache.spark.sql.gt.package@CanBeColumnextendsAnyRef" title="Permalink" target="_top">
-        <img src="../../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      
-    </li><li name="org.apache.spark.sql.gt.InternalRowTile" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="InternalRowTileextendsArrayTile"></a>
-      <a id="InternalRowTile:InternalRowTile"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">class</span>
-      </span>
-      <span class="symbol">
-        <a href="InternalRowTile.html"><span class="name">InternalRowTile</span></a><span class="result"> extends <span class="extype" name="geotrellis.raster.ArrayTile">ArrayTile</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../index.html#org.apache.spark.sql.gt.package@InternalRowTileextendsArrayTile" title="Permalink" target="_top">
-        <img src="../../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Wrapper around a <code>Tile</code> encoded in a Catalyst <code>InternalRow</code>, for the purpose
-of providing compatible semantics over common operations.</p><div class="fullcomment"><div class="comment cmt"><p>Wrapper around a <code>Tile</code> encoded in a Catalyst <code>InternalRow</code>, for the purpose
-of providing compatible semantics over common operations.
-</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>11/29/17</p></dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt.WithDecoder" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="WithDecoder[T]extendsAnyRef"></a>
-      <a id="WithDecoder[T]:WithDecoder[T]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">implicit </span>
-        <span class="kind">class</span>
-      </span>
-      <span class="symbol">
-        <a href="package$$WithDecoder.html"><span class="name">WithDecoder</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../index.html#org.apache.spark.sql.gt.package@WithDecoder[T]extendsAnyRef" title="Permalink" target="_top">
-        <img src="../../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      
-    </li></ol>
-            </div>
+        
 
         
 
         <div id="values" class="values members">
               <h3>Value Members</h3>
-              <ol><li name="org.apache.spark.sql.gt.InternalRowTile" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="InternalRowTile"></a>
-      <a id="InternalRowTile:InternalRowTile"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">object</span>
-      </span>
-      <span class="symbol">
-        <a href="InternalRowTile$.html"><span class="name">InternalRowTile</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../index.html#org.apache.spark.sql.gt.package@InternalRowTile" title="Permalink" target="_top">
-        <img src="../../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      
-    </li><li name="org.apache.spark.sql.gt#gtRegister" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="gtRegister(sqlContext:org.apache.spark.sql.SQLContext):Unit"></a>
-      <a id="gtRegister(SQLContext):Unit"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">gtRegister</span><span class="params">(<span name="sqlContext">sqlContext: <span class="extype" name="org.apache.spark.sql.SQLContext">SQLContext</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../index.html#org.apache.spark.sql.gt.package@gtRegister(sqlContext:org.apache.spark.sql.SQLContext):Unit" title="Permalink" target="_top">
-        <img src="../../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Annotations</dt><dd>
-                <span class="name">@Experimental</span><span class="args">()</span>
-              
-        </dd></dl></div>
-    </li><li name="org.apache.spark.sql.gt#registry" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="registry(sqlContext:org.apache.spark.sql.SQLContext):org.apache.spark.sql.catalyst.analysis.FunctionRegistry"></a>
-      <a id="registry(SQLContext):FunctionRegistry"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">registry</span><span class="params">(<span name="sqlContext">sqlContext: <span class="extype" name="org.apache.spark.sql.SQLContext">SQLContext</span></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.sql.catalyst.analysis.FunctionRegistry">FunctionRegistry</span></span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../../index.html#org.apache.spark.sql.gt.package@registry(sqlContext:org.apache.spark.sql.SQLContext):org.apache.spark.sql.catalyst.analysis.FunctionRegistry" title="Permalink" target="_top">
-        <img src="../../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      
-    </li><li name="org.apache.spark.sql.gt.types" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+              <ol><li name="org.apache.spark.sql.gt.types" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="types"></a>
       <a id="types:types"></a>
       <h4 class="signature">
@@ -220,8 +109,7 @@ of providing compatible semantics over common operations.
         <img src="../../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Module of GeoTrellis UDTs for Spark/Catalyst.</p><div class="fullcomment"><div class="comment cmt"><p>Module of GeoTrellis UDTs for Spark/Catalyst.
-</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>4/12/17</p></dd></dl></div>
+      
     </li></ol>
             </div>
 

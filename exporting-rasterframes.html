@@ -45,13 +45,14 @@ gtag('config', 'UA-106630615-1');
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.5.12
+0.6.0-RC4
 </div>
 </div>
 <div class="nav-toc">
 <ul>
   <li><a href="getting-started.html" class="page">Getting Started</a></li>
   <li><a href="creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
+  <li><a href="spatial-queries.html" class="page">Spatial Queries</a></li>
   <li><a href="apps/index.html" class="page">Applications</a>
   <ul>
     <li><a href="apps/geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
@@ -98,13 +99,14 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.5.12
+0.6.0-RC4
 </div>
 </div>
 <div class="nav-toc">
 <ul>
   <li><a href="getting-started.html" class="page">Getting Started</a></li>
   <li><a href="creating-rasterframes.html" class="page">Creating RasterFrames</a></li>
+  <li><a href="spatial-queries.html" class="page">Spatial Queries</a></li>
   <li><a href="apps/index.html" class="page">Applications</a>
   <ul>
     <li><a href="apps/geotrellis-ops.html" class="page">GeoTrellis Operations</a></li>
@@ -170,11 +172,11 @@ scala&gt; tileBack.drop(&quot;tileData&quot;).show(5, 40)
 +-----------+--------------------------------------+
 |spatial_key|                             tileAgain|
 +-----------+--------------------------------------+
-|      [6,3]|ShortRawArrayTile([S@307b279b,128,128)|
-|      [4,0]|ShortRawArrayTile([S@42259cd5,128,128)|
-|      [0,0]|ShortRawArrayTile([S@1676b279,128,128)|
-|      [4,2]|ShortRawArrayTile([S@437b77a8,128,128)|
-|      [0,2]|ShortRawArrayTile([S@2ad5d7a3,128,128)|
+|      [6,3]|ShortRawArrayTile([S@14785392,128,128)|
+|      [4,0]|ShortRawArrayTile([S@70c8de73,128,128)|
+|      [0,0]|ShortRawArrayTile([S@364aa6ef,128,128)|
+|      [4,2]|ShortRawArrayTile([S@12a35a5e,128,128)|
+|      [0,2]|ShortRawArrayTile([S@44917f5b,128,128)|
 +-----------+--------------------------------------+
 only showing top 5 rows
 
@@ -187,11 +189,11 @@ scala&gt; tileBackAgain.drop(&quot;tileData&quot;).show(5, 50)
 +-----------+--------------------------------------------------+
 |spatial_key|                                         tileAgain|
 +-----------+--------------------------------------------------+
-|      [6,3]|ShortUserDefinedNoDataArrayTile([S@55d59d94,128...|
-|      [4,0]|ShortUserDefinedNoDataArrayTile([S@6252009b,128...|
-|      [0,0]|ShortUserDefinedNoDataArrayTile([S@5731346,128,...|
-|      [4,2]|ShortUserDefinedNoDataArrayTile([S@910caf4,128,...|
-|      [0,2]|ShortUserDefinedNoDataArrayTile([S@70d0df7f,128...|
+|      [6,3]|ShortUserDefinedNoDataArrayTile([S@4de1cf08,128...|
+|      [4,0]|ShortUserDefinedNoDataArrayTile([S@23bc7420,128...|
+|      [0,0]|ShortUserDefinedNoDataArrayTile([S@3bf41e1b,128...|
+|      [4,2]|ShortUserDefinedNoDataArrayTile([S@102828e,128,...|
+|      [0,2]|ShortUserDefinedNoDataArrayTile([S@42589429,128...|
 +-----------+--------------------------------------------------+
 only showing top 5 rows
 
@@ -206,8 +208,8 @@ val equalized = rf.withColumn(&quot;equalized&quot;, equalizer($&quot;tile&quot;
 <pre class="prettyprint"><code class="language-scala">scala&gt; equalized.printSchema
 root
  |-- spatial_key: struct (nullable = true)
- |    |-- col: integer (nullable = true)
- |    |-- row: integer (nullable = true)
+ |    |-- col: integer (nullable = false)
+ |    |-- row: integer (nullable = false)
  |-- tile: rf_tile (nullable = true)
  |-- equalized: rf_tile (nullable = true)
 
@@ -286,7 +288,7 @@ image.tile.color(colors).renderPng().write(&quot;target/scala-2.11/tut/rf-raster
 <p>For future analysis it is helpful to persist a RasterFrame as a <a href="http://geotrellis.readthedocs.io/en/latest/guide/tile-backends.html">GeoTrellis layer</a>.</p>
 <p>First, convert the RasterFrame into a TileLayerRDD. The return type is an Either; the <code>left</code> side is for spatial-only keyed data</p>
 <pre class="prettyprint"><code class="language-scala">val tlRDD = equalized.toTileLayerRDD($&quot;equalized&quot;).left.get
-// tlRDD: geotrellis.spark.TileLayerRDD[geotrellis.spark.SpatialKey] = ContextRDD[67] at RDD at ContextRDD.scala:35
+// tlRDD: geotrellis.spark.TileLayerRDD[geotrellis.spark.SpatialKey] = ContextRDD[69] at RDD at ContextRDD.scala:35
 </code></pre>
 <p>Then create a GeoTrellis layer writer:</p>
 <pre class="prettyprint"><code class="language-scala">import java.nio.file.Files
@@ -414,7 +416,7 @@ scala.Either[geotrellis.spark.TileLayerRDD[geotrellis.spark.SpatialKey],geotrell
 <div class="row site-footer-content">
 <div class="small-12 text-center large-9 column">
 <div class="copyright">
-<span class="text">&copy; 2017
+<span class="text">&copy; 2018
 <a href="http://www.astraea.earth/">Astraea, Inc.</a></span>
 </div>
 </div>
