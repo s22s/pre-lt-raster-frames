@@ -48,7 +48,7 @@ def _register():
     spark = SparkSession.builder.getOrCreate()
     _rf_init(spark)
     for name, doc in _rf_functions.items():
-        globals()[name] = _create_function(spark.rf._jrfctx, name, doc)
+        globals()[name] = _create_function(spark.rasterframes._jrfctx, name, doc)
 
 
 _register()

@@ -101,6 +101,7 @@ object ProjectPlugin extends AutoPlugin {
         "scaladoc.geotrellis.base_url" -> "https://geotrellis.github.io/scaladocs/latest"
       ),
       paradoxTheme in Paradox := Some(builtinParadoxTheme("generic")),
+      paradoxGroups in Paradox := Map("Language" -> Seq("Scala", "Python")),
       sourceDirectory in Paradox in paradoxTheme := sourceDirectory.value / "main" / "paradox" / "_template",
       ghpagesNoJekyll := true,
       scalacOptions in (Compile, doc) ++= Seq(

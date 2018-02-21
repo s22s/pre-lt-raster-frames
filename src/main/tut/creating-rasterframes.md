@@ -6,6 +6,8 @@ There are a number of ways to create a `RasterFrame`, as enumerated in the secti
 
 First, some standard `import`s:
 
+Scala
+:
 ```tut:silent
 import astraea.spark.rasterframes._
 import geotrellis.raster._
@@ -16,11 +18,23 @@ import org.apache.spark.sql._
 import org.apache.spark.sql.functions._
 ```
 
+
+Python
+:
+``` python
+from pyrasterframes import *
+
+```
+
+
 Next, initialize the `SparkSession`, and call the `withRasterFrames` method on it:
  
+Scala
+:
 ```tut:silent
 implicit val spark = SparkSession.builder().
-  master("local[*]").appName("RasterFrames").
+  master("local[*]").
+  appName("RasterFrames").
   getOrCreate().
   withRasterFrames
 
@@ -31,13 +45,32 @@ import spark.implicits._
 spark.sparkContext.setLogLevel("ERROR")
 ```
 
+Python
+: 
+```python
+spark = SparkSession.builder.
+  master("local[*]").
+  appName("RasterFrames").
+  getOrCreate().
+  withRasterFrames
+```
+
 ## From `ProjectedExtent`
 
 The simplest mechanism for getting a RasterFrame is to use the `toRF(tileCols, tileRows)` extension method on `ProjectedRaster`. 
 
+Scala
+:
 ```tut
 val scene = SinglebandGeoTiff("src/test/resources/L8-B8-Robinson-IL.tiff")
 val rf = scene.projectedRaster.toRF(128, 128)
+rf.show(5, false)
+```
+
+Python
+:
+```python
+rf = spark.rasterframes.readGeoTiff("src/test/resources/L8-B8-Robinson-IL.tiff", 128, 128)
 rf.show(5, false)
 ```
 

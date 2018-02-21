@@ -31,9 +31,9 @@ import astraea.spark.rasterframes._
 class PyRFContext(implicit sparkSession: SparkSession) extends ColumnFunctions {
   sparkSession.withRasterFrames
 
-  def readSingleband(path: String): RasterFrame = {
+  def readSingleband(path: String, cols: Int, rows: Int): RasterFrame = {
     val scene = GeoTiffReader.readSingleband(path)
-    scene.projectedRaster.toRF(128, 128)
+    scene.projectedRaster.toRF(cols, rows)
   }
 
   def tileColumns(df: DataFrame): Array[Column] =

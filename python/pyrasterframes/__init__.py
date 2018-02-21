@@ -3,6 +3,9 @@ from pyspark import SparkContext
 from pyspark.sql import SparkSession, DataFrame
 from pyspark.sql.types import *
 
+# RasterFrame was moved to 'types.py' - do we want this here?
+from pyrasterframes.types import *
+
 
 
 __all__ = ['RFContext', 'types', 'functions']
@@ -18,14 +21,14 @@ class RFContext(object):
         jsess = self._spark_session._jsparkSession
         self._jrfctx = self._jvm.astraea.spark.rasterframes.py.PyRFContext(jsess)
 
-    def readGeoTiff(self, path):
-        rf = self._jrfctx.readSingleband(path)
+    def readGeoTiff(self, path, cols=128, rows=128):
+        rf = self._jrfctx.readSingleband(path, cols, rows)
         return RasterFrame(rf, self._spark_session, self._jrfctx)
 
 def _rf_init(spark_session):
     """Patches in RasterFrames functionality to PySpark session."""
-    if not hasattr(spark_session, "rf"):
-        spark_session.rf = RFContext(spark_session)
+    if not hasattr(spark_session, "rasterframes"):
+        spark_session.rasterframes = RFContext(spark_session)
         #spark_session.sparkContext.rf = spark_session.rf
     return spark_session
 

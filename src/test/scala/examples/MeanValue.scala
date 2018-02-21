@@ -22,6 +22,7 @@ package examples
 import astraea.spark.rasterframes._
 import geotrellis.raster.io.geotiff.SinglebandGeoTiff
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions._
 
 /**
  * Compute the cell mean value of an image.
@@ -41,7 +42,10 @@ object MeanValue extends App {
 
   val rf = scene.projectedRaster.toRF(128, 128) // <-- tile size
 
-  rf.select(aggMean(rf("tile"))).show(false)
+  rf.printSchema
+
+  val tileCol = rf("tile")
+  rf.agg(aggNoDataCells(tileCol), aggDataCells(tileCol), aggMean(tileCol)).show(false)
 
   spark.stop()
 }
