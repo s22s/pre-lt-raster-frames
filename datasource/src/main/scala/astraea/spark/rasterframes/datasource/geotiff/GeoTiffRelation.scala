@@ -82,7 +82,7 @@ case class GeoTiffRelation(sqlContext: SQLContext, uri: URI) extends BaseRelatio
 
     StructType(Seq(
       StructField(SPATIAL_KEY_COLUMN.columnName, skSchema, nullable = false, skMetadata),
-      StructField(EXTENT_COLUMN.columnName, extentSchema, nullable = false),
+      StructField(BOUNDS_COLUMN.columnName, extentSchema, nullable = false),
       StructField(METADATA_COLUMN.columnName,
         DataTypes.createMapType(StringType, StringType, false)
       )

@@ -43,7 +43,7 @@ trait RFSpatialColumnMethods extends MethodExtensions[RasterFrame] with Standard
   /** Returns the key-space to map-space coordinate transform. */
   def mapTransform: MapKeyTransform = self.tileLayerMetadata.widen.mapTransform
 
-  private def keyCol2Extent: Row ⇒ Polygon = {
+  private def keyCol2Bounds: Row ⇒ Polygon = {
     val transform = self.sparkSession.sparkContext.broadcast(mapTransform)
     (r: Row) ⇒ transform.value.keyToExtent(SpatialKey(r.getInt(0), r.getInt(1))).jtsGeom
   }
@@ -58,14 +58,14 @@ trait RFSpatialColumnMethods extends MethodExtensions[RasterFrame] with Standard
   }
 
   /**
-   * Append a column containing the extent of the row's spatial key.
+   * Append a column containing the bounds of the row's spatial key.
    * Coordinates are in native CRS.
-   * @param colName name of column to append. Defaults to "extent"
+   * @param colName name of column to append. Defaults to "bounds"
    * @return updated RasterFrame
    */
-  def withExtent(colName: String = EXTENT_COLUMN.columnName): RasterFrame = {
-    val key2Extent = sparkUdf(keyCol2Extent)
-    self.withColumn(colName, key2Extent(self.spatialKeyColumn)).certify
+  def withBounds(colName: String = BOUNDS_COLUMN.columnName): RasterFrame = {
+    val key2Bounds = sparkUdf(keyCol2Bounds)
+    self.withColumn(colName, key2Bounds(self.spatialKeyColumn)).certify
   }
 
   /**
@@ -75,7 +75,7 @@ trait RFSpatialColumnMethods extends MethodExtensions[RasterFrame] with Standard
    * @return updated RasterFrame
    */
   def withCenter(colName: String = CENTER_COLUMN.columnName): RasterFrame = {
-    val key2Center = sparkUdf(keyCol2Extent andThen (_.getCentroid))
+    val key2Center = sparkUdf(keyCol2Bounds andThen (_.getCentroid))
     self.withColumn(colName, key2Center(self.spatialKeyColumn).as[Point]).certify
   }
 

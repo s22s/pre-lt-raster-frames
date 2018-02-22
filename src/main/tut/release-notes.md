@@ -9,6 +9,7 @@
 * Addd a GeoTiff DataSource for directly loading a (preferably Cloud Optimized) GeoTiff as a RasterFrame, each row containing tiles as they are internally organized.
 * Fleshed out support for `MultibandTile` and `TileFeature` support in datasource.
 * Added `withTemporalComponent` convenince method for creating appending a temporal key column with constant value.
+* _Breaking_ Renamed `withExtent` to `withBounds`, and now returns a JTS `Polygon` 
 
 ## 0.5.x
 

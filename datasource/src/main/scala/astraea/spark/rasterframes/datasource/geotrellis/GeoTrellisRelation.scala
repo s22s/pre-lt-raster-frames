@@ -119,7 +119,7 @@ case class GeoTrellisRelation(sqlContext: SQLContext,
     lazy val TS = TIMESTAMP_COLUMN.columnName
     lazy val TL = TILE_COLUMN.columnName
     lazy val TF = TILE_FEATURE_DATA_COLUMN.columnName
-    lazy val EX = EXTENT_COLUMN.columnName
+    lazy val EX = BOUNDS_COLUMN.columnName
   }
 
   /** This unfortunate routine is here because the number bands in a  multiband layer isn't written
