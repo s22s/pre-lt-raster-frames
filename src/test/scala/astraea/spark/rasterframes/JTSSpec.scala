@@ -19,10 +19,14 @@
 
 package astraea.spark.rasterframes
 
+import astraea.spark.rasterframes.expressions.Box2DExpression
 import astraea.spark.rasterframes.util._
-import com.vividsolutions.jts.geom.{Coordinate, GeometryFactory}
+import com.vividsolutions.jts.geom._
 import geotrellis.proj4.LatLng
 import geotrellis.vector.{Point ⇒ gtPoint}
+import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
+import org.apache.spark.sql.{Column, Encoders}
+import org.apache.spark.sql.functions.udf
 
 /**
  * Test rig for operations providing interop with JTS types.
@@ -33,8 +37,8 @@ class JTSSpec extends TestEnvironment with TestData with StandardColumns with In
   import spark.implicits._
 
   describe("JTS interop") {
+    val rf = l8Sample(1).projectedRaster.toRF(10, 10).withBounds()
     it("should allow joining and filtering of tiles based on points") {
-      val rf = l8Sample(1).projectedRaster.toRF(10, 10).withExtent()
       val crs = rf.tileLayerMetadata.widen.crs
       val coords = Seq(
         "one" -> gtPoint(-78.6445222907, 38.3957546898).reproject(LatLng, crs).jtsGeom,
@@ -44,27 +48,27 @@ class JTSSpec extends TestEnvironment with TestData with StandardColumns with In
 
       val locs = coords.toDF("id", "point")
       withClue("join with point column") {
-        assert(rf.join(locs, st_contains(EXTENT_COLUMN, $"point")).count === coords.length)
-        assert(rf.join(locs, st_intersects(EXTENT_COLUMN, $"point")).count === coords.length)
+        assert(rf.join(locs, st_contains(BOUNDS_COLUMN, $"point")).count === coords.length)
+        assert(rf.join(locs, st_intersects(BOUNDS_COLUMN, $"point")).count === coords.length)
       }
 
       withClue("point literal") {
         val point = coords.head._2
-        assert(rf.filter(st_contains(EXTENT_COLUMN, geomlit(point))).count === 1)
-        assert(rf.filter(st_intersects(EXTENT_COLUMN, geomlit(point))).count === 1)
-        assert(rf.filter(EXTENT_COLUMN intersects point).count === 1)
-        assert(rf.filter(EXTENT_COLUMN intersects gtPoint(point)).count === 1)
-        assert(rf.filter(EXTENT_COLUMN containsGeom point).count === 1)
+        assert(rf.filter(st_contains(BOUNDS_COLUMN, geomlit(point))).count === 1)
+        assert(rf.filter(st_intersects(BOUNDS_COLUMN, geomlit(point))).count === 1)
+        assert(rf.filter(BOUNDS_COLUMN intersects point).count === 1)
+        assert(rf.filter(BOUNDS_COLUMN intersects gtPoint(point)).count === 1)
+        assert(rf.filter(BOUNDS_COLUMN containsGeom point).count === 1)
       }
 
       withClue("exercise predicates") {
         val point = geomlit(coords.head._2)
-        assert(rf.filter(st_covers(EXTENT_COLUMN, point)).count === 1)
-        assert(rf.filter(st_crosses(EXTENT_COLUMN, point)).count === 0)
-        assert(rf.filter(st_disjoint(EXTENT_COLUMN, point)).count === rf.count - 1)
-        assert(rf.filter(st_overlaps(EXTENT_COLUMN, point)).count === 0)
-        assert(rf.filter(st_touches(EXTENT_COLUMN, point)).count === 0)
-        assert(rf.filter(st_within(EXTENT_COLUMN, point)).count === 0)
+        assert(rf.filter(st_covers(BOUNDS_COLUMN, point)).count === 1)
+        assert(rf.filter(st_crosses(BOUNDS_COLUMN, point)).count === 0)
+        assert(rf.filter(st_disjoint(BOUNDS_COLUMN, point)).count === rf.count - 1)
+        assert(rf.filter(st_overlaps(BOUNDS_COLUMN, point)).count === 0)
+        assert(rf.filter(st_touches(BOUNDS_COLUMN, point)).count === 0)
+        assert(rf.filter(st_within(BOUNDS_COLUMN, point)).count === 0)
       }
     }
 
@@ -87,6 +91,16 @@ class JTSSpec extends TestEnvironment with TestData with StandardColumns with In
       assert(dfBlank.select(geomlit(mline)).first === mline)
       assert(dfBlank.select(geomlit(mpoly)).first === mpoly)
       assert(dfBlank.select(geomlit(coll)).first === coll)
+    }
+
+    it("should provide a means of getting a bounding box") {
+      val boxed = rf.select(box2D(BOUNDS_COLUMN) as "bbox")
+      boxed.printSchema()
+      boxed.show(false)
+
+      boxed.select("bbox.*").show(false)
+
+
     }
   }
 }
