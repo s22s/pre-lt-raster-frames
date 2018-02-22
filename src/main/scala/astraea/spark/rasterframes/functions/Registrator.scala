@@ -17,7 +17,6 @@
 package astraea.spark.rasterframes.functions
 
 import org.apache.spark.sql.SQLContext
-import org.apache.spark.sql.gt.types
 
 /**
  * Object responsible for registering functions with Catalyst
@@ -49,7 +48,7 @@ private[rasterframes] object Registrator {
     sqlContext.udf.register("rf_localSubtract", localSubtract)
     sqlContext.udf.register("rf_localMultiply", localMultiply)
     sqlContext.udf.register("rf_localDivide", localDivide)
-    sqlContext.udf.register("rf_cellTypes", types.cellTypes)
+    sqlContext.udf.register("rf_cellTypes", cellTypes)
     sqlContext.udf.register("rf_renderAscii", renderAscii)
   }
 }

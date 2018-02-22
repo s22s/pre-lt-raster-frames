@@ -3,10 +3,13 @@ import sbt.{io, _}
 import sbtassembly.AssemblyKeys.assembly
 import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 import sbtrelease.ReleasePlugin.autoImport._
+import com.servicerocket.sbt.release.git.flow.Steps._
 import sbtsparkpackage.SparkPackagePlugin.autoImport._
-
-import _root_.bintray.BintrayPlugin.autoImport._
+import sbtbuildinfo.BuildInfoPlugin.autoImport._
+import sbtassembly.AssemblyPlugin
+import sbtassembly.AssemblyPlugin.autoImport.{ShadeRule, _}
 import com.lightbend.paradox.sbt.ParadoxPlugin.autoImport._
+import xerial.sbt.Sonatype.autoImport._
 import com.typesafe.sbt.SbtGit.git
 import com.typesafe.sbt.sbtghpages.GhpagesPlugin
 import com.typesafe.sbt.sbtghpages.GhpagesPlugin.autoImport._
@@ -19,16 +22,7 @@ import tut.TutPlugin.autoImport._
  */
 object ProjectPlugin extends AutoPlugin {
   override def trigger: PluginTrigger = allRequirements
-
-  val versions = Map(
-    "geotrellis" -> "1.2.0-RC1",
-    "spark" -> "2.1.1"
-  )
-
-  private def geotrellis(module: String) =
-    "org.locationtech.geotrellis" %% s"geotrellis-$module" % versions("geotrellis")
-  private def spark(module: String) =
-    "org.apache.spark" %% s"spark-$module" % versions("spark")
+  import autoImport._
 
   override def projectSettings = Seq(
     organization := "io.astraea",
@@ -51,13 +45,15 @@ object ProjectPlugin extends AutoPlugin {
     sparkVersion in ThisBuild := "2.2.1" ,
     geotrellisVersion in ThisBuild := "1.2.0",
     libraryDependencies ++= Seq(
-      "com.chuusai" %% "shapeless" % "2.0.0",
-      spark("core") % Provided,
-      spark("mllib") % Provided,
-      spark("sql") % Provided,
-      geotrellis("spark"),
-      geotrellis("raster"),
-      geotrellis("spark-testkit") % Test excludeAll (
+      "com.chuusai" %% "shapeless" % "2.3.2",
+      "org.locationtech.geomesa" %% "geomesa-z3" % "1.3.5",
+      "org.locationtech.geomesa" %% "geomesa-spark-jts" % "2.0.0-astraea.1" exclude("jgridshift", "jgridshift"),
+      spark("core").value % Provided,
+      spark("mllib").value % Provided,
+      spark("sql").value % Provided,
+      geotrellis("spark").value,
+      geotrellis("raster").value,
+      geotrellis("spark-testkit").value % Test excludeAll (
         ExclusionRule(organization = "org.scalastic"),
         ExclusionRule(organization = "org.scalatest")
       ),
@@ -89,6 +85,18 @@ object ProjectPlugin extends AutoPlugin {
   val skipTut = false
 
   object autoImport {
+    val sparkVersion = settingKey[String]("Apache Spark version")
+    val geotrellisVersion = settingKey[String]("GeoTrellis version")
+
+    def geotrellis(module: String) = Def.setting {
+      "org.locationtech.geotrellis" %% s"geotrellis-$module" % geotrellisVersion.value
+    }
+    def spark(module: String) = Def.setting {
+      "org.apache.spark" %% s"spark-$module" % sparkVersion.value
+    }
+
+    val scalaTest = "org.scalatest" %% "scalatest" % "3.0.3" % Test
+
     val pysparkCmd = taskKey[Unit]("Builds pyspark package and emits command string for running pyspark with package")
 
     def docSettings: Seq[Def.Setting[_]] = Seq(
@@ -159,7 +167,6 @@ object ProjectPlugin extends AutoPlugin {
       }
     )
 
-
     lazy val spJarFile = Def.taskDyn {
       if (spShade.value) {
         Def.task((assembly in spPackage).value)
@@ -170,7 +177,6 @@ object ProjectPlugin extends AutoPlugin {
 
     def spSettings: Seq[Def.Setting[_]] = Seq(
       spName := "io.astraea/raster-frames",
-      sparkVersion := versions("spark"),
       sparkComponents ++= Seq("sql", "mllib"),
       spAppendScalaVersion := false,
       spIncludeMaven := false,
@@ -223,29 +229,37 @@ object ProjectPlugin extends AutoPlugin {
     def releaseSettings: Seq[Def.Setting[_]] = {
       val buildSite: (State) ⇒ State = releaseStepTask(makeSite)
       val publishSite: (State) ⇒ State = releaseStepTask(ghpagesPushSite)
-      val releaseArtifacts = releaseStepTask(bintrayRelease)
       Seq(
-        bintrayOrganization := Some("s22s"),
-        bintrayReleaseOnPublish in ThisBuild := false,
-        publishArtifact in (Compile, packageDoc) := false,
         releaseIgnoreUntrackedFiles := true,
         releaseTagName := s"${version.value}",
         releaseProcess := Seq[ReleaseStep](
           checkSnapshotDependencies,
+          checkGitFlowExists,
           inquireVersions,
-          runClean,
           runTest,
+          gitFlowReleaseStart,
           setReleaseVersion,
           buildSite,
           publishSite,
           commitReleaseVersion,
           tagRelease,
-          publishArtifacts,
-          releaseArtifacts,
+          releaseStepCommand("publishSigned"),
+          releaseStepCommand("sonatypeReleaseAll"),
+          gitFlowReleaseFinish,
           setNextVersion,
-          commitNextVersion,
-          pushChanges
-        )
+          commitNextVersion
+        ),
+        commands += Command.command("bumpVersion"){ st ⇒
+          val extracted = Project.extract(st)
+          val ver = extracted.get(version)
+          val nextFun = extracted.runTask(releaseNextVersion, st)._2
+
+          val nextVersion = nextFun(ver)
+
+          val file = extracted.get(releaseVersionFile)
+          IO.writeLines(file, Seq(s"""version in ThisBuild := "$nextVersion""""))
+          extracted.append(Seq(version := nextVersion), st)
+        }
       )
     }
 

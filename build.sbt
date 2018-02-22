@@ -24,9 +24,13 @@ lazy val `raster-frames` = project
 lazy val bench = project
   .dependsOn(`raster-frames`)
   .disablePlugins(
-    SparkPackagePlugin, ScoverageSbtPlugin, SitePlugin, BintrayPlugin,
+    SparkPackagePlugin, ScoverageSbtPlugin, SitePlugin,
     ReleasePlugin, AssemblyPlugin, SitePreviewPlugin
   )
+
+lazy val datasource = project
+  .dependsOn(`raster-frames` % "test->test;compile->compile")
+
 
 initialCommands in console := """
   |import astraea.spark.rasterframes._
