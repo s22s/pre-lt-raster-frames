@@ -58,7 +58,9 @@ trait RasterFunctions {
   /** Query the number of (cols, rows) in a Tile. */
   def tileDimensions(col: Column): Column = expressions.DimensionsExpression(col.expr).asColumn
 
-  /** Flattens Tile into an array. A numeric type parameter is required*/
+  def box2D(col: Column): Column = expressions.Box2DExpression(col.expr).asColumn
+
+  /** Flattens Tile into an array. A numeric type parameter is required. */
   @Experimental
   def tileToArray[T: HasCellType: TypeTag](col: Column): TypedColumn[Any, Array[T]] = withAlias("tileToArray", col)(
     udf[Array[T], Tile](F.tileToArray).apply(col)

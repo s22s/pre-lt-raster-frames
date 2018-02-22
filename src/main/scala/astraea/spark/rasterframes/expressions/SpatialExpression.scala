@@ -39,7 +39,8 @@ import scala.util.Try
  *
  * @since 12/28/17
  */
-abstract class SpatialExpression extends BinaryExpression with CodegenFallback {
+abstract class SpatialExpression extends BinaryExpression
+  with CodegenFallback with GeomDeserializerSupport  {
   lazy val jtsPointEncoder = ExpressionEncoder[Point]()
 
   override def toString: String = s"$nodeName($left, $right)"
@@ -48,22 +49,9 @@ abstract class SpatialExpression extends BinaryExpression with CodegenFallback {
 
   override def nullable: Boolean = left.nullable || right.nullable
 
-  private def asGeom(expr: Expression, item: Any): Geometry = {
-    item match {
-      case g: Geometry ⇒ g
-      case r: InternalRow ⇒
-        expr.dataType match {
-          case udt: AbstractGeometryUDT[_] ⇒ udt.deserialize(r)
-          case t if t == extentEncoder.schema ⇒
-            val extent = extentEncoder.resolveAndBind().fromRow(r)
-            extent.jtsGeom
-        }
-    }
-  }
-
   override protected def nullSafeEval(leftEval: Any, rightEval: Any): java.lang.Boolean = {
-    val leftGeom = asGeom(left, leftEval)
-    val rightGeom = asGeom(right, rightEval)
+    val leftGeom = extractGeometry(left, leftEval)
+    val rightGeom = extractGeometry(right, rightEval)
     relation(leftGeom, rightGeom)
   }
 

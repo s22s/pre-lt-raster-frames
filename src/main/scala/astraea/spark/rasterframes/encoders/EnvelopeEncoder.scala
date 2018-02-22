@@ -12,19 +12,23 @@ import org.apache.spark.sql.types._
 import scala.reflect.classTag
 
 /**
+ * Spark DataSet codec for JTS Envelope.
  *
  * @since 2/22/18
  */
 object EnvelopeEncoder {
+
+  val schema = StructType(Seq(
+    StructField("minX", DoubleType, false),
+    StructField("minY", DoubleType, false),
+    StructField("maxX", DoubleType, false),
+    StructField("maxY", DoubleType, false)
+  ))
+
+  val dataType: DataType = ScalaReflection.dataTypeFor[Envelope]
+
   def apply(): ExpressionEncoder[Envelope] = {
     val inputObject = BoundReference(0, ObjectType(classOf[Envelope]), nullable = true)
-
-    val schema = StructType(Seq(
-      StructField("minX", DoubleType, false),
-      StructField("minY", DoubleType, false),
-      StructField("maxX", DoubleType, false),
-      StructField("maxY", DoubleType, false)
-    ))
 
     val invokers = schema.flatMap { f ⇒
       val getter = "get" + f.name.head.toUpper + f.name.tail
@@ -34,7 +38,7 @@ object EnvelopeEncoder {
     val serializer = CreateNamedStruct(invokers)
     val deserializer = NewInstance(classOf[Envelope],
       (0 to 3).map(GetColumnByOrdinal(_, DoubleType)),
-      ScalaReflection.dataTypeFor[Envelope], false
+      dataType, false
     )
 
     new ExpressionEncoder[Envelope](schema, flat = false, serializer.flatten, deserializer, classTag[Envelope])

@@ -123,7 +123,7 @@ class EncodingSpec extends TestEnvironment with TestData with IntelliJPresentati
     }
 
     it("should code RDD[Envelope]") {
-      val ds = Seq[Envelope](new Envelope(0, 1, 0, 1)).toDS()
+      val ds = Seq[Envelope](new Envelope(1, 2, 3, 4)).toDS()
       ds.printSchema()
       ds.show()
       write(ds)
