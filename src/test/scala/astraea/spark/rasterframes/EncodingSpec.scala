@@ -22,6 +22,7 @@ package astraea.spark.rasterframes
 import java.io.File
 import java.net.URI
 
+import com.vividsolutions.jts.geom.Envelope
 import geotrellis.proj4._
 import geotrellis.raster.{CellType, Tile, TileFeature}
 import geotrellis.spark.{SpaceTimeKey, SpatialKey, TemporalProjectedExtent, TileLayerMetadata}
@@ -118,6 +119,13 @@ class EncodingSpec extends TestEnvironment with TestData with IntelliJPresentati
       val ds = Seq[URI](new URI("http://astraea.earth/"), new File("/tmp/humbug").toURI).toDS()
       ds.printSchema
       ds.show
+      write(ds)
+    }
+
+    it("should code RDD[Envelope]") {
+      val ds = Seq[Envelope](new Envelope(0, 1, 0, 1)).toDS()
+      ds.printSchema()
+      ds.show()
       write(ds)
     }
   }

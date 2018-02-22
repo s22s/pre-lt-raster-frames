@@ -24,11 +24,11 @@ trait StandardColumns extends StandardEncoders {
   /** Default RasterFrame timestamp column name */
   val TIMESTAMP_COLUMN = col("timestamp").as[Timestamp]
 
-  /** Default RasterFrame column name for an tile extent value. */
+  /** Default RasterFrame column name for an tile bounds value. */
   // This is a `def` because `PolygonUDT` needs to be initialized first.
-  def EXTENT_COLUMN = col("extent").as[jtsPolygon]
+  def BOUNDS_COLUMN = col("bounds").as[jtsPolygon]
 
-  /** Default RasterFrame column name for the center coordinates of the tile's extent. */
+  /** Default RasterFrame column name for the center coordinates of the tile's bounds. */
   // This is a `def` because `PointUDT` needs to be initialized first.
   def CENTER_COLUMN = col("center").as[jtsPoint]
 

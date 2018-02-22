@@ -131,7 +131,7 @@ class GeoTrellisDataSourceSpec
     }
 
     it("should invoke Encoder[Extent]") {
-      val df = layerReader.loadRF(layer).withExtent()
+      val df = layerReader.loadRF(layer).withBounds()
       assert(df.count > 0)
       assert(df.first.length === 5)
       assert(df.first.getAs[Extent](2) !== null)
@@ -173,7 +173,7 @@ class GeoTrellisDataSourceSpec
     it("should support extent against a geometry literal") {
       val df: DataFrame = layerReader
         .loadRF(layer)
-        .where(EXTENT_COLUMN intersects pt1)
+        .where(BOUNDS_COLUMN intersects pt1)
 
       val rel = extractRelation(df)
       assert(rel.filters.length === 1)
@@ -189,7 +189,7 @@ class GeoTrellisDataSourceSpec
 
       val df = layerReader
         .loadRF(layer)
-        .where(st_intersects(EXTENT_COLUMN, mkPtFcn(SPATIAL_KEY_COLUMN)))
+        .where(st_intersects(BOUNDS_COLUMN, mkPtFcn(SPATIAL_KEY_COLUMN)))
 
       assert(extractRelation(df).filters.length === 0)
 
@@ -242,8 +242,8 @@ class GeoTrellisDataSourceSpec
         val df = layerReader
           .loadRF(layer)
           .where(
-            ((EXTENT_COLUMN intersects pt1) ||
-              (EXTENT_COLUMN intersects pt2)) &&
+            ((BOUNDS_COLUMN intersects pt1) ||
+              (BOUNDS_COLUMN intersects pt2)) &&
               (TIMESTAMP_COLUMN at now)
           )
 
@@ -257,7 +257,7 @@ class GeoTrellisDataSourceSpec
       withClue("partially nested") {
         val df = layerReader
           .loadRF(layer)
-          .where((EXTENT_COLUMN intersects pt1) || (EXTENT_COLUMN intersects pt2))
+          .where((BOUNDS_COLUMN intersects pt1) || (BOUNDS_COLUMN intersects pt2))
           .where(TIMESTAMP_COLUMN at now)
 
         val rel = extractRelation(df)
@@ -271,7 +271,7 @@ class GeoTrellisDataSourceSpec
     it("should support intersects with between times") {
       val df = layerReader
         .loadRF(layer)
-        .where(EXTENT_COLUMN intersects pt1)
+        .where(BOUNDS_COLUMN intersects pt1)
         .where(TIMESTAMP_COLUMN betweenTimes(now.minusDays(1), now.plusDays(1)))
 
       df.show(true)

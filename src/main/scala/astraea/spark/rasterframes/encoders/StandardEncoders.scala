@@ -50,6 +50,7 @@ trait StandardEncoders {
   implicit val temporalKeyEncoder = ExpressionEncoder[TemporalKey]()
   implicit val spaceTimeKeyEncoder = ExpressionEncoder[SpaceTimeKey]()
   implicit val uriEncoder = URIEncoder()
+  implicit val envelopeEncoder = EnvelopeEncoder()
 }
 
 object StandardEncoders extends StandardEncoders
