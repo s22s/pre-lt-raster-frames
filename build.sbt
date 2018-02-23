@@ -11,8 +11,7 @@ lazy val `raster-frames` = project
     ParadoxSitePlugin,
     TutPlugin,
     GhpagesPlugin,
-    BuildInfoPlugin,
-    AssemblyPlugin
+    BuildInfoPlugin
   )
   .disablePlugins(LiteratorPlugin)
   .settings(name := "RasterFrames")
@@ -20,8 +19,6 @@ lazy val `raster-frames` = project
   .settings(releaseSettings)
   .settings(docSettings)
   .settings(buildInfoSettings)
-  .settings(assemblySettings)
-  .settings(spSettings)
 
 
 lazy val bench = project
@@ -33,6 +30,12 @@ lazy val bench = project
 
 lazy val datasource = project
   .dependsOn(`raster-frames` % "test->test;compile->compile")
+  .enablePlugins(
+    AssemblyPlugin,
+    SparkPackagePlugin
+  )
+  .settings(assemblySettings)
+  .settings(spSettings)
 
 
 initialCommands in console := """
