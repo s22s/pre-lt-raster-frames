@@ -94,13 +94,9 @@ class JTSSpec extends TestEnvironment with TestData with StandardColumns with In
     }
 
     it("should provide a means of getting a bounding box") {
-      val boxed = rf.select(box2D(BOUNDS_COLUMN) as "bbox")
-      boxed.printSchema()
-      boxed.show(false)
-
-      boxed.select("bbox.*").show(false)
-
-
+      val boxed = rf.select(BOUNDS_COLUMN, box2D(BOUNDS_COLUMN))
+      assert(boxed.select($"box2d(bounds)".as[Envelope]).first.getArea > 0)
+      assert(boxed.toDF("bounds", "bbox").select("bbox.*").schema.length === 4)
     }
   }
 }

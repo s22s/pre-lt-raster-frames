@@ -20,7 +20,7 @@ case class Box2DExpression(child: Expression) extends UnaryExpression
   override protected def nullSafeEval(input: Any): Any = {
     val geom = extractGeometry(child, input)
     val env = geom.getEnvelopeInternal
-    InternalRow(env.getMinX, env.getMinY, env.getMaxX, env.getMaxY)
+    InternalRow(env.getMinX, env.getMaxX, env.getMinY, env.getMaxY)
   }
 
   def dataType: DataType = EnvelopeEncoder.schema

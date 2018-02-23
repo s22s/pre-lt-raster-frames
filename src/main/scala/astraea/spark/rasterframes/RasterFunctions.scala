@@ -23,6 +23,7 @@ import astraea.spark.rasterframes.encoders.SparkDefaultEncoders
 import astraea.spark.rasterframes.expressions.ExplodeTileExpression
 import astraea.spark.rasterframes.functions.{CellCountAggregateFunction, CellMeanAggregateFunction}
 import astraea.spark.rasterframes.{functions ⇒ F}
+import com.vividsolutions.jts.geom.Envelope
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.LocalTileBinaryOp
 import geotrellis.raster.{CellType, Tile}
@@ -58,7 +59,8 @@ trait RasterFunctions {
   /** Query the number of (cols, rows) in a Tile. */
   def tileDimensions(col: Column): Column = expressions.DimensionsExpression(col.expr).asColumn
 
-  def box2D(col: Column): Column = expressions.Box2DExpression(col.expr).asColumn
+  /** Extracts the bounding box of a geometry as a JTS envelope. */
+  def box2D(col: Column): TypedColumn[Any, Envelope] = expressions.Box2DExpression(col.expr).asColumn.as[Envelope]
 
   /** Flattens Tile into an array. A numeric type parameter is required. */
   @Experimental
