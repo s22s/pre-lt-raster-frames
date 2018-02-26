@@ -26,8 +26,8 @@ object TileFeatureSupport {
 
   // To support other D types, extend DataOps as seen below:
   implicit object StringOps extends DataOps[String] {
-    override def merge(l:String,r:String) = l + r
-    override def prototype(data:String) = ""
+    override def merge(l:String,r:String): String = s"$l $r"
+    override def prototype(data:String): String = ""
   }
 
   implicit class TileFeatureMethodsWrapper[V <: CellGrid: ClassTag: WithMergeMethods: WithPrototypeMethods: WithCropMethods: WithMaskMethods, D:DataOps](val self: TileFeature[V, D])

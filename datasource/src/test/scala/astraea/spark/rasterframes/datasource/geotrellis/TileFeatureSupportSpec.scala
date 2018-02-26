@@ -27,10 +27,10 @@ class TileFeatureSupportSpec extends TestEnvironment
 
       val merged = tf1.merge(tf2)
       assert(merged.tile == tf1.tile.merge(tf2.tile))
-      assert(merged.data == "tf1tf2")
+      assert(merged.data == "tf1 tf2")
 
-      assert(tf1.merge(ext1,ext2,tf2) == TileFeature(tf1.tile.merge(ext1,ext2,tf2.tile),"tf1tf2"))
-      assert(tf1.merge(ext1,ext2,tf2,Bilinear) == TileFeature(tf1.tile.merge(ext1,ext2,tf2.tile,Bilinear),"tf1tf2"))
+      assert(tf1.merge(ext1,ext2,tf2) == TileFeature(tf1.tile.merge(ext1,ext2,tf2.tile),"tf1 tf2"))
+      assert(tf1.merge(ext1,ext2,tf2,Bilinear) == TileFeature(tf1.tile.merge(ext1,ext2,tf2.tile,Bilinear),"tf1 tf2"))
     }
     it("should support prototype with String data") {
 
