@@ -32,7 +32,7 @@ object ProjectPlugin extends AutoPlugin {
     description := "RasterFrames brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer operations of GeoTrellis",
     licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html")),
     scalaVersion := "2.11.12",
-    scalacOptions ++= Seq("-target:jvm-1.8", "-feature", "-deprecation"),
+    scalacOptions ++= Seq("-feature", "-deprecation"),
     javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
     cancelable in Global := true,
     resolvers ++= Seq(

@@ -36,7 +36,7 @@ trait TestEnvironment extends FunSpec with GeoTrellisTestEnvironment
 
   lazy val sqlContext: SQLContext = {
     val session = SparkSession.builder.config(_sc.getConf).getOrCreate()
-    session.sqlContext.withRasterFrames
+    astraea.spark.rasterframes.WithSQLContextMethods(session.sqlContext).withRasterFrames
   }
 
   lazy val sql: (String) ⇒ DataFrame = sqlContext.sql

@@ -19,14 +19,10 @@
 
 package astraea.spark.rasterframes
 
-import astraea.spark.rasterframes.expressions.Box2DExpression
 import astraea.spark.rasterframes.util._
 import com.vividsolutions.jts.geom._
 import geotrellis.proj4.LatLng
 import geotrellis.vector.{Point ⇒ gtPoint}
-import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
-import org.apache.spark.sql.{Column, Encoders}
-import org.apache.spark.sql.functions.udf
 
 /**
  * Test rig for operations providing interop with JTS types.
@@ -73,17 +69,7 @@ class JTSSpec extends TestEnvironment with TestData with StandardColumns with In
     }
 
     it("should allow construction of geometry literals") {
-      val fact = new GeometryFactory()
-      val c1 = new Coordinate(1, 2)
-      val c2 = new Coordinate(3, 4)
-      val c3 = new Coordinate(5, 6)
-      val point = fact.createPoint(c1)
-      val line = fact.createLineString(Array(c1, c2))
-      val poly = fact.createPolygon(Array(c1, c2, c3, c1))
-      val mpoint = fact.createMultiPoint(Array(point, point, point))
-      val mline = fact.createMultiLineString(Array(line, line, line))
-      val mpoly = fact.createMultiPolygon(Array(poly, poly, poly))
-      val coll = fact.createGeometryCollection(Array(point, line, poly, mpoint, mline, mpoly))
+      import JTS._
       assert(dfBlank.select(geomlit(point)).first === point)
       assert(dfBlank.select(geomlit(line)).first === line)
       assert(dfBlank.select(geomlit(poly)).first === poly)

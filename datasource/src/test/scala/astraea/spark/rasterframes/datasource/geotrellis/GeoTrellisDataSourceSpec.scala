@@ -36,11 +36,12 @@ import org.apache.hadoop.fs.FileUtil
 import org.apache.spark.sql.execution.datasources.LogicalRelation
 import org.apache.spark.sql.functions.{udf ⇒ sparkUdf, _}
 import org.apache.spark.sql.{DataFrame, Row}
-import org.scalatest.BeforeAndAfter
+import org.scalatest.{BeforeAndAfter, Inspectors}
 import org.apache.avro.generic._
+import org.apache.spark.storage.StorageLevel
 
 class GeoTrellisDataSourceSpec
-    extends TestEnvironment with TestData with BeforeAndAfter
+    extends TestEnvironment with TestData with BeforeAndAfter with Inspectors
     with IntelliJPresentationCompilerHack {
 
   lazy val layer = Layer(new File(outputLocalPath).toURI, LayerId("test-layer", 4))
@@ -180,6 +181,15 @@ class GeoTrellisDataSourceSpec
 
       assert(df.count() === 1)
       assert(df.select(SPATIAL_KEY_COLUMN).first === targetKey)
+    }
+
+    it("should support query with multiple geometry types") {
+      // Mostly just testing that these evaluate without catalyst type errors.
+      forEvery(JTS.all) { g ⇒
+        val query = layerReader.loadRF(layer).where(BOUNDS_COLUMN.intersects(g))
+          .persist(StorageLevel.OFF_HEAP)
+        assert(query.count() === 0)
+      }
     }
 
     it("should *not* support extent filter against a UDF") {
