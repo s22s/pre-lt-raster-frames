@@ -27,7 +27,7 @@ object TileFeatureSupport {
       with MethodExtensions[TileFeature[V, D]] {
 
     override def merge(other: TileFeature[V, D]): TileFeature[V, D] =
-      TileFeature(self.tile.merge(other.tile), implicitly[MergeableData[D]].merge(self.data,other.data))
+      TileFeature(self.tile.merge(other.tile), MergeableData[D].merge(self.data,other.data))
 
     override def merge(extent: Extent, otherExtent: Extent, other: TileFeature[V, D], method: ResampleMethod): TileFeature[V, D] =
       TileFeature(self.tile.merge(extent, otherExtent, other.tile, method), MergeableData[D].merge(self.data,other.data))
