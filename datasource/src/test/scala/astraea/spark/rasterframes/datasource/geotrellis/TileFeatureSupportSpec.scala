@@ -1,3 +1,22 @@
+/*
+ * This software is licensed under the Apache 2 license, quoted below.
+ *
+ * Copyright 2018 Astraea, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ *     [http://www.apache.org/licenses/LICENSE-2.0]
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *
+ */
+
 package astraea.spark.rasterframes.datasource.geotrellis
 
 import astraea.spark.rasterframes.datasource.geotrellis.TileFeatureSupport._
@@ -27,10 +46,10 @@ class TileFeatureSupportSpec extends TestEnvironment
 
       val merged = tf1.merge(tf2)
       assert(merged.tile == tf1.tile.merge(tf2.tile))
-      assert(merged.data == "tf1 tf2")
+      assert(merged.data == "tf1, tf2")
 
-      assert(tf1.merge(ext1,ext2,tf2) == TileFeature(tf1.tile.merge(ext1,ext2,tf2.tile),"tf1 tf2"))
-      assert(tf1.merge(ext1,ext2,tf2,Bilinear) == TileFeature(tf1.tile.merge(ext1,ext2,tf2.tile,Bilinear),"tf1 tf2"))
+      assert(tf1.merge(ext1,ext2,tf2) == TileFeature(tf1.tile.merge(ext1,ext2,tf2.tile),"tf1, tf2"))
+      assert(tf1.merge(ext1,ext2,tf2,Bilinear) == TileFeature(tf1.tile.merge(ext1,ext2,tf2.tile,Bilinear),"tf1, tf2"))
     }
     it("should support prototype with String data") {
 
@@ -105,12 +124,31 @@ class TileFeatureSupportSpec extends TestEnvironment
       assert(tf1.localInverseMask(r, 1, 2) == TileFeature(tf1.tile.localInverseMask(r.tile, 1, 2), tf1.data))
     }
 
-//    it("should support ops with Set data") {
-//
-//      val setTF1 = TileFeature(squareIncrementingTile(3),Set("tf1"))
-//      val setTF2 = TileFeature(squareIncrementingTile(3),Set("tf2"))
-//
-//      assert(false)
-//    }
+    it("should support ops with Seq data") {
+
+      val seqTF1 = TileFeature(squareIncrementingTile(3),Seq("tf1"))
+      val seqTF2 = TileFeature(squareIncrementingTile(3),Seq("tf2"))
+      assert(seqTF1.merge(seqTF2) == TileFeature(seqTF1.tile.merge(seqTF2.tile), Seq("tf1","tf2")))
+    }
+
+    it("should support ops with Set data") {
+
+      val setTF1 = TileFeature(squareIncrementingTile(3),Set("foo", "bar"))
+      val setTF2 = TileFeature(squareIncrementingTile(3),Set("foo", "ball"))
+      assert(setTF1.merge(setTF2) == TileFeature(setTF1.tile.merge(setTF2.tile), Set("foo","bar","ball")))
+    }
+
+    it("should support ops with Map[_,String] data") {
+
+      // works for Map[String,String]
+      val mapTF1 = TileFeature(squareIncrementingTile(3),Map("foo" -> "bar","hello" -> "goodbye"))
+      val mapTF2 = TileFeature(squareIncrementingTile(3),Map("foo" -> "ball","slap" -> "shot"))
+      assert(mapTF1.merge(mapTF2) == TileFeature(mapTF1.tile.merge(mapTF2.tile), Map("foo" -> "bar, ball","hello" -> "goodbye", "slap" -> "shot")))
+
+      // works for Map[Int,String]
+      val mapTF3 = TileFeature(squareIncrementingTile(3),Map(1 -> "bar", 2 -> "two"))
+      val mapTF4 = TileFeature(squareIncrementingTile(3),Map(1 -> "ball", 3 -> "three"))
+      assert(mapTF3.merge(mapTF4) == TileFeature(mapTF3.tile.merge(mapTF4.tile), Map(1 -> "bar, ball", 2 -> "two", 3 -> "three")))
+    }
   }
 }
