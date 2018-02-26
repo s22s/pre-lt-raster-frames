@@ -44,7 +44,7 @@ class TileFeatureSupportSpec extends TestEnvironment
 
       case class Foo(num:Int,seq:Seq[String])
 
-      implicit object FooOps extends DataOps[Foo] {
+      implicit object FooOps extends MergeableData[Foo] {
         override def merge(l: Foo, r: Foo): Foo = Foo(l.num + r.num, l.seq ++ r.seq)
         override def prototype(data: Foo): Foo = Foo(0,Seq())
       }
@@ -104,5 +104,13 @@ class TileFeatureSupportSpec extends TestEnvironment
       assert(tf1.localMask(r, 1, 2) == TileFeature(tf1.tile.localMask(r.tile, 1, 2), tf1.data))
       assert(tf1.localInverseMask(r, 1, 2) == TileFeature(tf1.tile.localInverseMask(r.tile, 1, 2), tf1.data))
     }
+
+//    it("should support ops with Set data") {
+//
+//      val setTF1 = TileFeature(squareIncrementingTile(3),Set("tf1"))
+//      val setTF2 = TileFeature(squareIncrementingTile(3),Set("tf2"))
+//
+//      assert(false)
+//    }
   }
 }
