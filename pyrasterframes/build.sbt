@@ -1,5 +1,7 @@
 enablePlugins(SparkPackagePlugin, AssemblyPlugin)
 
+val pysparkCmd = taskKey[Unit]("Builds pyspark package and emits command string for running pyspark with package")
+
 lazy val spJarFile = Def.taskDyn {
   if (spShade.value) {
     Def.task((assembly in spPackage).value)

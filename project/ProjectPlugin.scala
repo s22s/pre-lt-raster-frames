@@ -1,24 +1,14 @@
 import sbt.Keys._
-import sbt.{io, _}
+import sbt._
 import sbtassembly.AssemblyKeys.assembly
+import sbtassembly.AssemblyPlugin.autoImport._
 import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 import sbtrelease.ReleasePlugin.autoImport._
 
 import com.servicerocket.sbt.release.git.flow.Steps._
-import sbtsparkpackage.SparkPackagePlugin.autoImport._
-import sbtbuildinfo.BuildInfoPlugin.autoImport._
-import sbtassembly.AssemblyPlugin
-import sbtassembly.AssemblyPlugin.autoImport.{ShadeRule, _}
-import sbtsparkpackage.SparkPackagePlugin
-
-import com.lightbend.paradox.sbt.ParadoxPlugin.autoImport._
-import xerial.sbt.Sonatype.autoImport._
-import com.typesafe.sbt.SbtGit.git
-import com.typesafe.sbt.sbtghpages.GhpagesPlugin
 import com.typesafe.sbt.sbtghpages.GhpagesPlugin.autoImport._
 import com.typesafe.sbt.site.SitePlugin.autoImport._
-import com.typesafe.sbt.site.paradox.ParadoxSitePlugin.autoImport._
-import tut.TutPlugin.autoImport._
+import xerial.sbt.Sonatype.autoImport._
 
 /**
  * @since 8/20/17
@@ -77,8 +67,6 @@ object ProjectPlugin extends AutoPlugin {
     )
   )
 
-  val skipTut = false
-
   object autoImport {
     val rfSparkVersion = settingKey[String]("Apache Spark version")
     val rfGeotrellisVersion = settingKey[String]("GeoTrellis version")
@@ -91,35 +79,6 @@ object ProjectPlugin extends AutoPlugin {
     }
 
     val scalaTest = "org.scalatest" %% "scalatest" % "3.0.3" % Test
-
-    val pysparkCmd = taskKey[Unit]("Builds pyspark package and emits command string for running pyspark with package")
-
-    def docSettings: Seq[Def.Setting[_]] = Seq(
-      git.remoteRepo := "git@github.com:s22s/raster-frames.git",
-      apiURL := Some(url("http://rasterframes.io/latest/api")),
-      autoAPIMappings := false,
-      paradoxProperties in Paradox ++= Map(
-        "github.base_url" -> "https://github.com/s22s/raster-frames",
-        "scaladoc.org.apache.spark.sql.gt" -> "http://rasterframes.io/latest",
-        "scaladoc.geotrellis.base_url" -> "https://geotrellis.github.io/scaladocs/latest"
-      ),
-      paradoxTheme in Paradox := Some(builtinParadoxTheme("generic")),
-      paradoxGroups in Paradox := Map("Language" -> Seq("Scala", "Python")),
-      sourceDirectory in Paradox in paradoxTheme := sourceDirectory.value / "main" / "paradox" / "_template",
-      ghpagesNoJekyll := true,
-      scalacOptions in (Compile, doc) ++= Seq(
-        "-no-link-warnings"
-      ),
-      libraryDependencies ++= Seq(
-        spark("mllib").value % Tut,
-        spark("sql").value % Tut,
-        geotrellis("spark").value % Tut,
-        geotrellis("raster").value % Tut
-      ),
-      fork in (Tut, run) := true,
-      javaOptions in (Tut, run) := Seq("-Xmx8G", "-Dspark.ui.enabled=false"),
-      unmanagedClasspath in Tut ++= (fullClasspath in (LocalProject("datasource"), Compile)).value
-    )
 
     def assemblySettings: Seq[Def.Setting[_]] = Seq(
       test in assembly := {},

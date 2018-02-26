@@ -5,15 +5,7 @@ lazy val root = project
   .settings(releaseSettings)
 
 lazy val core = project
-  .enablePlugins(
-    SiteScaladocPlugin,
-    ParadoxSitePlugin,
-    TutPlugin,
-    GhpagesPlugin,
-    BuildInfoPlugin
-  )
   .disablePlugins(SparkPackagePlugin)
-  .settings(docSettings)
 
 lazy val pyrasterframes = project
   .dependsOn(core, datasource)
@@ -23,13 +15,13 @@ lazy val datasource = project
   .dependsOn(core % "test->test;compile->compile")
   .disablePlugins(SparkPackagePlugin)
 
+lazy val docs = project
+  .dependsOn(core, datasource)
+  .disablePlugins(SparkPackagePlugin)
+
 lazy val bench = project
   .dependsOn(core)
-  .disablePlugins(
-    SparkPackagePlugin,
-    ScoverageSbtPlugin, SitePlugin,
-    ReleasePlugin, AssemblyPlugin, SitePreviewPlugin
-  )
+  .disablePlugins(SparkPackagePlugin)
 
 initialCommands in console := """
   |import astraea.spark.rasterframes._

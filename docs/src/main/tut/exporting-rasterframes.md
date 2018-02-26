@@ -13,7 +13,7 @@ implicit val spark = SparkSession.builder().config("spark.ui.enabled", "false").
   master("local[*]").appName("RasterFrames").getOrCreate().withRasterFrames
 spark.sparkContext.setLogLevel("ERROR")
 import spark.implicits._
-val scene = SinglebandGeoTiff("src/test/resources/L8-B8-Robinson-IL.tiff")
+val scene = SinglebandGeoTiff("core/src/test/resources/L8-B8-Robinson-IL.tiff")
 val rf = scene.projectedRaster.toRF(128, 128).cache()
 ```
 
@@ -108,7 +108,7 @@ Here's how one might render the image to a georeferenced GeoTIFF file:
 ```tut:silent
 import geotrellis.raster.io.geotiff.GeoTiff
 val image = equalized.toRaster($"equalized", 774, 500)
-GeoTiff(image).write("target/scala-2.11/tut/rf-raster.tiff")
+GeoTiff(image).write("docs/target/scala-2.11/tut/rf-raster.tiff")
 ```
 
 [*Download GeoTIFF*](rf-raster.tiff)
@@ -117,7 +117,7 @@ Here's how one might render a raster frame to a false color PNG file:
 
 ```tut:silent
 val colors = ColorMap.fromQuantileBreaks(image.tile.histogram, ColorRamps.BlueToOrange)
-image.tile.color(colors).renderPng().write("target/scala-2.11/tut/rf-raster.png")
+image.tile.color(colors).renderPng().write("docs/target/scala-2.11/tut/rf-raster.png")
 ```
 
 ![](rf-raster.png)

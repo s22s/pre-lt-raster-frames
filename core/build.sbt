@@ -1,3 +1,5 @@
+enablePlugins(BuildInfoPlugin)
+
 moduleName := "raster-frames"
 
 libraryDependencies ++= Seq(

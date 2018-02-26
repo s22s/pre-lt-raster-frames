@@ -13,7 +13,7 @@ import org.apache.spark.sql._
 ```
 
 Python
-: @@snip [CreatingRasterFrames.py]() { #py_crf_imports }
+: @@snip [CreatingRasterFrames.py]($pyexamples$/CreatingRasterFrames.py) { #py_crf_imports }
 
 
 Next, initialize the `SparkSession`, and call the `withRasterFrames` method:
@@ -30,7 +30,7 @@ implicit val spark = SparkSession.builder().
 ```
 
 Python
-: @@snip [CreatingRasterFrames.py]() { #py_crf_create_session }
+: @@snip [CreatingRasterFrames.py]($pyexamples$/CreatingRasterFrames.py) { #py_crf_create_session }
 
 
 And, as is standard Spark SQL practice, we `import` additional `DataFrame` support:
@@ -46,7 +46,7 @@ spark.sparkContext.setLogLevel("ERROR")
 ```
 
 Python
-: @@snip [CreatingRasterFrames.py]() { #py_crf_more_imports }
+: @@snip [CreatingRasterFrames.py]($pyexamples$/CreatingRasterFrames.py) { #py_crf_more_imports }
 
 Now we are ready to create a RasterFrame.
 
@@ -70,7 +70,7 @@ Then we use the `DataFrameReader` provided by `spark.read` to read the GeoTIFF:
 
 
 ```tut:book
-val samplePath = new File("src/test/resources/LC08_RGB_Norfolk_COG.tiff")
+val samplePath = new File("core/src/test/resources/LC08_RGB_Norfolk_COG.tiff")
 val tiffRF = spark.read.
   geotiff.
   loadRF(samplePath.toURI)
@@ -164,7 +164,7 @@ The simplest mechanism for getting a RasterFrame is to use the `toRF(tileCols, t
 
 
 ```tut
-val scene = SinglebandGeoTiff("src/test/resources/L8-B8-Robinson-IL.tiff")
+val scene = SinglebandGeoTiff("core/src/test/resources/L8-B8-Robinson-IL.tiff")
 val rf = scene.projectedRaster.toRF(128, 128)
 rf.show(5, false)
 ```

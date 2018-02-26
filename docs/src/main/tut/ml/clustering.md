@@ -18,7 +18,7 @@ import org.apache.spark.ml.feature.VectorAssembler
 import org.apache.spark.sql._
 
 // Utility for reading imagery from our test data set
-def readTiff(name: String): SinglebandGeoTiff = SinglebandGeoTiff(s"src/test/resources/$name")
+def readTiff(name: String): SinglebandGeoTiff = SinglebandGeoTiff(s"core/src/test/resources/$name")
 
 implicit val spark = SparkSession.builder().
   master("local[*]").appName(getClass.getName).getOrCreate().withRasterFrames
@@ -138,7 +138,7 @@ val clusterColors = IndexedColorMap.fromColorMap(
   ColorRamps.Viridis.toColorMap((0 until k).toArray)
 )
 
-raster.tile.renderPng(clusterColors).write("target/scala-2.11/tut/ml/clustered.png")
+raster.tile.renderPng(clusterColors).write("docs/target/scala-2.11/tut/ml/clustered.png")
 ```
 
 | Color Composite    | Cluster Assignments |

@@ -14,7 +14,7 @@ implicit val spark = SparkSession.builder().
    master("local[*]").appName("RasterFrames").getOrCreate().withRasterFrames
 spark.sparkContext.setLogLevel("ERROR")
 import spark.implicits._
-val scene = SinglebandGeoTiff("src/test/resources/L8-B8-Robinson-IL.tiff")
+val scene = SinglebandGeoTiff("core/src/test/resources/L8-B8-Robinson-IL.tiff")
 val rf = scene.projectedRaster.toRF(128, 128).cache()
 ```
 
