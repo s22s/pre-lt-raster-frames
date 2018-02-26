@@ -4,11 +4,11 @@ from org.apache.spark.sql import *
 #py_crf_imports
 
 #py_crf_create_session
-spark = SparkSession.builder.
-    master("local[*]").
-    appName("RasterFrames").
-    config("spark.ui.enabled", "false").
-    getOrCreate().
+spark = SparkSession.builder. \
+    master("local[*]"). \
+    appName("RasterFrames"). \
+    config("spark.ui.enabled", "false"). \
+    getOrCreate(). \
     withRasterFrames()
 #py_crf_create_session
 

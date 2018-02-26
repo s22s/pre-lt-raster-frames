@@ -1,11 +1,10 @@
-
-import sbt._
-import sbt.Keys._
-import sbtassembly.AssemblyKeys.assembly
-
-lazy val `raster-frames` = project
+lazy val root = project
   .in(file("."))
-  .aggregate(LocalProject("datasource"))
+  .withId("RF")
+  .aggregate(core, datasource, pyrasterframes)
+  .settings(releaseSettings)
+
+lazy val core = project
   .enablePlugins(
     SiteScaladocPlugin,
     ParadoxSitePlugin,
@@ -13,30 +12,24 @@ lazy val `raster-frames` = project
     GhpagesPlugin,
     BuildInfoPlugin
   )
-  .disablePlugins(LiteratorPlugin)
-  .settings(name := "RasterFrames")
-  .settings(moduleName := "raster-frames")
-  .settings(releaseSettings)
+  .disablePlugins(SparkPackagePlugin)
   .settings(docSettings)
-  .settings(buildInfoSettings)
 
-
-lazy val bench = project
-  .dependsOn(`raster-frames`)
-  .disablePlugins(
-    SparkPackagePlugin, ScoverageSbtPlugin, SitePlugin,
-    ReleasePlugin, AssemblyPlugin, SitePreviewPlugin
-  )
+lazy val pyrasterframes = project
+  .dependsOn(core, datasource)
+  .settings(assemblySettings)
 
 lazy val datasource = project
-  .dependsOn(`raster-frames` % "test->test;compile->compile")
-  .enablePlugins(
-    AssemblyPlugin,
-    SparkPackagePlugin
-  )
-  .settings(assemblySettings)
-  .settings(spSettings)
+  .dependsOn(core % "test->test;compile->compile")
+  .disablePlugins(SparkPackagePlugin)
 
+lazy val bench = project
+  .dependsOn(core)
+  .disablePlugins(
+    SparkPackagePlugin,
+    ScoverageSbtPlugin, SitePlugin,
+    ReleasePlugin, AssemblyPlugin, SitePreviewPlugin
+  )
 
 initialCommands in console := """
   |import astraea.spark.rasterframes._

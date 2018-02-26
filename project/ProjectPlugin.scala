@@ -3,11 +3,14 @@ import sbt.{io, _}
 import sbtassembly.AssemblyKeys.assembly
 import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 import sbtrelease.ReleasePlugin.autoImport._
+
 import com.servicerocket.sbt.release.git.flow.Steps._
 import sbtsparkpackage.SparkPackagePlugin.autoImport._
 import sbtbuildinfo.BuildInfoPlugin.autoImport._
 import sbtassembly.AssemblyPlugin
 import sbtassembly.AssemblyPlugin.autoImport.{ShadeRule, _}
+import sbtsparkpackage.SparkPackagePlugin
+
 import com.lightbend.paradox.sbt.ParadoxPlugin.autoImport._
 import xerial.sbt.Sonatype.autoImport._
 import com.typesafe.sbt.SbtGit.git
@@ -33,32 +36,18 @@ object ProjectPlugin extends AutoPlugin {
     description := "RasterFrames brings the power of Spark DataFrames to geospatial raster data, empowered by the map algebra and tile layer operations of GeoTrellis",
     licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html")),
     scalaVersion := "2.11.12",
-    scalacOptions ++= Seq("-target:jvm-1.8", "-feature", "-deprecation"),
+    scalacOptions ++= Seq("-feature", "-deprecation"),
     javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
     cancelable in Global := true,
     resolvers ++= Seq(
       "locationtech-releases" at "https://repo.locationtech.org/content/groups/releases",
       "boundless-releases" at "https://repo.boundlessgeo.com/main/",
-      "osgeo-releases" at "http://download.osgeo.org/webdav/geotools/",
+//      "osgeo-releases" at "http://download.osgeo.org/webdav/geotools/",
       Resolver.bintrayRepo("s22s", "maven")
     ),
-    sparkVersion in ThisBuild := "2.2.1" ,
-    geotrellisVersion in ThisBuild := "1.2.0",
-    libraryDependencies ++= Seq(
-      "com.chuusai" %% "shapeless" % "2.3.2",
-      "org.locationtech.geomesa" %% "geomesa-z3" % "1.3.5",
-      "org.locationtech.geomesa" %% "geomesa-spark-jts" % "2.0.0-astraea.1" exclude("jgridshift", "jgridshift"),
-      spark("core").value % Provided,
-      spark("mllib").value % Provided,
-      spark("sql").value % Provided,
-      geotrellis("spark").value,
-      geotrellis("raster").value,
-      geotrellis("spark-testkit").value % Test excludeAll (
-        ExclusionRule(organization = "org.scalastic"),
-        ExclusionRule(organization = "org.scalatest")
-      ),
-      scalaTest
-    ),
+    rfSparkVersion in ThisBuild := "2.2.1" ,
+    rfGeotrellisVersion in ThisBuild := "1.2.0",
+
     publishTo := sonatypePublishTo.value,
     publishMavenStyle := true,
     publishArtifact in (Compile, packageDoc) := true,
@@ -78,6 +67,12 @@ object ProjectPlugin extends AutoPlugin {
         name = "Matt Eldridge",
         email = "meldridge@astraea.io",
         url = url("http://www.astraea.io")
+      ),
+      Developer(
+        id = "bguseman",
+        name = "Ben Guseman",
+        email = "bguseman@astraea.io",
+        url = url("http://www.astraea.io")
       )
     )
   )
@@ -85,14 +80,14 @@ object ProjectPlugin extends AutoPlugin {
   val skipTut = false
 
   object autoImport {
-    val sparkVersion = settingKey[String]("Apache Spark version")
-    val geotrellisVersion = settingKey[String]("GeoTrellis version")
+    val rfSparkVersion = settingKey[String]("Apache Spark version")
+    val rfGeotrellisVersion = settingKey[String]("GeoTrellis version")
 
     def geotrellis(module: String) = Def.setting {
-      "org.locationtech.geotrellis" %% s"geotrellis-$module" % geotrellisVersion.value
+      "org.locationtech.geotrellis" %% s"geotrellis-$module" % rfGeotrellisVersion.value
     }
     def spark(module: String) = Def.setting {
-      "org.apache.spark" %% s"spark-$module" % sparkVersion.value
+      "org.apache.spark" %% s"spark-$module" % rfSparkVersion.value
     }
 
     val scalaTest = "org.scalatest" %% "scalatest" % "3.0.3" % Test
@@ -126,18 +121,6 @@ object ProjectPlugin extends AutoPlugin {
       unmanagedClasspath in Tut ++= (fullClasspath in (LocalProject("datasource"), Compile)).value
     )
 
-    def buildInfoSettings: Seq[Def.Setting[_]] = Seq(
-      buildInfoKeys ++= Seq[BuildInfoKey](
-        name, version, scalaVersion, sbtVersion, geotrellisVersion, sparkVersion
-      ),
-      buildInfoPackage := "astraea.spark.rasterframes",
-      buildInfoObject := "RFBuildInfo",
-      buildInfoOptions := Seq(
-        BuildInfoOption.ToMap,
-        BuildInfoOption.BuildTime
-      )
-    )
-
     def assemblySettings: Seq[Def.Setting[_]] = Seq(
       test in assembly := {},
       assemblyMergeStrategy in assembly := {
@@ -165,65 +148,6 @@ object ProjectPlugin extends AutoPlugin {
 
         case _ ⇒ MergeStrategy.deduplicate
       }
-    )
-
-    lazy val spJarFile = Def.taskDyn {
-      if (spShade.value) {
-        Def.task((assembly in spPackage).value)
-      } else {
-        Def.task(spPackage.value)
-      }
-    }
-
-    def spSettings: Seq[Def.Setting[_]] = Seq(
-      spName := "io.astraea/raster-frames",
-      sparkComponents ++= Seq("sql", "mllib"),
-      spAppendScalaVersion := false,
-      spIncludeMaven := false,
-      spIgnoreProvided := true,
-      spShade := true,
-      spPackage := {
-        val dist = spDist.value
-        val extracted = IO.unzip(dist, (target in spPackage).value, GlobFilter("*.jar"))
-        if(extracted.size != 1) sys.error("Didn't expect to find multiple .jar files in distribution.")
-        extracted.head
-      },
-      spShortDescription := description.value,
-      spHomepage := homepage.value.get.toString,
-      spDescription := """
-        |RasterFrames brings the power of Spark DataFrames to geospatial raster data,
-        |empowered by the map algebra and tile layer operations of GeoTrellis.
-        |
-        |The underlying purpose of RasterFrames is to allow data scientists and software
-        |developers to process and analyze geospatial-temporal raster data with the
-        |same flexibility and ease as any other Spark Catalyst data type. At its core
-        |is a user-defined type (UDT) called TileUDT, which encodes a GeoTrellis Tile
-        |in a form the Spark Catalyst engine can process. Furthermore, we extend the
-        |definition of a DataFrame to encompass some additional invariants, allowing
-        |for geospatial operations within and between RasterFrames to occur, while
-        |still maintaining necessary geo-referencing constructs.
-      """.stripMargin,
-      test in assembly := {},
-      spPublishLocal := {
-        // This unfortunate override is necessary because
-        // the ivy resolver in pyspark defaults to the cache more
-        // frequently than we'd like.
-        val id = (projectID in spPublishLocal).value
-        val home = ivyPaths.value.ivyHome
-          .getOrElse(io.Path.userHome / ".ivy2")
-        val cacheDir = home / "cache" / id.organization / id.name
-        IO.delete(cacheDir)
-        spPublishLocal.value
-      },
-      pysparkCmd := {
-        val _ = spPublishLocal.value
-        val id = (projectID in spPublishLocal).value
-        val args = "pyspark" ::  "--packages" :: s"${id.organization}:${id.name}:${id.revision}" :: Nil
-        streams.value.log.info("PySpark Command:\n" + args.mkString(" "))
-        // --conf spark.jars.ivy=(ivyPaths in pysparkCmd).value....
-      },
-      ivyPaths in pysparkCmd := ivyPaths.value.withIvyHome(target.value / "ivy")
-      //credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
     )
 
     def releaseSettings: Seq[Def.Setting[_]] = {
@@ -258,10 +182,9 @@ object ProjectPlugin extends AutoPlugin {
 
           val file = extracted.get(releaseVersionFile)
           IO.writeLines(file, Seq(s"""version in ThisBuild := "$nextVersion""""))
-          extracted.append(Seq(version := nextVersion), st)
+          extracted.appendWithSession(Seq(version := nextVersion), st)
         }
       )
     }
-
   }
 }
