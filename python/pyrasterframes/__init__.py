@@ -1,7 +1,8 @@
 from __future__ import absolute_import
 from pyspark import SparkContext
-from pyspark.sql import SparkSession, DataFrame
+from pyspark.sql import SparkSession, DataFrame, DataFrameReader
 from pyspark.sql.types import *
+import functools
 
 # RasterFrame was moved to 'types.py' - do we want this here?
 from pyrasterframes.types import *
@@ -25,6 +26,7 @@ class RFContext(object):
         rf = self._jrfctx.readSingleband(path, cols, rows)
         return RasterFrame(rf, self._spark_session, self._jrfctx)
 
+
 def _rf_init(spark_session):
     """Patches in RasterFrames functionality to PySpark session."""
     if not hasattr(spark_session, "rasterframes"):
@@ -32,6 +34,12 @@ def _rf_init(spark_session):
         #spark_session.sparkContext.rf = spark_session.rf
     return spark_session
 
+
+def _reader(spark_session, format):
+    return spark_session.read.format(format)
+
+
 # Patch new method on SparkSession to mirror Scala approach
 SparkSession.withRasterFrames = _rf_init
+DataFrameReader.geotiff = functools.partial(_reader, format="geotiff")
 
