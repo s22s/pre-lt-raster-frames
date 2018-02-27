@@ -25,17 +25,14 @@ import java.sql.Timestamp
 import java.time.{ZoneOffset, ZonedDateTime}
 
 import astraea.spark.rasterframes._
+import astraea.spark.rasterframes.datasource.geotrellis.TileFeatureSupport._
 import astraea.spark.rasterframes.jts.SpatialFilters.{BetweenTimes, Contains ⇒ sfContains, Intersects ⇒ sfIntersects}
 import astraea.spark.rasterframes.datasource.geotrellis.GeoTrellisRelation._
 import astraea.spark.rasterframes.util._
 import com.vividsolutions.jts.geom
-import geotrellis.raster
+import geotrellis.raster._
 import geotrellis.raster.merge.TileMergeMethods
 import geotrellis.raster.prototype.TilePrototypeMethods
-import geotrellis.raster.resample.ResampleMethod
-import geotrellis.raster.split.Split.Options
-import geotrellis.raster.split.{Split, SplitMethods}
-import geotrellis.raster.{CellGrid, CellType, MultibandTile, Tile, TileFeature, TileLayout}
 import geotrellis.spark._
 import geotrellis.spark.io._
 import geotrellis.spark.io.avro.AvroRecordCodec
@@ -110,16 +107,12 @@ case class GeoTrellisRelation(sqlContext: SQLContext,
       (kt, tt)
     })
 
-  val subdivide = subdivideTile.getOrElse(1)
 
   @transient
   lazy val tileLayerMetadata: Either[TileLayerMetadata[SpatialKey], TileLayerMetadata[SpaceTimeKey]] = {
 
+    val subdivide = subdivideTile.getOrElse(1)
     def subdivideTLM[T](tlm: TileLayerMetadata[T]): TileLayerMetadata[T] = tlm.copy(layout = newLayout(tlm.layout))
-//      .updateBounds(newBounds[T](tlm))
-
-    def newBounds[T](tlm: TileLayerMetadata[T]) = newLayout(tlm.layout).mapTransform.extentToBounds(tlm.layoutExtent)
-//    def newBounds[T](tlm: TileLayerMetadata[T]) = tlm.updateBounds()
 
     def newLayout(l: LayoutDefinition): LayoutDefinition = if(subdivideTile.isEmpty) l
     else {
@@ -277,63 +270,12 @@ case class GeoTrellisRelation(sqlContext: SQLContext,
     }
   }
 
-  /*
-  private case class STK_T(rdd: RDD[(SpaceTimeKey, Tile)] with Metadata[TileLayerMetadata[SpaceTimeKey]])
-  private case class STK_M(rdd: RDD[(SpaceTimeKey, MultibandTile)] with Metadata[TileLayerMetadata[SpaceTimeKey]])
-  private case class STK_TF(rdd: RDD[(SpaceTimeKey, TileFeature[Tile @unchecked, TileFeatureData @unchecked])] with Metadata[TileLayerMetadata[SpaceTimeKey]])
-  private case class SK_T(rdd: RDD[(SpatialKey, Tile)] with Metadata[TileLayerMetadata[SpatialKey]])
-  private case class SK_M(rdd: RDD[(SpatialKey, MultibandTile)] with Metadata[TileLayerMetadata[SpatialKey]])
-  private case class SK_TF(rdd: RDD[(SpatialKey, TileFeature[Tile @unchecked, TileFeatureData @unchecked])] with Metadata[TileLayerMetadata[SpatialKey]])
+  def query[T<: CellGrid: WithMergeMethods :WithPrototypeMethods: AvroRecordCodec: ClassTag]
+  (reader: FilteringLayerReader[LayerId], columnIndexes: Seq[Int]): RDD[Row] = {
 
-  def regrid(rdd: RDD[(SpaceTimeKey, Tile)] with Metadata[TileLayerMetadata[SpaceTimeKey]], cols: Int, rows: Int): RDD[(SpaceTimeKey, Tile)] with Metadata[TileLayerMetadata[SpaceTimeKey]] =
-    rdd.regrid(cols, rows)
-  def regrid(rdd: RDD[(SpaceTimeKey, MultibandTile)] with Metadata[TileLayerMetadata[SpaceTimeKey]], cols: Int, rows: Int): RDD[(SpaceTimeKey, MultibandTile)] with Metadata[TileLayerMetadata[SpaceTimeKey]] =
-    rdd.regrid(cols, rows)
-  def regrid(rdd: RDD[(SpaceTimeKey, TileFeature[Tile @unchecked, TileFeatureData @unchecked])] with Metadata[TileLayerMetadata[SpaceTimeKey]], cols: Int, rows: Int): RDD[(SpaceTimeKey, TileFeature[Tile @unchecked, TileFeatureData @unchecked])] with Metadata[TileLayerMetadata[SpaceTimeKey]] = {
-    val r = rdd.mapValues(_.tile).regrid(cols, rows)
-    val m = rdd.metadata
-    ContextRDD(r, m)
-  }*/
-
-
-  def query[T<: CellGrid:  AvroRecordCodec: ClassTag](reader: FilteringLayerReader[LayerId], columnIndexes: Seq[Int]): RDD[Row] = {
     val parts = numPartitions.getOrElse(reader.defaultNumPartitions)
 
-    val (newCols, newRows) = {
-      val dims = tileLayerMetadata.fold(_.tileLayout.tileDimensions, _.tileLayout.tileDimensions)
-      (dims._1 / subdivide, dims._2 / subdivide)
-    }
-
     val newMapKeyTransform = tileLayerMetadata.fold(_.layout.mapTransform, _.layout.mapTransform)
-    val newMapTransBroadcast = spark.sparkContext.broadcast(newMapKeyTransform)
-
-    def subdivideKeyAndCellGrid(sourceExtent: Extent, t: T): TraversableOnce[(SpatialKey, T)] = {
-      // get centroids of the subdivide X subdivide new T's
-      val sdv: Int = subdivide
-      val rng = 0 until sdv // exclusive upper bound
-      val cols = rng.map{ s: Int ⇒ sourceExtent.xmin + ( (s + 0.5) * sourceExtent.width / sdv ) }
-      val rows = rng.map{ s: Int ⇒ sourceExtent.ymin + ( (s + 0.5) * sourceExtent.height / sdv ) }
-      val centroids = for(y <- rows; x ← cols) yield Point(x, y)
-      //new spatial keys
-      val sks: Seq[SpatialKey] = centroids.map(newMapKeyTransform.apply)
-
-      val ts = t match {
-        case tile: Tile ⇒ tile.split(newCols, newRows)
-          .map(_.asInstanceOf[T])
-        case mbt: MultibandTile ⇒ mbt.split(newCols, newRows)
-          .map(_.asInstanceOf[T])
-        case tf: TileFeature[Tile@unchecked, TileFeatureData@unchecked] ⇒
-          tf.tile.split(newCols, newRows)
-            .map(t ⇒ TileFeature(t, tf.data))
-            .map(_.asInstanceOf[T])
-      }
-
-      sks zip ts
-    }
-
-    def subdivideSTKeyAndCellGrid(instant: Long, sourceExtent: Extent, t: T): TraversableOnce[(SpaceTimeKey, T)] =
-      subdivideKeyAndCellGrid(sourceExtent, t).map{ case (sk: SpatialKey, t: T) ⇒ (SpaceTimeKey(sk.col, sk.row, instant), t) }
-
 
     tileLayerMetadata.fold(
       // Without temporal key case
@@ -369,49 +311,11 @@ case class GeoTrellisRelation(sqlContext: SQLContext,
         )(applyFilterTemporal(_, _))
 
         val rdd = query.result
-        val oldMapTransBroadcast = spark.sparkContext.broadcast(rdd.metadata.mapTransform)
 
-        val subdividedRdd = rdd
-          .map{ case (k, v) ⇒ (TemporalProjectedExtent(rdd.metadata.mapTransform(k), rdd.metadata.crs, k.instant), v) }
-          .tileToLayout[SpaceTimeKey](tlm)
-
-/*
-       lazy val subdividedRdd: RDD[(SpaceTimeKey, T)] = if(subdivideTile.isEmpty) rdd
-       else rdd.flatMap { tup ⇒
-         val (k, t) = tup
-
-//                      get the extent of `t`
-         val sourceExtent: Extent = oldMapTransBroadcast.value.apply(k)
-
-         val rng = 0 until subdivide // exclusive upper bound
-       val cols = rng.map{ s: Int ⇒ sourceExtent.xmin + ( (s + 0.5) * sourceExtent.width / subdivide) }
-         val rows = rng.map{ s: Int ⇒ sourceExtent.ymin + ( (s + 0.5) * sourceExtent.height / subdivide) }
-         val centroids = for(y <- rows; x ← cols) yield Point(x, y)
-         //new spatial keys
-         val sks: Seq[SpaceTimeKey] = centroids.map(newMapTransBroadcast.value.apply)
-           .map(s ⇒ SpaceTimeKey(s.col, s.row, k.instant))
-
-
-         val ts = t match {
-           case tile: Tile ⇒ tile.split(tile.cols / subdivide, tile.rows / subdivide)
-             .map(_.asInstanceOf[T])
-           case mbt: MultibandTile ⇒ mbt.split(newCols, newRows)
-             .map(_.asInstanceOf[T])
-           case tf: TileFeature[Tile@unchecked, TileFeatureData@unchecked] ⇒
-             tf.tile.split(newCols, newRows)
-               .map(t ⇒ TileFeature(t, tf.data))
-               .map(_.asInstanceOf[T])
-         }
-
-         sks zip ts
-       }
-       */
-
-        // Are any of these good options??
-//                val wat = Split(rdd,newCols, newRows)
-//         val cutRdd = CutTiles[SpaceTimeKey, SpaceTimeKey, T](rdd, rdd.metadata.cellType, tlm.layout)
-
-//        val regridRdd = Regrid(rdd, newCols, newRows)
+        val subdividedRdd: RDD[(SpaceTimeKey, T)] = rdd
+          .map{ case (k, v) ⇒
+            (TemporalProjectedExtent(rdd.metadata.mapTransform(k), rdd.metadata.crs, k.instant), v) }
+          .tileToLayout(tlm)
 
        subdividedRdd
           .map { case (stk: SpaceTimeKey, tile: T) ⇒
@@ -446,50 +350,11 @@ object GeoTrellisRelation {
   /** A dummy type used as a stand-in for ignored TileFeature data. */
   type TileFeatureData = String
 
-  type WithMergeMethods[V] = (V => TileMergeMethods[V])
-  type WithPrototypeMethods[V <: CellGrid] = (V => TilePrototypeMethods[V])
-
   implicit object TileFeatureDataOps extends MergeableData[TileFeatureData] {
     override def merge(l: TileFeatureData, r: TileFeatureData): TileFeatureData = l + r
 
     override def prototype(data: TileFeatureData): TileFeatureData = ""
   }
-  /*
-  trait SinglebandWithFeatureSplitMethods[TileFeatureData] extends SplitMethods[TileFeature[Tile, TileFeatureData]] {
-    import Split.Options
-
-    override def split(tileLayout: TileLayout, options: Options): Array[TileFeature[Tile, TileFeatureData]] = {
-      val results = self.tile.split(tileLayout, options)
-      results.map(t ⇒ TileFeature(t, self.data))
-    }
-  }
-
-  trait SinglebandWithFeaturePrototypeMethods[TileFeatureData] extends TilePrototypeMethods[TileFeature[Tile,TileFeatureData]] {
-    override def prototype(cols: Int, rows: Int): TileFeature[Tile, TileFeatureData] = {
-      TileFeature(self.tile.prototype(cols,rows), self.data)
-    }
-    override def prototype(cellType: CellType, cols: Int, rows: Int): TileFeature[Tile, TileFeatureData] = {
-      TileFeature(self.tile.prototype(cellType, cols, rows), self.data)
-    }
-  }
-
-//  trait SinglebandWithFeatureMergeMethods[D] extends TileMergeMethods[TileFeature[Tile, TileFeatureData]]
-
-  // NB: As stock GeoTrellis transformation enrichment methods are needed, they need to be mixed in here.
-//  implicit class SinglebandWithSetFeatureMethodsWrapper[TileFeatureData]
-//  (val self: TileFeature[Tile, Set[TileFeatureData]])
-//    extends MethodExtensions[TileFeature[Tile, Set[TileFeatureData]]]
-//      with SinglebandWithFeatureSplitMethods[Set[TileFeatureData]]
-//      with SinglebandWithFeatureMergeMethods[Set[TileFeatureData]]
-//      with SinglebandWithFeaturePrototypeMethods[Set[TileFeatureData]] {
-//
-//    override def merge(other: TileFeature[Tile, GeoTrellisRelation.TileFeatureData]): TileFeature[Tile, GeoTrellisRelation.TileFeatureData] =
-//      TileFeature(self.tile.merge(other.tile), self.data.mkString)
-//
-//    override def merge(extent: Extent, otherExtent: Extent, other: TileFeature[Tile, GeoTrellisRelation.TileFeatureData], method: ResampleMethod): TileFeature[Tile, GeoTrellisRelation.TileFeatureData] =
-//      TileFeature(self.tile.merge(extent, otherExtent, other.tile), self.data.mkString)
-//  }
-*/
 
   /** Constructor for Avro codec for TileFeature data stand-in. */
   private def tfDataCodec(dataSchema: KryoWrapper[Schema]) = new AvroRecordCodec[TileFeatureData]() {
