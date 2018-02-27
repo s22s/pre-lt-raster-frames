@@ -62,9 +62,10 @@ class DefaultSource extends DataSourceRegister with RelationProvider with Creata
     val uri: URI = URI.create(parameters("path"))
     val layerId: LayerId = LayerId(parameters("layer"), parameters("zoom").toInt)
     val numPartitions = parameters.get("numPartitions").map(_.toInt)
+    val subdivideTile = parameters.get("subdivideTile").map(_.toInt)
     val failOnUnrecognizedFilter = parameters.get("failOnUnrecognizedFilter").exists(_.toBoolean)
 
-    GeoTrellisRelation(sqlContext, uri, layerId, numPartitions, failOnUnrecognizedFilter)
+    GeoTrellisRelation(sqlContext, uri, layerId, numPartitions, failOnUnrecognizedFilter, subdivideTile = subdivideTile)
   }
 
   /** Write relation. */
