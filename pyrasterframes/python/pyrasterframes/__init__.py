@@ -35,11 +35,14 @@ def _rf_init(spark_session):
     return spark_session
 
 
-def _reader(spark_session, format):
-    return spark_session.read.format(format)
+def _reader(df_reader, format_key, path, **options):
+    return df_reader.format(format_key).load(path, **options)
 
 
 # Patch new method on SparkSession to mirror Scala approach
 SparkSession.withRasterFrames = _rf_init
-DataFrameReader.geotiff = functools.partial(_reader, format="geotiff")
+
+# Add DataSource methods to the DataFrameReader
+DataFrameReader.geotiff = lambda df_reader, path: _reader(df_reader, "geotiff", path)
+DataFrameReader.geotrellis = lambda df_reader, path: _reader(df_reader, "geotrellis", path)
 
