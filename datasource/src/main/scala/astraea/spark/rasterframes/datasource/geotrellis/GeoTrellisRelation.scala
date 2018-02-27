@@ -33,15 +33,18 @@ import com.vividsolutions.jts.geom
 import geotrellis.raster._
 import geotrellis.raster.merge.TileMergeMethods
 import geotrellis.raster.prototype.TilePrototypeMethods
+import geotrellis.raster.resample.NearestNeighbor
 import geotrellis.spark._
 import geotrellis.spark.io._
 import geotrellis.spark.io.avro.AvroRecordCodec
+import geotrellis.spark.tiling.Tiler.Options
 import geotrellis.spark.tiling._
 import geotrellis.spark.util.KryoWrapper
 import geotrellis.util.{LazyLogging, MethodExtensions}
 import geotrellis.vector._
 import org.apache.avro.Schema
 import org.apache.avro.generic.GenericRecord
+import org.apache.spark.HashPartitioner
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 import org.apache.spark.sql.gt.types.TileUDT
@@ -311,11 +314,18 @@ case class GeoTrellisRelation(sqlContext: SQLContext,
         )(applyFilterTemporal(_, _))
 
         val rdd = query.result
+        logger.debug(s"Query RDD has ${rdd.partitions.length}, parameter was ${numPartitions}")
 
-        val subdividedRdd: RDD[(SpaceTimeKey, T)] = rdd
-          .map{ case (k, v) ⇒
-            (TemporalProjectedExtent(rdd.metadata.mapTransform(k), rdd.metadata.crs, k.instant), v) }
-          .tileToLayout(tlm)
+        val subdividedRdd: RDD[(SpaceTimeKey, T)] = if(subdivideTile.isEmpty) rdd
+        else rdd
+          .mapPartitions { it ⇒
+            it.map { case (k, v) ⇒
+              (TemporalProjectedExtent(rdd.metadata.mapTransform(k), rdd.metadata.crs, k.instant), v)
+            }
+          }
+          .tileToLayout(tlm, Options(NearestNeighbor, numPartitions.map(new HashPartitioner(_))))
+
+        logger.debug(s"Subdivided RDD has ${rdd.partitions.length} partitions, parameter was `numPartitions`=${numPartitions} and `subdivideTile`=$subdivideTile")
 
        subdividedRdd
           .map { case (stk: SpaceTimeKey, tile: T) ⇒
