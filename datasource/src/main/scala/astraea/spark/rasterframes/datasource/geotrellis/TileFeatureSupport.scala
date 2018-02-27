@@ -83,7 +83,11 @@ object MergeableData {
   def apply[D: MergeableData]:MergeableData[D] = implicitly[MergeableData[D]]
 
   implicit def MergeableString: MergeableData[String] = new MergeableData[String] {
-    override def merge(l:String,r:String): String = s"$l, $r"
+    override def merge(l:String,r:String): String = (l,r) match {
+      case("",str:String) => str
+      case(str:String,"") => str
+      case(l:String,r:String) => s"$l, $r"
+    }
     override def prototype(data:String): String = ""
   }
 
@@ -97,9 +101,11 @@ object MergeableData {
     override def prototype(data: Set[T]): Set[T] = Set.empty
   }
 
+  // to be used as the value in a mergeableMap, the data type, V, must have context bound MergeableData as well
   implicit def mergeableMap[K,V: MergeableData]: MergeableData[Map[K,V]] = new MergeableData[Map[K,V]] {
     override def merge(l: Map[K,V], r: Map[K,V]): Map[K,V] = {
-      (l.toSeq ++ r.toSeq).groupBy{case(k,v) => k}
+      (l.toSeq ++ r.toSeq)
+        .groupBy{case(k,v) => k}
         .mapValues(_.map(_._2)
                     .reduce[V] {case(lv,rv) => MergeableData[V].merge(lv,rv)})
     }
