@@ -54,15 +54,15 @@ class JTSSpec extends TestEnvironment with TestData with StandardColumns with In
 
       withClue("point literal") {
         val point = coords.head._2
-        assert(rf.filter(st_contains(BOUNDS_COLUMN, geomlit(point))).count === 1)
-        assert(rf.filter(st_intersects(BOUNDS_COLUMN, geomlit(point))).count === 1)
+        assert(rf.filter(st_contains(BOUNDS_COLUMN, geomLit(point))).count === 1)
+        assert(rf.filter(st_intersects(BOUNDS_COLUMN, geomLit(point))).count === 1)
         assert(rf.filter(BOUNDS_COLUMN intersects point).count === 1)
         assert(rf.filter(BOUNDS_COLUMN intersects gtPoint(point)).count === 1)
         assert(rf.filter(BOUNDS_COLUMN containsGeom point).count === 1)
       }
 
       withClue("exercise predicates") {
-        val point = geomlit(coords.head._2)
+        val point = geomLit(coords.head._2)
         assert(rf.filter(st_covers(BOUNDS_COLUMN, point)).count === 1)
         assert(rf.filter(st_crosses(BOUNDS_COLUMN, point)).count === 0)
         assert(rf.filter(st_disjoint(BOUNDS_COLUMN, point)).count === rf.count - 1)
@@ -74,13 +74,13 @@ class JTSSpec extends TestEnvironment with TestData with StandardColumns with In
 
     it("should allow construction of geometry literals") {
       import JTS._
-      assert(dfBlank.select(geomlit(point)).first === point)
-      assert(dfBlank.select(geomlit(line)).first === line)
-      assert(dfBlank.select(geomlit(poly)).first === poly)
-      assert(dfBlank.select(geomlit(mpoint)).first === mpoint)
-      assert(dfBlank.select(geomlit(mline)).first === mline)
-      assert(dfBlank.select(geomlit(mpoly)).first === mpoly)
-      assert(dfBlank.select(geomlit(coll)).first === coll)
+      assert(dfBlank.select(geomLit(point)).first === point)
+      assert(dfBlank.select(geomLit(line)).first === line)
+      assert(dfBlank.select(geomLit(poly)).first === poly)
+      assert(dfBlank.select(geomLit(mpoint)).first === mpoint)
+      assert(dfBlank.select(geomLit(mline)).first === mline)
+      assert(dfBlank.select(geomLit(mpoly)).first === mpoly)
+      assert(dfBlank.select(geomLit(coll)).first === coll)
     }
 
     it("should provide a means of getting a bounding box") {

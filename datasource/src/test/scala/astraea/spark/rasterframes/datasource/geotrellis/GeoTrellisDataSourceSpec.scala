@@ -126,7 +126,7 @@ class GeoTrellisDataSourceSpec
         assert(df.count() === boundKeys.toGridBounds.sizeLong)
       }
       withClue("functional API") {
-        val df = wc.where(st_intersects(CENTER_COLUMN, geomlit(bbox)))
+        val df = wc.where(st_intersects(CENTER_COLUMN, geomLit(bbox)))
         assert(df.count() === boundKeys.toGridBounds.sizeLong)
       }
     }

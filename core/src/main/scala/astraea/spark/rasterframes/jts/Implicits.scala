@@ -40,20 +40,20 @@ trait Implicits extends SpatialFunctions {
     extends MethodExtensions[TypedColumn[Any, Polygon]] {
 
     def intersects(geom: Geometry): TypedColumn[Any, Boolean] =
-      st_intersects(self, geomlit(geom)).as[Boolean]
+      st_intersects(self, geomLit(geom)).as[Boolean]
 
     def containsGeom(geom: Geometry): TypedColumn[Any, Boolean] =
-      st_contains(self, geomlit(geom)).as[Boolean]
+      st_contains(self, geomLit(geom)).as[Boolean]
 
     def intersects(pt: gtPoint): TypedColumn[Any, Boolean] =
-      st_intersects(self, geomlit(pt.jtsGeom)).as[Boolean]
+      st_intersects(self, geomLit(pt.jtsGeom)).as[Boolean]
   }
 
   implicit class PointColumnMethods(val self: TypedColumn[Any, Point])
     extends MethodExtensions[TypedColumn[Any, Point]] {
 
     def intersects(geom: Geometry): TypedColumn[Any, Boolean] =
-      st_intersects(self, geomlit(geom)).as[Boolean]
+      st_intersects(self, geomLit(geom)).as[Boolean]
    }
 
   implicit class TimestampColumnMethods(val self: TypedColumn[Any, Timestamp])

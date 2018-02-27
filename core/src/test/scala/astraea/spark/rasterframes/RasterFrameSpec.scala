@@ -234,7 +234,7 @@ class RasterFrameSpec extends TestEnvironment with MetadataKeys
     def render(tile: Tile, tag: String): Unit = {
       if(false && !isCI) {
         val colors = ColorMap.fromQuantileBreaks(tile.histogram, Greyscale(128))
-        val path = s"/tmp/${getClass.getSimpleName}_$tag.png"
+        val path = s"target/${getClass.getSimpleName}_$tag.png"
         logger.info(s"Writing '$path'")
         tile.color(colors).renderPng().write(path)
       }

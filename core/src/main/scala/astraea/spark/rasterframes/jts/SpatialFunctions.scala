@@ -13,19 +13,24 @@ import org.apache.spark.sql.{Column, Encoder, TypedColumn}
 trait SpatialFunctions {
   import astraea.spark.rasterframes.encoders.SparkDefaultEncoders._
 
-  def geomlit(geom: Geometry): TypedColumn[Any, _ <: Geometry] = {
-    def udtlit[T >: Null <: Geometry: Encoder, U <: AbstractGeometryUDT[T]](t: T, u: U): TypedColumn[Any, T] =
-      new Column(Literal.create(u.serialize(t), u)).as[T]
+  /** Constructs a geometric literal from a value  and JTS UDT */
+  private def udtlit[T >: Null <: Geometry: Encoder, U <: AbstractGeometryUDT[T]](t: T, u: U): TypedColumn[Any, T] =
+    new Column(Literal.create(u.serialize(t), u)).as[T]
 
-    geom match {
-      case g: Point ⇒ udtlit(g, PointUDT)
-      case g: LineString ⇒ udtlit(g, LineStringUDT)
-      case g: Polygon ⇒ udtlit(g, PolygonUDT)
-      case g: MultiPoint ⇒ udtlit(g, MultiPointUDT)
-      case g: MultiLineString ⇒ udtlit(g, MultiLineStringUDT)
-      case g: MultiPolygon ⇒ udtlit(g, MultiPolygonUDT)
-      case g: GeometryCollection ⇒ udtlit(g, GeometryCollectionUDT)
-      case g: Geometry ⇒ udtlit(g, GeometryUDT)
-    }
-  }
+  /** Create a generic geometry literal, encoded as a GeometryUDT. */
+  def geomLit(g: Geometry): TypedColumn[Any, Geometry] = udtlit(g, GeometryUDT)
+  /** Create a point literal, encoded as a PointUDT. */
+  def pointLit(g: Point): TypedColumn[Any, Point] = udtlit(g, PointUDT)
+  /** Create a line literal, encoded as a LineUDT. */
+  def lineLit(g: LineString): TypedColumn[Any, LineString] = udtlit(g, LineStringUDT)
+  /** Create a polygon literal, encoded as a PolygonUDT. */
+  def polygonLit(g: Polygon): TypedColumn[Any, Polygon] = udtlit(g, PolygonUDT)
+  /** Create a multi-point literal, encoded as a MultiPointUDT. */
+  def mPointLit(g: MultiPoint): TypedColumn[Any, MultiPoint] = udtlit(g, MultiPointUDT)
+  /** Create a multi-line literal, encoded as a MultiPointUDT. */
+  def mLineLit(g: MultiLineString): TypedColumn[Any, MultiLineString] = udtlit(g, MultiLineStringUDT)
+  /** Create a multi-polygon literal, encoded as a MultiPolygonUDT. */
+  def mPolygonLit(g: MultiPolygon): TypedColumn[Any, MultiPolygon] = udtlit(g, MultiPolygonUDT)
+  /** create a geometry collection literal, encoded as a GeometryCollectionUDT. */
+  def geomCollLit(g: GeometryCollection): TypedColumn[Any, GeometryCollection] = udtlit(g, GeometryCollectionUDT)
 }
