@@ -1,15 +1,40 @@
+/*
+ * This software is licensed under the Apache 2 license, quoted below.
+ *
+ * Copyright 2018 Astraea, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ *     [http://www.apache.org/licenses/LICENSE-2.0]
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *
+ */
+
 package astraea.spark.rasterframes.datasource.geotrellis
 
 import astraea.spark.rasterframes.datasource.geotrellis.TileFeatureSupport._
 import astraea.spark.rasterframes.{IntelliJPresentationCompilerHack, TestData, TestEnvironment}
+import geotrellis.proj4.LatLng
 import geotrellis.raster.crop.Crop
 import geotrellis.raster.rasterize.Rasterizer
 import geotrellis.raster.resample.Bilinear
-import geotrellis.raster.{DoubleCellType, GridBounds, TileFeature, TileLayout}
+import geotrellis.raster.{CellGrid, GridBounds, IntCellType, ShortConstantNoDataCellType, Tile, TileFeature, TileLayout}
+import geotrellis.spark
+import geotrellis.spark.SpatialKey
 import geotrellis.spark.tiling.Implicits._
-import geotrellis.spark.{ContextRDD, TemporalProjectedExtent}
-import geotrellis.vector.Extent
+import geotrellis.spark.tiling._
+import geotrellis.vector.{Extent, ProjectedExtent}
+import org.apache.spark.rdd.RDD
 import org.scalatest.BeforeAndAfter
+
+import scala.reflect.ClassTag
 
 
 class TileFeatureSupportSpec extends TestEnvironment
@@ -17,29 +42,40 @@ class TileFeatureSupportSpec extends TestEnvironment
   with BeforeAndAfter
   with IntelliJPresentationCompilerHack {
 
-  val tf1 = TileFeature(squareIncrementingTile(3),"tf1")
-  val tf2 = TileFeature(squareIncrementingTile(3),"tf2")
+  val strTF1 = TileFeature(squareIncrementingTile(3),"data1")
+  val strTF2 = TileFeature(squareIncrementingTile(3),"data2")
   val ext1 = Extent(10,10,20,20)
   val ext2 = Extent(15,15,25,25)
+  val cropOpts: Crop.Options = Crop.Options.DEFAULT
+  val gb = GridBounds(0,0,1,1)
+  val geoms = Seq(ext2.toPolygon())
+  val maskOpts: Rasterizer.Options = Rasterizer.Options.DEFAULT
+
 
   describe("TileFeatureSupport") {
-    it("should support merge with String data") {
+    it("should support merge, prototype operations") {
 
-      val merged = tf1.merge(tf2)
-      assert(merged.tile == tf1.tile.merge(tf2.tile))
-      assert(merged.data == "tf1 tf2")
+      val merged = strTF1.merge(strTF2)
+      assert(merged.tile == strTF1.tile.merge(strTF2.tile))
+      assert(merged.data == "data1, data2")
 
-      assert(tf1.merge(ext1,ext2,tf2) == TileFeature(tf1.tile.merge(ext1,ext2,tf2.tile),"tf1 tf2"))
-      assert(tf1.merge(ext1,ext2,tf2,Bilinear) == TileFeature(tf1.tile.merge(ext1,ext2,tf2.tile,Bilinear),"tf1 tf2"))
-    }
-    it("should support prototype with String data") {
-
-      val proto = tf1.prototype(16,16)
+      val proto = strTF1.prototype(16,16)
       assert(proto.tile == byteArrayTile.prototype(16,16))
       assert(proto.data == "")
-
-      assert(tf1.prototype(DoubleCellType,10,20) == tf1.prototype(DoubleCellType,10,20),"")
     }
+
+    it("should enable tileToLayout over TileFeature RDDs") {
+      val peRDD = randomProjectedExtentTileFeatureRDD(100)
+      val layout = LayoutDefinition(LatLng.worldExtent,TileLayout(5,5,40,40))
+
+      val newRDD = peRDD.tileToLayout(ShortConstantNoDataCellType,layout)
+      assert(newRDD.count == 25) // assumes peRDD covers full layout
+
+      val firstTF = newRDD.first._2
+      assert(firstTF.tile.rows == 40)
+      assert(firstTF.tile.cols == 40)
+    }
+
     it("should support ops with custom data type") {
 
       case class Foo(num:Int,seq:Seq[String])
@@ -51,66 +87,91 @@ class TileFeatureSupportSpec extends TestEnvironment
 
       val foo1 = Foo(10,Seq("Hello","Goodbye"))
       val foo2 = Foo(20, Seq("HelloAgain"))
-      val fooTF1 = TileFeature(byteArrayTile,foo1)
-      val fooTF2 = TileFeature(byteArrayTile,foo2)
+      val fooTF1 = TileFeature(byteArrayTile, Foo(10,Seq("Hello","Goodbye")))
+      val fooTF2 = TileFeature(byteArrayTile, Foo(20, Seq("HelloAgain")))
 
-      assert(fooTF1.merge(fooTF2) == TileFeature(byteArrayTile,Foo(30, Seq("Hello","Goodbye","HelloAgain"))))
-      assert(fooTF1.prototype(20,20) == TileFeature(byteArrayTile.prototype(20,20),Foo(0,Seq())))
-    }
-    it("should enable tileToLayout over TileFeature RDDs") {
-
-      // Create a RDD[(TemporalProjectedExtent,TileFeature[Tile,String])] suitable for tileToLayout
-      val stkRDD = TestData.randomSpatioTemporalTileLayerRDD(20,20,10,10)
-      val oldMD = stkRDD.metadata
-      val peRDD = stkRDD.map{ case(k,v) => {
-        val pe = TemporalProjectedExtent(oldMD.mapTransform(k),oldMD.crs,k.instant)
-        val tf = TileFeature(v,"x")
-        (pe,tf)
-      }}
-
-      // create a new tlm that will drive retile into RDD[(stk,tf)]
-      val newLD = oldMD.layout.copy(tileLayout=TileLayout(5,5,40,40))
-      val newMD = oldMD.copy(layout = newLD)
-
-      // retile
-      val newRDD = ContextRDD(peRDD.tileToLayout(newMD),newMD)
-      assert(newRDD.count == 25)
-
-      val firstTF = newRDD.first._2
-      assert(firstTF.tile.rows == 40)
-      assert(firstTF.tile.cols == 40)
-
-    }
-    it("should support crop operations") {
-
-      // crop with extents
-      val ext = Extent(0, 0, 100, 100)
-      val ext2 = Extent(0, 0, 100, 50)
-      val opts = Crop.Options.DEFAULT
-      assert(tf1.crop(ext, ext2, opts) == TileFeature(tf1.tile.crop(ext, ext2, opts), tf1.data))
-
-      // crop with gridbounds
-      val gb = GridBounds(0,0,1,1)
-      assert(tf1.crop(gb, opts) == TileFeature(tf1.tile.crop(gb, opts), tf1.data))
-    }
-    it("should support mask operations") {
-
-      val ext = Extent(0, 0, 100, 100)
-      val geoms = Seq(Extent(10,10,90,90).toPolygon())
-      val opts = Rasterizer.Options.DEFAULT
-      assert(tf1.mask(ext, geoms, opts) == TileFeature(tf1.tile.mask(ext, geoms, opts), tf1.data))
-
-      val r = tf2.prototype(tf1.cols, tf1.rows)
-      assert(tf1.localMask(r, 1, 2) == TileFeature(tf1.tile.localMask(r.tile, 1, 2), tf1.data))
-      assert(tf1.localInverseMask(r, 1, 2) == TileFeature(tf1.tile.localInverseMask(r.tile, 1, 2), tf1.data))
+      testAllOps(fooTF1,fooTF2)
     }
 
-//    it("should support ops with Set data") {
-//
-//      val setTF1 = TileFeature(squareIncrementingTile(3),Set("tf1"))
-//      val setTF2 = TileFeature(squareIncrementingTile(3),Set("tf2"))
-//
-//      assert(false)
-//    }
+    it("should support full ops with String data") {
+      val strTF1 = TileFeature(squareIncrementingTile(3), "tf1")
+      val strTF2 = TileFeature(squareIncrementingTile(3), "tf2")
+
+      testAllOps(strTF1, strTF2)
+    }
+
+    it("should support full ops with Seq data") {
+      val seqTF1 = TileFeature(squareIncrementingTile(3), Seq("tf1"))
+      val seqTF2 = TileFeature(squareIncrementingTile(3), Seq("tf2"))
+
+      testAllOps(seqTF1, seqTF2)
+    }
+
+    it("should support full ops with Set data") {
+      val setTF1 = TileFeature(squareIncrementingTile(3), Set("foo", "bar"))
+      val setTF2 = TileFeature(squareIncrementingTile(3), Set("foo", "ball"))
+      testAllOps(setTF1, setTF2)
+    }
+
+    it("should support full ops with Map") {
+      // works for Map[String,String]
+      val mapStrStrTF1 = TileFeature(squareIncrementingTile(3),Map("foo" -> "bar","hello" -> "goodbye"))
+      val mapStrStrTF2 = TileFeature(squareIncrementingTile(3),Map("foo" -> "ball","slap" -> "shot"))
+      testAllOps(mapStrStrTF1, mapStrStrTF2)
+
+      // works for Map[Int,String]
+      val mapIntStrTF1 = TileFeature(squareIncrementingTile(3),Map(1 -> "bar", 2 -> "two"))
+      val mapIntStrTF2 = TileFeature(squareIncrementingTile(3),Map(1 -> "ball", 3 -> "three"))
+      testAllOps(mapIntStrTF1, mapIntStrTF2)
+
+      // Map[String,Seq[String]]
+      val mapStrSeqStrTF1 = TileFeature(squareIncrementingTile(3),Map("foo" -> Seq("hello"),"bar" -> Seq("Goodbye")))
+      val mapStrSeqStrTF2 = TileFeature(squareIncrementingTile(3),Map("foo" -> Seq("Hello"),"cat" -> Seq("Yo","Bonjour")))
+      testAllOps(mapStrSeqStrTF1, mapStrSeqStrTF2)
+    }
+  }
+
+  private def testAllOps[V <: CellGrid: ClassTag: WithMergeMethods: WithPrototypeMethods:
+    WithCropMethods: WithMaskMethods, D: MergeableData](tf1: TileFeature[V, D], tf2: TileFeature[V, D]) = {
+    
+    assert(tf1.prototype(20, 20) == TileFeature(tf1.tile.prototype(20, 20), MergeableData[D].prototype(tf1.data)))
+    assert(tf1.prototype(IntCellType, 20, 20) == TileFeature(tf1.tile.prototype(IntCellType, 20, 20), MergeableData[D].prototype(tf1.data)))
+
+    assert(tf1.crop(ext1, ext2, cropOpts) == TileFeature(tf1.tile.crop(ext1, ext2, cropOpts), tf1.data))
+    assert(tf1.crop(gb, cropOpts) == TileFeature(tf1.tile.crop(gb, cropOpts), tf1.data))
+
+    assert(tf1.mask(ext1, geoms, maskOpts) == TileFeature(tf1.tile.mask(ext1, geoms, maskOpts), tf1.data))
+    assert(tf1.localMask(tf2, 1, 2) == TileFeature(tf1.tile.localMask(tf2.tile, 1, 2), tf1.data))
+    assert(tf1.localInverseMask(tf2, 1, 2) == TileFeature(tf1.tile.localInverseMask(tf2.tile, 1, 2), tf1.data))
+
+    assert(tf1.merge(tf2) == TileFeature(tf1.tile.merge(tf2.tile), MergeableData[D].merge(tf1.data, tf2.data)))
+    assert(tf1.merge(ext1, ext2, tf2, Bilinear) == TileFeature(tf1.tile.merge(ext1, ext2, tf2.tile, Bilinear), MergeableData[D].merge(tf1.data,tf2.data)))
+  }
+
+  class RichRandom(rnd: scala.util.Random) {
+    def nextDouble(max: Double): Double = (rnd.nextInt * max) / Int.MaxValue.toDouble
+    def nextOrderedPair(max:Double): (Double,Double) = (nextDouble(max),nextDouble(max)) match {
+      case(l,r) if l > r => (r,l)
+      case(l,r) if l == r => nextOrderedPair(max)
+      case pair => pair
+    }
+  }
+
+  import scala.language.implicitConversions
+  implicit def richRandom(rnd: scala.util.Random): RichRandom = new RichRandom(rnd)
+
+  def randomProjectedExtentTileRDD(n:Int): RDD[(ProjectedExtent,Tile)] = {
+    val rnd = new scala.util.Random(31415)
+    val x = (1 to n).map(i => {
+      val (latMin, latMax) = rnd.nextOrderedPair(90)
+      val (lonMin, lonMax) = rnd.nextOrderedPair(180)
+      (ProjectedExtent(Extent(lonMin, latMin, lonMax, latMax),LatLng),TestData.randomTile(20, 20, "int16"))
+    })
+    sc.parallelize(x)
+  }
+
+  def randomProjectedExtentTileFeatureRDD(n:Int): RDD[(ProjectedExtent, TileFeature[Tile,String])] = {
+    val rnd = new scala.util.Random(112358)
+    randomProjectedExtentTileRDD(n).mapValues(tile => TileFeature(tile,new String(rnd.alphanumeric.take(4).toArray)))
   }
 }
