@@ -28,7 +28,7 @@ import astraea.spark.rasterframes._
  * @author sfitch 
  * @since 11/6/17
  */
-class PyRFContext(implicit sparkSession: SparkSession)  {
+class PyRFContext(implicit sparkSession: SparkSession) extends RasterFunctions {
   sparkSession.withRasterFrames
 
   def readSingleband(path: String, cols: Int, rows: Int): RasterFrame = {

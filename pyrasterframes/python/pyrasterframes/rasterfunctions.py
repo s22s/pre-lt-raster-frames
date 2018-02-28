@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 from pyspark import SparkContext
-from pyspark.sql import SparkSession, DataFrame
 from pyspark.sql.types import *
 from pyspark.sql.column import Column, _to_java_column
 
@@ -32,25 +31,29 @@ _rf_functions = {
 }
 
 
-def _create_function(rfctx, name, doc=""):
+__all__ = list(_rf_functions.keys())
+
+
+def _create_function(name, doc=""):
     """ Create a mapping to Scala UDF by name"""
     def _(col):
-        jcol = col._jc if isinstance(col, Column) else _to_java_column(col)
-        jfcn = getattr(rfctx, name)
+        sc = SparkContext._active_spark_context
+        jcol = _to_java_column(col)
+        if not hasattr(sc, '_jrf_context'):
+            raise AttributeError(
+                "RasterFrames have not been enabled for the active session. Call 'SparkSession.withRasterFrames()'.")
+        jfcn = getattr(sc._jrf_context, name)
         return Column(jfcn(jcol))
     _.__name__ = name
     _.__doc__ = doc
+    _.__module__ = 'pyrasterframes'
     return _
 
 
-def _register():
-    from pyrasterframes import _rf_init
-    spark = SparkSession.builder.getOrCreate()
-    _rf_init(spark)
+def _register_functions():
+    """ Register each function in the scope"""
     for name, doc in _rf_functions.items():
-        globals()[name] = _create_function(spark.rasterframes._jrfctx, name, doc)
+        globals()[name] = _create_function(name, doc)
 
 
-_register()
-
-__all__ = list(_rf_functions.keys())
+_register_functions()

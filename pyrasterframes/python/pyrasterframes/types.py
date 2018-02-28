@@ -1,10 +1,26 @@
-from pyspark.sql.column import Column, _to_java_column
 from pyspark.sql.types import UserDefinedType
-from pyspark.sql import SparkSession, DataFrame
-
+from pyspark.sql import SparkSession, DataFrame, Column
 from pyspark.sql.types import *
 
-__all__ = ['TileUDT', 'RasterFrame']
+__all__ = ['RFContext', 'RasterFrame', 'TileUDT']
+
+class RFContext(object):
+    """
+    Entrypoint to RasterFrames services
+    """
+    def __init__(self, spark_session):
+        self._spark_session = spark_session
+        self._gateway = spark_session.sparkContext._gateway
+        self._jvm = self._gateway.jvm
+        jsess = self._spark_session._jsparkSession
+        self._jrfctx = self._jvm.astraea.spark.rasterframes.py.PyRFContext(jsess)
+        spark_session.sparkContext._jrf_context = self._jrfctx
+
+
+    def readGeoTiff(self, path, cols=128, rows=128):
+        rf = self._jrfctx.readSingleband(path, cols, rows)
+        return RasterFrame(rf, self._spark_session, self._jrfctx)
+
 
 class RasterFrame(DataFrame):
     def __init__(self, jdf, spark_session, jrfctx):
