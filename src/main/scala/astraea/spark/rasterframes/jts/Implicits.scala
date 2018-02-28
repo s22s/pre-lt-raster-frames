@@ -71,6 +71,10 @@ trait Implicits extends SpatialFunctions {
 
     def at(time: Timestamp): TypedColumn[Any, Boolean] = (self === lit(time)).as[Boolean]
     def at(time: ZonedDateTime): TypedColumn[Any, Boolean] = at(time: Timestamp)
+
+    private def typedOr(left: TypedColumn[Any, Boolean], right: TypedColumn[Any, Boolean]): TypedColumn[Any, Boolean] = (left or right).as[Boolean]
+    def at(times: ZonedDateTime*): TypedColumn[Any, Boolean] =
+      times.map(t ⇒ at(t: Timestamp)).reduce(typedOr)
   }
 }
 
