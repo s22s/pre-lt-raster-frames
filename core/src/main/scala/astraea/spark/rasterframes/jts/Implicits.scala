@@ -22,12 +22,14 @@ package astraea.spark.rasterframes.jts
 import java.sql.Timestamp
 import java.time.ZonedDateTime
 
+import astraea.spark.rasterframes.expressions.SpatialExpression.{Contains, Intersects}
 import com.vividsolutions.jts.geom._
 import geotrellis.util.MethodExtensions
 import geotrellis.vector.{Point ⇒ gtPoint}
 import org.apache.spark.sql.TypedColumn
 import org.apache.spark.sql.functions._
 import org.locationtech.geomesa.spark.jts._
+import org.apache.spark.sql.rf.CanBeColumn
 
 /**
  * Extension methods on typed columns allowing for DSL-like queries over JTS types.
@@ -40,20 +42,21 @@ trait Implicits extends SpatialFunctions {
     extends MethodExtensions[TypedColumn[Any, Polygon]] {
 
     def intersects(geom: Geometry): TypedColumn[Any, Boolean] =
-      st_intersects(self, geomLit(geom)).as[Boolean]
-
-    def containsGeom(geom: Geometry): TypedColumn[Any, Boolean] =
-      st_contains(self, geomLit(geom)).as[Boolean]
+      Intersects(self.expr, geomLit(geom).expr).asColumn.as[Boolean]
 
     def intersects(pt: gtPoint): TypedColumn[Any, Boolean] =
-      st_intersects(self, geomLit(pt.jtsGeom)).as[Boolean]
+      Intersects(self.expr, geomLit(pt.jtsGeom).expr).asColumn.as[Boolean]
+
+    def containsGeom(geom: Geometry): TypedColumn[Any, Boolean] =
+      Contains(self.expr, geomLit(geom).expr).asColumn.as[Boolean]
+
   }
 
   implicit class PointColumnMethods(val self: TypedColumn[Any, Point])
     extends MethodExtensions[TypedColumn[Any, Point]] {
 
     def intersects(geom: Geometry): TypedColumn[Any, Boolean] =
-      st_intersects(self, geomLit(geom)).as[Boolean]
+      Intersects(self.expr, geomLit(geom).expr).asColumn.as[Boolean]
    }
 
   implicit class TimestampColumnMethods(val self: TypedColumn[Any, Timestamp])
