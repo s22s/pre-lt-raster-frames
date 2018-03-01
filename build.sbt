@@ -1,27 +1,19 @@
-lazy val `raster-frames` = project
+lazy val root = project
   .in(file("."))
-  .aggregate(LocalProject("datasource"))
-  .enablePlugins(
-    SiteScaladocPlugin,
-    ParadoxSitePlugin,
-    TutPlugin,
-    GhpagesPlugin,
-    BuildInfoPlugin,
-    AssemblyPlugin
-  )
-  .disablePlugins(LiteratorPlugin)
-  .settings(name := "RasterFrames")
-  .settings(moduleName := "raster-frames")
+  .withId("RF")
+  .aggregate(core, datasource)
   .settings(releaseSettings)
-  .settings(docSettings)
-  .settings(buildInfoSettings)
-  .settings(assemblySettings)
+
+lazy val core = project
 
 lazy val datasource = project
-  .dependsOn(`raster-frames` % "test->test;compile->compile")
+  .dependsOn(core % "test->test;compile->compile")
+
+lazy val docs = project
+  .dependsOn(core, datasource)
 
 lazy val bench = project
-  .dependsOn(`raster-frames`)
+  .dependsOn(core)
 
 initialCommands in console := """
   |import astraea.spark.rasterframes._

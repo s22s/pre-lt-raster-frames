@@ -36,11 +36,12 @@ import org.apache.hadoop.fs.FileUtil
 import org.apache.spark.sql.execution.datasources.LogicalRelation
 import org.apache.spark.sql.functions.{udf ⇒ sparkUdf, _}
 import org.apache.spark.sql.{DataFrame, Row}
-import org.scalatest.BeforeAndAfter
+import org.scalatest.{BeforeAndAfter, Inspectors}
 import org.apache.avro.generic._
+import org.apache.spark.storage.StorageLevel
 
 class GeoTrellisDataSourceSpec
-    extends TestEnvironment with TestData with BeforeAndAfter
+    extends TestEnvironment with TestData with BeforeAndAfter with Inspectors
     with IntelliJPresentationCompilerHack {
 
   val tileSize = 12
@@ -126,7 +127,7 @@ class GeoTrellisDataSourceSpec
         assert(df.count() === boundKeys.toGridBounds.sizeLong)
       }
       withClue("functional API") {
-        val df = wc.where(st_intersects(CENTER_COLUMN, geomlit(bbox)))
+        val df = wc.where(st_intersects(CENTER_COLUMN, geomLit(bbox)))
         assert(df.count() === boundKeys.toGridBounds.sizeLong)
       }
     }
@@ -235,6 +236,15 @@ class GeoTrellisDataSourceSpec
 
       assert(df.count() === 1)
       assert(df.select(SPATIAL_KEY_COLUMN).first === targetKey)
+    }
+
+    it("should support query with multiple geometry types") {
+      // Mostly just testing that these evaluate without catalyst type errors.
+      forEvery(JTS.all) { g ⇒
+        val query = layerReader.loadRF(layer).where(BOUNDS_COLUMN.intersects(g))
+          .persist(StorageLevel.OFF_HEAP)
+        assert(query.count() === 0)
+      }
     }
 
     it("should *not* support extent filter against a UDF") {
