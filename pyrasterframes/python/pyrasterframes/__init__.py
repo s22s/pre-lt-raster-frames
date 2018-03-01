@@ -18,7 +18,8 @@ def _rf_init(spark_session):
 
 def _reader(df_reader, format_key, path, **options):
     """ Loads the file of the given type at the given path."""
-    return df_reader.format(format_key).load(path, **options)
+    dFrame = df_reader.format(format_key).load(path, **options)
+    return RasterFrame(dFrame._jdf, df_reader._spark.sparkSession)
 
 
 # Patch new method on SparkSession to mirror Scala approach

@@ -19,13 +19,13 @@ class RFContext(object):
 
     def readGeoTiff(self, path, cols=128, rows=128):
         rf = self._jrfctx.readSingleband(path, cols, rows)
-        return RasterFrame(rf, self._spark_session, self._jrfctx)
+        return RasterFrame(rf, self._spark_session)
 
 
 class RasterFrame(DataFrame):
-    def __init__(self, jdf, spark_session, jrfctx):
+    def __init__(self, jdf, spark_session):
         DataFrame.__init__(self, jdf, spark_session)
-        self._jrfctx = jrfctx
+        self._jrfctx = spark_session.rasterframes._jrfctx
 
     def tileColumns(self):
         """
@@ -50,6 +50,7 @@ class RasterFrame(DataFrame):
         """
         col = self._jrfctx.temporalKeyColumn(self._jdf)
         return col and Column(col)
+
 
 class TileUDT(UserDefinedType):
     """User-defined type (UDT).

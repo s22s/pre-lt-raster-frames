@@ -44,4 +44,8 @@ class PyRFContext(implicit sparkSession: SparkSession) extends RasterFunctions {
 
   def temporalKeyColumn(df: DataFrame): Column =
     df.asRF.temporalKeyColumn.orNull
+
+  def tileToIntArray(col: Column): Column = tileToArray[Int](col)
+
+  def tileToDoubleArray(col: Column): Column = tileToArray[Double](col)
 }

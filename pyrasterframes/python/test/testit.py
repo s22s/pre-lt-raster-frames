@@ -2,7 +2,7 @@
 from pyspark.sql import SparkSession
 # Get access to Raster Frames goodies. (this works fine with local master)
 from pyrasterframes import *
-from pyrasterframes.functions import *
+from pyrasterframes.rasterfunctions import *
 
 # you can also tweak app name and master here, not necessary from pyspark REPL.
 spark = SparkSession.builder.getOrCreate()
