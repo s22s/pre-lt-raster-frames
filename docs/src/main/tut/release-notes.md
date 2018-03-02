@@ -2,15 +2,22 @@
 
 ## 0.6.0
 
-* Upgraded to Spark 2.2.0 (now required)
+* Upgraded to Spark 2.2.1. Added `VersionShims` to allow for Spark 2.1.x backwards compatibility.
 * Introduced separate `rasterframes-datasource` library for hosting sources from which to read RasterFrames.
-* Implemented basic temporal and spatial filter predicate push-down feature for the GeoTrellis layer datasource.
-* Added a GeoTrellis "Catalog" DataSource for inspecting available layers and associated metadata at a URI.
+* Implemented basic (but sufficient) temporal and spatial filter predicate push-down feature for the GeoTrellis layer datasource.
+* Added Catalyst expressions specifically for spatial relations, allowing for some polymorphism over JTS types.
+* Added a GeoTrellis Catalog `DataSource` for inspecting available layers and associated metadata at a URI 
+* Added GeoTrellis Layer DataSource for reading GeoTrellis layers from any SPI-registered GeoTrellis backend (which includes HDFS, S3, Accumulo, HBase, Cassandra, etc.).
+* Ability to save a RasterFrame as a GeoTrellis layer to any SPI-registered GeoTrellis backends. Multi-column RasterFrames are written as Multiband tiles.
 * Addd a GeoTiff DataSource for directly loading a (preferably Cloud Optimized) GeoTiff as a RasterFrame, each row containing tiles as they are internally organized.
 * Fleshed out support for `MultibandTile` and `TileFeature` support in datasource.
 * Added `withTemporalComponent` convenince method for creating appending a temporal key column with constant value.
-* _Breaking_: Renamed `withExtent` to `withBounds`, and now returns a JTS `Polygon`
+* _Breaking_: Renamed `withExtent` to `withBounds`, and now returns a JTS `Polygon`.
 * Added `EnvelopeEncoder` for encoding JTS `Envelope` type. 
+* Refactored build into separate `core` and `docs`, paving way for `pyrasterframes` polyglot module.
+
+#### Known Issues
+* Writing multi-column RasterFrames to GeoTrellis layers requires all tiles to be of the same cell type.
 
 ## 0.5.x
 
@@ -19,8 +26,8 @@
 * Added `withSpatialIndex` to introduce a column assigning a z-curve index value based on the tile's centroid in EPSG:4326. 
 * Added column-appending convenience methods: `withExtent`, `withCenter`,  `withCenterLatLng`
 * Documented example of creating a GeoTrellis layer from a RasterFrame.
-* Added Spark 2.2.0 forward-compatibility
-* Upgraded to GeoTrellis 1.2.0-RC2
+* Added Spark 2.2.0 forward-compatibility.
+* Upgraded to GeoTrellis 1.2.0-RC2.
 
 ### 0.5.11
 
