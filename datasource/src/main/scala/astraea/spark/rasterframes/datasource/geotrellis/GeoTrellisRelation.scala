@@ -316,6 +316,8 @@ case class GeoTrellisRelation(sqlContext: SQLContext,
         val rdd = query.result
         logger.debug(s"Query RDD has ${rdd.partitions.length}, parameter was ${numPartitions}")
 
+        /* Note when there are both numPartitions and subdivideTile options
+         *    we will change the partitioning to try to honor the numPartitions  */
         val subdividedRdd: RDD[(SpaceTimeKey, T)] = if(subdivideTile.isEmpty) rdd
         else rdd
           .mapPartitions { it ⇒
