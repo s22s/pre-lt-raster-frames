@@ -1,3 +1,5 @@
+addCommandAlias("makeSite", "docs/makeSite")
+
 lazy val root = project
   .in(file("."))
   .withId("RF")

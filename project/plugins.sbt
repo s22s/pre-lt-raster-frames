@@ -12,7 +12,7 @@ addSbtPlugin("de.heikoseeberger" % "sbt-header" % "3.0.2")
 
 addSbtPlugin("com.lucidchart" % "sbt-scalafmt" % "1.10")
 
-addSbtPlugin("org.tpolecat" % "tut-plugin" % "0.6.2")
+addSbtPlugin("org.tpolecat" % "tut-plugin" % "0.6.3-M5")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-ghpages" % "0.6.2")
 

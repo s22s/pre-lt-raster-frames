@@ -110,8 +110,8 @@ object ProjectPlugin extends AutoPlugin {
     )
 
     def releaseSettings: Seq[Def.Setting[_]] = {
-      val buildSite: (State) ⇒ State = releaseStepTask(makeSite)
-      val publishSite: (State) ⇒ State = releaseStepTask(ghpagesPushSite)
+      val buildSite: (State) ⇒ State = releaseStepTask(makeSite in LocalProject("docs"))
+      val publishSite: (State) ⇒ State = releaseStepTask(ghpagesPushSite in LocalProject("docs"))
       Seq(
         releaseIgnoreUntrackedFiles := true,
         releaseTagName := s"${version.value}",
