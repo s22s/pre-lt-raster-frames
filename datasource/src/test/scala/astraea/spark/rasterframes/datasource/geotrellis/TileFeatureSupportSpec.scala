@@ -19,18 +19,17 @@
 
 package astraea.spark.rasterframes.datasource.geotrellis
 
+import astraea.spark.rasterframes._
 import astraea.spark.rasterframes.datasource.geotrellis.TileFeatureSupport._
-import astraea.spark.rasterframes.{IntelliJPresentationCompilerHack, TestData, TestEnvironment}
 import geotrellis.proj4.LatLng
 import geotrellis.raster.crop.Crop
 import geotrellis.raster.rasterize.Rasterizer
 import geotrellis.raster.resample.Bilinear
 import geotrellis.raster.{CellGrid, GridBounds, IntCellType, ShortConstantNoDataCellType, Tile, TileFeature, TileLayout}
-import geotrellis.spark
-import geotrellis.spark.SpatialKey
 import geotrellis.spark.tiling.Implicits._
 import geotrellis.spark.tiling._
 import geotrellis.vector.{Extent, ProjectedExtent}
+import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 import org.scalatest.BeforeAndAfter
 
@@ -65,7 +64,7 @@ class TileFeatureSupportSpec extends TestEnvironment
     }
 
     it("should enable tileToLayout over TileFeature RDDs") {
-      val peRDD = randomProjectedExtentTileFeatureRDD(100)
+      val peRDD = TestHarness.randomProjectedExtentTileFeatureRDD(100)
       val layout = LayoutDefinition(LatLng.worldExtent,TileLayout(5,5,40,40))
 
       val newRDD = peRDD.tileToLayout(ShortConstantNoDataCellType,layout)
@@ -113,7 +112,7 @@ class TileFeatureSupportSpec extends TestEnvironment
       testAllOps(setTF1, setTF2)
     }
 
-    it("should support full ops with Map") {
+    it("should support full ops with Map data") {
       // works for Map[String,String]
       val mapStrStrTF1 = TileFeature(squareIncrementingTile(3),Map("foo" -> "bar","hello" -> "goodbye"))
       val mapStrStrTF2 = TileFeature(squareIncrementingTile(3),Map("foo" -> "ball","slap" -> "shot"))
@@ -147,6 +146,12 @@ class TileFeatureSupportSpec extends TestEnvironment
     assert(tf1.merge(tf2) == TileFeature(tf1.tile.merge(tf2.tile), MergeableData[D].merge(tf1.data, tf2.data)))
     assert(tf1.merge(ext1, ext2, tf2, Bilinear) == TileFeature(tf1.tile.merge(ext1, ext2, tf2.tile, Bilinear), MergeableData[D].merge(tf1.data,tf2.data)))
   }
+}
+
+
+object TestHarness {
+
+  import scala.language.implicitConversions
 
   class RichRandom(rnd: scala.util.Random) {
     def nextDouble(max: Double): Double = (rnd.nextInt * max) / Int.MaxValue.toDouble
@@ -157,20 +162,22 @@ class TileFeatureSupportSpec extends TestEnvironment
     }
   }
 
-  import scala.language.implicitConversions
-  implicit def richRandom(rnd: scala.util.Random): RichRandom = new RichRandom(rnd)
+  object RichRandom {
+    implicit def apply(rnd: scala.util.Random): RichRandom = new RichRandom(rnd)
+  }
 
-  def randomProjectedExtentTileRDD(n:Int): RDD[(ProjectedExtent,Tile)] = {
+  def randomProjectedExtentTileRDD(n:Int)(implicit sc: SparkContext): RDD[(ProjectedExtent,Tile)] = {
+    import RichRandom._
+
     val rnd = new scala.util.Random(31415)
-    val x = (1 to n).map(i => {
+    sc.parallelize((1 to n).map(i => {
       val (latMin, latMax) = rnd.nextOrderedPair(90)
       val (lonMin, lonMax) = rnd.nextOrderedPair(180)
       (ProjectedExtent(Extent(lonMin, latMin, lonMax, latMax),LatLng),TestData.randomTile(20, 20, "int16"))
-    })
-    sc.parallelize(x)
+    }))
   }
 
-  def randomProjectedExtentTileFeatureRDD(n:Int): RDD[(ProjectedExtent, TileFeature[Tile,String])] = {
+  def randomProjectedExtentTileFeatureRDD(n:Int)(implicit sc: SparkContext): RDD[(ProjectedExtent, TileFeature[Tile,String])] = {
     val rnd = new scala.util.Random(112358)
     randomProjectedExtentTileRDD(n).mapValues(tile => TileFeature(tile,new String(rnd.alphanumeric.take(4).toArray)))
   }
