@@ -75,6 +75,3 @@ trait TileFeatureSupport {
 }
 
 object TileFeatureSupport extends TileFeatureSupport
-
-
-
