@@ -25,7 +25,6 @@ import org.apache.spark.ml.param.ParamMap
 import org.apache.spark.ml.util.{DefaultParamsReadable, DefaultParamsWritable, Identifiable}
 import org.apache.spark.sql.Dataset
 import org.apache.spark.sql.functions.col
-import org.apache.spark.sql.gt.types.TileUDT
 import org.apache.spark.sql.types._
 import astraea.spark.rasterframes.util._
 
@@ -35,19 +34,16 @@ import astraea.spark.rasterframes.util._
  *
  * @since 9/21/17
  */
-class TileExploder(override val uid: String) extends Transformer with DefaultParamsWritable {
+class TileExploder(override val uid: String) extends Transformer
+  with DefaultParamsWritable with TileColumnSupport {
 
   def this() = this(Identifiable.randomUID("tile-exploder"))
 
   override def copy(extra: ParamMap): TileExploder = defaultCopy(extra)
 
-  private def isTile(field: StructField) =
-    field.dataType.typeName.equalsIgnoreCase(TileUDT.typeName)
-
   /** Checks the incoming schema and determines what the output schema will be. */
   def transformSchema(schema: StructType) = {
-    val nonTiles = schema.fields.filter(!isTile(_))
-    val tiles = schema.fields.filter(isTile)
+    val (tiles, nonTiles) = selectTileAndNonTileFields(schema)
     val cells = tiles.map(_.copy(dataType = DoubleType, nullable = false))
     val indexes = Seq(
       StructField(COLUMN_INDEX_COLUMN.columnName, IntegerType, false),
@@ -57,10 +53,11 @@ class TileExploder(override val uid: String) extends Transformer with DefaultPar
   }
 
   def transform(dataset: Dataset[_]) = {
-    val nonTiles = dataset.schema.fields.filter(!isTile(_)).map(f ⇒ col(f.name))
-    val tiles = dataset.schema.fields.filter(isTile).map(f ⇒ col(f.name))
-    val exploder = explodeTiles(tiles: _*)
-    dataset.select(nonTiles :+ exploder: _*)
+    val (tiles, nonTiles) = selectTileAndNonTileFields(dataset.schema)
+    val tileCols = tiles.map(f ⇒ col(f.name))
+    val nonTileCols = nonTiles.map(f ⇒ col(f.name))
+    val exploder = explodeTiles(tileCols: _*)
+    dataset.select(nonTileCols :+ exploder: _*)
   }
 }
 
