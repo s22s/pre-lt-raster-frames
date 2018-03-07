@@ -1,5 +1,8 @@
 # Release Notes
 
+## 0.7.0
+
+
 ## 0.6.0
 
 * Upgraded to Spark 2.2.0 (now required)

@@ -1,5 +1,6 @@
 from pyspark.sql.types import UserDefinedType
-from pyspark.sql import SparkSession, DataFrame, Column
+from pyspark import SparkContext
+from pyspark.sql import SparkSession, DataFrame, Column, Row
 from pyspark.sql.types import *
 
 __all__ = ['RFContext', 'RasterFrame', 'TileUDT']
@@ -14,7 +15,6 @@ class RFContext(object):
         self._jvm = self._gateway.jvm
         jsess = self._spark_session._jsparkSession
         self._jrfctx = self._jvm.astraea.spark.rasterframes.py.PyRFContext(jsess)
-        spark_session.sparkContext._jrf_context = self._jrfctx
 
 
     def readGeoTiff(self, path, cols=128, rows=128):
@@ -76,7 +76,16 @@ class TileUDT(UserDefinedType):
         return 'org.apache.spark.sql.gt.types.TileUDT'
 
     def serialize(self, obj):
-        raise TypeError("Not implemented yet")
+        if (obj is None): return None
+        print(obj.cellType().name())
+        return Row(obj.cellType().name().encode("UTF8"),
+                  obj.cols().toShort(),
+                  obj.rows().toShort(),
+                  obj.toBytes)
 
     def deserialize(self, datum):
-        raise TypeError("Not implemented yet")
+        ctx = SparkContext._active_spark_context._rf_context
+        return ctx.generateTile(datum[0], datum[1], datum[2], datum[3])
+
+
+

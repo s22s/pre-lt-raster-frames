@@ -21,6 +21,8 @@ package astraea.spark.rasterframes.py
 import geotrellis.raster.io.geotiff.reader.GeoTiffReader
 import org.apache.spark.sql._
 import astraea.spark.rasterframes._
+import geotrellis.raster.{ArrayTile, CellType}
+
 
 /**
  * py4j access wrapper to RasterFrame entry points.
@@ -30,6 +32,14 @@ import astraea.spark.rasterframes._
  */
 class PyRFContext(implicit sparkSession: SparkSession) extends RasterFunctions {
   sparkSession.withRasterFrames
+
+  def asRF(df: DataFrame): RasterFrame = {
+    df.asRF
+  }
+
+  def generateTile(cellType: String, cols: Int, rows: Int, bytes: Array[Byte]): ArrayTile = {
+    ArrayTile.fromBytes(bytes, CellType.fromName(cellType), cols, rows)
+  }
 
   def readSingleband(path: String, cols: Int, rows: Int): RasterFrame = {
     val scene = GeoTiffReader.readSingleband(path)
