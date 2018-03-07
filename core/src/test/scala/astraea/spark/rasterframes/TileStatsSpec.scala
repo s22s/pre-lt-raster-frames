@@ -88,11 +88,18 @@ class TileStatsSpec extends TestEnvironment with TestData  {
       val expectedNoData = 10 * 10
       val expectedData = 10 * 10 * 10 - expectedNoData
 
+      logger.debug(ds.select($"tile").as[Tile].first.cellType.name)
+
       assert(ds.select(dataCells($"tile") as "cells").agg(sum("cells")).as[Long].first() === expectedData)
       assert(ds.select(noDataCells($"tile") as "cells").agg(sum("cells")).as[Long].first() === expectedNoData)
 
       assert(ds.select(aggDataCells($"tile")).first() === expectedData)
       assert(ds.select(aggNoDataCells($"tile")).first() === expectedNoData)
+
+      val resultTileStats = ds.select(tileStats($"tile")("dataCells") as "cells")
+        .agg(sum("cells")).as[Long]
+        .first()
+      assert(resultTileStats === expectedData)
     }
 
     it("should compute tile statistics") {
@@ -234,7 +241,6 @@ class TileStatsSpec extends TestEnvironment with TestData  {
       val tiles = (Seq.fill[Tile](count)(randomTile(tsize, tsize, "uint8ud255"))
         .map(injectND(nds)) :+ null).toDF("tiles")
 
-      //tiles.select(tileStats($"tiles")).show(100)
       val counts = tiles.select(noDataCells($"tiles")).collect().dropRight(1)
       forEvery(counts)(c ⇒ assert(c === nds))
       val counts2 = tiles.select(dataCells($"tiles")).collect().dropRight(1)
