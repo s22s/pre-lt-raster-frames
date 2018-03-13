@@ -11,6 +11,7 @@
 * Ability to save a RasterFrame as a GeoTrellis layer to any SPI-registered GeoTrellis backends. Multi-column RasterFrames are written as Multiband tiles.
 * Addd a GeoTiff DataSource for directly loading a (preferably Cloud Optimized) GeoTiff as a RasterFrame, each row containing tiles as they are internally organized.
 * Fleshed out support for `MultibandTile` and `TileFeature` support in datasource.
+* Added typeclass for specifying merge operations on `TileFeature` data payload.
 * Added `withTemporalComponent` convenince method for creating appending a temporal key column with constant value.
 * _Breaking_: Renamed `withExtent` to `withBounds`, and now returns a JTS `Polygon`.
 * Added `EnvelopeEncoder` for encoding JTS `Envelope` type. 

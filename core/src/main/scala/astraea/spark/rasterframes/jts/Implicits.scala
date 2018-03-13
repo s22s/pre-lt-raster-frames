@@ -28,7 +28,6 @@ import geotrellis.util.MethodExtensions
 import geotrellis.vector.{Point ⇒ gtPoint}
 import org.apache.spark.sql.TypedColumn
 import org.apache.spark.sql.functions._
-import org.locationtech.geomesa.spark.jts._
 import org.apache.spark.sql.rf.CanBeColumn
 
 /**
@@ -38,8 +37,8 @@ import org.apache.spark.sql.rf.CanBeColumn
 trait Implicits extends SpatialFunctions {
   import astraea.spark.rasterframes.encoders.SparkDefaultEncoders._
 
-  implicit class ExtentColumnMethods(val self: TypedColumn[Any, Polygon])
-    extends MethodExtensions[TypedColumn[Any, Polygon]] {
+  implicit class ExtentColumnMethods[T <: Geometry](val self: TypedColumn[Any, T])
+    extends MethodExtensions[TypedColumn[Any, T]] {
 
     def intersects(geom: Geometry): TypedColumn[Any, Boolean] =
       Intersects(self.expr, geomLit(geom).expr).asColumn.as[Boolean]

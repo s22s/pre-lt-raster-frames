@@ -19,14 +19,10 @@
 
 package astraea.spark.rasterframes
 
-import astraea.spark.rasterframes.expressions.Box2DExpression
 import astraea.spark.rasterframes.util._
 import com.vividsolutions.jts.geom._
 import geotrellis.proj4.LatLng
-import geotrellis.vector.{Point ⇒ gtPoint}
-import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
-import org.apache.spark.sql.{Column, Encoders}
-import org.apache.spark.sql.functions.udf
+import geotrellis.vector.{Point => gtPoint}
 
 /**
  * Test rig for operations providing interop with JTS types.

@@ -120,6 +120,14 @@ class RasterFrameSpec extends TestEnvironment with MetadataKeys
       assert(rf.columns.toSet === Set(SPATIAL_KEY_COLUMN, TEMPORAL_KEY_COLUMN, TILE_COLUMN, TILE_FEATURE_DATA_COLUMN).map(_.columnName))
     }
 
+    it("should support adding a timestamp column") {
+      val rf = sampleGeoTiff.projectedRaster.toRF(256, 256)
+      val wt = rf.addTemporalComponent(TemporalKey(34))
+      val goodie = wt.withTimestamp()
+      assert(goodie.columns.contains("timestamp"))
+      assert(goodie.count > 0)
+    }
+
     it("should support spatial joins") {
       val rf = sampleGeoTiff.projectedRaster.toRF(256, 256)
       val wt = rf.addTemporalComponent(TemporalKey(34))

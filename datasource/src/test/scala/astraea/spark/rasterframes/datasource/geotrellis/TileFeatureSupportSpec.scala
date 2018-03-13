@@ -64,7 +64,7 @@ class TileFeatureSupportSpec extends TestEnvironment
     }
 
     it("should enable tileToLayout over TileFeature RDDs") {
-      val peRDD = TestHarness.randomProjectedExtentTileFeatureRDD(100)
+      val peRDD = TileFeatureSupportSpec.randomProjectedExtentTileFeatureRDD(100)
       val layout = LayoutDefinition(LatLng.worldExtent,TileLayout(5,5,40,40))
 
       val newRDD = peRDD.tileToLayout(ShortConstantNoDataCellType,layout)
@@ -149,11 +149,11 @@ class TileFeatureSupportSpec extends TestEnvironment
 }
 
 
-object TestHarness {
+object TileFeatureSupportSpec {
 
   import scala.language.implicitConversions
 
-  class RichRandom(rnd: scala.util.Random) {
+  implicit class RichRandom(val rnd: scala.util.Random) extends AnyVal {
     def nextDouble(max: Double): Double = (rnd.nextInt * max) / Int.MaxValue.toDouble
     def nextOrderedPair(max:Double): (Double,Double) = (nextDouble(max),nextDouble(max)) match {
       case(l,r) if l > r => (r,l)
@@ -162,13 +162,7 @@ object TestHarness {
     }
   }
 
-  object RichRandom {
-    implicit def apply(rnd: scala.util.Random): RichRandom = new RichRandom(rnd)
-  }
-
   def randomProjectedExtentTileRDD(n:Int)(implicit sc: SparkContext): RDD[(ProjectedExtent,Tile)] = {
-    import RichRandom._
-
     val rnd = new scala.util.Random(31415)
     sc.parallelize((1 to n).map(i => {
       val (latMin, latMax) = rnd.nextOrderedPair(90)

@@ -32,7 +32,7 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql._
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.gt.types.TileUDT
-import org.apache.spark.sql.types.{Metadata, StructField}
+import org.apache.spark.sql.types.{Metadata, StructField, TimestampType}
 import spray.json._
 import astraea.spark.rasterframes.util._
 import astraea.spark.rasterframes.encoders.StandardEncoders._
@@ -124,6 +124,16 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame]
 
   /** Create a temporal key from the given time and assign it as thea temporal key for all rows. */
   def addTemporalComponent(value: ZonedDateTime): RasterFrame = addTemporalComponent(TemporalKey(value))
+
+  /**
+   * Append a column containing the temporal key rendered as a TimeStamp.
+   * @param colName name of column to add
+   * @return updated RasterFrame
+   */
+  def withTimestamp(colName: String = TIMESTAMP_COLUMN.columnName): RasterFrame = {
+    self.withColumn(colName, TEMPORAL_KEY_COLUMN.getField("instant").cast(TimestampType))
+      .certify
+  }
 
   /**
    * Perform a spatial join between two raster frames. Currently ignores a temporal column if there is one.
