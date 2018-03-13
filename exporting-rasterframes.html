@@ -45,9 +45,10 @@ gtag('config', 'UA-106630615-1');
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.6.0-RC4
+0.6.0-RC7
 </div>
 </div>
+<select class="supergroup" name="Language"><option class="group" value="group-scala">Scala</option><option class="group" value="group-python">Python</option></select>
 <div class="nav-toc">
 <ul>
   <li><a href="getting-started.html" class="page">Getting Started</a></li>
@@ -99,9 +100,10 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.6.0-RC4
+0.6.0-RC7
 </div>
 </div>
+<select class="supergroup" name="Language"><option class="group" value="group-scala">Scala</option><option class="group" value="group-python">Python</option></select>
 <div class="nav-toc">
 <ul>
   <li><a href="getting-started.html" class="page">Getting Started</a></li>
@@ -172,11 +174,11 @@ scala&gt; tileBack.drop(&quot;tileData&quot;).show(5, 40)
 +-----------+--------------------------------------+
 |spatial_key|                             tileAgain|
 +-----------+--------------------------------------+
-|      [6,3]|ShortRawArrayTile([S@14785392,128,128)|
-|      [4,0]|ShortRawArrayTile([S@70c8de73,128,128)|
-|      [0,0]|ShortRawArrayTile([S@364aa6ef,128,128)|
-|      [4,2]|ShortRawArrayTile([S@12a35a5e,128,128)|
-|      [0,2]|ShortRawArrayTile([S@44917f5b,128,128)|
+|      [6,3]|ShortRawArrayTile([S@6e2b679e,128,128)|
+|      [4,0]|ShortRawArrayTile([S@78a689e7,128,128)|
+|      [0,0]|ShortRawArrayTile([S@206769f8,128,128)|
+|      [4,2]| ShortRawArrayTile([S@437eeb4,128,128)|
+|      [0,2]|ShortRawArrayTile([S@31156e3b,128,128)|
 +-----------+--------------------------------------+
 only showing top 5 rows
 
@@ -189,11 +191,11 @@ scala&gt; tileBackAgain.drop(&quot;tileData&quot;).show(5, 50)
 +-----------+--------------------------------------------------+
 |spatial_key|                                         tileAgain|
 +-----------+--------------------------------------------------+
-|      [6,3]|ShortUserDefinedNoDataArrayTile([S@4de1cf08,128...|
-|      [4,0]|ShortUserDefinedNoDataArrayTile([S@23bc7420,128...|
-|      [0,0]|ShortUserDefinedNoDataArrayTile([S@3bf41e1b,128...|
-|      [4,2]|ShortUserDefinedNoDataArrayTile([S@102828e,128,...|
-|      [0,2]|ShortUserDefinedNoDataArrayTile([S@42589429,128...|
+|      [6,3]|ShortUserDefinedNoDataArrayTile([S@6e3a9e71,128...|
+|      [4,0]|ShortUserDefinedNoDataArrayTile([S@f734e1,128,1...|
+|      [0,0]|ShortUserDefinedNoDataArrayTile([S@7b7d5d8d,128...|
+|      [4,2]|ShortUserDefinedNoDataArrayTile([S@59708aaa,128...|
+|      [0,2]|ShortUserDefinedNoDataArrayTile([S@63834ee3,128...|
 +-----------+--------------------------------------------------+
 only showing top 5 rows
 
@@ -239,7 +241,7 @@ equalized.select(&quot;*&quot;, &quot;spatial_key.*&quot;).write.partitionBy(&qu
 import java.io.File
 
 scala&gt; new File(filePath).list.filter(f =&gt; !f.contains(&quot;_&quot;))
-res8: Array[String] = Array(col=0, col=1, col=2, col=3, col=4, col=5, col=6)
+res8: Array[String] = Array(col=0, col=1, col=6, col=3, col=4, col=5, col=2)
 </code></pre>
 <p>Now we can load the data back in and check it out:</p>
 <pre class="prettyprint"><code class="language-scala">val rf2 = spark.read.parquet(filePath)
@@ -303,7 +305,7 @@ writer.write(layerId, tlRDD, index.ZCurveKeyIndexMethod)
 </code></pre>
 <p>Take a look at the metadata in JSON format:</p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; AttributeStore(p.toUri).readMetadata[JsValue](layerId).prettyPrint
-res16: String =
+res15: String =
 {
   &quot;extent&quot;: {
     &quot;xmin&quot;: 431902.5,

@@ -45,9 +45,10 @@ gtag('config', 'UA-106630615-1');
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.6.0-RC4
+0.6.0-RC7
 </div>
 </div>
+<select class="supergroup" name="Language"><option class="group" value="group-scala">Scala</option><option class="group" value="group-python">Python</option></select>
 <div class="nav-toc">
 <ul>
   <li><a href="../getting-started.html" class="page">Getting Started</a></li>
@@ -99,9 +100,10 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.6.0-RC4
+0.6.0-RC7
 </div>
 </div>
+<select class="supergroup" name="Language"><option class="group" value="group-scala">Scala</option><option class="group" value="group-python">Python</option></select>
 <div class="nav-toc">
 <ul>
   <li><a href="../getting-started.html" class="page">Getting Started</a></li>
@@ -151,8 +153,8 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <pre class="prettyprint"><code class="language-scala">import astraea.spark.rasterframes._
 import astraea.spark.rasterframes.ml.{NoDataFilter, TileExploder}
 import geotrellis.raster._
-import geotrellis.raster.io.geotiff.reader.GeoTiffReader
-import geotrellis.raster.render.{ColorRamps, IndexedColorMap}
+import geotrellis.raster.render._
+import geotrellis.raster.io.geotiff.SinglebandGeoTiff
 import org.apache.spark.ml.Pipeline
 import org.apache.spark.ml.classification.DecisionTreeClassifier
 import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
@@ -160,15 +162,14 @@ import org.apache.spark.ml.feature.VectorAssembler
 import org.apache.spark.ml.tuning.{CrossValidator, ParamGridBuilder}
 import org.apache.spark.sql._
 
-
-implicit val spark = SparkSession.builder().config(&quot;spark.ui.enabled&quot;, &quot;false&quot;).
+implicit val spark = SparkSession.builder().
   master(&quot;local[*]&quot;).appName(getClass.getName).getOrCreate().withRasterFrames
 spark.sparkContext.setLogLevel(&quot;ERROR&quot;)
 
 import spark.implicits._
 
 // Utility for reading imagery from our test data set
-def readTiff(name: String) = GeoTiffReader.readSingleband(s&quot;src/test/resources/$name&quot;)
+def readTiff(name: String): SinglebandGeoTiff = SinglebandGeoTiff(s&quot;../core/src/test/resources/$name&quot;)
 </code></pre>
 <h2><a href="#loading-data" name="loading-data" class="anchor"><span class="anchor-link"></span></a>Loading Data</h2>
 <p>The first step is to load multiple bands of imagery and construct a single RasterFrame from them. To do this we:</p>
@@ -263,7 +264,7 @@ val trainer = new CrossValidator().
 </code></pre>
 <p>Push the &ldquo;go&rdquo; button:</p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; val model = trainer.fit(abt)
-model: org.apache.spark.ml.tuning.CrossValidatorModel = cv_26d6ee57ee77
+model: org.apache.spark.ml.tuning.CrossValidatorModel = cv_7a244a94b5a3
 </code></pre>
 <h2><a href="#model-evaluation" name="model-evaluation" class="anchor"><span class="anchor-link"></span></a>Model Evaluation</h2>
 <p>To view the model&rsquo;s performance we format the <code>paramGrid</code> settings used for each model and render the parameter/performance association.</p>
