@@ -2,6 +2,7 @@
 
 package astraea.spark.rasterframes
 
+import java.sql.Timestamp
 import java.time.ZonedDateTime
 
 import geotrellis.proj4.LatLng
@@ -14,6 +15,7 @@ import geotrellis.vector.{Extent, ProjectedExtent}
 import org.apache.spark.sql.{SQLContext, SparkSession}
 import org.apache.spark.sql.functions._
 import astraea.spark.rasterframes.util._
+
 import scala.util.control.NonFatal
 
 /**
@@ -121,15 +123,21 @@ class RasterFrameSpec extends TestEnvironment with MetadataKeys
     }
 
     it("should support adding a timestamp column") {
+      val now = ZonedDateTime.now()
       val rf = sampleGeoTiff.projectedRaster.toRF(256, 256)
-      val wt = rf.addTemporalComponent(TemporalKey(34))
+      val wt = rf.addTemporalComponent(now)
       val goodie = wt.withTimestamp()
       assert(goodie.columns.contains("timestamp"))
       assert(goodie.count > 0)
+      val ts = goodie.select(col("timestamp").as[Timestamp]).first
+
+      assert(ts === Timestamp.from(now.toInstant))
+
     }
 
     it("should support spatial joins") {
       val rf = sampleGeoTiff.projectedRaster.toRF(256, 256)
+
       val wt = rf.addTemporalComponent(TemporalKey(34))
 
       assert(wt.columns.contains(TEMPORAL_KEY_COLUMN.columnName))

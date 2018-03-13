@@ -16,6 +16,7 @@
 
 package astraea.spark.rasterframes.extensions
 
+import java.sql.Timestamp
 import java.time.ZonedDateTime
 
 import astraea.spark.rasterframes.{MetadataKeys, RasterFrame}
@@ -131,7 +132,7 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame]
    * @return updated RasterFrame
    */
   def withTimestamp(colName: String = TIMESTAMP_COLUMN.columnName): RasterFrame = {
-    self.withColumn(colName, TEMPORAL_KEY_COLUMN.getField("instant").cast(TimestampType))
+    self.withColumn(colName, (TEMPORAL_KEY_COLUMN.getField("instant").as[Long] / 1000).cast(TimestampType))
       .certify
   }
 
