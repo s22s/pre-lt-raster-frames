@@ -4,6 +4,7 @@ lazy val root = project
   .in(file("."))
   .withId("RF")
   .aggregate(core, datasource)
+  .settings(publishArtifact := false)
   .settings(releaseSettings)
 
 lazy val core = project

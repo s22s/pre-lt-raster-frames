@@ -28,5 +28,7 @@ addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "2.1")
 
 addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.1.0")
 
+addSbtPlugin("com.eed3si9n" % "sbt-unidoc" % "0.4.1")
+
 // addSbtPlugin("laughedelic" % "literator" % "0.8.0")
 
