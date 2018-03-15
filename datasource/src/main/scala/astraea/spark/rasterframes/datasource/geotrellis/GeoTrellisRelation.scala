@@ -166,14 +166,14 @@ case class GeoTrellisRelation(sqlContext: SQLContext,
     val tileFields = tileClass match {
       case t if t =:= typeOf[Tile]  ⇒
         List(
-          StructField(Cols.TL, TileUDT, nullable = true)
+          StructField(Cols.TL, new TileUDT, nullable = true)
         )
       case t if t =:= typeOf[MultibandTile] ⇒
         for(b ← 1 to peekBandCount) yield
-          StructField(Cols.TL + "_" + b, TileUDT, nullable = true)
+          StructField(Cols.TL + "_" + b, new TileUDT, nullable = true)
       case t if t =:= typeOf[TileFeature[Tile, _]] ⇒
         List(
-          StructField(Cols.TL, TileUDT, nullable = true),
+          StructField(Cols.TL, new TileUDT, nullable = true),
           StructField(Cols.TF, DataTypes.StringType, nullable = true)
         )
     }

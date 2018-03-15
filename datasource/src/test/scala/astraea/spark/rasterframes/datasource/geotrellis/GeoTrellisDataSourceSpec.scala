@@ -141,6 +141,13 @@ class GeoTrellisDataSourceSpec
       assert(df.first.length === 5)
       assert(df.first.getAs[Extent](2) !== null)
     }
+
+    it("should write to parquet") {
+      //just should not throw
+      val df = layerReader.loadRF(layer)
+        .drop(BOUNDS_COLUMN)
+      assert(write(df))
+    }
   }
 
   describe("DataSource options") {
