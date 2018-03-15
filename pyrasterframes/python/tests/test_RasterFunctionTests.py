@@ -3,54 +3,46 @@ from pyspark.sql import SparkSession, Column
 from pyspark.sql.functions import *
 from pyrasterframes import *
 from pyrasterframes.rasterfunctions import *
+from pathlib import Path
 import os
-import inspect
-import pathlib
 import unittest
+
+# version-conditional imports
 import sys
-
-
-def _floor_compare(val1, val2):
-    return math.floor(val1) == math.floor(val2)
-
-#############################
-# THIS IS ALL TEMPORARY JUNK:
-def _jar_path():
-    jar_locs = [p for p in sys.path if p.endswith('.jar')]
-    jar_path = os.path.abspath(jar_locs[0])
-    return pathlib.Path(jar_path).resolve()
+if sys.version_info[0] > 2:
+    import builtins
+else:
+    import __builtin__ as builtins
 
 
 
-def _locate_dir():
-    return os.path.abspath(inspect.getsourcefile(lambda:0))
 
-_curr_dir = _locate_dir()
-
-def we_are_frozen():
-    # All of the modules are built-in to the interpreter, e.g., by py2exe
-    return hasattr(sys, "frozen")
-
-def module_path():
-    if we_are_frozen():
-        return os.path.dirname(sys.executable)
-    return os.path.dirname(__file__)
-
-##############################
+def _rounded_compare(val1, val2):
+    print('Comparing {} and {} using round()'.format(val1, val2))
+    return builtins.round(val1) == builtins.round(val2)
 
 
 class RasterFunctionsTest(unittest.TestCase):
 
+
     @classmethod
     def setUpClass(cls):
+
+        # gather Scala requirements
+        jarpath = list(Path('../target').resolve().glob('pyrasterframes*.jar'))[0]
+        os.environ["SPARK_CLASSPATH"] = jarpath.as_uri()
+
+        # hard-coded relative path for resources
+        cls.resource_dir = Path('../../core/src/test/resources').resolve()
+
+        # spark session with RF
         cls.spark = SparkSession.builder.getOrCreate()
         cls.spark.sparkContext.setLogLevel('ERROR')
+        print(cls.spark.version)
         cls.spark.withRasterFrames()
-        filepath = pathlib.Path(_curr_dir).resolve().parent
-        print(_curr_dir)
-        print(filepath)
-        #print(os.listdir(str(_jar_path()) + '/pyrasterframes/'))
-        cls.rf = cls.spark.read.geotiff('L8-B8-Robinson-IL.tiff')
+
+        # load something into a rasterframe
+        cls.rf = cls.spark.read.geotiff(cls.resource_dir.joinpath('L8-B8-Robinson-IL.tiff').as_uri())
         cls.tileCol = 'tile'
         cls.rf.show()
 
@@ -92,18 +84,27 @@ class RasterFunctionsTest(unittest.TestCase):
             # aggHistogram(self.tileCol),
         )
         row = aggs.first()
-        self.assertTrue(_floor_compare(row['agg_mean(tile)'], 10160))
-        self.assertTrue(row['agg_data_cells(tile)'] == self.rf.count())
+        aggs.show()
+        print(self.rf.count())
+        dims = self.rf.withColumn('dims',  tileDimensions(self.tileCol)).first().dims
+        print(dims.cols)
+        print(dims.rows)
+        self.assertTrue(_rounded_compare(row['agg_mean(tile)'], 10160))
+        self.assertTrue(row['agg_data_cells(tile)'] == 387000)
         self.assertTrue(row['agg_nodata_cells(tile)'] == 0)
         self.assertTrue(row['aggStats(tile)'].dataCells == row['agg_data_cells(tile)'])
         aggs.show()
 
 
     def test_sql(self):
+
         self.rf.createOrReplaceTempView("rf")
 
-        self.spark.sql("""SELECT tile, rf_makeConstantTile(1, 128,128, 'uint16') AS One, 
-                            rf_makeConstantTile(2, 128,128, 'uint16') AS Two FROM rf""") \
+        dims = self.rf.withColumn('dims',  tileDimensions(self.tileCol)).first().dims
+        dims_str = """{}, {}""".format(dims.cols, dims.rows)
+
+        self.spark.sql("""SELECT tile, rf_makeConstantTile(1, {}, 'uint16') AS One, 
+                            rf_makeConstantTile(2, {}, 'uint16') AS Two FROM rf""".format(dims_str, dims_str)) \
             .createOrReplaceTempView("r3")
 
         ops = self.spark.sql("""SELECT tile, rf_localAdd(tile, One) AS AndOne, 
@@ -120,10 +121,10 @@ class RasterFunctionsTest(unittest.TestCase):
                            tileMean("OverTwo").alias('half')) \
                         .first()
 
-        self.assertTrue(_floor_compare(statsRow.base, statsRow.plus_one - 1))
-        self.assertTrue(_floor_compare(statsRow.base, statsRow.minus_one + 1))
-        self.assertTrue(_floor_compare(statsRow.base, statsRow.double / 2))
-        self.assertTrue(_floor_compare(statsRow.base, statsRow.half * 2))
+        self.assertTrue(_rounded_compare(statsRow.base, statsRow.plus_one - 1))
+        self.assertTrue(_rounded_compare(statsRow.base, statsRow.minus_one + 1))
+        self.assertTrue(_rounded_compare(statsRow.base, statsRow.double / 2))
+        self.assertTrue(_rounded_compare(statsRow.base, statsRow.half * 2))
 
 
 def suite():

@@ -21,7 +21,6 @@ package org.apache.spark.sql.gt.types
 
 
 import geotrellis.raster._
-import org.apache.spark.sql.Row
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.rf.InternalRowTile
 import org.apache.spark.sql.types.{DataType, _}
@@ -46,9 +45,7 @@ class TileUDT extends UserDefinedType[Tile] {
 
   override def deserialize(datum: Any): Tile = {
     Option(datum)
-      .collect {
-        case row: InternalRow ⇒ InternalRowTile(row).toArrayTile
-      }
+      .collect { case row: InternalRow ⇒ InternalRowTile(row).toArrayTile }
       .orNull
   }
 

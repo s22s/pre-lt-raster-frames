@@ -2,6 +2,7 @@ from pyspark.sql.types import UserDefinedType
 from pyspark import SparkContext
 from pyspark.sql import SparkSession, DataFrame, Column, Row
 from pyspark.sql.types import *
+from pyrasterframes.rasterfunctions import _checked_context
 
 __all__ = ['RFContext', 'RasterFrame', 'TileUDT']
 
@@ -84,8 +85,7 @@ class TileUDT(UserDefinedType):
                   obj.toBytes)
 
     def deserialize(self, datum):
-        ctx = SparkContext._active_spark_context._rf_context
-        return ctx.generateTile(datum[0], datum[1], datum[2], datum[3])
+        return _checked_context().generateTile(datum[0], datum[1], datum[2], datum[3])
 
 
 

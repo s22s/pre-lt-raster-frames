@@ -2,8 +2,6 @@ from __future__ import absolute_import
 from pyspark import SparkContext
 from pyspark.sql import SparkSession, DataFrame, DataFrameReader
 from pyspark.sql.types import *
-from astraea.spark.rasterframes.datasource.geotiff import *
-from astraea.spark.rasterframes.datasource.geotrellis import *
 
 # Import RasterFrame types and functions
 from pyrasterframes.types import *
