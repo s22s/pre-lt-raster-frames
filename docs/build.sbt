@@ -20,8 +20,8 @@ addMappingsToSiteDir(ScalaUnidoc / packageDoc / mappings, ScalaUnidoc / siteSubd
 
 Paradox / paradoxProperties ++= Map(
   "github.base_url" -> "https://github.com/s22s/raster-frames",
-  "scaladoc.org.apache.spark.sql.gt" -> "http://rasterframes.io/latest",
-  "scaladoc.geotrellis.base_url" -> "https://geotrellis.github.io/scaladocs/latest",
+  //"scaladoc.org.apache.spark.sql.gt" -> "http://rasterframes.io/latest",
+  //"scaladoc.geotrellis.base_url" -> "https://geotrellis.github.io/scaladocs/latest",
   "snip.pyexamples.base_dir" -> (baseDirectory.value + "/../pyrasterframes/python/test/examples")
 )
 Paradox / paradoxTheme := Some(builtinParadoxTheme("generic"))
