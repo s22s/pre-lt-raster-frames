@@ -41,6 +41,7 @@ if (skipTut) Seq(
   makeSite := makeSite.dependsOn(Compile / unidoc).value
 )
 else Seq(
+  Paradox / paradox := (Paradox / paradox).dependsOn(tutQuick).value,
   Paradox / sourceDirectory := tutTargetDirectory.value,
-  makeSite := makeSite.dependsOn(tutQuick, Compile / unidoc).value
+  makeSite := makeSite.dependsOn(Compile / unidoc).value
 )
