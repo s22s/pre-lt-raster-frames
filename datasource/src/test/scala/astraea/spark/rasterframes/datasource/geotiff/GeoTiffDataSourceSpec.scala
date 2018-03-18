@@ -38,5 +38,12 @@ class GeoTiffDataSourceSpec
 
       assert(rf.count() > 10)
     }
+
+    it("should write RF to parquet") {
+      val rf = spark.read
+        .geotiff
+        .loadRF(cogPath)
+      assert(write(rf))
+    }
   }
 }

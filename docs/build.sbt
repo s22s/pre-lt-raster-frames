@@ -1,45 +1,47 @@
 import com.typesafe.sbt.SbtGit.git
 
-enablePlugins(SiteScaladocPlugin, ParadoxSitePlugin, TutPlugin, GhpagesPlugin)
+enablePlugins(SiteScaladocPlugin, ParadoxSitePlugin, TutPlugin, GhpagesPlugin, ScalaUnidocPlugin)
 
 name := "raster-frames-docs"
 
 libraryDependencies ++= Seq(
   spark("mllib").value % Tut,
   spark("sql").value % Tut
-  //,
-//  geotrellis("spark").value % Tut,
-//  geotrellis("raster").value % Tut
 )
 
 git.remoteRepo := "git@github.com:s22s/raster-frames.git"
 apiURL := Some(url("http://rasterframes.io/latest/api"))
-autoAPIMappings := false
-paradoxProperties in Paradox ++= Map(
-  "github.base_url" -> "https://github.com/s22s/raster-frames",
-  "scaladoc.org.apache.spark.sql.gt" -> "http://rasterframes.io/latest",
-  "scaladoc.geotrellis.base_url" -> "https://geotrellis.github.io/scaladocs/latest",
-  "snip.pyexamples.base_dir" -> (baseDirectory.value + "/../pyrasterframes/python/test/examples")
-)
-paradoxTheme in Paradox := Some(builtinParadoxTheme("generic"))
-paradoxGroups in Paradox := Map("Language" -> Seq("Scala", "Python"))
-sourceDirectory in Paradox in paradoxTheme := sourceDirectory.value / "main" / "paradox" / "_template"
+autoAPIMappings := true
 ghpagesNoJekyll := true
 
-scalacOptions in (Compile, doc) ++= Seq( "-J-Xmx6G", "-no-link-warnings")
+ScalaUnidoc / siteSubdirName := "latest/api"
 
-fork in (Tut, run) := true
+addMappingsToSiteDir(ScalaUnidoc / packageDoc / mappings, ScalaUnidoc / siteSubdirName)
 
-javaOptions in (Tut, run) := Seq("-Xmx8G", "-Dspark.ui.enabled=false")
+Paradox / paradoxProperties ++= Map(
+  "github.base_url" -> "https://github.com/s22s/raster-frames",
+  //"scaladoc.org.apache.spark.sql.gt" -> "http://rasterframes.io/latest",
+  //"scaladoc.geotrellis.base_url" -> "https://geotrellis.github.io/scaladocs/latest",
+  "snip.pyexamples.base_dir" -> (baseDirectory.value + "/../pyrasterframes/python/test/examples")
+)
+Paradox / paradoxTheme := Some(builtinParadoxTheme("generic"))
+Paradox / paradoxGroups := Map("Language" -> Seq("Scala", "Python"))
+Paradox / paradoxTheme / sourceDirectory := sourceDirectory.value / "main" / "paradox" / "_template"
 
-//unmanagedClasspath in Tut ++= (fullClasspath in (LocalProject("datasource"), Compile)).value
+Compile / doc / scalacOptions++= Seq( "-J-Xmx6G", "-no-link-warnings")
+
+Tut / run / fork := true
+
+Tut / run / javaOptions := Seq("-Xmx8G", "-Dspark.ui.enabled=false")
 
 val skipTut = false
 
 if (skipTut) Seq(
-  sourceDirectory in Paradox := tutSourceDirectory.value
+  Paradox / sourceDirectory := tutSourceDirectory.value,
+  makeSite := makeSite.dependsOn(Compile / unidoc).value
 )
 else Seq(
-  sourceDirectory in Paradox := tutTargetDirectory.value,
-  makeSite := makeSite.dependsOn(tutQuick).value
+  Paradox / paradox := (Paradox / paradox).dependsOn(tutQuick).value,
+  Paradox / sourceDirectory := tutTargetDirectory.value,
+  makeSite := makeSite.dependsOn(Compile / unidoc).value
 )

@@ -39,6 +39,19 @@ class RasterFrameSpec extends TestEnvironment with MetadataKeys
     }
   }
 
+  describe("DataFrame") {
+    it("should support column prefixes") {
+      val baseDF = Seq((1, "one", 1.0), (2, "two", 2.0)).toDF("int", "str", "flt")
+
+      val df1 = baseDF.withPrefixedColumnNames("ONE_")
+      val df2 = baseDF.withPrefixedColumnNames("TWO_")
+
+      assert(df1.columns.forall(_.startsWith("ONE_")))
+      assert(df2.columns.forall(_.startsWith("TWO_")))
+      assert(df1.join(df2, $"ONE_int" === $"TWO_int").columns === df1.columns ++ df2.columns)
+    }
+  }
+
   describe("RasterFrame") {
     it("should implicitly convert from spatial layer type") {
 
@@ -132,7 +145,6 @@ class RasterFrameSpec extends TestEnvironment with MetadataKeys
       val ts = goodie.select(col("timestamp").as[Timestamp]).first
 
       assert(ts === Timestamp.from(now.toInstant))
-
     }
 
     it("should support spatial joins") {

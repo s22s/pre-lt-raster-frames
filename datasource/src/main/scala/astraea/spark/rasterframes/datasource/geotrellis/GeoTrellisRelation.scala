@@ -41,7 +41,6 @@ import org.apache.avro.generic.GenericRecord
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
 import org.apache.spark.sql.gt.types.TileUDT
-import org.apache.spark.sql.jts.PolygonUDT
 import org.apache.spark.sql.sources._
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.{Row, SQLContext, sources}
@@ -166,19 +165,19 @@ case class GeoTrellisRelation(sqlContext: SQLContext,
     val tileFields = tileClass match {
       case t if t =:= typeOf[Tile]  ⇒
         List(
-          StructField(Cols.TL, TileUDT, nullable = true)
+          StructField(Cols.TL, new TileUDT, nullable = true)
         )
       case t if t =:= typeOf[MultibandTile] ⇒
         for(b ← 1 to peekBandCount) yield
-          StructField(Cols.TL + "_" + b, TileUDT, nullable = true)
+          StructField(Cols.TL + "_" + b, new TileUDT, nullable = true)
       case t if t =:= typeOf[TileFeature[Tile, _]] ⇒
         List(
-          StructField(Cols.TL, TileUDT, nullable = true),
+          StructField(Cols.TL, new TileUDT, nullable = true),
           StructField(Cols.TF, DataTypes.StringType, nullable = true)
         )
     }
 
-    val extentField = StructField(Cols.EX, PolygonUDT, false)
+    val extentField = StructField(Cols.EX, org.apache.spark.sql.jts.JTSTypes.PolygonTypeInstance, false)
     StructType((keyFields :+ extentField) ++ tileFields)
   }
 

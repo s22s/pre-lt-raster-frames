@@ -95,6 +95,10 @@ package object util extends LazyLogging {
     def when(pred: T ⇒ Boolean): Option[T] = Option(left).filter(pred)
   }
 
+  implicit class ConditionalMap[T](val left: T) extends AnyVal {
+    def mapWhen[R >: T](pred: T ⇒ Boolean, f: T ⇒ R): R = if(pred(left)) f(left) else left
+  }
+
   private[rasterframes]
   def toParquetFriendlyColumnName(name: String) = name.replaceAll("[ ,;{}()\n\t=]", "_")
 
