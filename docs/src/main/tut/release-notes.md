@@ -16,6 +16,7 @@
 * _Breaking_: Renamed `withExtent` to `withBounds`, and now returns a JTS `Polygon`.
 * Added `EnvelopeEncoder` for encoding JTS `Envelope` type. 
 * Refactored build into separate `core` and `docs`, paving way for `pyrasterframes` polyglot module.
+* Added utility extension method `withPrefixedColumnNames` to `DataFrame`.
 
 #### Known Issues
 * Writing multi-column RasterFrames to GeoTrellis layers requires all tiles to be of the same cell type.

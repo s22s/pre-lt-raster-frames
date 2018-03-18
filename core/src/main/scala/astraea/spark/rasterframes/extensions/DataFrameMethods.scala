@@ -81,6 +81,12 @@ trait DataFrameMethods extends MethodExtensions[DataFrame] with MetadataKeys {
   def getColumnRole(column: Column): Option[String] =
     fetchMetadataValue(column, _.metadata.getString(SPATIAL_ROLE_KEY))
 
+  /** Renames all columns such that they start with the given prefix string.
+   * Useful for preparing dataframes for joins where duplicate names may arise.
+   */
+  def withPrefixedColumnNames(prefix: String): DataFrame =
+    self.columns.foldLeft(self)((df, c) ⇒ df.withColumnRenamed(c, s"$prefix$c"))
+
   /** Converts this DataFrame to a RasterFrame after ensuring it has:
    *
    * <ol type="a">
