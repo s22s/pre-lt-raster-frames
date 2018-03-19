@@ -68,6 +68,7 @@ class RasterFunctionsTest(unittest.TestCase):
             .withColumn('max', tileMax(self.tileCol)) \
             .withColumn('mean', tileMean(self.tileCol)) \
             .withColumn('sum', tileSum(self.tileCol)) \
+            .withColumn('sum', tileStats(self.tileCol)) \
             .withColumn('mean', renderAscii(self.tileCol))
 
         df.show()
@@ -84,11 +85,7 @@ class RasterFunctionsTest(unittest.TestCase):
             # aggHistogram(self.tileCol),
         )
         row = aggs.first()
-        aggs.show()
-        print(self.rf.count())
-        dims = self.rf.withColumn('dims',  tileDimensions(self.tileCol)).first().dims
-        print(dims.cols)
-        print(dims.rows)
+
         self.assertTrue(_rounded_compare(row['agg_mean(tile)'], 10160))
         self.assertTrue(row['agg_data_cells(tile)'] == 387000)
         self.assertTrue(row['agg_nodata_cells(tile)'] == 0)
