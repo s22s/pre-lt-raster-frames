@@ -33,7 +33,7 @@ class RasterFunctionsTest(unittest.TestCase):
         os.environ["SPARK_CLASSPATH"] = jarpath.as_uri()
 
         # hard-coded relative path for resources
-        cls.resource_dir = Path('../../core/src/test/resources').resolve()
+        cls.resource_dir = Path('./static').resolve()
 
         # spark session with RF
         cls.spark = SparkSession.builder.getOrCreate()

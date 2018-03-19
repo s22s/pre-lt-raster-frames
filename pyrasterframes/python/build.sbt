@@ -1,6 +1,10 @@
+import scala.sys.process.Process
+
 enablePlugins(SparkPackagePlugin, AssemblyPlugin)
 
 val pysparkCmd = taskKey[Unit]("Builds pyspark package and emits command string for running pyspark with package")
+
+lazy val pyTest = taskKey[Unit]("Run pyrasterframes tests.")
 
 lazy val spJarFile = Def.taskDyn {
   if (spShade.value) {
@@ -65,3 +69,28 @@ ivyPaths in pysparkCmd := ivyPaths.value.withIvyHome(target.value / "ivy")
 
 //credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
 
+pyTest := {
+  val _ = spPublishLocal.value
+  val s = streams.value
+  val wd = baseDirectory.value / "python"
+  Process("python setup.py test", wd) ! s.log
+}
+
+Test / test := (Test / test).dependsOn(pyTest).value
+
+lazy val pythonAssembly = TaskKey[Unit]("pythonAssembly", "Zips all files in python")
+
+//lazy val pythonAssemblyTask = pythonAssembly := {
+//  val baseDir = sourceDirectory.value
+//  val targetDir = assembly.value.getParentFile.getParent
+//  val id = (projectID in spPublishLocal).value
+//  val args = "pyspark" ::  "--packages" :: s"${id.organization}:${id.name}:${id.revision}"
+//  val target = new File(targetDir + s"/python/rfu-api-client-python-${Commons.appVersion}.zip")
+//  val pythonBaseDir = new File(baseDir + "/main/python")
+//  val pythonFiles = Path.allSubpaths(pythonBaseDir)
+//
+//  println("Zipping files in " + pythonBaseDir)
+//  pythonFiles foreach { case (_, s) => println(s) }
+//  IO.zip(pythonFiles, target)
+//  println(s"Created $target")
+//}

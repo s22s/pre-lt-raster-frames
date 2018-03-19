@@ -8,14 +8,12 @@ import sys
 with open('README.rst') as f:
     readme = f.read()
 
-
 setup_args = dict(
     name='pyrasterframes',
     description='Python bindings for RasterFrames',
     long_description=readme,
     version='0.0.1',
     url='http://rasterframes.io',
-    packages=find_packages(exclude=['tests']),
     author='Simeon H.K. Fitch',
     author_email='fitch@astraea.io',
     license='Apache 2',
@@ -27,6 +25,10 @@ setup_args = dict(
         'pytest==3.4.2'
     ],
     test_suite="pytest-runner",
+    packages=['.'] + find_packages(exclude=['tests']),
+    include_package_data=True,
+    package_data={'.':['LICENSE', 'static/*']},
+    exclude_package_data={'.':['setup.cfg']},
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Other Environment',
