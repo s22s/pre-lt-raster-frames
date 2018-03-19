@@ -77,7 +77,7 @@ case class GeoTiffRelation(sqlContext: SQLContext, uri: URI) extends BaseRelatio
     else {
       for (i <- 0 until info.bandCount) yield s"${baseName}_${i + 1}"
     }).map(name ⇒
-      StructField(name, TileUDT, nullable = false)
+      StructField(name, new TileUDT, nullable = false)
     )
 
     StructType(Seq(

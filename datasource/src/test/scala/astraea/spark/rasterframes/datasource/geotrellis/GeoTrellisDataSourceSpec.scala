@@ -22,6 +22,7 @@ import java.io.File
 import java.time.ZonedDateTime
 
 import astraea.spark.rasterframes._
+import astraea.spark.rasterframes.util._
 import geotrellis.proj4.LatLng
 import geotrellis.raster._
 import geotrellis.spark._
@@ -36,11 +37,14 @@ import org.apache.hadoop.fs.FileUtil
 import org.apache.spark.sql.execution.datasources.LogicalRelation
 import org.apache.spark.sql.functions.{udf ⇒ sparkUdf, _}
 import org.apache.spark.sql.{DataFrame, Row}
-import org.scalatest.BeforeAndAfter
+import org.scalatest.{BeforeAndAfter, Inspectors}
 import org.apache.avro.generic._
+import org.apache.spark.storage.StorageLevel
+
+import scala.math.{min, max}
 
 class GeoTrellisDataSourceSpec
-    extends TestEnvironment with TestData with BeforeAndAfter
+    extends TestEnvironment with TestData with BeforeAndAfter with Inspectors
     with IntelliJPresentationCompilerHack {
 
   lazy val layer = Layer(new File(outputLocalPath).toURI, LayerId("test-layer", 4))
@@ -75,10 +79,10 @@ class GeoTrellisDataSourceSpec
     // Test layer writing via RF
     testRdd.toRF.write.geotrellis.asLayer(layer).save()
 
-    val tfRdd = testRdd.withContext(_.map { case (stk, tile) ⇒
-      val md = Map("col" -> stk.col,"row" -> stk.row)
-      (stk, TileFeature(tile, md))
-    })
+    val tfRdd = testRdd.map { case (k, tile) ⇒
+        val md = Map("col" -> k.col,"row" -> k.row)
+        (k, TileFeature(tile, md))
+    }
 
     implicit val mdCodec = new AvroRecordCodec[Map[String, Int]]() {
       def schema: Schema = SchemaBuilder.record("metadata")
@@ -96,7 +100,8 @@ class GeoTrellisDataSourceSpec
 
     // We don't currently support writing TileFeature-based layers in RF.
     val writer = LayerWriter(tfLayer.base)
-    writer.write(tfLayer.id, tfRdd, ZCurveKeyIndexMethod.byDay())
+    val tlfRdd = ContextRDD(tfRdd, testRdd.metadata)
+    writer.write(tfLayer.id, tlfRdd, ZCurveKeyIndexMethod.byDay())
   }
 
 
@@ -125,7 +130,7 @@ class GeoTrellisDataSourceSpec
         assert(df.count() === boundKeys.toGridBounds.sizeLong)
       }
       withClue("functional API") {
-        val df = wc.where(st_intersects(CENTER_COLUMN, geomlit(bbox)))
+        val df = wc.where(st_intersects(CENTER_COLUMN, geomLit(bbox)))
         assert(df.count() === boundKeys.toGridBounds.sizeLong)
       }
     }
@@ -135,6 +140,12 @@ class GeoTrellisDataSourceSpec
       assert(df.count > 0)
       assert(df.first.length === 5)
       assert(df.first.getAs[Extent](2) !== null)
+    }
+
+    it("should write to parquet") {
+      //just should not throw
+      val df = layerReader.loadRF(layer)
+      assert(write(df))
     }
   }
 
@@ -158,15 +169,25 @@ class GeoTrellisDataSourceSpec
   describe("Predicate push-down support") {
     def layerReader = spark.read.geotrellis
 
-    def extractRelation(df: DataFrame): GeoTrellisRelation = {
+    def extractRelation(df: DataFrame): Option[GeoTrellisRelation] = {
       val plan = df.queryExecution.optimizedPlan
-      plan.children.collect {
+      plan.collectFirst {
         case LogicalRelation(gt: GeoTrellisRelation, _, _) ⇒ gt
-      }.head
+      }
+    }
+    def numFilters(df: DataFrame) = {
+      extractRelation(df).map(_.filters.length).getOrElse(0)
+    }
+    def numSplitFilters(df: DataFrame) = {
+      extractRelation(df).map(_.splitFilters.length).getOrElse(0)
     }
 
     val pt1 = Point(-88, 60)
     val pt2 = Point(-78, 38)
+    val region = Extent(
+      min(pt1.x, pt2.x), max(pt1.x, pt2.x),
+      min(pt1.y, pt2.y), max(pt1.y, pt2.y)
+    )
 
     val targetKey = testRdd.metadata.mapTransform(pt1)
 
@@ -175,11 +196,19 @@ class GeoTrellisDataSourceSpec
         .loadRF(layer)
         .where(BOUNDS_COLUMN intersects pt1)
 
-      val rel = extractRelation(df)
-      assert(rel.filters.length === 1)
+      assert(numFilters(df) === 1)
 
       assert(df.count() === 1)
       assert(df.select(SPATIAL_KEY_COLUMN).first === targetKey)
+    }
+
+    it("should support query with multiple geometry types") {
+      // Mostly just testing that these evaluate without catalyst type errors.
+      forEvery(JTS.all) { g ⇒
+        val query = layerReader.loadRF(layer).where(BOUNDS_COLUMN.intersects(g))
+          .persist(StorageLevel.OFF_HEAP)
+        assert(query.count() === 0)
+      }
     }
 
     it("should *not* support extent filter against a UDF") {
@@ -191,7 +220,7 @@ class GeoTrellisDataSourceSpec
         .loadRF(layer)
         .where(st_intersects(BOUNDS_COLUMN, mkPtFcn(SPATIAL_KEY_COLUMN)))
 
-      assert(extractRelation(df).filters.length === 0)
+      assert(numFilters(df) === 0)
 
       assert(df.count() === 1)
       assert(df.select(SPATIAL_KEY_COLUMN).first === targetKey)
@@ -203,7 +232,7 @@ class GeoTrellisDataSourceSpec
           .loadRF(layer)
           .where(TIMESTAMP_COLUMN at now)
 
-        assert(extractRelation(df).filters.length == 1)
+        assert(numFilters(df) == 1)
         assert(df.count() == testRdd.count())
       }
 
@@ -212,7 +241,7 @@ class GeoTrellisDataSourceSpec
           .loadRF(layer)
           .where(TIMESTAMP_COLUMN at now.minusDays(1))
 
-        assert(extractRelation(df).filters.length == 1)
+        assert(numFilters(df) === 1)
         assert(df.count() == 0)
       }
 
@@ -221,7 +250,7 @@ class GeoTrellisDataSourceSpec
           .loadRF(layer)
           .where(TIMESTAMP_COLUMN betweenTimes (now.minusDays(1), now.plusDays(1)))
 
-        assert(extractRelation(df).filters.length == 1)
+        assert(numFilters(df) === 1)
         assert(df.count() == testRdd.count())
       }
 
@@ -230,11 +259,9 @@ class GeoTrellisDataSourceSpec
           .loadRF(layer)
           .where(TIMESTAMP_COLUMN betweenTimes (now.plusDays(1), now.plusDays(2)))
 
-        assert(extractRelation(df).filters.length == 1)
+        assert(numFilters(df) === 1)
         assert(df.count() == 0)
       }
-
-
     }
 
     it("should support nested predicates") {
@@ -247,9 +274,8 @@ class GeoTrellisDataSourceSpec
               (TIMESTAMP_COLUMN at now)
           )
 
-        val rel = extractRelation(df)
-        assert(rel.filters.length === 1)
-        assert(rel.splitFilters.length === 2, rel.splitFilters.toString)
+        assert(numFilters(df) === 1)
+        assert(numSplitFilters(df) === 2, extractRelation(df).toString)
 
         assert(df.count === 2)
       }
@@ -260,9 +286,8 @@ class GeoTrellisDataSourceSpec
           .where((BOUNDS_COLUMN intersects pt1) || (BOUNDS_COLUMN intersects pt2))
           .where(TIMESTAMP_COLUMN at now)
 
-        val rel = extractRelation(df)
-        assert(rel.filters.length === 1)
-        assert(rel.splitFilters.length === 2, rel.splitFilters.toString)
+        assert(numFilters(df) === 1)
+        assert(numSplitFilters(df) === 2, extractRelation(df).toString)
 
         assert(df.count === 2)
       }
@@ -274,8 +299,26 @@ class GeoTrellisDataSourceSpec
         .where(BOUNDS_COLUMN intersects pt1)
         .where(TIMESTAMP_COLUMN betweenTimes(now.minusDays(1), now.plusDays(1)))
 
-      df.show(true)
-      assert(extractRelation(df).filters.length == 1)
+      assert(numFilters(df) == 1)
+    }
+
+    it("should handle renamed spatial filter columns") {
+      val df = layerReader
+        .loadRF(layer)
+        .where(BOUNDS_COLUMN intersects region.jtsGeom)
+        .withColumnRenamed(BOUNDS_COLUMN.columnName, "foobar")
+
+      assert(numFilters(df) === 1, df.explain(true))
+      assert(df.count > 0, df.printSchema)
+    }
+
+    it("should handle dropped spatial filter columns") {
+      val df = layerReader
+        .loadRF(layer)
+        .where(BOUNDS_COLUMN intersects region.jtsGeom)
+        .drop(BOUNDS_COLUMN)
+
+      assert(numFilters(df) === 1, df.explain(true))
     }
   }
 

@@ -1,42 +1,30 @@
-
 # Creating RasterFrames
 
 ## Initialization
 
-There are a couple of simple setup steps needed to work with RasterFrames. First, `import` the API symbols into scope:
+There are a couple of setup steps necessary anytime you want to work with RasterFrames. the first is to import the API symbols into scope:
 
-Scala
-:
+
+
 ```tut:silent
 import astraea.spark.rasterframes._
 import org.apache.spark.sql._
 ```
 
-Python
-: @@snip [CreatingRasterFrames.py]($pyexamples$/CreatingRasterFrames.py) { #py_crf_imports }
+
+Next, initialize the `SparkSession`, and call the `withRasterFrames` method on it:
 
 
-Next, initialize the `SparkSession`, and call the `withRasterFrames` method:
-
-Scala
-:
 ```tut:silent
 implicit val spark = SparkSession.builder().
-  master("local[*]").
-  appName("RasterFrames").
+  master("local").appName("RasterFrames").
   config("spark.ui.enabled", "false").
   getOrCreate().
   withRasterFrames
 ```
 
-Python
-: @@snip [CreatingRasterFrames.py]($pyexamples$/CreatingRasterFrames.py) { #py_crf_create_session }
+And, as is standard Spark SQL practice, we import additional DataFrame support:
 
-
-And, as is standard Spark SQL practice, we `import` additional `DataFrame` support:
-
-Scala
-:
 ```tut:silent
 import spark.implicits._
 ```
@@ -44,9 +32,6 @@ import spark.implicits._
 ```tut:invisible
 spark.sparkContext.setLogLevel("ERROR")
 ```
-
-Python
-: @@snip [CreatingRasterFrames.py]($pyexamples$/CreatingRasterFrames.py) { #py_crf_more_imports }
 
 Now we are ready to create a RasterFrame.
 
@@ -70,7 +55,7 @@ Then we use the `DataFrameReader` provided by `spark.read` to read the GeoTIFF:
 
 
 ```tut:book
-val samplePath = new File("core/src/test/resources/LC08_RGB_Norfolk_COG.tiff")
+val samplePath = new File("../core/src/test/resources/LC08_RGB_Norfolk_COG.tiff")
 val tiffRF = spark.read.
   geotiff.
   loadRF(samplePath.toURI)
@@ -126,8 +111,8 @@ cat.show()
 ```
 
 As you can see, there's a lot of information stored in each row of the catalog. Most of this is associated with how the
-layer is discretized. However, there may be other application-specific metadata serialized with a layer that can be used
-to filter the catalog entries or to select one. But for now, we're just going to load a RasterFrame in from the
+layer is discretized. However, there may be other application specific metadata serialized with a layer that can be use
+to filter the catalog entries or select a specific one. But for now, we're just going to load a RasterFrame in from the
 catalog using a convenience function.
 
 ```tut
@@ -164,7 +149,7 @@ The simplest mechanism for getting a RasterFrame is to use the `toRF(tileCols, t
 
 
 ```tut
-val scene = SinglebandGeoTiff("core/src/test/resources/L8-B8-Robinson-IL.tiff")
+val scene = SinglebandGeoTiff("../core/src/test/resources/L8-B8-Robinson-IL.tiff")
 val rf = scene.projectedRaster.toRF(128, 128)
 rf.show(5, false)
 ```

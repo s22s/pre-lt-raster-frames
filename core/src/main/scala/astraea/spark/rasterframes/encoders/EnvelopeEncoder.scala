@@ -20,8 +20,8 @@ object EnvelopeEncoder {
 
   val schema = StructType(Seq(
     StructField("minX", DoubleType, false),
-    StructField("minY", DoubleType, false),
     StructField("maxX", DoubleType, false),
+    StructField("minY", DoubleType, false),
     StructField("maxY", DoubleType, false)
   ))
 

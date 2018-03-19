@@ -2,6 +2,7 @@
 
 package astraea.spark.rasterframes
 
+import java.sql.Timestamp
 import java.time.ZonedDateTime
 
 import geotrellis.proj4.LatLng
@@ -14,6 +15,7 @@ import geotrellis.vector.{Extent, ProjectedExtent}
 import org.apache.spark.sql.{SQLContext, SparkSession}
 import org.apache.spark.sql.functions._
 import astraea.spark.rasterframes.util._
+
 import scala.util.control.NonFatal
 
 /**
@@ -34,6 +36,19 @@ class RasterFrameSpec extends TestEnvironment with MetadataKeys
     it("should provide Spark initialization methods") {
       assert(spark.withRasterFrames.isInstanceOf[SparkSession])
       assert(sqlContext.withRasterFrames.isInstanceOf[SQLContext])
+    }
+  }
+
+  describe("DataFrame") {
+    it("should support column prefixes") {
+      val baseDF = Seq((1, "one", 1.0), (2, "two", 2.0)).toDF("int", "str", "flt")
+
+      val df1 = baseDF.withPrefixedColumnNames("ONE_")
+      val df2 = baseDF.withPrefixedColumnNames("TWO_")
+
+      assert(df1.columns.forall(_.startsWith("ONE_")))
+      assert(df2.columns.forall(_.startsWith("TWO_")))
+      assert(df1.join(df2, $"ONE_int" === $"TWO_int").columns === df1.columns ++ df2.columns)
     }
   }
 
@@ -120,8 +135,21 @@ class RasterFrameSpec extends TestEnvironment with MetadataKeys
       assert(rf.columns.toSet === Set(SPATIAL_KEY_COLUMN, TEMPORAL_KEY_COLUMN, TILE_COLUMN, TILE_FEATURE_DATA_COLUMN).map(_.columnName))
     }
 
+    it("should support adding a timestamp column") {
+      val now = ZonedDateTime.now()
+      val rf = sampleGeoTiff.projectedRaster.toRF(256, 256)
+      val wt = rf.addTemporalComponent(now)
+      val goodie = wt.withTimestamp()
+      assert(goodie.columns.contains("timestamp"))
+      assert(goodie.count > 0)
+      val ts = goodie.select(col("timestamp").as[Timestamp]).first
+
+      assert(ts === Timestamp.from(now.toInstant))
+    }
+
     it("should support spatial joins") {
       val rf = sampleGeoTiff.projectedRaster.toRF(256, 256)
+
       val wt = rf.addTemporalComponent(TemporalKey(34))
 
       assert(wt.columns.contains(TEMPORAL_KEY_COLUMN.columnName))
@@ -234,7 +262,7 @@ class RasterFrameSpec extends TestEnvironment with MetadataKeys
     def render(tile: Tile, tag: String): Unit = {
       if(false && !isCI) {
         val colors = ColorMap.fromQuantileBreaks(tile.histogram, Greyscale(128))
-        val path = s"/tmp/${getClass.getSimpleName}_$tag.png"
+        val path = s"target/${getClass.getSimpleName}_$tag.png"
         logger.info(s"Writing '$path'")
         tile.color(colors).renderPng().write(path)
       }

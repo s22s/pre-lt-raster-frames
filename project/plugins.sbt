@@ -12,7 +12,7 @@ addSbtPlugin("de.heikoseeberger" % "sbt-header" % "3.0.2")
 
 addSbtPlugin("com.lucidchart" % "sbt-scalafmt" % "1.10")
 
-addSbtPlugin("org.tpolecat" % "tut-plugin" % "0.6.2")
+addSbtPlugin("org.tpolecat" % "tut-plugin" % "0.6.3-M5")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-ghpages" % "0.6.2")
 
@@ -28,7 +28,7 @@ addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "2.1")
 
 addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.1.0")
 
-addSbtPlugin("org.spark-packages" % "sbt-spark-package" % "0.2.7-astraea.1")
+addSbtPlugin("com.eed3si9n" % "sbt-unidoc" % "0.4.1")
 
 // addSbtPlugin("laughedelic" % "literator" % "0.8.0")
 

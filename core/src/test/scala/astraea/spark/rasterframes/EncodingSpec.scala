@@ -101,7 +101,7 @@ class EncodingSpec extends TestEnvironment with TestData with IntelliJPresentati
 
       assert(ds.toDF.as[(SpatialKey, SpaceTimeKey)].first === (sk, stk))
 
-      // This stinks: vvvvvvvv   Encoders don't seem to work with UDFs.
+      // This stinks: vvvvvvvv Encoders don't seem to work with UDFs.
       val key2col = udf((row: Row) ⇒ row.getInt(0))
 
       val colNum = ds.select(key2col(ds(ds.columns.head))).as[Int].first()
@@ -110,23 +110,21 @@ class EncodingSpec extends TestEnvironment with TestData with IntelliJPresentati
 
     it("should code RDD[CRS]") {
       val ds = Seq[CRS](LatLng, WebMercator, ConusAlbers, Sinusoidal).toDS()
-      ds.printSchema()
-      ds.show
       write(ds)
       assert(ds.toDF.as[CRS].first === LatLng)
     }
+
     it("should code RDD[URI]") {
       val ds = Seq[URI](new URI("http://astraea.earth/"), new File("/tmp/humbug").toURI).toDS()
-      ds.printSchema
-      ds.show
       write(ds)
+      assert(ds.filter(u ⇒ Option(u.getHost).exists(_.contains("astraea"))).count === 1)
     }
 
     it("should code RDD[Envelope]") {
-      val ds = Seq[Envelope](new Envelope(1, 2, 3, 4)).toDS()
-      ds.printSchema()
-      ds.show()
+      val env = new Envelope(1, 2, 3, 4)
+      val ds = Seq[Envelope](env).toDS()
       write(ds)
+      assert(ds.first === env)
     }
   }
 }

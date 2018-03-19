@@ -20,16 +20,12 @@
 package astraea.spark.rasterframes.extensions
 
 import astraea.spark.rasterframes.RasterFrame
-import astraea.spark.rasterframes.extensions._
 import geotrellis.raster.{ProjectedRaster, Tile, TileFeature}
 import geotrellis.spark.{Metadata, SpaceTimeKey, SpatialComponent, SpatialKey, TileLayerMetadata}
 import geotrellis.util.MethodExtensions
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql._
-import org.apache.spark.sql.catalyst.analysis.UnresolvedAttribute
-import org.apache.spark.sql.catalyst.expressions.{Alias, AttributeReference}
-import org.apache.spark.sql.types.{MetadataBuilder, Metadata ⇒ SMetadata}
-import shapeless.Lub
+import org.apache.spark.sql.types.{MetadataBuilder, Metadata => SMetadata}
 import spray.json.JsonFormat
 
 import scala.reflect.ClassTag

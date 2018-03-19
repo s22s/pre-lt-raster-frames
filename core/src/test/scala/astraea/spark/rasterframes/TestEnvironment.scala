@@ -36,7 +36,7 @@ trait TestEnvironment extends FunSpec with GeoTrellisTestEnvironment
 
   lazy val sqlContext: SQLContext = {
     val session = SparkSession.builder.config(_sc.getConf).getOrCreate()
-    session.sqlContext.withRasterFrames
+    astraea.spark.rasterframes.WithSQLContextMethods(session.sqlContext).withRasterFrames
   }
 
   lazy val sql: (String) ⇒ DataFrame = sqlContext.sql
@@ -45,13 +45,15 @@ trait TestEnvironment extends FunSpec with GeoTrellisTestEnvironment
   def isCI: Boolean = sys.env.get("CI").contains("true")
 
   /** This is here so we can test writing UDF generated/modified GeoTrellis types to ensure they are Parquet compliant. */
-  def write(df: Dataset[_]): Unit = {
+  def write(df: Dataset[_]): Boolean = {
     val sanitized = df.select(df.columns.map(c ⇒ col(c).as(toParquetFriendlyColumnName(c))): _*)
-    val dest = Files.createTempFile(Paths.get(outputLocalPath), "GTSQL", ".parquet")
+    val inRows = sanitized.count()
+    val dest = Files.createTempFile(Paths.get(outputLocalPath), "rf", ".parquet")
     logger.debug(s"Writing '${sanitized.columns.mkString(", ")}' to '$dest'...")
     sanitized.write.mode(SaveMode.Overwrite).parquet(dest.toString)
     val rows = df.sparkSession.read.parquet(dest.toString).count()
     logger.debug(s" it has $rows row(s)")
+    rows == inRows
   }
 
   /**

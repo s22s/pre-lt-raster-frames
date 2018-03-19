@@ -152,7 +152,8 @@ package object functions {
 
   /** Single tile statistics. Convenience for `tileHistogram.statistics`. */
   private[rasterframes] val tileStats = safeEval[Tile, Statistics]((t: Tile) ⇒
-    t.statisticsDouble.map(Statistics.apply).orNull
+    if (t.cellType.isFloatingPoint) t.statisticsDouble.map(Statistics.apply).orNull
+    else t.statistics.map(Statistics.apply).orNull
   )
 
   /** Add up all the cell values. */

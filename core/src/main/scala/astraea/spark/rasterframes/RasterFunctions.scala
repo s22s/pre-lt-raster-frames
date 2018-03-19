@@ -23,6 +23,7 @@ import astraea.spark.rasterframes.encoders.SparkDefaultEncoders
 import astraea.spark.rasterframes.expressions.ExplodeTileExpression
 import astraea.spark.rasterframes.functions.{CellCountAggregateFunction, CellMeanAggregateFunction}
 import astraea.spark.rasterframes.{functions ⇒ F}
+import com.vividsolutions.jts.geom.Envelope
 import geotrellis.raster.histogram.Histogram
 import geotrellis.raster.mapalgebra.local.LocalTileBinaryOp
 import geotrellis.raster.{CellType, Tile}
@@ -58,8 +59,8 @@ trait RasterFunctions {
   /** Query the number of (cols, rows) in a Tile. */
   def tileDimensions(col: Column): Column = expressions.DimensionsExpression(col.expr).asColumn
 
-  /** Extracts the bounding box (envelope) of the geometry. */
-  def box2D(col: Column): Column = expressions.Box2DExpression(col.expr).asColumn
+  /** Extracts the bounding box of a geometry as a JTS envelope. */
+  def box2D(col: Column): TypedColumn[Any, Envelope] = expressions.Box2DExpression(col.expr).asColumn.as[Envelope]
 
   /** Flattens Tile into an array. A numeric type parameter is required. */
   @Experimental
@@ -69,7 +70,7 @@ trait RasterFunctions {
 
   @Experimental
   /** Convert array in `arrayCol` into a Tile of dimensions `cols` and `rows`*/
-  def arrayToTile(arrayCol: Column, cols: Int, rows: Int): Column = withAlias("arrayToTile", arrayCol)(
+  def arrayToTile(arrayCol: Column, cols: Int, rows: Int) = withAlias("arrayToTile", arrayCol)(
     udf[Tile, AnyRef](F.arrayToTile(cols, rows)).apply(arrayCol)
   )
 
@@ -84,7 +85,7 @@ trait RasterFunctions {
     expressions.CellTypeExpression(col.expr).asColumn.as[String]
 
   /** Assign a `NoData` value to the Tiles. */
-  def withNoData(col: Column, nodata: Double): TypedColumn[Any, Tile] = withAlias("withNoData", col)(
+  def withNoData(col: Column, nodata: Double) = withAlias("withNoData", col)(
     udf[Tile, Tile](F.withNoData(nodata)).apply(col)
   ).as[Tile]
 

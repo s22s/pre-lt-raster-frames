@@ -22,6 +22,7 @@ import java.nio.file.Path
 import java.time.ZonedDateTime
 
 import astraea.spark.rasterframes.{functions ⇒ F}
+import com.vividsolutions.jts.geom.{Coordinate, GeometryFactory}
 import geotrellis.proj4.LatLng
 import geotrellis.raster
 import geotrellis.raster._
@@ -85,6 +86,7 @@ trait TestData {
       UByteArrayTile(rangeArray(size, _.toByte), rows, cols),
       UShortArrayTile(rangeArray(size, _.toShort), rows, cols)
     )
+
   }
 
   def readSingleband(name: String) = SinglebandGeoTiff(IOUtils.toByteArray(getClass.getResourceAsStream("/" + name)))
@@ -107,6 +109,21 @@ trait TestData {
     val tlm = TileLayerMetadata(raster.tile.cellType, layout, layout.extent, LatLng, kb)
     val rdd = spark.sparkContext.makeRDD(Seq((raster.projectedExtent, raster.tile)))
     ContextRDD(rdd.tileToLayout(tlm), tlm)
+  }
+
+  object JTS {
+    val fact = new GeometryFactory()
+    val c1 = new Coordinate(1, 2)
+    val c2 = new Coordinate(3, 4)
+    val c3 = new Coordinate(5, 6)
+    val point = fact.createPoint(c1)
+    val line = fact.createLineString(Array(c1, c2))
+    val poly = fact.createPolygon(Array(c1, c2, c3, c1))
+    val mpoint = fact.createMultiPoint(Array(point, point, point))
+    val mline = fact.createMultiLineString(Array(line, line, line))
+    val mpoly = fact.createMultiPolygon(Array(poly, poly, poly))
+    val coll = fact.createGeometryCollection(Array(point, line, poly, mpoint, mline, mpoly))
+    val all = Seq(point, line, poly, mpoint, mline, mpoly, coll)
   }
 }
 

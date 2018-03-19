@@ -28,7 +28,7 @@ spark.sparkContext.setLogLevel("ERROR")
 import spark.implicits._
 
 // Utility for reading imagery from our test data set
-def readTiff(name: String): SinglebandGeoTiff = SinglebandGeoTiff(s"core/src/test/resources/$name")
+def readTiff(name: String): SinglebandGeoTiff = SinglebandGeoTiff(s"../core/src/test/resources/$name")
 ```
 
 ## Loading Data
@@ -205,7 +205,7 @@ val clusterColors = IndexedColorMap.fromColorMap(
   ColorRamps.Viridis.toColorMap((0 until 3).toArray)
 )
 
-raster.tile.renderPng(clusterColors).write("docs/target/scala-2.11/tut/ml/classified.png")
+raster.tile.renderPng(clusterColors).write("target/scala-2.11/tut/ml/classified.png")
 ```
 
 | Color Composite    | Target Labels          | Class Assignments   |
@@ -214,7 +214,7 @@ raster.tile.renderPng(clusterColors).write("docs/target/scala-2.11/tut/ml/classi
 
 
 ```tut:invisible
-val raster = SinglebandGeoTiff("core/src/test/resources/L8-Labels-Elkton-VA.tiff").raster
+val raster = SinglebandGeoTiff("../core/src/test/resources/L8-Labels-Elkton-VA.tiff").raster
 
 val k = raster.findMinMax._2
 
@@ -222,7 +222,7 @@ val clusterColors = IndexedColorMap.fromColorMap(
   ColorRamps.Viridis.toColorMap((0 to k).toArray)
 )
 
-raster.tile.renderPng(clusterColors).write("docs/target/scala-2.11/tut/ml/target-labels.png")
+raster.tile.renderPng(clusterColors).write("target/scala-2.11/tut/ml/target-labels.png")
 
 spark.stop()
 ```

@@ -103,6 +103,7 @@ trait RFSpatialColumnMethods extends MethodExtensions[RasterFrame] with Standard
       case rf ⇒ rf.certify
     }
   }
+
 }
 
 object RFSpatialColumnMethods {
