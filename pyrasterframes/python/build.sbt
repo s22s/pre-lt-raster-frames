@@ -6,6 +6,8 @@ val pysparkCmd = taskKey[Unit]("Builds pyspark package and emits command string 
 
 lazy val pyTest = taskKey[Unit]("Run pyrasterframes tests.")
 
+lazy val pyEgg = taskKey[Unit]("Creates a Python .egg file")
+
 lazy val spJarFile = Def.taskDyn {
   if (spShade.value) {
     Def.task((assembly in spPackage).value)
@@ -78,19 +80,9 @@ pyTest := {
 
 Test / test := (Test / test).dependsOn(pyTest).value
 
-lazy val pythonAssembly = TaskKey[Unit]("pythonAssembly", "Zips all files in python")
+pyEgg := {
+  val s = streams.value
+  val wd = baseDirectory.value / "python"
+  Process("python setup.py bdist_egg", wd) ! s.log
+}
 
-//lazy val pythonAssemblyTask = pythonAssembly := {
-//  val baseDir = sourceDirectory.value
-//  val targetDir = assembly.value.getParentFile.getParent
-//  val id = (projectID in spPublishLocal).value
-//  val args = "pyspark" ::  "--packages" :: s"${id.organization}:${id.name}:${id.revision}"
-//  val target = new File(targetDir + s"/python/rfu-api-client-python-${Commons.appVersion}.zip")
-//  val pythonBaseDir = new File(baseDir + "/main/python")
-//  val pythonFiles = Path.allSubpaths(pythonBaseDir)
-//
-//  println("Zipping files in " + pythonBaseDir)
-//  pythonFiles foreach { case (_, s) => println(s) }
-//  IO.zip(pythonFiles, target)
-//  println(s"Created $target")
-//}
