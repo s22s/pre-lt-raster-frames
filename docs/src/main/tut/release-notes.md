@@ -4,6 +4,7 @@
 
 ### 0.6.1
 
+* Added support for reading striped GeoTiffs (#64).
 * Moved extension methods associated with querying tagged columns to `DataFrameMethods` for supporting
   temporal and spatial columns on non-RasterFrame DataFrames.
 

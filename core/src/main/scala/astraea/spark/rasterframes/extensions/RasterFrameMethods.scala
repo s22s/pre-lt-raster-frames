@@ -173,8 +173,8 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame]
    */
   def clipLayerExtent: RasterFrame = {
     val metadata = tileLayerMetadata
-    val extent = metadata.fold(_.extent, _.extent)
-    val layout = metadata.fold(_.layout, _.layout)
+    val extent = metadata.widen.extent
+    val layout = metadata.widen.layout
     val trans = layout.mapTransform
 
     def updateBounds[T: SpatialComponent: Boundable: JsonFormat: TypeTag](tlm: TileLayerMetadata[T],
