@@ -70,8 +70,6 @@ case class GeoTiffRelation(sqlContext: SQLContext, uri: URI) extends BaseRelatio
       .attachContext(tileLayerMetadata.asColumnMetadata)
       .tagSpatialKey.build
 
-    val extentSchema = ExpressionEncoder[Extent]().schema
-
     val baseName = TILE_COLUMN.columnName
     val tileCols = (if (info.bandCount == 1) Seq(baseName)
     else {
@@ -82,7 +80,7 @@ case class GeoTiffRelation(sqlContext: SQLContext, uri: URI) extends BaseRelatio
 
     StructType(Seq(
       StructField(SPATIAL_KEY_COLUMN.columnName, skSchema, nullable = false, skMetadata),
-      StructField(BOUNDS_COLUMN.columnName, extentSchema, nullable = false),
+      StructField(BOUNDS_COLUMN.columnName, org.apache.spark.sql.jts.JTSTypes.PolygonTypeInstance, nullable = true),
       StructField(METADATA_COLUMN.columnName,
         DataTypes.createMapType(StringType, StringType, false)
       )
@@ -109,7 +107,7 @@ case class GeoTiffRelation(sqlContext: SQLContext, uri: URI) extends BaseRelatio
         val gb = mapTransform.extentToBounds(pe.extent)
         val entries = columnIndexes.map {
           case 0 ⇒ SpatialKey(gb.colMin, gb.rowMin)
-          case 1 ⇒ pe.extent
+          case 1 ⇒ pe.extent.jtsGeom
           case 2 ⇒ metadata
           case n ⇒ tiles.band(n - 3)
         }
