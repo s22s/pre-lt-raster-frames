@@ -1,9 +1,14 @@
 # Release Notes
 
-## 0.7.0
+## 0.6.x
 
+### 0.6.1
 
-## 0.6.0
+* Added support for reading striped GeoTiffs (#64).
+* Moved extension methods associated with querying tagged columns to `DataFrameMethods` for supporting
+  temporal and spatial columns on non-RasterFrame DataFrames.
+
+### 0.6.0
 
 * Upgraded to Spark 2.2.1. Added `VersionShims` to allow for Spark 2.1.x backwards compatibility.
 * Introduced separate `rasterframes-datasource` library for hosting sources from which to read RasterFrames.

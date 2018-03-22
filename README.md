@@ -18,6 +18,6 @@ Please see the [Getting Started](http://rasterframes.io/getting-started.html) se
 
 ## Copyright and License
 
-RasterFrames is released under the Apache 2.0 License, copyright Astraea, Inc. 2017.
+RasterFrames is released under the Apache 2.0 License, copyright Astraea, Inc. 2017-2018.
 
 

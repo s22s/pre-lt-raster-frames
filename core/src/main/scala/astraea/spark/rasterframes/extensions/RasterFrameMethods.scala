@@ -16,9 +16,9 @@
 
 package astraea.spark.rasterframes.extensions
 
-import java.sql.Timestamp
 import java.time.ZonedDateTime
 
+import astraea.spark.rasterframes.util._
 import astraea.spark.rasterframes.{MetadataKeys, RasterFrame}
 import geotrellis.proj4.CRS
 import geotrellis.raster.resample.{Bilinear, ResampleMethod}
@@ -32,11 +32,8 @@ import org.apache.spark.annotation.Experimental
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql._
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.gt.types.TileUDT
-import org.apache.spark.sql.types.{Metadata, StructField, TimestampType}
+import org.apache.spark.sql.types.{Metadata, TimestampType}
 import spray.json._
-import astraea.spark.rasterframes.util._
-import astraea.spark.rasterframes.encoders.StandardEncoders._
 
 import scala.reflect.runtime.universe._
 
@@ -46,57 +43,29 @@ import scala.reflect.runtime.universe._
  */
 trait RasterFrameMethods extends MethodExtensions[RasterFrame]
   with RFSpatialColumnMethods with MetadataKeys with LazyLogging {
-  import Implicits.WithDataFrameMethods
-  import Implicits.WithRasterFrameMethods
+  import Implicits.{WithDataFrameMethods, WithRasterFrameMethods}
 
   private val _stableDF = self
   import _stableDF.sqlContext.implicits._
 
-  /** Get the names of the columns that are of type `Tile` */
-  def tileColumns: Seq[TypedColumn[Any, Tile]] =
-    self.schema.fields
-      .filter(_.dataType.typeName.equalsIgnoreCase(TileUDT.typeName))
-      .map(f ⇒ col(f.name).as[Tile])
-
   /** Get the spatial column. */
   def spatialKeyColumn: TypedColumn[Any, SpatialKey] = {
-    val key = findSpatialKeyField
+    val key = self.findSpatialKeyField
     key
       .map(_.name)
       .map(col(_).as[SpatialKey])
       .getOrElse(throw new IllegalArgumentException("All RasterFrames must have a column tagged with context"))
   }
 
-  /** Get the temporal column, if any. */
-  def temporalKeyColumn: Option[TypedColumn[Any, TemporalKey]] = {
-    val key = findTemporalKeyField
-    key.map(_.name).map(col(_).as[TemporalKey])
-  }
-
-  private[rasterframes] def findRoleField(role: String): Option[StructField] =
-    self.schema.fields.find(
-      f ⇒
-        f.metadata.contains(SPATIAL_ROLE_KEY) &&
-          f.metadata.getString(SPATIAL_ROLE_KEY) == role
-    )
-
-  /** The spatial key is the first one found with context metadata attached to it. */
-  private[rasterframes] def findSpatialKeyField: Option[StructField] =
-    findRoleField(SPATIAL_KEY_COLUMN.columnName)
-
-  /** The temporal key is the first one found with the temporal tag. */
-  private[rasterframes] def findTemporalKeyField: Option[StructField] =
-    findRoleField(TEMPORAL_KEY_COLUMN.columnName)
-
   /**
    * Reassemble the [[TileLayerMetadata]] record from DataFrame metadata.
    */
   def tileLayerMetadata: Either[TileLayerMetadata[SpatialKey], TileLayerMetadata[SpaceTimeKey]] = {
-    val spatialMD = findSpatialKeyField
+    val spatialMD = self.findSpatialKeyField
       .map(_.metadata)
       .getOrElse(throw new IllegalArgumentException(s"RasterFrame operation requsted on non-RasterFrame: $self"))
 
-    if (findTemporalKeyField.nonEmpty)
+    if (self.findTemporalKeyField.nonEmpty)
       Right(extract[TileLayerMetadata[SpaceTimeKey]](CONTEXT_METADATA_KEY)(spatialMD))
     else
       Left(extract[TileLayerMetadata[SpatialKey]](CONTEXT_METADATA_KEY)(spatialMD))
@@ -107,7 +76,7 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame]
 
   /** Add a temporal key to the RasterFrame, assigning the same temporal key to all rows. */
   def addTemporalComponent(value: TemporalKey): RasterFrame = {
-    require(temporalKeyColumn.isEmpty, "RasterFrame already has a temporal component")
+    require(self.temporalKeyColumn.isEmpty, "RasterFrame already has a temporal component")
     val tlm = tileLayerMetadata.left.get
     val newTlm = tlm.map(k ⇒ SpaceTimeKey(k, value))
 
@@ -204,8 +173,8 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame]
    */
   def clipLayerExtent: RasterFrame = {
     val metadata = tileLayerMetadata
-    val extent = metadata.fold(_.extent, _.extent)
-    val layout = metadata.fold(_.layout, _.layout)
+    val extent = metadata.widen.extent
+    val layout = metadata.widen.layout
     val trans = layout.mapTransform
 
     def updateBounds[T: SpatialComponent: Boundable: JsonFormat: TypeTag](tlm: TileLayerMetadata[T],
@@ -216,16 +185,16 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame]
 
       val gridExtent = trans(keyBounds.toGridBounds())
       val newExtent = gridExtent.intersection(extent).getOrElse(gridExtent)
-      self.setSpatialColumnRole(spatialKeyColumn, tlm.copy(extent = newExtent, bounds = keyBounds))
+      self.setSpatialColumnRole(self.spatialKeyColumn, tlm.copy(extent = newExtent, bounds = keyBounds))
     }
 
     val df = metadata.fold(
-      tlm ⇒ updateBounds(tlm, self.select(spatialKeyColumn)),
+      tlm ⇒ updateBounds(tlm, self.select(self.spatialKeyColumn)),
       tlm ⇒ {
         updateBounds(
           tlm,
           self
-            .select(spatialKeyColumn, temporalKeyColumn.get)
+            .select(self.spatialKeyColumn, self.temporalKeyColumn.get)
             .map { case (s, t) ⇒ SpaceTimeKey(s, t) }
         )
       }
@@ -240,10 +209,10 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame]
    */
   def toTileLayerRDD(tileCol: Column): Either[TileLayerRDD[SpatialKey], TileLayerRDD[SpaceTimeKey]] =
     tileLayerMetadata.fold(
-      tlm ⇒ Left(ContextRDD(self.select(spatialKeyColumn, tileCol.as[Tile]).rdd, tlm)),
+      tlm ⇒ Left(ContextRDD(self.select(self.spatialKeyColumn, tileCol.as[Tile]).rdd, tlm)),
       tlm ⇒ {
         val rdd = self
-          .select(spatialKeyColumn, temporalKeyColumn.get, tileCol.as[Tile])
+          .select(self.spatialKeyColumn, self.temporalKeyColumn.get, tileCol.as[Tile])
           .rdd
           .map { case (sk, tk, v) ⇒ (SpaceTimeKey(sk, tk), v) }
         Right(ContextRDD(rdd, tlm))
@@ -255,7 +224,7 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame]
     tileLayerMetadata.fold(
       tlm ⇒ {
         val rdd = self
-          .select(spatialKeyColumn, array(self.tileColumns: _*)).as[(SpatialKey, Array[Tile])]
+          .select(self.spatialKeyColumn, array(self.tileColumns: _*)).as[(SpatialKey, Array[Tile])]
           .rdd
           .map { case (sk, tiles) ⇒
             (sk, MultibandTile(tiles))
@@ -264,7 +233,7 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame]
       },
       tlm ⇒ {
         val rdd = self
-          .select(spatialKeyColumn, temporalKeyColumn.get, array(self.tileColumns: _*)).as[(SpatialKey, TemporalKey, Array[Tile])]
+          .select(self.spatialKeyColumn, self.temporalKeyColumn.get, array(self.tileColumns: _*)).as[(SpatialKey, TemporalKey, Array[Tile])]
           .rdd
           .map { case (sk, tk, tiles) ⇒ (SpaceTimeKey(sk, tk), MultibandTile(tiles)) }
         Right(ContextRDD(rdd, tlm))
