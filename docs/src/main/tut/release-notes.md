@@ -7,6 +7,9 @@
 * Added support for reading striped GeoTiffs (#64).
 * Moved extension methods associated with querying tagged columns to `DataFrameMethods` for supporting
   temporal and spatial columns on non-RasterFrame DataFrames.
+* GeoTIFF and GeoTrellis DataSources automatically initialize RasterFrames.
+* Added `RasterFrame.toMultibandRaster`.
+* Added utility for rendering multiband tile as RGB composite PNG.  
 
 ### 0.6.0
 

@@ -6,8 +6,8 @@ import java.sql.Timestamp
 import java.time.ZonedDateTime
 
 import geotrellis.proj4.LatLng
-import geotrellis.raster.render.{ColorMap, ColorRamp}
-import geotrellis.raster.{ProjectedRaster, Tile, TileFeature, TileLayout}
+import geotrellis.raster.render.{ColorMap, ColorRamp, ColorRamps}
+import geotrellis.raster.{IntCellType, ProjectedRaster, Tile, TileFeature, TileLayout}
 import geotrellis.spark._
 import geotrellis.spark.io._
 import geotrellis.spark.tiling._
@@ -45,7 +45,8 @@ class RasterFrameSpec extends TestEnvironment with MetadataKeys
 
       val df1 = baseDF.withPrefixedColumnNames("ONE_")
       val df2 = baseDF.withPrefixedColumnNames("TWO_")
-
+      val spark = df1.sparkSession
+      import spark.implicits._
       assert(df1.columns.forall(_.startsWith("ONE_")))
       assert(df2.columns.forall(_.startsWith("TWO_")))
       assert(df1.join(df2, $"ONE_int" === $"TWO_int").columns === df1.columns ++ df2.columns)
@@ -82,8 +83,6 @@ class RasterFrameSpec extends TestEnvironment with MetadataKeys
 
       val rf = tileLayerRDD.toRF
 
-      //rf.printSchema()
-      //rf.show()
       try {
         assert(rf.tileColumns.nonEmpty)
         assert(rf.spatialKeyColumn.columnName === "spatial_key")
@@ -271,11 +270,9 @@ class RasterFrameSpec extends TestEnvironment with MetadataKeys
     it("should rasterize with a spatiotemporal key") {
       val rf = TestData.randomSpatioTemporalTileLayerRDD(20, 20, 2, 2).toRF
 
-      val md = rf.schema.fields(0).metadata
-
-      //println(rf.extract[TileLayerMetadata[SpaceTimeKey]](CONTEXT_METADATA_KEY)(md))
-
-      rf.toRaster($"tile", 128, 128)
+      noException shouldBe thrownBy {
+        rf.toRaster($"tile", 128, 128)
+      }
     }
 
     it("should maintain metadata after all spatial join operations") {
@@ -287,6 +284,22 @@ class RasterFrameSpec extends TestEnvironment with MetadataKeys
         val joined = rf1.spatialJoin(rf2, jt)
         //println(joined.schema.json)
         assert(joined.tileLayerMetadata.isRight)
+      }
+    }
+
+    it("should rasterize multiband") {
+
+      val blue = TestData.l8Sample(1).projectedRaster.toRF.withColumnRenamed("tile", "blue").asRF
+      val green = TestData.l8Sample(2).projectedRaster.toRF.withColumnRenamed("tile", "green").asRF
+      val red = TestData.l8Sample(3).projectedRaster.toRF.withColumnRenamed("tile", "red").asRF
+
+      val joined = blue.spatialJoin(green).spatialJoin(red)
+      joined.printSchema
+
+      noException shouldBe thrownBy {
+        val raster = joined.toMultibandRaster(Seq($"red", $"green", $"blue"), 128, 128)
+        val png = MultibandRender.rgbComposite(raster.tile, MultibandRender.Landsat8NaturalColor)
+        png.write(s"target/${getClass.getSimpleName}.png")
       }
     }
 
