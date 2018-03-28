@@ -83,8 +83,6 @@ class RasterFrameSpec extends TestEnvironment with MetadataKeys
 
       val rf = tileLayerRDD.toRF
 
-      //rf.printSchema()
-      //rf.show()
       try {
         assert(rf.tileColumns.nonEmpty)
         assert(rf.spatialKeyColumn.columnName === "spatial_key")
@@ -278,8 +276,8 @@ class RasterFrameSpec extends TestEnvironment with MetadataKeys
     }
 
     it("should maintain metadata after all spatial join operations") {
-      val rf1 = TestData.randomSpatialTileLayerRDD(20, 20, 2, 2).toRF
-      val rf2 = TestData.randomSpatialTileLayerRDD(20, 20, 2, 2).toRF
+      val rf1 = TestData.randomSpatioTemporalTileLayerRDD(20, 20, 2, 2).toRF
+      val rf2 = TestData.randomSpatioTemporalTileLayerRDD(20, 20, 2, 2).toRF
 
       val joinTypes = Seq("inner", "outer", "fullouter", "left_outer", "right_outer", "leftsemi")
       forEvery(joinTypes) { jt ⇒
