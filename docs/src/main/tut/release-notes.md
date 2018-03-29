@@ -9,7 +9,8 @@
   temporal and spatial columns on non-RasterFrame DataFrames.
 * GeoTIFF and GeoTrellis DataSources automatically initialize RasterFrames.
 * Added `RasterFrame.toMultibandRaster`.
-* Added utility for rendering multiband tile as RGB composite PNG.  
+* Added utility for rendering multiband tile as RGB composite PNG.
+* Added `RasterFrame.withRFColumnRenamed` to lessen boilerplate in maintaining `RasterFrame` type tag.  
 
 ### 0.6.0
 

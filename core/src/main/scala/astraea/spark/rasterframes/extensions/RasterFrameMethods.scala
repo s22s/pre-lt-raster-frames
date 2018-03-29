@@ -48,6 +48,13 @@ trait RasterFrameMethods extends MethodExtensions[RasterFrame]
   private val _stableDF = self
   import _stableDF.sqlContext.implicits._
 
+
+  /**
+   * A convenience over `DataFrame.withColumnRenamed` whereby the `RasterFrame` type is maintained.
+   */
+  def withRFColumnRenamed(existingName: String, newName: String): RasterFrame =
+    (self: DataFrame).withColumnRenamed(existingName, newName).certify
+
   /** Get the spatial column. */
   def spatialKeyColumn: TypedColumn[Any, SpatialKey] = {
     val key = self.findSpatialKeyField

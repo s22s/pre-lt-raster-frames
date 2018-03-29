@@ -288,18 +288,31 @@ class RasterFrameSpec extends TestEnvironment with MetadataKeys
     }
 
     it("should rasterize multiband") {
+      withClue("Landsat") {
+        val blue = TestData.l8Sample(1).projectedRaster.toRF.withRFColumnRenamed("tile", "blue")
+        val green = TestData.l8Sample(2).projectedRaster.toRF.withRFColumnRenamed("tile", "green")
+        val red = TestData.l8Sample(3).projectedRaster.toRF.withRFColumnRenamed("tile", "red")
 
-      val blue = TestData.l8Sample(1).projectedRaster.toRF.withColumnRenamed("tile", "blue").asRF
-      val green = TestData.l8Sample(2).projectedRaster.toRF.withColumnRenamed("tile", "green").asRF
-      val red = TestData.l8Sample(3).projectedRaster.toRF.withColumnRenamed("tile", "red").asRF
+        val joined = blue.spatialJoin(green).spatialJoin(red)
 
-      val joined = blue.spatialJoin(green).spatialJoin(red)
-      joined.printSchema
+        noException shouldBe thrownBy {
+          val raster = joined.toMultibandRaster(Seq($"red", $"green", $"blue"), 128, 128)
+          val png = MultibandRender.rgbComposite(raster.tile, MultibandRender.Landsat8NaturalColor)
+          //png.write(s"target/${getClass.getSimpleName}.png")
+        }
+      }
+      withClue("NAIP") {
+        val red = TestData.naipSample(1).projectedRaster.toRF.withRFColumnRenamed("tile", "red")
+        val green = TestData.naipSample(2).projectedRaster.toRF.withRFColumnRenamed("tile", "green")
+        val blue = TestData.naipSample(3).projectedRaster.toRF.withRFColumnRenamed("tile", "blue")
+        val joined = blue.spatialJoin(green).spatialJoin(red)
+        joined.printSchema
 
-      noException shouldBe thrownBy {
-        val raster = joined.toMultibandRaster(Seq($"red", $"green", $"blue"), 128, 128)
-        val png = MultibandRender.rgbComposite(raster.tile, MultibandRender.Landsat8NaturalColor)
-        png.write(s"target/${getClass.getSimpleName}.png")
+        noException shouldBe thrownBy {
+          val raster = joined.toMultibandRaster(Seq($"red", $"green", $"blue"), 256, 256)
+          val png = MultibandRender.rgbComposite(raster.tile, MultibandRender.NAIPNaturalColor)
+          png.write(s"target/${getClass.getSimpleName}.png")
+        }
       }
     }
 
