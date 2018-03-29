@@ -45,7 +45,7 @@ gtag('config', 'UA-106630615-1');
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.6.0
+0.6.1
 </div>
 </div>
 <select class="supergroup" name="Language"><option class="group" value="group-scala">Scala</option><option class="group" value="group-python">Python</option></select>
@@ -100,7 +100,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.6.0
+0.6.1
 </div>
 </div>
 <select class="supergroup" name="Language"><option class="group" value="group-scala">Scala</option><option class="group" value="group-python">Python</option></select>
@@ -174,11 +174,11 @@ scala&gt; tileBack.drop(&quot;tileData&quot;).show(5, 40)
 +-----------+--------------------------------------+
 |spatial_key|                             tileAgain|
 +-----------+--------------------------------------+
-|      [6,3]|ShortRawArrayTile([S@78a689e7,128,128)|
-|      [4,0]|ShortRawArrayTile([S@206769f8,128,128)|
-|      [0,0]| ShortRawArrayTile([S@437eeb4,128,128)|
-|      [4,2]|ShortRawArrayTile([S@31156e3b,128,128)|
-|      [0,2]|ShortRawArrayTile([S@7d30304f,128,128)|
+|      [6,3]|ShortRawArrayTile([S@6603aeb8,128,128)|
+|      [4,0]|ShortRawArrayTile([S@5dfabe82,128,128)|
+|      [0,0]|ShortRawArrayTile([S@470467b0,128,128)|
+|      [4,2]|ShortRawArrayTile([S@3bca8557,128,128)|
+|      [0,2]|ShortRawArrayTile([S@40478af8,128,128)|
 +-----------+--------------------------------------+
 only showing top 5 rows
 
@@ -191,11 +191,11 @@ scala&gt; tileBackAgain.drop(&quot;tileData&quot;).show(5, 50)
 +-----------+--------------------------------------------------+
 |spatial_key|                                         tileAgain|
 +-----------+--------------------------------------------------+
-|      [6,3]|ShortUserDefinedNoDataArrayTile([S@f734e1,128,1...|
-|      [4,0]|ShortUserDefinedNoDataArrayTile([S@7b7d5d8d,128...|
-|      [0,0]|ShortUserDefinedNoDataArrayTile([S@59708aaa,128...|
-|      [4,2]|ShortUserDefinedNoDataArrayTile([S@63834ee3,128...|
-|      [0,2]|ShortUserDefinedNoDataArrayTile([S@5aea3e4e,128...|
+|      [6,3]|ShortUserDefinedNoDataArrayTile([S@5aea3e4e,128...|
+|      [4,0]|ShortUserDefinedNoDataArrayTile([S@4b6a81ab,128...|
+|      [0,0]|ShortUserDefinedNoDataArrayTile([S@161267b6,128...|
+|      [4,2]|ShortUserDefinedNoDataArrayTile([S@6f1fd7c1,128...|
+|      [0,2]|ShortUserDefinedNoDataArrayTile([S@648c8c22,128...|
 +-----------+--------------------------------------------------+
 only showing top 5 rows
 
@@ -290,7 +290,7 @@ image.tile.color(colors).renderPng().write(&quot;target/scala-2.11/tut/rf-raster
 <p>For future analysis it is helpful to persist a RasterFrame as a <a href="http://geotrellis.readthedocs.io/en/latest/guide/tile-backends.html">GeoTrellis layer</a>.</p>
 <p>First, convert the RasterFrame into a TileLayerRDD. The return type is an Either; the <code>left</code> side is for spatial-only keyed data</p>
 <pre class="prettyprint"><code class="language-scala">val tlRDD = equalized.toTileLayerRDD($&quot;equalized&quot;).left.get
-// tlRDD: geotrellis.spark.TileLayerRDD[geotrellis.spark.SpatialKey] = ContextRDD[69] at RDD at ContextRDD.scala:35
+// tlRDD: geotrellis.spark.TileLayerRDD[geotrellis.spark.SpatialKey] = ContextRDD[70] at RDD at ContextRDD.scala:35
 </code></pre>
 <p>Then create a GeoTrellis layer writer:</p>
 <pre class="prettyprint"><code class="language-scala">import java.nio.file.Files

@@ -949,23 +949,6 @@ tile layer metadata. A more flexible spatial join is in the works.**
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.extensions.RasterFrameMethods#temporalKeyColumn" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="temporalKeyColumn:Option[org.apache.spark.sql.TypedColumn[Any,geotrellis.spark.TemporalKey]]"></a>
-      <a id="temporalKeyColumn:Option[TypedColumn[Any,TemporalKey]]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">temporalKeyColumn</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.12/index.html#scala.Option" class="extype" target="_top">Option</a>[<span class="extype" name="org.apache.spark.sql.TypedColumn">TypedColumn</span>[<a href="http://www.scala-lang.org/api/2.11.12/index.html#scala.Any" class="extype" target="_top">Any</a>, <span class="extype" name="geotrellis.spark.TemporalKey">TemporalKey</span>]]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.extensions.Implicits$WithRasterFrameMethods@temporalKeyColumn:Option[org.apache.spark.sql.TypedColumn[Any,geotrellis.spark.TemporalKey]]" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Get the temporal column, if any.</p><div class="fullcomment"><div class="comment cmt"><p>Get the temporal column, if any.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RasterFrameMethods.html" class="extype" name="astraea.spark.rasterframes.extensions.RasterFrameMethods">RasterFrameMethods</a></dd></dl></div>
     </li><li name="astraea.spark.rasterframes.encoders.StandardEncoders#temporalKeyEncoder" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="temporalKeyEncoder:org.apache.spark.sql.catalyst.encoders.ExpressionEncoder[geotrellis.spark.TemporalKey]"></a>
       <a id="temporalKeyEncoder:ExpressionEncoder[TemporalKey]"></a>
@@ -1000,23 +983,6 @@ tile layer metadata. A more flexible spatial join is in the works.**
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../encoders/StandardEncoders.html" class="extype" name="astraea.spark.rasterframes.encoders.StandardEncoders">StandardEncoders</a></dd></dl></div>
-    </li><li name="astraea.spark.rasterframes.extensions.RasterFrameMethods#tileColumns" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="tileColumns:Seq[org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.Tile]]"></a>
-      <a id="tileColumns:Seq[TypedColumn[Any,Tile]]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">tileColumns</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="org.apache.spark.sql.TypedColumn">TypedColumn</span>[<a href="http://www.scala-lang.org/api/2.11.12/index.html#scala.Any" class="extype" target="_top">Any</a>, <span class="extype" name="geotrellis.raster.Tile">Tile</span>]]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.extensions.Implicits$WithRasterFrameMethods@tileColumns:Seq[org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.Tile]]" title="Permalink" target="_top">
-        <img src="../../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Get the names of the columns that are of type <code>Tile</code></p><div class="fullcomment"><div class="comment cmt"><p>Get the names of the columns that are of type <code>Tile</code></p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RasterFrameMethods.html" class="extype" name="astraea.spark.rasterframes.extensions.RasterFrameMethods">RasterFrameMethods</a></dd></dl></div>
     </li><li name="astraea.spark.rasterframes.extensions.RasterFrameMethods#tileLayerMetadata" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="tileLayerMetadata:Either[geotrellis.spark.TileLayerMetadata[geotrellis.spark.SpatialKey],geotrellis.spark.TileLayerMetadata[geotrellis.spark.SpaceTimeKey]]"></a>
       <a id="tileLayerMetadata:Either[TileLayerMetadata[SpatialKey],TileLayerMetadata[SpaceTimeKey]]"></a>
@@ -1052,6 +1018,41 @@ tile layer metadata. A more flexible spatial join is in the works.**
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../encoders/StandardEncoders.html" class="extype" name="astraea.spark.rasterframes.encoders.StandardEncoders">StandardEncoders</a></dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.extensions.RasterFrameMethods#toMultibandRaster" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="toMultibandRaster(tileCols:Seq[org.apache.spark.sql.Column],rasterCols:Int,rasterRows:Int,resampler:geotrellis.raster.resample.ResampleMethod):geotrellis.raster.ProjectedRaster[geotrellis.raster.MultibandTile]"></a>
+      <a id="toMultibandRaster(Seq[Column],Int,Int,ResampleMethod):ProjectedRaster[MultibandTile]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">toMultibandRaster</span><span class="params">(<span name="tileCols">tileCols: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="org.apache.spark.sql.Column">Column</span>]</span>, <span name="rasterCols">rasterCols: <a href="http://www.scala-lang.org/api/2.11.12/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="rasterRows">rasterRows: <a href="http://www.scala-lang.org/api/2.11.12/index.html#scala.Int" class="extype" target="_top">Int</a></span>, <span name="resampler">resampler: <span class="extype" name="geotrellis.raster.resample.ResampleMethod">ResampleMethod</span> = <span class="symbol"><span class="name"><a href="../../../../geotrellis/package.html">Bilinear</a></span></span></span>)</span><span class="result">: <span class="extype" name="geotrellis.raster.ProjectedRaster">ProjectedRaster</span>[<span class="extype" name="geotrellis.raster.MultibandTile">MultibandTile</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#astraea.spark.rasterframes.extensions.Implicits$WithRasterFrameMethods@toMultibandRaster(tileCols:Seq[org.apache.spark.sql.Column],rasterCols:Int,rasterRows:Int,resampler:geotrellis.raster.resample.ResampleMethod):geotrellis.raster.ProjectedRaster[geotrellis.raster.MultibandTile]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Convert the Red, Green &amp; Blue assigned tiles in the RasterFrame into a single color composite raster.</p><div class="fullcomment"><div class="comment cmt"><p>Convert the Red, Green &amp; Blue assigned tiles in the RasterFrame into a single color composite raster.
+For RasterFrames keyed with temporal keys, they will be merged underterministically.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RasterFrameMethods.html" class="extype" name="astraea.spark.rasterframes.extensions.RasterFrameMethods">RasterFrameMethods</a></dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.extensions.RasterFrameMethods#toMultibandTileLayerRDD" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="toMultibandTileLayerRDD(tileCols:org.apache.spark.sql.Column*):Either[geotrellis.spark.MultibandTileLayerRDD[geotrellis.spark.SpatialKey],geotrellis.spark.MultibandTileLayerRDD[geotrellis.spark.SpaceTimeKey]]"></a>
+      <a id="toMultibandTileLayerRDD(Column*):Either[MultibandTileLayerRDD[SpatialKey],MultibandTileLayerRDD[SpaceTimeKey]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">toMultibandTileLayerRDD</span><span class="params">(<span name="tileCols">tileCols: <span class="extype" name="org.apache.spark.sql.Column">Column</span>*</span>)</span><span class="result">: <span class="extype" name="scala.Either">Either</span>[<a href="../../../../geotrellis/spark/package.html#MultibandTileLayerRDD[K]=org.apache.spark.rdd.RDD[(K,geotrellis.raster.MultibandTile)]withgeotrellis.spark.Metadata[geotrellis.spark.TileLayerMetadata[K]]" class="extmbr" name="geotrellis.spark.MultibandTileLayerRDD">MultibandTileLayerRDD</a>[<span class="extype" name="geotrellis.spark.SpatialKey">SpatialKey</span>], <a href="../../../../geotrellis/spark/package.html#MultibandTileLayerRDD[K]=org.apache.spark.rdd.RDD[(K,geotrellis.raster.MultibandTile)]withgeotrellis.spark.Metadata[geotrellis.spark.TileLayerMetadata[K]]" class="extmbr" name="geotrellis.spark.MultibandTileLayerRDD">MultibandTileLayerRDD</a>[<span class="extype" name="geotrellis.spark.SpaceTimeKey">SpaceTimeKey</span>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#astraea.spark.rasterframes.extensions.Implicits$WithRasterFrameMethods@toMultibandTileLayerRDD(tileCols:org.apache.spark.sql.Column*):Either[geotrellis.spark.MultibandTileLayerRDD[geotrellis.spark.SpatialKey],geotrellis.spark.MultibandTileLayerRDD[geotrellis.spark.SpaceTimeKey]]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Convert the specified tile columns in a Rasterrame to a GeoTrellis <span class="extype" name="MultibandTileLayerRDD">MultibandTileLayerRDD</span></p><div class="fullcomment"><div class="comment cmt"><p>Convert the specified tile columns in a Rasterrame to a GeoTrellis <span class="extype" name="MultibandTileLayerRDD">MultibandTileLayerRDD</span></p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RasterFrameMethods.html" class="extype" name="astraea.spark.rasterframes.extensions.RasterFrameMethods">RasterFrameMethods</a></dd></dl></div>
     </li><li name="astraea.spark.rasterframes.extensions.RasterFrameMethods#toMultibandTileLayerRDD" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toMultibandTileLayerRDD:Either[geotrellis.spark.MultibandTileLayerRDD[geotrellis.spark.SpatialKey],geotrellis.spark.MultibandTileLayerRDD[geotrellis.spark.SpaceTimeKey]]"></a>
       <a id="toMultibandTileLayerRDD:Either[MultibandTileLayerRDD[SpatialKey],MultibandTileLayerRDD[SpaceTimeKey]]"></a>
@@ -1085,8 +1086,8 @@ tile layer metadata. A more flexible spatial join is in the works.**
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Convert the tiles in the RasterFrame into a single raster.</p><div class="fullcomment"><div class="comment cmt"><p>Convert the tiles in the RasterFrame into a single raster. For RasterFrames keyed with temporal keys, this
-will merge based</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RasterFrameMethods.html" class="extype" name="astraea.spark.rasterframes.extensions.RasterFrameMethods">RasterFrameMethods</a></dd></dl></div>
+      <p class="shortcomment cmt">Convert the tiles in the RasterFrame into a single raster.</p><div class="fullcomment"><div class="comment cmt"><p>Convert the tiles in the RasterFrame into a single raster. For RasterFrames keyed with temporal keys, they
+will be merge undeterministically.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RasterFrameMethods.html" class="extype" name="astraea.spark.rasterframes.extensions.RasterFrameMethods">RasterFrameMethods</a></dd></dl></div>
     </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
       <a id="toString():String"></a>
@@ -1261,6 +1262,24 @@ Coordinate is in native CRS.</p></div><dl class="paramcmts block"><dt class="par
     </span>
       <p class="shortcomment cmt">Append a column containing the center of the row's spatial key.</p><div class="fullcomment"><div class="comment cmt"><p>Append a column containing the center of the row's spatial key.
 Coordinate is in (longitude, latitude) (EPSG:4326).</p></div><dl class="paramcmts block"><dt class="param">colName</dt><dd class="cmt"><p>name of column to append. Defaults to &quot;center&quot;</p></dd><dt>returns</dt><dd class="cmt"><p>updated RasterFrame</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RFSpatialColumnMethods.html" class="extype" name="astraea.spark.rasterframes.extensions.RFSpatialColumnMethods">RFSpatialColumnMethods</a></dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.extensions.RasterFrameMethods#withRFColumnRenamed" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="withRFColumnRenamed(existingName:String,newName:String):astraea.spark.rasterframes.RasterFrame"></a>
+      <a id="withRFColumnRenamed(String,String):RasterFrame"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">withRFColumnRenamed</span><span class="params">(<span name="existingName">existingName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="newName">newName: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="../package.html#RasterFrame=shapeless.tag.@@[org.apache.spark.sql.DataFrame,astraea.spark.rasterframes.package.RasterFrameTag]" class="extmbr" name="astraea.spark.rasterframes.RasterFrame">RasterFrame</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#astraea.spark.rasterframes.extensions.Implicits$WithRasterFrameMethods@withRFColumnRenamed(existingName:String,newName:String):astraea.spark.rasterframes.RasterFrame" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">A convenience over <code>DataFrame.withColumnRenamed</code> whereby the <code>RasterFrame</code> type is maintained.</p><div class="fullcomment"><div class="comment cmt"><p>A convenience over <code>DataFrame.withColumnRenamed</code> whereby the <code>RasterFrame</code> type is maintained.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RasterFrameMethods.html" class="extype" name="astraea.spark.rasterframes.extensions.RasterFrameMethods">RasterFrameMethods</a></dd></dl></div>
     </li><li name="astraea.spark.rasterframes.extensions.RFSpatialColumnMethods#withSpatialIndex" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="withSpatialIndex(colName:String,applyOrdering:Boolean):astraea.spark.rasterframes.RasterFrame"></a>
       <a id="withSpatialIndex(String,Boolean):RasterFrame"></a>

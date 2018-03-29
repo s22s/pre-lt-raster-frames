@@ -45,14 +45,14 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <span class="name">DataFrameMethods</span><span class="result"> extends <span class="extype" name="geotrellis.util.MethodExtensions">MethodExtensions</span>[<a href="../../../../org/apache/spark/sql/package.html#DataFrame=org.apache.spark.sql.Dataset[org.apache.spark.sql.Row]" class="extmbr" name="org.apache.spark.sql.DataFrame">DataFrame</a>] with <a href="../MetadataKeys.html" class="extype" name="astraea.spark.rasterframes.MetadataKeys">MetadataKeys</a></span>
+        <span class="name">DataFrameMethods</span><span class="tparams">[<span name="DF">DF &lt;: <a href="../../../../org/apache/spark/sql/package.html#DataFrame=org.apache.spark.sql.Dataset[org.apache.spark.sql.Row]" class="extmbr" name="org.apache.spark.sql.DataFrame">DataFrame</a></span>]</span><span class="result"> extends <span class="extype" name="geotrellis.util.MethodExtensions">MethodExtensions</span>[<span class="extype" name="astraea.spark.rasterframes.extensions.DataFrameMethods.DF">DF</span>] with <a href="../MetadataKeys.html" class="extype" name="astraea.spark.rasterframes.MetadataKeys">MetadataKeys</a></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Extension methods over <span class="extype" name="DataFrame">DataFrame</span>.
 </p></div><dl class="attributes block"> <dt>Since</dt><dd><p>7/18/17</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="../MetadataKeys.html" class="extype" name="astraea.spark.rasterframes.MetadataKeys">MetadataKeys</a>, <span class="extype" name="geotrellis.util.MethodExtensions">MethodExtensions</span>[<a href="../../../../org/apache/spark/sql/package.html#DataFrame=org.apache.spark.sql.Dataset[org.apache.spark.sql.Row]" class="extmbr" name="org.apache.spark.sql.DataFrame">DataFrame</a>], <a href="http://www.scala-lang.org/api/2.11.12/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://www.scala-lang.org/api/2.11.12/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.12/index.html#scala.Any" class="extype" target="_top">Any</a></div>
+          <div class="superTypes hiddenContent"><a href="../MetadataKeys.html" class="extype" name="astraea.spark.rasterframes.MetadataKeys">MetadataKeys</a>, <span class="extype" name="geotrellis.util.MethodExtensions">MethodExtensions</span>[<span class="extype" name="astraea.spark.rasterframes.extensions.DataFrameMethods.DF">DF</span>], <a href="http://www.scala-lang.org/api/2.11.12/index.html#scala.Serializable" class="extype" target="_top">Serializable</a>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="http://www.scala-lang.org/api/2.11.12/index.html#scala.AnyRef" class="extype" target="_top">AnyRef</a>, <a href="http://www.scala-lang.org/api/2.11.12/index.html#scala.Any" class="extype" target="_top">Any</a></div>
         </div><div class="toggleContainer block">
             <span class="toggle">Known Subclasses</span>
             <div class="subClasses hiddenContent"><a href="Implicits$WithDataFrameMethods.html" class="extype" name="astraea.spark.rasterframes.extensions.Implicits.WithDataFrameMethods">WithDataFrameMethods</a></div>
@@ -98,14 +98,14 @@
               <h3>Abstract Value Members</h3>
               <ol><li name="geotrellis.util.MethodExtensions#self" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="self:T"></a>
-      <a id="self:DataFrame"></a>
+      <a id="self:DF"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">self</span><span class="result">: <a href="../../../../org/apache/spark/sql/package.html#DataFrame=org.apache.spark.sql.Dataset[org.apache.spark.sql.Row]" class="extmbr" name="org.apache.spark.sql.DataFrame">DataFrame</a></span>
+        <span class="name">self</span><span class="result">: <span class="extype" name="astraea.spark.rasterframes.extensions.DataFrameMethods.DF">DF</span></span>
       </span>
       </h4><span class="permalink">
       <a href="../../../../index.html#astraea.spark.rasterframes.extensions.DataFrameMethods@self:T" title="Permalink" target="_top">
@@ -478,6 +478,23 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.extensions.DataFrameMethods#spatialKeyColumn" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="spatialKeyColumn:Option[org.apache.spark.sql.TypedColumn[Any,geotrellis.spark.SpatialKey]]"></a>
+      <a id="spatialKeyColumn:Option[TypedColumn[Any,SpatialKey]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">spatialKeyColumn</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.12/index.html#scala.Option" class="extype" target="_top">Option</a>[<span class="extype" name="org.apache.spark.sql.TypedColumn">TypedColumn</span>[<a href="http://www.scala-lang.org/api/2.11.12/index.html#scala.Any" class="extype" target="_top">Any</a>, <span class="extype" name="geotrellis.spark.SpatialKey">SpatialKey</span>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#astraea.spark.rasterframes.extensions.DataFrameMethods@spatialKeyColumn:Option[org.apache.spark.sql.TypedColumn[Any,geotrellis.spark.SpatialKey]]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Get the spatial column.</p>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -495,6 +512,40 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="astraea.spark.rasterframes.extensions.DataFrameMethods#temporalKeyColumn" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="temporalKeyColumn:Option[org.apache.spark.sql.TypedColumn[Any,geotrellis.spark.TemporalKey]]"></a>
+      <a id="temporalKeyColumn:Option[TypedColumn[Any,TemporalKey]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">temporalKeyColumn</span><span class="result">: <a href="http://www.scala-lang.org/api/2.11.12/index.html#scala.Option" class="extype" target="_top">Option</a>[<span class="extype" name="org.apache.spark.sql.TypedColumn">TypedColumn</span>[<a href="http://www.scala-lang.org/api/2.11.12/index.html#scala.Any" class="extype" target="_top">Any</a>, <span class="extype" name="geotrellis.spark.TemporalKey">TemporalKey</span>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#astraea.spark.rasterframes.extensions.DataFrameMethods@temporalKeyColumn:Option[org.apache.spark.sql.TypedColumn[Any,geotrellis.spark.TemporalKey]]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Get the temporal column, if any.</p>
+    </li><li name="astraea.spark.rasterframes.extensions.DataFrameMethods#tileColumns" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="tileColumns:Seq[org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.Tile]]"></a>
+      <a id="tileColumns:Seq[TypedColumn[Any,Tile]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">tileColumns</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="org.apache.spark.sql.TypedColumn">TypedColumn</span>[<a href="http://www.scala-lang.org/api/2.11.12/index.html#scala.Any" class="extype" target="_top">Any</a>, <span class="extype" name="geotrellis.raster.Tile">Tile</span>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#astraea.spark.rasterframes.extensions.DataFrameMethods@tileColumns:Seq[org.apache.spark.sql.TypedColumn[Any,geotrellis.raster.Tile]]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Get the names of the columns that are of type <code>Tile</code></p>
     </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
       <a id="toString():String"></a>
@@ -582,18 +633,18 @@
               
         </dd></dl></div>
     </li><li name="astraea.spark.rasterframes.extensions.DataFrameMethods#withPrefixedColumnNames" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="withPrefixedColumnNames(prefix:String):org.apache.spark.sql.DataFrame"></a>
-      <a id="withPrefixedColumnNames(String):DataFrame"></a>
+      <a id="withPrefixedColumnNames(prefix:String):DF"></a>
+      <a id="withPrefixedColumnNames(String):DF"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">withPrefixedColumnNames</span><span class="params">(<span name="prefix">prefix: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <a href="../../../../org/apache/spark/sql/package.html#DataFrame=org.apache.spark.sql.Dataset[org.apache.spark.sql.Row]" class="extmbr" name="org.apache.spark.sql.DataFrame">DataFrame</a></span>
+        <span class="name">withPrefixedColumnNames</span><span class="params">(<span name="prefix">prefix: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="astraea.spark.rasterframes.extensions.DataFrameMethods.DF">DF</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#astraea.spark.rasterframes.extensions.DataFrameMethods@withPrefixedColumnNames(prefix:String):org.apache.spark.sql.DataFrame" title="Permalink" target="_top">
+      <a href="../../../../index.html#astraea.spark.rasterframes.extensions.DataFrameMethods@withPrefixedColumnNames(prefix:String):DF" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -612,7 +663,7 @@ Useful for preparing dataframes for joins where duplicate names may arise.
         <div class="parent" name="astraea.spark.rasterframes.MetadataKeys">
               <h3>Inherited from <a href="../MetadataKeys.html" class="extype" name="astraea.spark.rasterframes.MetadataKeys">MetadataKeys</a></h3>
             </div><div class="parent" name="geotrellis.util.MethodExtensions">
-              <h3>Inherited from <span class="extype" name="geotrellis.util.MethodExtensions">MethodExtensions</span>[<a href="../../../../org/apache/spark/sql/package.html#DataFrame=org.apache.spark.sql.Dataset[org.apache.spark.sql.Row]" class="extmbr" name="org.apache.spark.sql.DataFrame">DataFrame</a>]</h3>
+              <h3>Inherited from <span class="extype" name="geotrellis.util.MethodExtensions">MethodExtensions</span>[<span class="extype" name="astraea.spark.rasterframes.extensions.DataFrameMethods.DF">DF</span>]</h3>
             </div><div class="parent" name="scala.Serializable">
               <h3>Inherited from <a href="http://www.scala-lang.org/api/2.11.12/index.html#scala.Serializable" class="extype" target="_top">Serializable</a></h3>
             </div><div class="parent" name="java.io.Serializable">

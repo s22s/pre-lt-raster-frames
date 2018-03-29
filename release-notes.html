@@ -45,7 +45,7 @@ gtag('config', 'UA-106630615-1');
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.6.0
+0.6.1
 </div>
 </div>
 <select class="supergroup" name="Language"><option class="group" value="group-scala">Scala</option><option class="group" value="group-python">Python</option></select>
@@ -100,7 +100,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>RasterFrames
 </a>
 <div class="version-number">
-0.6.0
+0.6.1
 </div>
 </div>
 <select class="supergroup" name="Language"><option class="group" value="group-scala">Scala</option><option class="group" value="group-python">Python</option></select>
@@ -146,7 +146,17 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <div class="page-content row">
 <div class="small-12 large-9 column" id="docs">
 <h1><a href="#release-notes" name="release-notes" class="anchor"><span class="anchor-link"></span></a>Release Notes</h1>
-<h2><a href="#0-6-0" name="0-6-0" class="anchor"><span class="anchor-link"></span></a>0.6.0</h2>
+<h2><a href="#0-6-x" name="0-6-x" class="anchor"><span class="anchor-link"></span></a>0.6.x</h2>
+<h3><a href="#0-6-1" name="0-6-1" class="anchor"><span class="anchor-link"></span></a>0.6.1</h3>
+<ul>
+  <li>Added support for reading striped GeoTiffs (#64).</li>
+  <li>Moved extension methods associated with querying tagged columns to <code>DataFrameMethods</code> for supporting  temporal and spatial columns on non-RasterFrame DataFrames.</li>
+  <li>GeoTIFF and GeoTrellis DataSources automatically initialize RasterFrames.</li>
+  <li>Added <code>RasterFrame.toMultibandRaster</code>.</li>
+  <li>Added utility for rendering multiband tile as RGB composite PNG.</li>
+  <li>Added <code>RasterFrame.withRFColumnRenamed</code> to lessen boilerplate in maintaining <code>RasterFrame</code> type tag.</li>
+</ul>
+<h3><a href="#0-6-0" name="0-6-0" class="anchor"><span class="anchor-link"></span></a>0.6.0</h3>
 <ul>
   <li>Upgraded to Spark 2.2.1. Added <code>VersionShims</code> to allow for Spark 2.1.x backwards compatibility.</li>
   <li>Introduced separate <code>rasterframes-datasource</code> library for hosting sources from which to read RasterFrames.</li>
@@ -234,7 +244,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <ul>
   <li><a href="release-notes.html#release-notes" class="header">Release Notes</a>
   <ul>
-    <li><a href="release-notes.html#0-6-0" class="header">0.6.0</a></li>
+    <li><a href="release-notes.html#0-6-x" class="header">0.6.x</a></li>
     <li><a href="release-notes.html#0-5-x" class="header">0.5.x</a></li>
   </ul></li>
 </ul>
