@@ -21,7 +21,11 @@ package astraea.spark.rasterframes.py
 import geotrellis.raster.io.geotiff.reader.GeoTiffReader
 import org.apache.spark.sql._
 import astraea.spark.rasterframes._
+import com.vividsolutions.jts.geom.Geometry
 import geotrellis.raster.{ArrayTile, CellType}
+import geotrellis.spark.io._
+import org.locationtech.geomesa.spark.jts.util.WKBUtils
+import spray.json._
 
 
 /**
@@ -33,13 +37,23 @@ import geotrellis.raster.{ArrayTile, CellType}
 class PyRFContext(implicit sparkSession: SparkSession) extends RasterFunctions {
   sparkSession.withRasterFrames
 
+  /**
+    * Base conversion to RasterFrame
+    */
   def asRF(df: DataFrame): RasterFrame = {
     df.asRF
   }
 
+  /** DESERIALIZATION **/
+
   def generateTile(cellType: String, cols: Int, rows: Int, bytes: Array[Byte]): ArrayTile = {
     ArrayTile.fromBytes(bytes, CellType.fromName(cellType), cols, rows)
   }
+
+  def generateGeometry(obj: Array[Byte]): Geometry = {
+    WKBUtils.read(obj)
+  }
+
 
   def readSingleband(path: String, cols: Int, rows: Int): RasterFrame = {
     val scene = GeoTiffReader.readSingleband(path)
@@ -58,4 +72,8 @@ class PyRFContext(implicit sparkSession: SparkSession) extends RasterFunctions {
   def tileToIntArray(col: Column): Column = tileToArray[Int](col)
 
   def tileToDoubleArray(col: Column): Column = tileToArray[Double](col)
+
+  def tileLayerMetadata(df: DataFrame): String =
+    // The `fold` is required because an `Either` is retured, depending on the key type.
+    df.asRF.tileLayerMetadata.fold(_.toJson, _.toJson).prettyPrint
 }

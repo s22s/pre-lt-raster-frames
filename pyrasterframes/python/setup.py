@@ -22,6 +22,7 @@ setup_args = dict(
         'pyspark>=2.1.0,<2.2',
     ],
     tests_require=[
+        'pyspark>=2.1.0,<2.2',
         'pytest==3.4.2'
     ],
     test_suite="pytest-runner",

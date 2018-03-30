@@ -60,6 +60,9 @@ class RasterFunctionsTest(unittest.TestCase):
 
 
     def test_general(self):
+        meta = self.rf.tileLayerMetadata()
+        print(meta)
+        self.assertIsNotNone(meta['bounds'])
         df = self.rf.withColumn('dims',  tileDimensions(self.tileCol)) \
             .withColumn('type', cellType(self.tileCol)) \
             .withColumn('dCells', dataCells(self.tileCol)) \
@@ -84,13 +87,13 @@ class RasterFunctionsTest(unittest.TestCase):
             # Not currently working:
             # aggHistogram(self.tileCol),
         )
+        aggs.show()
         row = aggs.first()
 
-        self.assertTrue(_rounded_compare(row['agg_mean(tile)'], 10160))
-        self.assertTrue(row['agg_data_cells(tile)'] == 387000)
+        self.assertTrue(_rounded_compare(row['agg_mean(tile)'], 10158))
+        self.assertTrue(row['agg_data_cells(tile)'] == 250000)
         self.assertTrue(row['agg_nodata_cells(tile)'] == 0)
         self.assertTrue(row['aggStats(tile)'].dataCells == row['agg_data_cells(tile)'])
-        aggs.show()
 
 
     def test_sql(self):

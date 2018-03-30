@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from pyspark.sql.types import UserDefinedType
 from pyspark import SparkContext
 from pyspark.sql import SparkSession, DataFrame, DataFrameReader
 from pyspark.sql.types import *
@@ -30,6 +31,14 @@ def _convertDF(df):
     return RasterFrame(ctx._jrfctx.asRF(df._jdf), ctx._spark_session)
 
 
+_prevFJ = UserDefinedType.fromJson
+def _fromJson(json_val):
+    if str(json_val['class']).startswith('org.apache.spark.sql.jts'):
+        json_val['pyClass'] = 'pyrasterframes.GeometryUDT'
+
+    return _prevFJ(json_val)
+
+
 # Patch new method on SparkSession to mirror Scala approach
 SparkSession.withRasterFrames = _rf_init
 
@@ -40,4 +49,7 @@ DataFrame.asRF = lambda dFrame: _convertDF(dFrame)
 # TODO: make sure this supports **options
 DataFrameReader.geotiff = lambda df_reader, path: _reader(df_reader, "geotiff", path)
 DataFrameReader.geotrellis = lambda df_reader, path: _reader(df_reader, "geotrellis", path)
+
+# If you don't have Python support, you will get it anyway
+UserDefinedType.fromJson = lambda json_val: _fromJson(json_val)
 

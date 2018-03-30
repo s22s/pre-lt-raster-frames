@@ -4,7 +4,7 @@ from pyspark.sql import SparkSession, DataFrame, Column, Row
 from pyspark.sql.types import *
 from pyrasterframes.rasterfunctions import _checked_context
 
-__all__ = ['RFContext', 'RasterFrame', 'TileUDT']
+__all__ = ['RFContext', 'RasterFrame', 'TileUDT', 'GeometryUDT']
 
 class RFContext(object):
     """
@@ -52,6 +52,14 @@ class RasterFrame(DataFrame):
         col = self._jrfctx.temporalKeyColumn(self._jdf)
         return col and Column(col)
 
+    def tileLayerMetadata(self):
+        """
+        Fetch the tile layer metadata.
+        :return: A dictionary of metadata.
+        """
+        import json
+        return json.loads(str(self._jrfctx.tileLayerMetadata(self._jdf)))
+
 
 class TileUDT(UserDefinedType):
     """User-defined type (UDT).
@@ -88,4 +96,29 @@ class TileUDT(UserDefinedType):
         return _checked_context().generateTile(datum[0], datum[1], datum[2], datum[3])
 
 
+
+class GeometryUDT(UserDefinedType):
+    """User-defined type (UDT).
+
+    .. note:: WARN: Internal use only.
+    """
+
+    @classmethod
+    def sqlType(self):
+        return StructField("wkb", BinaryType(), False)
+
+    @classmethod
+    def module(cls):
+        return 'pyrasterframes'
+
+    @classmethod
+    def scalaUDT(cls):
+        return 'org.apache.spark.sql.jts.GeometryUDT'
+
+    def serialize(self, obj):
+        if (obj is None): return None
+        return Row(obj.toBytes)
+
+    def deserialize(self, datum):
+        return _checked_context().generateGeometry(datum[0])
 
