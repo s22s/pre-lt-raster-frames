@@ -265,7 +265,7 @@ scala&gt; cat.show()
 </code></pre>
 <p>As you can see, there&rsquo;s a lot of information stored in each row of the catalog. Most of this is associated with how the layer is discretized. However, there may be other application specific metadata serialized with a layer that can be use to filter the catalog entries or select a specific one. But for now, we&rsquo;re just going to load a RasterFrame in from the catalog using a convenience function.</p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; val firstLayer = cat.select(geotrellis_layer).first
-firstLayer: astraea.spark.rasterframes.datasource.geotrellis.Layer = Layer(file:///var/folders/lr/7lb0jzbj1x951n71lpcc2cy40000gn/T/rf-30239366893230728/,Layer(name = &quot;sample&quot;, zoom = 0))
+firstLayer: astraea.spark.rasterframes.datasource.geotrellis.Layer = Layer(file:///var/folders/lr/7lb0jzbj1x951n71lpcc2cy40000gn/T/rf-4016171983291591484/,Layer(name = &quot;sample&quot;, zoom = 0))
 
 scala&gt; val rfAgain = spark.read.geotrellis.loadRF(firstLayer)
 rfAgain: astraea.spark.rasterframes.RasterFrame = [spatial_key: struct&lt;col: int, row: int&gt;, bounds: polygon ... 3 more fields]
@@ -274,26 +274,26 @@ scala&gt; rfAgain.show()
 +-----------+--------------------+--------------------+--------------------+--------------------+
 |spatial_key|              bounds|              tile_1|              tile_2|              tile_3|
 +-----------+--------------------+--------------------+--------------------+--------------------+
+|      [4,3]|POLYGON ((389127 ...|geotrellis.raster...|geotrellis.raster...|geotrellis.raster...|
 |      [4,1]|POLYGON ((389127 ...|geotrellis.raster...|geotrellis.raster...|geotrellis.raster...|
 |      [4,2]|POLYGON ((389127 ...|geotrellis.raster...|geotrellis.raster...|geotrellis.raster...|
-|      [4,3]|POLYGON ((389127 ...|geotrellis.raster...|geotrellis.raster...|geotrellis.raster...|
-|      [0,1]|POLYGON ((364455 ...|geotrellis.raster...|geotrellis.raster...|geotrellis.raster...|
+|      [2,0]|POLYGON ((376791 ...|geotrellis.raster...|geotrellis.raster...|geotrellis.raster...|
 |      [0,0]|POLYGON ((364455 ...|geotrellis.raster...|geotrellis.raster...|geotrellis.raster...|
 |      [1,1]|POLYGON ((370623 ...|geotrellis.raster...|geotrellis.raster...|geotrellis.raster...|
 |      [1,0]|POLYGON ((370623 ...|geotrellis.raster...|geotrellis.raster...|geotrellis.raster...|
-|      [2,0]|POLYGON ((376791 ...|geotrellis.raster...|geotrellis.raster...|geotrellis.raster...|
+|      [0,1]|POLYGON ((364455 ...|geotrellis.raster...|geotrellis.raster...|geotrellis.raster...|
 |      [3,0]|POLYGON ((382959 ...|geotrellis.raster...|geotrellis.raster...|geotrellis.raster...|
 |      [2,1]|POLYGON ((376791 ...|geotrellis.raster...|geotrellis.raster...|geotrellis.raster...|
 |      [1,3]|POLYGON ((370623 ...|geotrellis.raster...|geotrellis.raster...|geotrellis.raster...|
-|      [0,3]|POLYGON ((364455 ...|geotrellis.raster...|geotrellis.raster...|geotrellis.raster...|
-|      [2,3]|POLYGON ((376791 ...|geotrellis.raster...|geotrellis.raster...|geotrellis.raster...|
-|      [3,1]|POLYGON ((382959 ...|geotrellis.raster...|geotrellis.raster...|geotrellis.raster...|
-|      [2,2]|POLYGON ((376791 ...|geotrellis.raster...|geotrellis.raster...|geotrellis.raster...|
 |      [0,2]|POLYGON ((364455 ...|geotrellis.raster...|geotrellis.raster...|geotrellis.raster...|
-|      [3,2]|POLYGON ((382959 ...|geotrellis.raster...|geotrellis.raster...|geotrellis.raster...|
-|      [4,0]|POLYGON ((389127 ...|geotrellis.raster...|geotrellis.raster...|geotrellis.raster...|
+|      [2,2]|POLYGON ((376791 ...|geotrellis.raster...|geotrellis.raster...|geotrellis.raster...|
+|      [3,1]|POLYGON ((382959 ...|geotrellis.raster...|geotrellis.raster...|geotrellis.raster...|
+|      [0,3]|POLYGON ((364455 ...|geotrellis.raster...|geotrellis.raster...|geotrellis.raster...|
 |      [1,2]|POLYGON ((370623 ...|geotrellis.raster...|geotrellis.raster...|geotrellis.raster...|
+|      [4,0]|POLYGON ((389127 ...|geotrellis.raster...|geotrellis.raster...|geotrellis.raster...|
+|      [2,3]|POLYGON ((376791 ...|geotrellis.raster...|geotrellis.raster...|geotrellis.raster...|
 |      [3,3]|POLYGON ((382959 ...|geotrellis.raster...|geotrellis.raster...|geotrellis.raster...|
+|      [3,2]|POLYGON ((382959 ...|geotrellis.raster...|geotrellis.raster...|geotrellis.raster...|
 +-----------+--------------------+--------------------+--------------------+--------------------+
 
 </code></pre>
@@ -312,7 +312,7 @@ import geotrellis.spark.io._
 <h3><a href="#from-projectedextent" name="from-projectedextent" class="anchor"><span class="anchor-link"></span></a>From <code>ProjectedExtent</code></h3>
 <p>The simplest mechanism for getting a RasterFrame is to use the <code>toRF(tileCols, tileRows)</code> extension method on <code>ProjectedRaster</code>.</p>
 <pre class="prettyprint"><code class="language-scala">scala&gt; val scene = SinglebandGeoTiff(&quot;../core/src/test/resources/L8-B8-Robinson-IL.tiff&quot;)
-scene: geotrellis.raster.io.geotiff.SinglebandGeoTiff = SinglebandGeoTiff(geotrellis.raster.UShortConstantNoDataArrayTile@1759a48,Extent(431902.5, 4313647.5, 443512.5, 4321147.5),EPSG:32616,Tags(Map(AREA_OR_POINT -&gt; POINT),List(Map())),GeoTiffOptions(geotrellis.raster.io.geotiff.Striped@142f0f23,geotrellis.raster.io.geotiff.compression.DeflateCompression$@39256034,1,None))
+scene: geotrellis.raster.io.geotiff.SinglebandGeoTiff = SinglebandGeoTiff(geotrellis.raster.UShortConstantNoDataArrayTile@14c96229,Extent(431902.5, 4313647.5, 443512.5, 4321147.5),EPSG:32616,Tags(Map(AREA_OR_POINT -&gt; POINT),List(Map())),GeoTiffOptions(geotrellis.raster.io.geotiff.Striped@50d2e745,geotrellis.raster.io.geotiff.compression.DeflateCompression$@f550f5c,1,None))
 
 scala&gt; val rf = scene.projectedRaster.toRF(128, 128)
 rf: astraea.spark.rasterframes.RasterFrame = [spatial_key: struct&lt;col: int, row: int&gt;, tile: rf_tile]
@@ -321,11 +321,11 @@ scala&gt; rf.show(5, false)
 +-----------+--------------------------------------------------------+
 |spatial_key|tile                                                    |
 +-----------+--------------------------------------------------------+
-|[0,0]      |geotrellis.raster.UShortConstantNoDataArrayTile@7ac0d0af|
-|[1,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@1500ea8d|
-|[6,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@17116a39|
-|[3,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@1628c472|
-|[4,2]      |geotrellis.raster.UShortConstantNoDataArrayTile@6a113bb0|
+|[0,0]      |geotrellis.raster.UShortConstantNoDataArrayTile@7b5f2995|
+|[1,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@4e59ec2d|
+|[6,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@7ac0d0af|
+|[3,1]      |geotrellis.raster.UShortConstantNoDataArrayTile@1500ea8d|
+|[4,2]      |geotrellis.raster.UShortConstantNoDataArrayTile@17116a39|
 +-----------+--------------------------------------------------------+
 only showing top 5 rows
 
