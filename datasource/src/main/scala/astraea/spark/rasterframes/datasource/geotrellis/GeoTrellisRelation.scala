@@ -26,22 +26,15 @@ import java.time.{ZoneOffset, ZonedDateTime}
 
 import astraea.spark.rasterframes._
 import astraea.spark.rasterframes.jts.SpatialFilters.{BetweenTimes, Contains ⇒ sfContains, Intersects ⇒ sfIntersects}
-import astraea.spark.rasterframes.datasource.geotrellis.GeoTrellisRelation._
+import astraea.spark.rasterframes.datasource.geotrellis.GeoTrellisRelation.TileFeatureData
 import astraea.spark.rasterframes.util._
 import com.vividsolutions.jts.geom
-import geotrellis.raster
-import geotrellis.raster.merge.TileMergeMethods
-import geotrellis.raster.prototype.TilePrototypeMethods
-import geotrellis.raster.resample.ResampleMethod
-import geotrellis.raster.split.Split.Options
-import geotrellis.raster.split.{Split, SplitMethods}
-import geotrellis.raster.{CellGrid, CellType, MultibandTile, Tile, TileFeature, TileLayout}
-import geotrellis.spark._
+import geotrellis.raster.{CellGrid, MultibandTile, Tile, TileFeature}
 import geotrellis.spark.io._
 import geotrellis.spark.io.avro.AvroRecordCodec
-import geotrellis.spark.tiling._
 import geotrellis.spark.util.KryoWrapper
-import geotrellis.util.{LazyLogging, MethodExtensions}
+import geotrellis.spark.{LayerId, Metadata, SpatialKey, TileLayerMetadata, _}
+import geotrellis.util.LazyLogging
 import geotrellis.vector._
 import org.apache.avro.Schema
 import org.apache.avro.generic.GenericRecord
@@ -53,6 +46,8 @@ import org.apache.spark.sql.types._
 import org.apache.spark.sql.{Row, SQLContext, sources}
 import spray.json.DefaultJsonProtocol._
 import spray.json.JsValue
+import TileFeatureSupport._
+import geotrellis.spark.tiling.{CutTiles, TilerKeyMethods}
 
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
@@ -61,13 +56,13 @@ import scala.reflect.runtime.universe._
  * A Spark SQL `Relation` over a standard GeoTrellis layer.
  */
 case class GeoTrellisRelation(sqlContext: SQLContext,
-                              uri: URI,
-                              layerId: LayerId,
-                              numPartitions: Option[Int] = None,
-                              failOnUnrecognizedFilter: Boolean = false,
-                              filters: Seq[Filter] = Seq.empty,
-                              subdivideTile: Option[Int] = None)
-    extends BaseRelation with PrunedScan with LazyLogging {
+  uri: URI,
+  layerId: LayerId,
+  numPartitions: Option[Int] = None,
+  failOnUnrecognizedFilter: Boolean = false,
+  tileSubdivisions: Option[Int] = None,
+  filters: Seq[Filter] = Seq.empty)
+  extends BaseRelation with PrunedScan with LazyLogging {
 
   implicit val sc = sqlContext.sparkContext
 
@@ -109,40 +104,27 @@ case class GeoTrellisRelation(sqlContext: SQLContext,
       (kt, tt)
     })
 
-  val subdivide = subdivideTile.getOrElse(1)
-
   @transient
-  lazy val tileLayerMetadata: Either[TileLayerMetadata[SpatialKey], TileLayerMetadata[SpaceTimeKey]] = {
-
-    def subdivideTLM[T](tlm: TileLayerMetadata[T]): TileLayerMetadata[T] = tlm.copy(layout = newLayout(tlm.layout))
-//      .updateBounds(newBounds[T](tlm))
-
-    def newBounds[T](tlm: TileLayerMetadata[T]) = newLayout(tlm.layout).mapTransform.extentToBounds(tlm.layoutExtent)
-//    def newBounds[T](tlm: TileLayerMetadata[T]) = tlm.updateBounds()
-
-    def newLayout(l: LayoutDefinition): LayoutDefinition = if(subdivideTile.isEmpty) l
-    else {
-      require(subdivide > 1, "subdivideTile parameter must be greater than 1.")
-      require(l.tileLayout.tileRows % subdivide == 0, s"Tile size must be divisible by subdivideTile parameter: ${l.tileLayout.tileRows} rows not divisible by $subdivide.")
-      require(l.tileLayout.tileCols % subdivide == 0, s"Tile size must be divisible by subdivideTile parameter: ${l.tileLayout.tileCols} columns not divisible by $subdivide.")
-      val tl = TileLayout(
-        layoutRows = l.tileLayout.layoutRows * subdivide,
-        layoutCols = l.tileLayout.layoutCols * subdivide,
-        tileCols = l.tileLayout.tileCols / subdivide,
-        tileRows = l.tileLayout.tileRows / subdivide
-      )
-      l.copy(tileLayout = tl)
-    }
-
+  lazy val tileLayerMetadata: Either[TileLayerMetadata[SpatialKey], TileLayerMetadata[SpaceTimeKey]] =
     keyType match {
       case t if t =:= typeOf[SpaceTimeKey] ⇒ Right(
-        subdivideTLM[SpaceTimeKey](attributes.readMetadata[TileLayerMetadata[SpaceTimeKey]](layerId))
+        attributes.readMetadata[TileLayerMetadata[SpaceTimeKey]](layerId)
       )
       case t if t =:= typeOf[SpatialKey] ⇒ Left(
-        subdivideTLM[SpatialKey](attributes.readMetadata[TileLayerMetadata[SpatialKey]](layerId))
+        attributes.readMetadata[TileLayerMetadata[SpatialKey]](layerId)
       )
     }
+
+  def subdividedTileLayerMetadata: Either[TileLayerMetadata[SpatialKey], TileLayerMetadata[SpaceTimeKey]] = {
+    tileSubdivisions.filter(_ > 1) match {
+      case None ⇒ tileLayerMetadata
+      case Some(divs) ⇒ tileLayerMetadata
+        .right.map(_.subdivide(divs))
+        .left.map(_.subdivide(divs))
+    }
   }
+
+  private def shouldSubdivide = tileSubdivisions.exists(_ > 1)
 
   private object Cols {
     lazy val SK = SPATIAL_KEY_COLUMN.columnName
@@ -153,7 +135,7 @@ case class GeoTrellisRelation(sqlContext: SQLContext,
     lazy val EX = BOUNDS_COLUMN.columnName
   }
 
-  /** This unfortunate routine is here because the number bands in a  multiband layer isn't written
+  /** This unfortunate routine is here because the number bands in a multiband layer isn't written
    * in the metadata anywhere. This is potentially an expensive hack, which needs further quantifying of impact.
    * Another option is to force the user to specify the number of bands. */
   private lazy val peekBandCount = {
@@ -175,8 +157,8 @@ case class GeoTrellisRelation(sqlContext: SQLContext,
   override def schema: StructType = {
     val skSchema = ExpressionEncoder[SpatialKey]().schema
 
-    val skMetadata = attributes.readMetadata[JsValue](layerId) |>
-      (m ⇒ Metadata.fromJson(m.compactPrint)) |>
+    val skMetadata = subdividedTileLayerMetadata.
+      fold(_.asColumnMetadata, _.asColumnMetadata) |>
       (Metadata.empty.append.attachContext(_).tagSpatialKey.build)
 
     val keyFields = keyType match {
@@ -213,7 +195,7 @@ case class GeoTrellisRelation(sqlContext: SQLContext,
     StructType((keyFields :+ extentField) ++ tileFields)
   }
 
-  type BLQ[K, T] = BoundLayerQuery[K, TileLayerMetadata[K], RDD[(K, T)] with geotrellis.spark.Metadata[TileLayerMetadata[K]]]
+  type BLQ[K, T] = BoundLayerQuery[K, TileLayerMetadata[K], RDD[(K, T)] with Metadata[TileLayerMetadata[K]]]
 
   def applyFilter[K: Boundable: SpatialComponent, T](query: BLQ[K, T], predicate: Filter): BLQ[K, T] = {
     predicate match {
@@ -276,79 +258,43 @@ case class GeoTrellisRelation(sqlContext: SQLContext,
     }
   }
 
-  /*
-  private case class STK_T(rdd: RDD[(SpaceTimeKey, Tile)] with Metadata[TileLayerMetadata[SpaceTimeKey]])
-  private case class STK_M(rdd: RDD[(SpaceTimeKey, MultibandTile)] with Metadata[TileLayerMetadata[SpaceTimeKey]])
-  private case class STK_TF(rdd: RDD[(SpaceTimeKey, TileFeature[Tile @unchecked, TileFeatureData @unchecked])] with Metadata[TileLayerMetadata[SpaceTimeKey]])
-  private case class SK_T(rdd: RDD[(SpatialKey, Tile)] with Metadata[TileLayerMetadata[SpatialKey]])
-  private case class SK_M(rdd: RDD[(SpatialKey, MultibandTile)] with Metadata[TileLayerMetadata[SpatialKey]])
-  private case class SK_TF(rdd: RDD[(SpatialKey, TileFeature[Tile @unchecked, TileFeatureData @unchecked])] with Metadata[TileLayerMetadata[SpatialKey]])
+//  private def flatMapSpatialComponent[T](f: ((SpatialKey, T)) ⇒ Seq[(SpatialKey, T)])(kv: (SpaceTimeKey, T)) = {
+//    val sk = kv._1.spatialKey
+//    val tk = kv._1.temporalKey
+//    f((sk, kv._2)).map(p ⇒ (SpaceTimeKey(p._1, tk), p._2))
+//  }
 
-  def regrid(rdd: RDD[(SpaceTimeKey, Tile)] with Metadata[TileLayerMetadata[SpaceTimeKey]], cols: Int, rows: Int): RDD[(SpaceTimeKey, Tile)] with Metadata[TileLayerMetadata[SpaceTimeKey]] =
-    rdd.regrid(cols, rows)
-  def regrid(rdd: RDD[(SpaceTimeKey, MultibandTile)] with Metadata[TileLayerMetadata[SpaceTimeKey]], cols: Int, rows: Int): RDD[(SpaceTimeKey, MultibandTile)] with Metadata[TileLayerMetadata[SpaceTimeKey]] =
-    rdd.regrid(cols, rows)
-  def regrid(rdd: RDD[(SpaceTimeKey, TileFeature[Tile @unchecked, TileFeatureData @unchecked])] with Metadata[TileLayerMetadata[SpaceTimeKey]], cols: Int, rows: Int): RDD[(SpaceTimeKey, TileFeature[Tile @unchecked, TileFeatureData @unchecked])] with Metadata[TileLayerMetadata[SpaceTimeKey]] = {
-    val r = rdd.mapValues(_.tile).regrid(cols, rows)
-    val m = rdd.metadata
-    ContextRDD(r, m)
-  }*/
-
-
-  def query[T<: CellGrid:  AvroRecordCodec: ClassTag](reader: FilteringLayerReader[LayerId], columnIndexes: Seq[Int]): RDD[Row] = {
-    val parts = numPartitions.getOrElse(reader.defaultNumPartitions)
-
-    val (newCols, newRows) = {
-      val dims = tileLayerMetadata.fold(_.tileLayout.tileDimensions, _.tileLayout.tileDimensions)
-      (dims._1 / subdivide, dims._2 / subdivide)
-    }
-
-    val newMapKeyTransform = tileLayerMetadata.fold(_.layout.mapTransform, _.layout.mapTransform)
-    val newMapTransBroadcast = spark.sparkContext.broadcast(newMapKeyTransform)
-
-    def subdivideKeyAndCellGrid(sourceExtent: Extent, t: T): TraversableOnce[(SpatialKey, T)] = {
-      // get centroids of the subdivide X subdivide new T's
-      val sdv: Int = subdivide
-      val rng = 0 until sdv // exclusive upper bound
-      val cols = rng.map{ s: Int ⇒ sourceExtent.xmin + ( (s + 0.5) * sourceExtent.width / sdv ) }
-      val rows = rng.map{ s: Int ⇒ sourceExtent.ymin + ( (s + 0.5) * sourceExtent.height / sdv ) }
-      val centroids = for(y <- rows; x ← cols) yield Point(x, y)
-      //new spatial keys
-      val sks: Seq[SpatialKey] = centroids.map(newMapKeyTransform.apply)
-
-      val ts = t match {
-        case tile: Tile ⇒ tile.split(newCols, newRows)
-          .map(_.asInstanceOf[T])
-        case mbt: MultibandTile ⇒ mbt.split(newCols, newRows)
-          .map(_.asInstanceOf[T])
-        case tf: TileFeature[Tile@unchecked, TileFeatureData@unchecked] ⇒
-          tf.tile.split(newCols, newRows)
-            .map(t ⇒ TileFeature(t, tf.data))
-            .map(_.asInstanceOf[T])
-      }
-
-      sks zip ts
-    }
-
-    def subdivideSTKeyAndCellGrid(instant: Long, sourceExtent: Extent, t: T): TraversableOnce[(SpaceTimeKey, T)] =
-      subdivideKeyAndCellGrid(sourceExtent, t).map{ case (sk: SpatialKey, t: T) ⇒ (SpaceTimeKey(sk.col, sk.row, instant), t) }
-
-
-    tileLayerMetadata.fold(
+  private def query[T <: CellGrid: WithPrototypeMethods: WithMergeMethods: AvroRecordCodec: ClassTag](reader: FilteringLayerReader[LayerId], columnIndexes: Seq[Int]) = {
+    subdividedTileLayerMetadata.fold(
       // Without temporal key case
       (tlm: TileLayerMetadata[SpatialKey]) ⇒ {
+
+        val parts = numPartitions.getOrElse(reader.defaultNumPartitions)
+
         val query = splitFilters.foldLeft(
           reader.query[SpatialKey, T, TileLayerMetadata[SpatialKey]](layerId, parts)
         )(applyFilter(_, _))
 
-        val rdd = query.result
+        val rdd = if(shouldSubdivide) {
+          val origTrans = tileLayerMetadata.left.get.mapTransform
 
+          implicit val keyTransform = (sk: SpatialKey) ⇒ new TilerKeyMethods[SpatialKey, SpatialKey] {
+            def self: SpatialKey = sk
+            def extent: Extent = origTrans.keyToExtent(self)
+            def translate(spatialKey: SpatialKey): SpatialKey = spatialKey
+          }
+
+          CutTiles(query.result, tlm.cellType, tlm.layout)
+        }
+        else query.result
+
+
+        val trans = tlm.mapTransform
         rdd
           .map { case (sk: SpatialKey, tile: T) ⇒
-
             val entries = columnIndexes.map {
               case 0 ⇒ sk
-              case 1 ⇒ newMapKeyTransform.keyToExtent(sk).jtsGeom
+              case 1 ⇒ trans.keyToExtent(sk).jtsGeom
               case 2 ⇒ tile match {
                 case t: Tile ⇒ t
                 case t: TileFeature[Tile @unchecked, TileFeatureData @unchecked] ⇒ t.tile
@@ -363,63 +309,37 @@ case class GeoTrellisRelation(sqlContext: SQLContext,
           }
       }, // With temporal key case
       (tlm: TileLayerMetadata[SpaceTimeKey]) ⇒ {
+        val trans = tlm.mapTransform
+
+        val parts = numPartitions.getOrElse(reader.defaultNumPartitions)
+
         val query = splitFilters.foldLeft(
           reader.query[SpaceTimeKey, T, TileLayerMetadata[SpaceTimeKey]](layerId, parts)
         )(applyFilterTemporal(_, _))
 
-        val rdd = query.result
-        val oldMapTransBroadcast = spark.sparkContext.broadcast(rdd.metadata.mapTransform)
+        val rdd = if(shouldSubdivide) {
+          val origTrans = tileLayerMetadata.right.get.mapTransform
 
-        val subdividedRdd = rdd
-          .map{ case (k, v) ⇒ (TemporalProjectedExtent(rdd.metadata.mapTransform(k), rdd.metadata.crs, k.instant), v) }
-          .tileToLayout[SpaceTimeKey](tlm)
+          implicit val keyTransform = (stk: SpaceTimeKey) ⇒ new TilerKeyMethods[SpaceTimeKey, SpaceTimeKey] {
+            def self: SpaceTimeKey = stk
+            def extent: Extent = origTrans.keyToExtent(self)
+            def translate(stk: SpaceTimeKey): SpaceTimeKey = stk
+            def translate(spatialKey: SpatialKey): SpaceTimeKey = SpaceTimeKey(spatialKey, stk.temporalKey)
+          }
 
-/*
-       lazy val subdividedRdd: RDD[(SpaceTimeKey, T)] = if(subdivideTile.isEmpty) rdd
-       else rdd.flatMap { tup ⇒
-         val (k, t) = tup
-
-//                      get the extent of `t`
-         val sourceExtent: Extent = oldMapTransBroadcast.value.apply(k)
-
-         val rng = 0 until subdivide // exclusive upper bound
-       val cols = rng.map{ s: Int ⇒ sourceExtent.xmin + ( (s + 0.5) * sourceExtent.width / subdivide) }
-         val rows = rng.map{ s: Int ⇒ sourceExtent.ymin + ( (s + 0.5) * sourceExtent.height / subdivide) }
-         val centroids = for(y <- rows; x ← cols) yield Point(x, y)
-         //new spatial keys
-         val sks: Seq[SpaceTimeKey] = centroids.map(newMapTransBroadcast.value.apply)
-           .map(s ⇒ SpaceTimeKey(s.col, s.row, k.instant))
+          CutTiles(query.result, tlm.cellType, tlm.layout)
+        }
+        else query.result
 
 
-         val ts = t match {
-           case tile: Tile ⇒ tile.split(tile.cols / subdivide, tile.rows / subdivide)
-             .map(_.asInstanceOf[T])
-           case mbt: MultibandTile ⇒ mbt.split(newCols, newRows)
-             .map(_.asInstanceOf[T])
-           case tf: TileFeature[Tile@unchecked, TileFeatureData@unchecked] ⇒
-             tf.tile.split(newCols, newRows)
-               .map(t ⇒ TileFeature(t, tf.data))
-               .map(_.asInstanceOf[T])
-         }
-
-         sks zip ts
-       }
-       */
-
-        // Are any of these good options??
-//                val wat = Split(rdd,newCols, newRows)
-//         val cutRdd = CutTiles[SpaceTimeKey, SpaceTimeKey, T](rdd, rdd.metadata.cellType, tlm.layout)
-
-//        val regridRdd = Regrid(rdd, newCols, newRows)
-
-       subdividedRdd
+        rdd
           .map { case (stk: SpaceTimeKey, tile: T) ⇒
             val sk = stk.spatialKey
             val entries = columnIndexes.map {
               case 0 ⇒ sk
               case 1 ⇒ stk.temporalKey
               case 2 ⇒ new Timestamp(stk.temporalKey.instant)
-              case 3 ⇒ newMapKeyTransform.keyToExtent(stk).jtsGeom
+              case 3 ⇒ trans.keyToExtent(stk).jtsGeom
               case 4 ⇒ tile match {
                 case t: Tile ⇒ t
                 case t: TileFeature[Tile @unchecked, TileFeatureData @unchecked] ⇒ t.tile
@@ -444,51 +364,6 @@ case class GeoTrellisRelation(sqlContext: SQLContext,
 object GeoTrellisRelation {
   /** A dummy type used as a stand-in for ignored TileFeature data. */
   type TileFeatureData = String
-
-  type WithMergeMethods[V] = (V => TileMergeMethods[V])
-  type WithPrototypeMethods[V <: CellGrid] = (V => TilePrototypeMethods[V])
-
-  implicit object TileFeatureDataOps extends MergeableData[TileFeatureData] {
-    override def merge(l: TileFeatureData, r: TileFeatureData): TileFeatureData = l + r
-
-    override def prototype(data: TileFeatureData): TileFeatureData = ""
-  }
-  /*
-  trait SinglebandWithFeatureSplitMethods[TileFeatureData] extends SplitMethods[TileFeature[Tile, TileFeatureData]] {
-    import Split.Options
-
-    override def split(tileLayout: TileLayout, options: Options): Array[TileFeature[Tile, TileFeatureData]] = {
-      val results = self.tile.split(tileLayout, options)
-      results.map(t ⇒ TileFeature(t, self.data))
-    }
-  }
-
-  trait SinglebandWithFeaturePrototypeMethods[TileFeatureData] extends TilePrototypeMethods[TileFeature[Tile,TileFeatureData]] {
-    override def prototype(cols: Int, rows: Int): TileFeature[Tile, TileFeatureData] = {
-      TileFeature(self.tile.prototype(cols,rows), self.data)
-    }
-    override def prototype(cellType: CellType, cols: Int, rows: Int): TileFeature[Tile, TileFeatureData] = {
-      TileFeature(self.tile.prototype(cellType, cols, rows), self.data)
-    }
-  }
-
-//  trait SinglebandWithFeatureMergeMethods[D] extends TileMergeMethods[TileFeature[Tile, TileFeatureData]]
-
-  // NB: As stock GeoTrellis transformation enrichment methods are needed, they need to be mixed in here.
-//  implicit class SinglebandWithSetFeatureMethodsWrapper[TileFeatureData]
-//  (val self: TileFeature[Tile, Set[TileFeatureData]])
-//    extends MethodExtensions[TileFeature[Tile, Set[TileFeatureData]]]
-//      with SinglebandWithFeatureSplitMethods[Set[TileFeatureData]]
-//      with SinglebandWithFeatureMergeMethods[Set[TileFeatureData]]
-//      with SinglebandWithFeaturePrototypeMethods[Set[TileFeatureData]] {
-//
-//    override def merge(other: TileFeature[Tile, GeoTrellisRelation.TileFeatureData]): TileFeature[Tile, GeoTrellisRelation.TileFeatureData] =
-//      TileFeature(self.tile.merge(other.tile), self.data.mkString)
-//
-//    override def merge(extent: Extent, otherExtent: Extent, other: TileFeature[Tile, GeoTrellisRelation.TileFeatureData], method: ResampleMethod): TileFeature[Tile, GeoTrellisRelation.TileFeatureData] =
-//      TileFeature(self.tile.merge(extent, otherExtent, other.tile), self.data.mkString)
-//  }
-*/
 
   /** Constructor for Avro codec for TileFeature data stand-in. */
   private def tfDataCodec(dataSchema: KryoWrapper[Schema]) = new AvroRecordCodec[TileFeatureData]() {

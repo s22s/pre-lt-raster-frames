@@ -48,6 +48,7 @@ class DefaultSource extends DataSourceRegister with RelationProvider with Creata
    *                   `layer`-layer name (e.g. "LC08_L1GT");
    *                   `zoom`-positive integer zoom level (e.g. "8");
    *                   `numPartitions`-(optional) integer specifying initial number of partitions;
+   *                   `tileSubdivisions`-(optional) positive integer defining how many division horizontally and vertically should be applied to a tile;
    *                   `failOnUnrecognizedFilter`-(optional) if true, predicate push-down filters not translated into GeoTrellis query syntax are fatal.
    */
   def createRelation(sqlContext: SQLContext, parameters: Map[String, String]): BaseRelation = {
@@ -62,10 +63,11 @@ class DefaultSource extends DataSourceRegister with RelationProvider with Creata
     val uri: URI = URI.create(parameters("path"))
     val layerId: LayerId = LayerId(parameters("layer"), parameters("zoom").toInt)
     val numPartitions = parameters.get("numPartitions").map(_.toInt)
-    val subdivideTile = parameters.get("subdivideTile").map(_.toInt)
+    val tileSubdivisions = parameters.get("tileSplits").map(_.toInt)
+    tileSubdivisions.foreach(s ⇒ require(s >= 0, "tileSubdivisions must be a postive integer"))
     val failOnUnrecognizedFilter = parameters.get("failOnUnrecognizedFilter").exists(_.toBoolean)
 
-    GeoTrellisRelation(sqlContext, uri, layerId, numPartitions, failOnUnrecognizedFilter, subdivideTile = subdivideTile)
+    GeoTrellisRelation(sqlContext, uri, layerId, numPartitions, failOnUnrecognizedFilter, tileSubdivisions)
   }
 
   /** Write relation. */

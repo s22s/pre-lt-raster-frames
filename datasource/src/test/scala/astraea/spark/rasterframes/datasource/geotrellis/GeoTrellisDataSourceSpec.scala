@@ -151,8 +151,6 @@ class GeoTrellisDataSourceSpec
   }
 
   describe("DataSource options") {
-    def layerReader = spark.read.geotrellis
-
     it("should respect partitions 2") {
       val expected = 2
       val df = spark.read.option("numPartitions", expected)
@@ -165,27 +163,50 @@ class GeoTrellisDataSourceSpec
         .geotrellis.loadRF(layer)
       assert(df.rdd.partitions.length === expected)
     }
-    it("should be able to subdivide RDD") {
-      // apply flat map thing here?
-      val mt = testRdd.metadata.mapTransform
-//      val subRdd = testRdd.flatMap()
-
-      assert(true === true)
-    }
-    it("should respect subdivide 6") {
-      val param = 6
-      val df: RasterFrame = spark.read.option("subdivideTile", param)
+    it("should respect split 2") {
+      val param = 2
+      val df: RasterFrame = spark.read.option("tileSplits", param)
         .geotrellis.loadRF(layer)
-
-//      df.ti
 
       val dims = df.select(tileDimensions(df.tileColumns.head)("cols"), tileDimensions(df.tileColumns.head)("rows")).first()
       assert(dims.getAs[Int](0) === tileSize / param)
       assert(dims.getAs[Int](1) === tileSize / param)
 
       // row count will increase
-      assert(df.count === spark.read.geotrellis.loadRF(layer).count * param * param)
+      assert(df.count === testRdd.count() * param * param)
     }
+    it("should respect subdivide with TileFeature"){
+      val param = 2
+      val rf: RasterFrame = spark.read.option("subdivideTile", param)
+        .geotrellis.loadRF(tfLayer)
+
+      assert(rf.count() === testRdd.count() * param * param)
+
+      val dims = rf.select(tileDimensions(rf.tileColumns.head)("cols"), tileDimensions(rf.tileColumns.head)("rows"))
+        .first()
+      assert(dims.getAs[Int](0) === tileSize / param)
+      assert(dims.getAs[Int](1) === tileSize / param)
+    }
+    it("should respect both subdivideTile and numPartitions"){
+      val subParam = 3
+
+      val rf = spark.read
+        .option("subdivideTile", subParam)
+        .option("numPartitions", 7)
+        .geotrellis.loadRF(layer)
+
+      // is it partitioned correctly?
+      assert(rf.rdd.partitions.length === 7)
+
+      // is it subdivided?
+      assert(rf.count === testRdd.count * subParam * subParam)
+      val dims = rf.select(tileDimensions(rf.tileColumns.head)("cols"), tileDimensions(rf.tileColumns.head)("rows"))
+        .first()
+      assert(dims.getAs[Int](0) === tileSize / subParam)
+      assert(dims.getAs[Int](1) === tileSize / subParam)
+
+    }
+
     it("should throw on subdivide 5") {
       // only throws when an action is taken...
       assertThrows[IllegalArgumentException](spark.read.option("subdivideTile", 5).geotrellis.loadRF(layer).cache)
@@ -362,8 +383,36 @@ class GeoTrellisDataSourceSpec
       assert(rf.collect().length === testRdd.count())
     }
     it("should respect subdivideTile option on TileFeature RasterFrame") {
-      val rf = spark.read.option("subdivideTile", 2).geotrellis.loadRF(tfLayer)
-      assert(rf.count === 2 * testRdd.count)
+      val subParam = 4
+      val rf = spark.read.option("subdivideTile", subParam).geotrellis.loadRF(tfLayer)
+
+      assert(rf.count === testRdd.count * subParam * subParam)
+
+      val dims = rf.select(tileDimensions(rf.tileColumns.head)("cols"), tileDimensions(rf.tileColumns.head)("rows"))
+        .first()
+      assert(dims.getAs[Int](0) === tileSize / subParam)
+      assert(dims.getAs[Int](1) === tileSize / subParam)
+    }
+    it("should respect both `subdivideTile` and `numPartition` options on TileFeature"){
+      val subParam = 2
+
+      val rf = spark.read
+        .option("subdivideTile", subParam)
+        .option("numPartitions", 10)
+        .geotrellis.loadRF(tfLayer)
+
+      // is it subdivided?
+      assert(rf.count === testRdd.count * subParam * subParam)
+      val dims = rf.select(tileDimensions(rf.tileColumns.head)("cols"), tileDimensions(rf.tileColumns.head)("rows"))
+        .first()
+      assert(dims.getAs[Int](0) === tileSize / subParam)
+      assert(dims.getAs[Int](1) === tileSize / subParam)
+
+      // is it partitioned correctly?
+      assert(rf.rdd.partitions.length === 10)
+    }
+    it("should respect options on spatial-only TileFeature"){
+      assert(true === true)
     }
   }
 }

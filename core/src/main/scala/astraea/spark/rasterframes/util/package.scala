@@ -19,8 +19,15 @@
 
 package astraea.spark.rasterframes
 
+import geotrellis.raster.crop.TileCropMethods
+import geotrellis.raster.{CellGrid, TileLayout}
 import geotrellis.raster.mapalgebra.local.LocalTileBinaryOp
-import geotrellis.util.LazyLogging
+import geotrellis.raster.mask.TileMaskMethods
+import geotrellis.raster.merge.TileMergeMethods
+import geotrellis.raster.prototype.TilePrototypeMethods
+import geotrellis.spark.tiling.TilerKeyMethods
+import geotrellis.spark.{Bounds, KeyBounds, SpaceTimeKey, SpatialComponent, SpatialKey, TileLayerMetadata}
+import geotrellis.util.{GetComponent, LazyLogging}
 import org.apache.spark.sql.catalyst.analysis.UnresolvedAttribute
 import org.apache.spark.sql.catalyst.expressions.{Alias, AttributeReference}
 import org.apache.spark.sql.catalyst.plans.logical.LogicalPlan
@@ -29,6 +36,7 @@ import org.apache.spark.sql.rf._
 import org.apache.spark.sql.{Column, DataFrame, SQLContext}
 import shapeless.Lub
 
+import scala.reflect.runtime.universe._
 
 /**
  * Internal utilities.
@@ -36,6 +44,23 @@ import shapeless.Lub
  * @since 12/18/17
  */
 package object util extends LazyLogging {
+
+
+  /**
+   * Type lambda alias for components that have bounds with parameterized key.
+   * @tparam K bounds key type
+   */
+  type BoundsComponentOf[K] = {
+    type Get[M] = GetComponent[M, Bounds[K]]
+  }
+
+  // Type lambda aliases
+  type WithMergeMethods[V] = (V => TileMergeMethods[V])
+  type WithPrototypeMethods[V <: CellGrid] = (V => TilePrototypeMethods[V])
+  type WithCropMethods[V <: CellGrid] = (V => TileCropMethods[V])
+  type WithMaskMethods[V] = (V => TileMaskMethods[V])
+
+  type KeyMethodsProvider[K1, K2] = K1 ⇒ TilerKeyMethods[K1, K2]
 
   /** Internal method for slapping the RasterFrame seal of approval on a DataFrame. */
   private[rasterframes] def certifyRasterframe(df: DataFrame): RasterFrame =
@@ -74,6 +99,50 @@ package object util extends LazyLogging {
       case ar: AttributeReference ⇒ ar.name
       case as: Alias ⇒ as.name
       case o ⇒ o.prettyName
+    }
+  }
+
+  implicit class TileLayoutHasSubdivide(val tl: TileLayout) extends AnyVal {
+    def subdivide(divs: Int): TileLayout = {
+      def shrink(num: Int) = {
+        require(num % divs == 0, s"Number of subdivisions $divs does not evenly divide into dimension $num")
+        num / divs
+      }
+      def grow(num: Int) = num * divs
+
+      divs match {
+        case 0 ⇒ tl
+        case i if i < 0 ⇒ throw new IllegalArgumentException(s"divs=$divs must be positive")
+        case _ ⇒
+          TileLayout(
+            layoutCols = grow(tl.layoutCols),
+            layoutRows = grow(tl.layoutRows),
+            tileCols = shrink(tl.tileCols),
+            tileRows = shrink(tl.tileRows)
+          )
+      }
+    }
+  }
+
+  implicit class BoundsHasSubdivide[K: SpatialComponent](val b: Bounds[K]) {
+    def subdivide(divs: Int): Bounds[K] = {
+      b.map(kb ⇒ {
+        val currGrid = kb.toGridBounds()
+        val newGrid = currGrid.copy(
+          colMax = currGrid.colMin + (currGrid.width - 1) * divs,
+          rowMax = currGrid.rowMin + (currGrid.height - 1) * divs
+        )
+        kb.setSpatialBounds(KeyBounds(newGrid))
+      })
+    }
+  }
+
+  implicit class TileLayerMetadataHasSubdivide[K: SpatialComponent](val tlm: TileLayerMetadata[K]) {
+    def subdivide(divs: Int): TileLayerMetadata[K] = {
+      val tileLayout = tlm.layout.tileLayout.subdivide(divs)
+      val layout = tlm.layout.copy(tileLayout = tileLayout)
+      val bounds = tlm.bounds.subdivide(divs)
+      tlm.copy(layout = layout, bounds = bounds)
     }
   }
 
