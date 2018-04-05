@@ -19,10 +19,10 @@
  */
 
 package astraea.spark.rasterframes
-import astraea.spark.rasterframes.util._
+import astraea.spark.rasterframes.util.SubdivideSupport._
 import geotrellis.proj4.LatLng
 import geotrellis.raster.{ByteCellType, GridBounds, TileLayout}
-import geotrellis.spark.{KeyBounds, TileLayerMetadata}
+import geotrellis.spark.{KeyBounds, SpatialKey, TileLayerMetadata}
 import geotrellis.spark.tiling.LayoutDefinition
 import geotrellis.spark.tiling.CRSWorldExtent
 
@@ -63,9 +63,23 @@ class ExtensionMethodSpec extends TestEnvironment with TestData {
 
     }
     it("should split KeyBounds[SpatialKey]") {
-      val grid = GridBounds(0, 0, 10, 10)
+      val grid = GridBounds(0, 0, 9, 9)
       val kb = KeyBounds(grid)
-      println(kb.subdivide(2))
+      val kb2 = kb.subdivide(2)
+      assert(kb2.get.toGridBounds() === GridBounds(0, 0, 19, 19))
+
+      val grid2 = GridBounds(2, 2, 9, 9)
+      val kb3 = KeyBounds(grid2)
+      val kb4 = kb3.subdivide(2)
+      assert(kb4.get.toGridBounds() === GridBounds(4, 4, 19, 19))
+    }
+
+    it("should split key") {
+      val s1 = SpatialKey(0, 0).subdivide(2)
+      assert(s1 === Seq(SpatialKey(0,0), SpatialKey(1,0), SpatialKey(0,1), SpatialKey(1,1)))
+
+      val s2 = SpatialKey(2, 3).subdivide(3)
+      assert(s2 === Seq(SpatialKey(6,9), SpatialKey(7,9), SpatialKey(8,9), SpatialKey(6,10), SpatialKey(7,10), SpatialKey(8,10), SpatialKey(6,11), SpatialKey(7,11), SpatialKey(8,11)))
     }
 
     it("should split TileLayerMetadata[SpatialKey]") {

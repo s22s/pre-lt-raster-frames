@@ -23,6 +23,7 @@ import java.net.URI
 
 import astraea.spark.rasterframes.rules.registerOptimization
 import astraea.spark.rasterframes._
+import astraea.spark.rasterframes.datasource.geotrellis.DefaultSource._
 import geotrellis.spark._
 import geotrellis.spark.io._
 import geotrellis.spark.io.index.ZCurveKeyIndexMethod
@@ -53,18 +54,18 @@ class DefaultSource extends DataSourceRegister with RelationProvider with Creata
    */
   def createRelation(sqlContext: SQLContext, parameters: Map[String, String]): BaseRelation = {
     require(parameters.contains("path"), "'path' parameter required.")
-    require(parameters.contains("layer"), "'layer' parameter for raster layer name required.")
-    require(parameters.contains("zoom"), "'zoom' parameter for raster layer zoom level required.")
+    require(parameters.contains(LAYER_PARAM), "'layer' parameter for raster layer name required.")
+    require(parameters.contains(ZOOM_PARAM), "'zoom' parameter for raster layer zoom level required.")
 
     sqlContext.withRasterFrames
 
     registerOptimization(sqlContext, SpatialFilterPushdownRules)
 
     val uri: URI = URI.create(parameters("path"))
-    val layerId: LayerId = LayerId(parameters("layer"), parameters("zoom").toInt)
-    val numPartitions = parameters.get("numPartitions").map(_.toInt)
-    val tileSubdivisions = parameters.get("tileSplits").map(_.toInt)
-    tileSubdivisions.foreach(s ⇒ require(s >= 0, "tileSubdivisions must be a postive integer"))
+    val layerId: LayerId = LayerId(parameters(LAYER_PARAM), parameters(ZOOM_PARAM).toInt)
+    val numPartitions = parameters.get(NUM_PARTITIONS_PARAM).map(_.toInt)
+    val tileSubdivisions = parameters.get(TILE_SUBDIVISIONS_PARAM).map(_.toInt)
+    tileSubdivisions.foreach(s ⇒ require(s >= 0, TILE_SUBDIVISIONS_PARAM + " must be a postive integer"))
     val failOnUnrecognizedFilter = parameters.get("failOnUnrecognizedFilter").exists(_.toBoolean)
 
     GeoTrellisRelation(sqlContext, uri, layerId, numPartitions, failOnUnrecognizedFilter, tileSubdivisions)
@@ -72,9 +73,9 @@ class DefaultSource extends DataSourceRegister with RelationProvider with Creata
 
   /** Write relation. */
   def createRelation(sqlContext: SQLContext, mode: SaveMode, parameters: Map[String, String], data: DataFrame): BaseRelation = {
-    val zoom = parameters.get("zoom").flatMap(p ⇒ Try(p.toInt).toOption)
+    val zoom = parameters.get(ZOOM_PARAM).flatMap(p ⇒ Try(p.toInt).toOption)
     val path = parameters.get("path").flatMap(p ⇒ Try(new URI(p)).toOption)
-    val layerName = parameters.get("layer")
+    val layerName = parameters.get(LAYER_PARAM)
 
     require(path.isDefined, "Valid URI 'path' parameter required.")
     require(layerName.isDefined, "'layer' parameter for raster layer name required.")
@@ -113,4 +114,8 @@ class DefaultSource extends DataSourceRegister with RelationProvider with Creata
 
 object DefaultSource {
   final val SHORT_NAME = "geotrellis"
+  final val TILE_SUBDIVISIONS_PARAM = "tileSubdivisions"
+  final val NUM_PARTITIONS_PARAM = "numPartitions"
+  final val LAYER_PARAM = "layer"
+  final val ZOOM_PARAM = "zoom"
 }

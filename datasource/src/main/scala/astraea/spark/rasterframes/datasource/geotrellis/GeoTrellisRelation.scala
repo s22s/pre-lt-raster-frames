@@ -36,6 +36,7 @@ import geotrellis.spark.util.KryoWrapper
 import geotrellis.spark.{LayerId, Metadata, SpatialKey, TileLayerMetadata, _}
 import geotrellis.util.LazyLogging
 import geotrellis.vector._
+import geotrellis.util._
 import org.apache.avro.Schema
 import org.apache.avro.generic.GenericRecord
 import org.apache.spark.rdd.RDD
@@ -48,6 +49,7 @@ import spray.json.DefaultJsonProtocol._
 import spray.json.JsValue
 import TileFeatureSupport._
 import geotrellis.spark.tiling.{CutTiles, TilerKeyMethods}
+import SubdivideSupport._
 
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe._
@@ -123,8 +125,6 @@ case class GeoTrellisRelation(sqlContext: SQLContext,
         .left.map(_.subdivide(divs))
     }
   }
-
-  private def shouldSubdivide = tileSubdivisions.exists(_ > 1)
 
   private object Cols {
     lazy val SK = SPATIAL_KEY_COLUMN.columnName
@@ -258,13 +258,13 @@ case class GeoTrellisRelation(sqlContext: SQLContext,
     }
   }
 
-//  private def flatMapSpatialComponent[T](f: ((SpatialKey, T)) ⇒ Seq[(SpatialKey, T)])(kv: (SpaceTimeKey, T)) = {
-//    val sk = kv._1.spatialKey
-//    val tk = kv._1.temporalKey
-//    f((sk, kv._2)).map(p ⇒ (SpaceTimeKey(p._1, tk), p._2))
-//  }
+  private def subdivider[K: SpatialComponent, T <: CellGrid: WithCropMethods](divs: Int) = (p: (K, T)) ⇒ {
+    val newKeys = p._1.subdivide(divs)
+    val newTiles = p._2.subdivide(divs)
+    newKeys.zip(newTiles)
+  }
 
-  private def query[T <: CellGrid: WithPrototypeMethods: WithMergeMethods: AvroRecordCodec: ClassTag](reader: FilteringLayerReader[LayerId], columnIndexes: Seq[Int]) = {
+  private def query[T <: CellGrid: WithCropMethods: WithMergeMethods: AvroRecordCodec: ClassTag](reader: FilteringLayerReader[LayerId], columnIndexes: Seq[Int]) = {
     subdividedTileLayerMetadata.fold(
       // Without temporal key case
       (tlm: TileLayerMetadata[SpatialKey]) ⇒ {
@@ -275,19 +275,11 @@ case class GeoTrellisRelation(sqlContext: SQLContext,
           reader.query[SpatialKey, T, TileLayerMetadata[SpatialKey]](layerId, parts)
         )(applyFilter(_, _))
 
-        val rdd = if(shouldSubdivide) {
-          val origTrans = tileLayerMetadata.left.get.mapTransform
-
-          implicit val keyTransform = (sk: SpatialKey) ⇒ new TilerKeyMethods[SpatialKey, SpatialKey] {
-            def self: SpatialKey = sk
-            def extent: Extent = origTrans.keyToExtent(self)
-            def translate(spatialKey: SpatialKey): SpatialKey = spatialKey
-          }
-
-          CutTiles(query.result, tlm.cellType, tlm.layout)
+        val rdd = tileSubdivisions.filter(_ > 1) match {
+          case Some(divs) ⇒
+            query.result.flatMap(subdivider[SpatialKey, T](divs))
+          case None ⇒ query.result
         }
-        else query.result
-
 
         val trans = tlm.mapTransform
         rdd
@@ -317,20 +309,11 @@ case class GeoTrellisRelation(sqlContext: SQLContext,
           reader.query[SpaceTimeKey, T, TileLayerMetadata[SpaceTimeKey]](layerId, parts)
         )(applyFilterTemporal(_, _))
 
-        val rdd = if(shouldSubdivide) {
-          val origTrans = tileLayerMetadata.right.get.mapTransform
-
-          implicit val keyTransform = (stk: SpaceTimeKey) ⇒ new TilerKeyMethods[SpaceTimeKey, SpaceTimeKey] {
-            def self: SpaceTimeKey = stk
-            def extent: Extent = origTrans.keyToExtent(self)
-            def translate(stk: SpaceTimeKey): SpaceTimeKey = stk
-            def translate(spatialKey: SpatialKey): SpaceTimeKey = SpaceTimeKey(spatialKey, stk.temporalKey)
-          }
-
-          CutTiles(query.result, tlm.cellType, tlm.layout)
+        val rdd = tileSubdivisions.filter(_ > 1) match {
+          case Some(divs) ⇒
+            query.result.flatMap(subdivider[SpaceTimeKey, T](divs))
+          case None ⇒ query.result
         }
-        else query.result
-
 
         rdd
           .map { case (stk: SpaceTimeKey, tile: T) ⇒

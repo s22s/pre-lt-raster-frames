@@ -18,8 +18,7 @@ package astraea.spark
 
 import astraea.spark.rasterframes.encoders.StandardEncoders
 import geotrellis.raster.{Tile, TileFeature}
-import geotrellis.spark.{Bounds, ContextRDD, Metadata, SpaceTimeKey, SpatialKey, TileLayerMetadata}
-import geotrellis.util.GetComponent
+import geotrellis.spark.{ContextRDD, Metadata, SpaceTimeKey, SpatialKey, TileLayerMetadata}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql._
 import org.locationtech.geomesa.spark.jts.DataFrameFunctions
@@ -27,7 +26,6 @@ import org.locationtech.geomesa.spark.jts.encoders.SpatialEncoders
 import shapeless.tag.@@
 
 import scala.language.higherKinds
-import scala.reflect.runtime.universe
 import scala.reflect.runtime.universe._
 
 /**

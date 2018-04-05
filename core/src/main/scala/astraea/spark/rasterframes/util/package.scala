@@ -102,50 +102,6 @@ package object util extends LazyLogging {
     }
   }
 
-  implicit class TileLayoutHasSubdivide(val tl: TileLayout) extends AnyVal {
-    def subdivide(divs: Int): TileLayout = {
-      def shrink(num: Int) = {
-        require(num % divs == 0, s"Number of subdivisions $divs does not evenly divide into dimension $num")
-        num / divs
-      }
-      def grow(num: Int) = num * divs
-
-      divs match {
-        case 0 ⇒ tl
-        case i if i < 0 ⇒ throw new IllegalArgumentException(s"divs=$divs must be positive")
-        case _ ⇒
-          TileLayout(
-            layoutCols = grow(tl.layoutCols),
-            layoutRows = grow(tl.layoutRows),
-            tileCols = shrink(tl.tileCols),
-            tileRows = shrink(tl.tileRows)
-          )
-      }
-    }
-  }
-
-  implicit class BoundsHasSubdivide[K: SpatialComponent](val b: Bounds[K]) {
-    def subdivide(divs: Int): Bounds[K] = {
-      b.map(kb ⇒ {
-        val currGrid = kb.toGridBounds()
-        val newGrid = currGrid.copy(
-          colMax = currGrid.colMin + (currGrid.width - 1) * divs,
-          rowMax = currGrid.rowMin + (currGrid.height - 1) * divs
-        )
-        kb.setSpatialBounds(KeyBounds(newGrid))
-      })
-    }
-  }
-
-  implicit class TileLayerMetadataHasSubdivide[K: SpatialComponent](val tlm: TileLayerMetadata[K]) {
-    def subdivide(divs: Int): TileLayerMetadata[K] = {
-      val tileLayout = tlm.layout.tileLayout.subdivide(divs)
-      val layout = tlm.layout.copy(tileLayout = tileLayout)
-      val bounds = tlm.bounds.subdivide(divs)
-      tlm.copy(layout = layout, bounds = bounds)
-    }
-  }
-
   private[rasterframes]
   implicit class Pipeable[A](val a: A) extends AnyVal {
     def |>[B](f: A ⇒ B): B = f(a)

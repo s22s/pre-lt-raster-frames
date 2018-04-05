@@ -5,6 +5,8 @@
 ### 0.6.2
 
 * Added for for writing GeoTIFFs from RasterFrames via with DataFrameWriter.
+* Added `spark.read.geotrellis.withNumPartitions(Int)` for setting the initial number of partitions to use when reading a layer.
+* Added `spark.read.geotrellis.withTileSubdivisions(Int)` for evenly subdividing tiles before they become rows in a RasterFrame.
 * _Breaking_: Renamed/moved `astraea.spark.rasterframes.functions.CellStatsAggregateFunction.Statistics` to
 `astraea.spark.rasterframes.stats.CellStatistics`.
 * _Breaking_: `HistogramAggregateFunction` now generates a `astraea.spark.rasterframes.stats.CellHistogram`.
