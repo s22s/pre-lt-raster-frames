@@ -29,7 +29,7 @@ import shapeless.tag
 import shapeless.tag.@@
 
 /**
- * Extension:win
+ * Extension methods for literate and type-safe loading of geotrellis layers.
  *
  * @since 1/12/18
  */

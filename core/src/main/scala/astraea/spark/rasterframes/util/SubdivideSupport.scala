@@ -34,7 +34,7 @@ trait SubdivideSupport {
   implicit class TileLayoutHasSubdivide(self: TileLayout) {
     def subdivide(divs: Int): TileLayout = {
       def shrink(num: Int) = {
-        require(num % divs == 0, s"Number of subdivisions $divs does not evenly divide into dimension $num")
+        require(num % divs == 0, s"Subdivision of '$divs' does not evenly divide into dimension '$num'")
         num / divs
       }
       def grow(num: Int) = num * divs
