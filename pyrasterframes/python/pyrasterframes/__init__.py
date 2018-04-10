@@ -23,7 +23,7 @@ def _rf_init(spark_session):
 def _reader(df_reader, format_key, path, **options):
     """ Loads the file of the given type at the given path."""
     df = df_reader.format(format_key).load(path, **options)
-    return RasterFrame(df._jdf, df_reader._spark.sparkSession)
+    return _convertDF(df)
 
 
 def _convertDF(df):

@@ -31,7 +31,7 @@ def _create_assembleTile():
         jfcn = getattr(_checked_context(), 'assembleTile')
         return Column(jfcn(_to_java_column(colIndex), _to_java_column(rowIndex), _to_java_column(cellData), numCols, numRows, cellType))
     _.__name__ = 'assembleTile'
-    _.__doc__ = "'Create a Tile from  a column of cell data with location indices"
+    _.__doc__ = "Create a Tile from  a column of cell data with location indices"
     _.__module__ = 'pyrasterframes'
     return _
 
@@ -42,15 +42,40 @@ def _create_arrayToTile():
         jfcn = getattr(_checked_context(), 'arrayToTile')
         return Column(jfcn(_to_java_column(arrayCol), numCols, numRows))
     _.__name__ = 'arrayToTile'
-    _.__doc__ = "'Convert array in `arrayCol` into a Tile of dimensions `numCols` and `numRows'"
+    _.__doc__ = "Convert array in `arrayCol` into a Tile of dimensions `numCols` and `numRows'"
     _.__module__ = 'pyrasterframes'
     return _
+
+
+def _create_normalizedDifference():
+    """ Create a function mapping to the Scala implementation."""
+    def _(tileCol1, tileCol2):
+        jfcn = getattr(_checked_context(), 'normalizedDifference')
+        return Column(jfcn(_to_java_column(tileCol1), _to_java_column(tileCol2)))
+    _.__name__ = 'normalizedDifference'
+    _.__doc__ = "Create a Tile containing the normalized difference between `tileCol1` and `tileCol2`"
+    _.__module__ = 'pyrasterframes'
+    return _
+
+
+def _create_convertCellType():
+    """ Create a function mapping to the Scala implementation."""
+    def _(tileCol, cellType):
+        jfcn = getattr(_checked_context(), 'convertCellType')
+        return Column(jfcn(_to_java_column(tileCol), cellType))
+    _.__name__ = 'convertCellType'
+    _.__doc__ = "Convert the numeric type of the Tiles in `tileCol`"
+    _.__module__ = 'pyrasterframes'
+    return _
+
 
 
 _rf_unique_functions = {
     'withNoData': _create_withNoData(),
     'assembleTile': _create_assembleTile(),
     'arrayToTile': _create_arrayToTile(),
+    'normalizedDifference': _create_normalizedDifference(),
+    'convertCellType': _create_convertCellType(),
 }
 
 

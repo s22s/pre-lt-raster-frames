@@ -1,6 +1,6 @@
 #py_crf_imports
 from pyrasterframes import *
-from org.apache.spark.sql import *
+from pyspark.sql import *
 #py_crf_imports
 
 #py_crf_create_session
@@ -17,6 +17,16 @@ spark = SparkSession.builder. \
 #py_crf_more_imports
 
 #py_crf_create_rasterframe
-rf = spark.rasterframes.readGeoTiff("src/test/resources/L8-B8-Robinson-IL.tiff", 128, 128)
+rf = spark.read.geotiff("src/test/resources/L8-B8-Robinson-IL.tiff")
 rf.show(5, False)
 #py_crf_create_rasterframe
+
+#py_crf_metadata
+rf.tileColumns()
+
+rf.spatialKeyColumn()
+
+rf.temporalKeyColumn()
+
+rf.tileLayerMetadata()
+#py_crf_metadata
