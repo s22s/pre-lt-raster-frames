@@ -22,10 +22,9 @@ import geotrellis.raster.io.geotiff.reader.GeoTiffReader
 import org.apache.spark.sql._
 import astraea.spark.rasterframes._
 import astraea.spark.rasterframes.util.withAlias
-import com.vividsolutions.jts.geom.{Envelope, Geometry}
+import com.vividsolutions.jts.geom.Geometry
 import geotrellis.raster.{ArrayTile, CellType, Tile}
 import geotrellis.spark.io._
-import org.apache.spark.sql.functions.udf
 import org.locationtech.geomesa.spark.jts.util.WKBUtils
 import spray.json._
 
@@ -54,10 +53,6 @@ class PyRFContext(implicit sparkSession: SparkSession) extends RasterFunctions {
 
   def generateGeometry(obj: Array[Byte]): Geometry = {
     WKBUtils.read(obj)
-  }
-
-  def generateEnvelope(minX: Double, maxX: Double, minY: Double, maxY: Double): Envelope = {
-    new Envelope(minX, maxX, minY, maxY)
   }
 
   def readSingleband(path: String, cols: Int, rows: Int): RasterFrame = {

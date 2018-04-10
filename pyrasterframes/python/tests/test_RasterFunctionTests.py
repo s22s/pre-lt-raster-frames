@@ -42,8 +42,13 @@ class RasterFunctionsTest(unittest.TestCase):
         cls.spark.withRasterFrames()
 
         # load something into a rasterframe
-        cls.rf = cls.spark.read.geotiff(cls.resource_dir.joinpath('L8-B8-Robinson-IL.tiff').as_uri())
+        rf = cls.spark.read.geotiff(cls.resource_dir.joinpath('L8-B8-Robinson-IL.tiff').as_uri())
+
+        # convert the tile cell type to provide for other operations
         cls.tileCol = 'tile'
+        cls.rf = rf.withColumn('tile2', convertCellType(cls.tileCol, 'float32')) \
+            .drop(cls.tileCol) \
+            .withColumnRenamed('tile2', cls.tileCol).asRF()
         cls.rf.show()
 
 
@@ -59,9 +64,24 @@ class RasterFunctionsTest(unittest.TestCase):
         print("Temporal key column: ", col)
 
 
+    def test_tile_operations(self):
+        df1 = self.rf.withColumnRenamed(self.tileCol, 't1').asRF()
+        df2 = self.rf.withColumnRenamed(self.tileCol, 't2').asRF()
+        df3 = df1.spatialJoin(df2).asRF()
+        df3 = df3.withColumn('norm_diff', normalizedDifference('t1', 't2'))
+        df3.printSchema()
+
+        aggs = df3.agg(
+            aggMean('norm_diff'),
+        )
+        aggs.show()
+        row = aggs.first()
+
+        self.assertTrue(_rounded_compare(row['agg_mean(norm_diff)'], 0))
+
+
     def test_general(self):
         meta = self.rf.tileLayerMetadata()
-        print(meta)
         self.assertIsNotNone(meta['bounds'])
         df = self.rf.withColumn('dims',  tileDimensions(self.tileCol)) \
             .withColumn('type', cellType(self.tileCol)) \
@@ -71,8 +91,9 @@ class RasterFunctionsTest(unittest.TestCase):
             .withColumn('max', tileMax(self.tileCol)) \
             .withColumn('mean', tileMean(self.tileCol)) \
             .withColumn('sum', tileSum(self.tileCol)) \
-            .withColumn('sum', tileStats(self.tileCol)) \
-            .withColumn('mean', renderAscii(self.tileCol))
+            .withColumn('stats', tileStats(self.tileCol)) \
+            .withColumn('box2D', box2D('bounds')) \
+            .withColumn('ascii', renderAscii(self.tileCol))
 
         df.show()
 
