@@ -2,6 +2,20 @@
 
 ## 0.6.x
 
+### 0.6.2
+
+* Updated to GeoMesa version 2.0.0-rc.1.
+* Added for for writing GeoTIFFs from RasterFrames via with DataFrameWriter.
+* Added `spark.read.geotrellis.withNumPartitions(Int)` for setting the initial number of partitions to use when reading a layer.
+* Added `spark.read.geotrellis.withTileSubdivisions(Int)` for evenly subdividing tiles before they become rows in a RasterFrame.
+* Added `astraea.spark.rasterframes.util.debug` hosting debug feature to export RasterFrame as a slippy-tile directory structure.
+  _Experimental and not for long-term use_.
+* _Change_: Default interpoation for `toRaster` and `toMultibandRaster` has been changed from `Bilinear` to `NearestNeighbor`.
+* _Breaking_: Renamed/moved `astraea.spark.rasterframes.functions.CellStatsAggregateFunction.Statistics` to
+`astraea.spark.rasterframes.stats.CellStatistics`.
+* _Breaking_: `HistogramAggregateFunction` now generates a `astraea.spark.rasterframes.stats.CellHistogram`.
+
+  
 ### 0.6.1
 
 * Added support for reading striped GeoTiffs (#64).
@@ -9,7 +23,8 @@
   temporal and spatial columns on non-RasterFrame DataFrames.
 * GeoTIFF and GeoTrellis DataSources automatically initialize RasterFrames.
 * Added `RasterFrame.toMultibandRaster`.
-* Added utility for rendering multiband tile as RGB composite PNG.  
+* Added utility for rendering multiband tile as RGB composite PNG.
+* Added `RasterFrame.withRFColumnRenamed` to lessen boilerplate in maintaining `RasterFrame` type tag.  
 
 ### 0.6.0
 

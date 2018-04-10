@@ -5,16 +5,15 @@ package astraea.spark.rasterframes
 import java.sql.Timestamp
 import java.time.ZonedDateTime
 
+import astraea.spark.rasterframes.util._
 import geotrellis.proj4.LatLng
-import geotrellis.raster.render.{ColorMap, ColorRamp, ColorRamps}
-import geotrellis.raster.{IntCellType, ProjectedRaster, Tile, TileFeature, TileLayout}
+import geotrellis.raster.render.{ColorMap, ColorRamp}
+import geotrellis.raster.{ProjectedRaster, Tile, TileFeature, TileLayout, UByteCellType}
 import geotrellis.spark._
-import geotrellis.spark.io._
 import geotrellis.spark.tiling._
 import geotrellis.vector.{Extent, ProjectedExtent}
-import org.apache.spark.sql.{SQLContext, SparkSession}
 import org.apache.spark.sql.functions._
-import astraea.spark.rasterframes.util._
+import org.apache.spark.sql.{SQLContext, SparkSession}
 
 import scala.util.control.NonFatal
 
@@ -97,7 +96,7 @@ class RasterFrameSpec extends TestEnvironment with MetadataKeys
     }
 
     it("should implicitly convert layer of TileFeature") {
-      val tile = TileFeature(randomTile(20, 20, "uint8"), (1, "b", 3.0))
+      val tile = TileFeature(randomTile(20, 20, UByteCellType), (1, "b", 3.0))
 
       val tileLayout = TileLayout(1, 1, 20, 20)
 
@@ -116,7 +115,7 @@ class RasterFrameSpec extends TestEnvironment with MetadataKeys
     }
 
     it("should implicitly convert spatiotemporal layer of TileFeature") {
-      val tile = TileFeature(randomTile(20, 20, "uint8"), (1, "b", 3.0))
+      val tile = TileFeature(randomTile(20, 20, UByteCellType), (1, "b", 3.0))
 
       val tileLayout = TileLayout(1, 1, 20, 20)
 
@@ -154,7 +153,6 @@ class RasterFrameSpec extends TestEnvironment with MetadataKeys
       assert(wt.columns.contains(TEMPORAL_KEY_COLUMN.columnName))
 
       val joined = wt.spatialJoin(wt, "outer")
-      joined.printSchema
 
       // Should be both left and right column names.
       assert(joined.columns.count(_.contains(TEMPORAL_KEY_COLUMN.columnName)) === 2)
@@ -168,14 +166,13 @@ class RasterFrameSpec extends TestEnvironment with MetadataKeys
       val right = left.withColumnRenamed(left.tileColumns.head.columnName, "rightTile")
         .asRF
 
-      val joined = left.spatialJoin(right, "inner")
-      joined.printSchema
+      val joined = left.spatialJoin(right)
+      // since right is a copy of left, should not drop any rows with inner join
+      assert(joined.count === left.count)
 
       // Should use left's key column names
       assert(joined.spatialKeyColumn.columnName === left.spatialKeyColumn.columnName)
       assert(joined.temporalKeyColumn.map(_.columnName) === left.temporalKeyColumn.map(_.columnName))
-      // since right is a copy of left, should not drop any rows with inner join
-      assert(joined.count === left.count)
 
     }
 
@@ -206,22 +203,22 @@ class RasterFrameSpec extends TestEnvironment with MetadataKeys
       assert(bounds._2 === SpaceTimeKey(3, 1, now))
     }
 
-    it("should clip TileLayerMetadata extent") {
-      val tiled = sampleTileLayerRDD
-
-      val rf = tiled.toRF
-
-      val worldish = Extent(-179, -89, 179, 89)
-      val areaish = Extent(-90, 30, -81, 39)
-
-      val orig = tiled.metadata.extent
-      assert(orig.contains(worldish))
-      assert(orig.contains(areaish))
-
-      val clipped = rf.clipLayerExtent.tileLayerMetadata.widen.extent
-      assert(!clipped.contains(worldish))
-      assert(clipped.contains(areaish))
-    }
+//    it("should clip TileLayerMetadata extent") {
+//      val tiled = sampleTileLayerRDD
+//
+//      val rf = tiled.reproject(LatLng, tiled.metadata.layout)._2.toRF
+//
+//      val worldish = Extent(-179, -89, 179, 89)
+//      val areaish = Extent(-90, 30, -81, 40)
+//
+//      val orig = rf.tileLayerMetadata.widen.extent
+//      assert(worldish.contains(orig))
+//      assert(areaish.contains(orig))
+//
+//      val clipped = rf.clipLayerExtent.tileLayerMetadata.widen.extent
+//      assert(!clipped.contains(worldish))
+//      assert(clipped.contains(areaish))
+//    }
 
     def basicallySame(expected: Extent, computed: Extent): Unit = {
       val components = Seq(
@@ -288,18 +285,30 @@ class RasterFrameSpec extends TestEnvironment with MetadataKeys
     }
 
     it("should rasterize multiband") {
+      withClue("Landsat") {
+        val blue = TestData.l8Sample(1).projectedRaster.toRF.withRFColumnRenamed("tile", "blue")
+        val green = TestData.l8Sample(2).projectedRaster.toRF.withRFColumnRenamed("tile", "green")
+        val red = TestData.l8Sample(3).projectedRaster.toRF.withRFColumnRenamed("tile", "red")
 
-      val blue = TestData.l8Sample(1).projectedRaster.toRF.withColumnRenamed("tile", "blue").asRF
-      val green = TestData.l8Sample(2).projectedRaster.toRF.withColumnRenamed("tile", "green").asRF
-      val red = TestData.l8Sample(3).projectedRaster.toRF.withColumnRenamed("tile", "red").asRF
+        val joined = blue.spatialJoin(green).spatialJoin(red)
 
-      val joined = blue.spatialJoin(green).spatialJoin(red)
-      joined.printSchema
+        noException shouldBe thrownBy {
+          val raster = joined.toMultibandRaster(Seq($"red", $"green", $"blue"), 128, 128)
+          val png = MultibandRender.rgbComposite(raster.tile, MultibandRender.Landsat8NaturalColor)
+          //png.write(s"target/${getClass.getSimpleName}.png")
+        }
+      }
+      withClue("NAIP") {
+        val red = TestData.naipSample(1).projectedRaster.toRF.withRFColumnRenamed("tile", "red")
+        val green = TestData.naipSample(2).projectedRaster.toRF.withRFColumnRenamed("tile", "green")
+        val blue = TestData.naipSample(3).projectedRaster.toRF.withRFColumnRenamed("tile", "blue")
+        val joined = blue.spatialJoin(green).spatialJoin(red)
 
-      noException shouldBe thrownBy {
-        val raster = joined.toMultibandRaster(Seq($"red", $"green", $"blue"), 128, 128)
-        val png = MultibandRender.rgbComposite(raster.tile, MultibandRender.Landsat8NaturalColor)
-        png.write(s"target/${getClass.getSimpleName}.png")
+        noException shouldBe thrownBy {
+          val raster = joined.toMultibandRaster(Seq($"red", $"green", $"blue"), 256, 256)
+          val png = MultibandRender.rgbComposite(raster.tile, MultibandRender.NAIPNaturalColor)
+          png.write(s"target/${getClass.getSimpleName}.png")
+        }
       }
     }
 

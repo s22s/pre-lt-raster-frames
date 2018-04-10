@@ -55,17 +55,13 @@ object MultibandRender {
   }
   import CellTransforms._
 
-  sealed trait Profile {
+  trait Profile {
     /** Value from -255 to 255 */
     val brightness: Int = 0
     /** Value from  -255 to 255 */
     val contrast: Int = 0
     /**  0.01 to 7.99 */
     val gamma: Double = 1.0
-    /** lower-bound cutoff */
-    val clampMin: Int = Int.MinValue
-    /** upper-bound cutoff */
-    val clampMax: Int = Int.MaxValue
 
     /** Get the red band. */
     def red(mb: MultibandTile): Tile = mb.band(0)
@@ -74,22 +70,23 @@ object MultibandRender {
     /** Get the blue band. */
     def blue(mb: MultibandTile): Tile = mb.band(2)
 
+    /** Convert the tile to an Int-based cell type. */
+    def normalizeCellType(tile: Tile): Tile = tile.convert(IntCellType)
+
     /** Convert tile such that cells values fall between 0 and 255. */
-    def compressRange(tile: Tile): Tile = {
-      val clamper = clamp(clampMin, clampMax) _
-      tile.convert(IntCellType).map(clamper).normalize(clampMin, clampMax, 0, 255)
-    }
+    def compressRange(tile: Tile): Tile = tile
 
     /** Apply color correction so it "looks nice". */
     def colorAdjust(tile: Tile): Tile = {
-      val pipeline = brightnessCorrect(brightness) _ andThen
+      val pipeline =
+        brightnessCorrect(brightness) _ andThen
         clampByte andThen
         gammaCorrect(gamma) andThen
         clampByte andThen
         contrastCorrect(contrast) andThen
         clampByte
 
-      tile.map(pipeline)
+      normalizeCellType(tile).map(pipeline)
     }
 
     val applyAdjustment = compressRange _ andThen colorAdjust
@@ -101,7 +98,17 @@ object MultibandRender {
     override val brightness = 15
     override val contrast = 30
     override val gamma = 0.8
-    override val (clampMin, clampMax) = (4000, 15176)
+    val (clampMin, clampMax) = (4000, 15176)
+
+    override def compressRange(tile: Tile): Tile = {
+      val clamper = clamp(clampMin, clampMax) _
+      tile.map(clamper).normalize(clampMin, clampMax, 0, 255)
+    }
+  }
+
+  case object NAIPNaturalColor extends Profile {
+    override val gamma = 1.4
+    override def compressRange(tile: Tile): Tile = tile.rescale(0, 255)
   }
 
   def rgbComposite(tile: MultibandTile, profile: Profile): Png = {
