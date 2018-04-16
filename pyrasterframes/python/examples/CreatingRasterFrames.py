@@ -1,3 +1,8 @@
+
+#examples_setup
+from examples import resource_dir
+#examples_setup
+
 #py_crf_imports
 from pyrasterframes import *
 from pyspark.sql import *
@@ -17,7 +22,7 @@ spark = SparkSession.builder. \
 #py_crf_more_imports
 
 #py_crf_create_rasterframe
-rf = spark.read.geotiff("src/test/resources/L8-B8-Robinson-IL.tiff")
+rf = spark.read.geotiff(resource_dir.joinpath('L8-B8-Robinson-IL.tiff').as_uri())
 rf.show(5, False)
 #py_crf_create_rasterframe
 

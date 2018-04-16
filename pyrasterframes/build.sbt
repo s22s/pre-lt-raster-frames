@@ -6,6 +6,8 @@ val pysparkCmd = taskKey[Unit]("Builds pyspark package and emits command string 
 
 lazy val pyTest = taskKey[Unit]("Run pyrasterframes tests.")
 
+lazy val pyExamples = taskKey[Unit]("Run pyrasterframes examples.")
+
 lazy val pyEgg = taskKey[Unit]("Creates a Python .egg file")
 
 lazy val spJarFile = Def.taskDyn {
@@ -84,5 +86,12 @@ pyEgg := {
   val s = streams.value
   val wd = baseDirectory.value / "python"
   Process("python setup.py bdist_egg", wd) ! s.log
+}
+
+pyExamples := {
+  val _ = spPublishLocal.value
+  val s = streams.value
+  val wd = baseDirectory.value / "python"
+  Process("python setup.py examples", wd) ! s.log
 }
 
