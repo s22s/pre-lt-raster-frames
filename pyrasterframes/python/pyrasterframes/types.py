@@ -2,9 +2,11 @@ from pyspark.sql.types import UserDefinedType
 from pyspark import SparkContext
 from pyspark.sql import SparkSession, DataFrame, Column, Row
 from pyspark.sql.types import *
+from pyspark.ml.wrapper import JavaTransformer
+from pyspark.ml.util import JavaMLReadable, JavaMLWritable
 from pyrasterframes.rasterfunctions import _checked_context
 
-__all__ = ['RFContext', 'RasterFrame', 'TileUDT', 'GeometryUDT']
+__all__ = ['RFContext', 'RasterFrame', 'TileUDT', 'GeometryUDT', 'TileExploder']
 
 class RFContext(object):
     """
@@ -131,3 +133,9 @@ class GeometryUDT(UserDefinedType):
         return _checked_context().generateGeometry(datum[0])
 
 
+
+class TileExploder(JavaTransformer, JavaMLReadable, JavaMLWritable):
+
+    def __init__(self):
+        super(TileExploder, self).__init__()
+        self._java_obj = self._new_java_obj("astraea.spark.rasterframes.ml.TileExploder", self.uid)

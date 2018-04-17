@@ -3,13 +3,14 @@ from pyspark.sql.types import UserDefinedType
 from pyspark import SparkContext
 from pyspark.sql import SparkSession, DataFrame, DataFrameReader
 from pyspark.sql.types import *
+from pyspark.sql.column import _to_java_column
 
 # Import RasterFrame types and functions
 from pyrasterframes.types import *
 from pyrasterframes import rasterfunctions
 
 
-__all__ = ["RasterFrame"]
+__all__ = ['RasterFrame', 'TileExploder']
 
 
 def _rf_init(spark_session):
@@ -26,9 +27,15 @@ def _reader(df_reader, format_key, path, **options):
     return _convertDF(df)
 
 
-def _convertDF(df):
+def _convertDF(df, sp_key = None, metadata = None):
     ctx = SparkContext._active_spark_context._rf_context
-    return RasterFrame(ctx._jrfctx.asRF(df._jdf), ctx._spark_session)
+
+    if sp_key is None:
+        return RasterFrame(ctx._jrfctx.asRF(df._jdf), ctx._spark_session)
+    else:
+        import json
+        return RasterFrame(ctx._jrfctx.asRF(
+            df._jdf, _to_java_column(sp_key), json.dumps(metadata)), ctx._spark_session)
 
 
 _prevFJ = UserDefinedType.fromJson
@@ -43,7 +50,7 @@ def _fromJson(json_val):
 SparkSession.withRasterFrames = _rf_init
 
 # Add the 'asRF' method to pyspark DataFrame
-DataFrame.asRF = lambda dFrame: _convertDF(dFrame)
+DataFrame.asRF = _convertDF
 
 # Add DataSource convenience methods to the DataFrameReader
 # TODO: make sure this supports **options

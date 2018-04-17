@@ -14,6 +14,11 @@ def _checked_context():
     return sc._rf_context._jrfctx
 
 
+def _celltype(cellTypeStr):
+    f = getattr(_checked_context(), 'cellType')
+    return f(cellTypeStr)
+
+
 def _create_withNoData():
     """ Create a function mapping to the Scala implementation."""
     def _(col, noDataVal):
@@ -28,8 +33,9 @@ def _create_withNoData():
 def _create_assembleTile():
     """ Create a function mapping to the Scala implementation."""
     def _(colIndex, rowIndex, cellData, numCols, numRows, cellType):
-        jfcn = getattr(_checked_context(), 'assembleTile')
-        return Column(jfcn(_to_java_column(colIndex), _to_java_column(rowIndex), _to_java_column(cellData), numCols, numRows, cellType))
+        ctx = _checked_context()
+        jfcn = getattr(ctx, 'assembleTile')
+        return Column(jfcn(_to_java_column(colIndex), _to_java_column(rowIndex), _to_java_column(cellData), numCols, numRows, _celltype(cellType)))
     _.__name__ = 'assembleTile'
     _.__doc__ = "Create a Tile from  a column of cell data with location indices"
     _.__module__ = 'pyrasterframes'
@@ -62,7 +68,7 @@ def _create_convertCellType():
     """ Create a function mapping to the Scala implementation."""
     def _(tileCol, cellType):
         jfcn = getattr(_checked_context(), 'convertCellType')
-        return Column(jfcn(_to_java_column(tileCol), cellType))
+        return Column(jfcn(_to_java_column(tileCol), _celltype(cellType)))
     _.__name__ = 'convertCellType'
     _.__doc__ = "Convert the numeric type of the Tiles in `tileCol`"
     _.__module__ = 'pyrasterframes'

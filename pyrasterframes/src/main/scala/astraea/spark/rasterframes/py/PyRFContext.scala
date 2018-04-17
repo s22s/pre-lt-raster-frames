@@ -21,9 +21,11 @@ package astraea.spark.rasterframes.py
 import geotrellis.raster.io.geotiff.reader.GeoTiffReader
 import org.apache.spark.sql._
 import astraea.spark.rasterframes._
+import astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder
 import astraea.spark.rasterframes.util.withAlias
 import com.vividsolutions.jts.geom.Geometry
 import geotrellis.raster.{ArrayTile, CellType, Tile}
+import geotrellis.spark.{SpatialKey, TileLayerMetadata}
 import geotrellis.spark.io._
 import org.locationtech.geomesa.spark.jts.util.WKBUtils
 import spray.json._
@@ -45,10 +47,23 @@ class PyRFContext(implicit sparkSession: SparkSession) extends RasterFunctions {
     df.asRF
   }
 
+  /**
+    * Conversion to RasterFrame with spatial key column and TileLayerMetadata specified.
+    */
+  def asRF(df: DataFrame, spatialKey: Column, tlm: String): RasterFrame = {
+    val jtlm = tlm.parseJson.convertTo[TileLayerMetadata[SpatialKey]]
+    df.asRF(spatialKey, jtlm)
+  }
+
+  /**
+    * Convenience function for use in Python
+    */
+  def cellType(name: String): CellType = CellType.fromName(name)
+
   /** DESERIALIZATION **/
 
   def generateTile(cellType: String, cols: Int, rows: Int, bytes: Array[Byte]): ArrayTile = {
-    ArrayTile.fromBytes(bytes, CellType.fromName(cellType), cols, rows)
+    ArrayTile.fromBytes(bytes, PyRFContext.this.cellType(cellType), cols, rows)
   }
 
   def generateGeometry(obj: Array[Byte]): Geometry = {
