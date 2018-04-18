@@ -21,7 +21,7 @@ class ExampleCommand(distutils.cmd.Command):
     description = 'run pyrasterframes examples'
     user_options = [
         # The format is (long option, short option, description).
-        ('examples=', 'e', 'examples to run'),
+        ('examples', 'e', 'examples to run'),
     ]
 
     def initialize_options(self):

@@ -21,7 +21,6 @@ package astraea.spark.rasterframes.py
 import geotrellis.raster.io.geotiff.reader.GeoTiffReader
 import org.apache.spark.sql._
 import astraea.spark.rasterframes._
-import astraea.spark.rasterframes.encoders.TileLayerMetadataEncoder
 import astraea.spark.rasterframes.util.withAlias
 import com.vividsolutions.jts.geom.Geometry
 import geotrellis.raster.{ArrayTile, CellType, Tile}
