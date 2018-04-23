@@ -18,18 +18,19 @@
  *
  */
 
-package examples
+package astraea.spark.rasterframes.experimental
 
 import java.io.File
 
 import astraea.spark.rasterframes._
-import astraea.spark.rasterframes.util.debug._
+import astraea.spark.rasterframes.experimental.SlippyExport._
 import geotrellis.raster._
 import geotrellis.raster.io.geotiff.SinglebandGeoTiff
 import org.apache.spark.sql.SparkSession
 
-object Slippy {
+object SlippyExportDriver {
   def main(args: Array[String]): Unit = {
+
     implicit val spark = SparkSession
       .builder()
       .master("local[*]")
@@ -39,6 +40,7 @@ object Slippy {
 
     val bands: Seq[SinglebandGeoTiff] = for (i ← 1 to 3) yield {
       TestData.readSingleband(s"NAIP-VA-b$i.tiff")
+      //s"L8-B$i-Elkton-VA.tiff")
     }
 
     val mtile = MultibandTile(bands.map(_.tile))
@@ -49,7 +51,8 @@ object Slippy {
 
     val rf = pr.toRF(64, 64)
 
-    rf.debugTileExport(new File("target/slippy").toURI)
+    //rf.exportGeoTiffTiles(new File("target/slippy-tiff").toURI)
 
+    rf.exportSlippyMap(new File("target/slippy-png/").toURI)
   }
 }
