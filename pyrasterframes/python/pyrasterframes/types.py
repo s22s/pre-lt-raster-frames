@@ -1,3 +1,10 @@
+"""
+This module contains all types relevant to PyRasterFrames. Classes in this module are
+meant to provide smoother pathways between the jvm and Python, and whenever possible,
+the implementations take advantage of the existing Scala functionality. The RasterFrame
+class here provides the PyRasterFrames entry point.
+"""
+
 from pyspark.sql.types import UserDefinedType
 from pyspark import SparkContext
 from pyspark.sql import SparkSession, DataFrame, Column, Row
@@ -18,11 +25,6 @@ class RFContext(object):
         self._jvm = self._gateway.jvm
         jsess = self._spark_session._jsparkSession
         self._jrfctx = self._jvm.astraea.spark.rasterframes.py.PyRFContext(jsess)
-
-
-    def readGeoTiff(self, path, cols=128, rows=128):
-        rf = self._jrfctx.readSingleband(path, cols, rows)
-        return RasterFrame(rf, self._spark_session)
 
 
 class RasterFrame(DataFrame):

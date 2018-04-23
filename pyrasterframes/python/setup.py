@@ -3,8 +3,7 @@ import distutils.log
 import importlib
 from pathlib import Path
 
-#if sys.version_info < (3, 4):
-#    sys.exit("PyRasterFrames requires Python 3.4 or greater.")
+
 def _extract_module(mod):
     module = importlib.import_module(mod)
 
@@ -21,7 +20,7 @@ class ExampleCommand(distutils.cmd.Command):
     description = 'run pyrasterframes examples'
     user_options = [
         # The format is (long option, short option, description).
-        ('examples', 'e', 'examples to run'),
+        ('examples=', 'e', 'examples to run'),
     ]
 
     def initialize_options(self):

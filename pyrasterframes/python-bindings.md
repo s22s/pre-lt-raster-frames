@@ -40,14 +40,14 @@ We eventually want RasterFrames deployed via https://spark-packages.org/, in a f
 
 ## Tasks
 
-* [ ] Implement `asRF` on `Dataframe`
-* [ ] Expose RasterFrame extension methods
-* [ ] Add mirror for TileUDT (and update `pyUDT` field in Scala)
+* [x] Implement `asRF` on `Dataframe`
+* [x] Expose RasterFrame extension methods
+* [x] Add mirror for TileUDT (and update `pyUDT` field in Scala)
 * [ ] Properly (pythondoc) document wrapper classes
 * [ ] Enable language groups in Paradox
-* [ ] Implement Scala examples in Python, finding missing API bindings
-* [ ] Publish via spark-packages.org
-* [ ] Figure out how to unit test python code
+* [x] Implement Scala examples in Python, finding missing API bindings
+* [ ] ~~Publish via spark-packages.org~~
+* [x] Figure out how to unit test python code
 
 
 ## References

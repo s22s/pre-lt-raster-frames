@@ -1,3 +1,10 @@
+"""
+This module creates explicit Python functions that map back to the existing Scala
+implementations. Most functions are standard Column functions, but those with unique
+signatures are handled here as well.
+"""
+
+
 from __future__ import absolute_import
 from pyspark import SparkContext
 from pyspark.sql.types import *
@@ -15,6 +22,7 @@ def _checked_context():
 
 
 def _celltype(cellTypeStr):
+    """ Convert the string cell type to the expected CellType object."""
     f = getattr(_checked_context(), 'cellType')
     return f(cellTypeStr)
 

@@ -1,3 +1,9 @@
+"""
+Module initialization for PyRasterFrames. This is where much of the cool stuff is
+appended to PySpark classes.
+"""
+
+
 from __future__ import absolute_import
 from pyspark.sql.types import UserDefinedType
 from pyspark import SparkContext
@@ -58,5 +64,5 @@ DataFrameReader.geotiff = lambda df_reader, path: _reader(df_reader, "geotiff", 
 DataFrameReader.geotrellis = lambda df_reader, path: _reader(df_reader, "geotrellis", path)
 
 # If you don't have Python support, you will get it anyway
-UserDefinedType.fromJson = lambda json_val: _fromJson(json_val)
+UserDefinedType.fromJson = _fromJson
 
